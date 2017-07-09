@@ -20,13 +20,16 @@ Base build dependencies
 brew install automake libtool pkg-config libnatpmp
 ```
 
+See [dependencies.md](dependencies.md) for a complete overview.
+
 If you want to build the disk image with `make deploy` (.dmg / optional), you need RSVG:
 ```bash
 brew install librsvg
 ```
 
-Building
---------
+If you run into issues, check [Homebrew's troubleshooting page](https://docs.brew.sh/Troubleshooting).
+
+## Building
 
 It's possible that your `PATH` environment variable contains some problematic strings, run
 ```bash
