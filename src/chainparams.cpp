@@ -420,6 +420,9 @@ public:
                         //   (the tx=... number in the ChainStateFlushed debug.log lines)
             0.2         // * estimated number of transactions per second after that timestamp
         };
+
+        /* disable fallback fee on mainnet */
+        m_fallback_fee_enabled = false;
     }
 };
 
@@ -628,6 +631,8 @@ public:
             0.01        // * estimated number of transactions per second after that timestamp
         };
 
+        /* enable fallback fee on testnet */
+        m_fallback_fee_enabled = true;
     }
 };
 
@@ -1120,6 +1125,9 @@ public:
         params->minSize = threshold;
         params->threshold = threshold;
         params->dkgBadVotesThreshold = threshold;
+
+        /* enable fallback fee on regtest */
+        m_fallback_fee_enabled = true;
     }
     void UpdateLLMQTestParametersFromArgs(const ArgsManager& args);
 };
