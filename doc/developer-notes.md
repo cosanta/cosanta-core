@@ -417,8 +417,6 @@ Threads
 
 - DumpAddresses : Dumps IP addresses of nodes to peers.dat.
 
-- ThreadFlushWalletDB : Close the wallet.dat file if it hasn't been used in 500ms.
-
 - ThreadRPCServer : Remote procedure call handler, listens on port 9998 for connections and services them.
 
 - Shutdown : Does an orderly shutdown of everything.
@@ -621,6 +619,18 @@ int GetInt(Tabs tab)
 
 *Rationale*: The comment documents skipping `default:` label, and it complies with `clang-format` rules. The assertion prevents firing of `-Wreturn-type` warning on some compilers.
 
+- Initialize all non-static class members where they are defined
+
+  - *Rationale*: Initializing the members in the declaration makes it easy to spot uninitialized ones,
+  and avoids accidentally reading uninitialized memory
+
+```cpp
+class A
+{
+    uint32_t m_count{0};
+}
+```
+
 Strings and formatting
 ------------------------
 
@@ -684,11 +694,11 @@ member name:
 ```c++
 class AddressBookPage
 {
-    Mode mode;
+    Mode m_mode;
 }
 
 AddressBookPage::AddressBookPage(Mode _mode) :
-      mode(_mode)
+      m_mode(_mode)
 ...
 ```
 

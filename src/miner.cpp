@@ -47,11 +47,6 @@
 #include <utility>
 #include <boost/thread.hpp>
 
-//////////////////////////////////////////////////////////////////////////////
-//
-// CosantaMiner
-//
-
 int64_t nLastCoinStakeSearchTime = 0;
 
 int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
