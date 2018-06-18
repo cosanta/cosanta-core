@@ -149,7 +149,7 @@ public:
 
     friend bool operator==(const CCoinJoinAccept& a, const CCoinJoinAccept& b)
     {
-        return a.nDenom == b.nDenom && a.txCollateral == b.txCollateral;
+        return a.nDenom == b.nDenom && CTransaction(a.txCollateral) == CTransaction(b.txCollateral);
     }
 };
 
