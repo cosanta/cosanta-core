@@ -38,7 +38,7 @@ enum class IsMineResult
     NO = 0,          //! Not ours
     WATCH_ONLY = 1,  //! Included in watch-only balance
     SPENDABLE = 2,   //! Included in all balances
-    INVALID = 3,     //! Not spendable by anyone
+    INVALID = 3,     //! Not spendable by anyone (P2SH inside P2SH)
 };
 
 bool PermitsUncompressed(IsMineSigVersion sigversion)
@@ -138,12 +138,10 @@ IsMineResult IsMineInner(const CKeyStore& keystore, const CScript& scriptPubKey,
 
 } // namespace
 
-isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey, bool& isInvalid)
+isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey)
 {
-    isInvalid = false;
     switch (IsMineInner(keystore, scriptPubKey, IsMineSigVersion::TOP)) {
     case IsMineResult::INVALID:
-        isInvalid = true;
     case IsMineResult::NO:
         return ISMINE_NO;
     case IsMineResult::WATCH_ONLY:
@@ -152,12 +150,6 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey, bool& 
         return ISMINE_SPENDABLE;
     }
     assert(false);
-}
-
-isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey)
-{
-    bool isInvalid = false;
-    return IsMine(keystore, scriptPubKey, isInvalid);
 }
 
 isminetype IsMine(const CKeyStore& keystore, const CTxDestination& dest)
