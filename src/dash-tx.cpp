@@ -105,11 +105,10 @@ static int AppInitRawTx(int argc, char* argv[])
 
     if (argc < 2 || HelpRequested(gArgs)) {
         // First part of help message is specific to this utility
-        std::string strUsage = strprintf("%s dash-tx utility version", PACKAGE_NAME) + " " + FormatFullVersion() + "\n\n" +
-            "Usage:\n"
-              "  cosanta-tx [options] <hex-tx> [commands]  Update hex-encoded cosanta transaction\n" +
-              "  cosanta-tx [options] -create [commands]   Create hex-encoded cosanta transaction\n" +
-              "\n";
+        std::string strUsage = PACKAGE_NAME " cosanta-tx utility version " + FormatFullVersion() + "\n\n" +
+            "Usage:  cosanta-tx [options] <hex-tx> [commands]  Update hex-encoded dash transaction\n" +
+            "or:     cosanta-tx [options] -create [commands]   Create hex-encoded dash transaction\n" +
+            "\n";
         strUsage += gArgs.GetHelpMessage();
 
         tfm::format(std::cout, "%s", strUsage);
