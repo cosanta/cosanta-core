@@ -46,7 +46,6 @@ class LLMQCoinbaseCommitmentsTest(CosantaTestFramework):
 
     def run_test(self):
         self.test_node = self.nodes[0].add_p2p_connection(TestP2PConn())
-        self.nodes[0].p2p.wait_for_verack()
 
         self.confirm_mns()
 
