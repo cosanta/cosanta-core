@@ -260,7 +260,7 @@ static UniValue setlabel(const JSONRPCRequest& request)
                 },
             }.ToString());
 
-    LOCK2(cs_main, pwallet->cs_wallet);
+    LOCK(pwallet->cs_wallet);
 
     CTxDestination dest = DecodeDestination(request.params[0].get_str());
     if (!IsValidDestination(dest)) {

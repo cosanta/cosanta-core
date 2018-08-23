@@ -529,7 +529,6 @@ static UniValue decoderawtransaction(const JSONRPCRequest& request)
                 },
             }.ToString());
 
-    LOCK(cs_main);
     RPCTypeCheck(request.params, {UniValue::VSTR});
 
     CMutableTransaction mtx;
