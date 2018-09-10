@@ -1676,6 +1676,7 @@ UniValue converttopsbt(const JSONRPCRequest& request)
     return EncodeBase64(ssTx.str());
 }
 
+// clang-format off
 static const CRPCCommand commands[] =
 { //  category              name                            actor (function)            argNames
   //  --------------------- ------------------------        -----------------------     ----------
@@ -1697,6 +1698,7 @@ static const CRPCCommand commands[] =
     { "blockchain",         "gettxoutproof",                &gettxoutproof,             {"txids", "blockhash"} },
     { "blockchain",         "verifytxoutproof",             &verifytxoutproof,          {"proof"} },
 };
+// clang-format on
 
 void RegisterRawTransactionRPCCommands(CRPCTable &t)
 {
