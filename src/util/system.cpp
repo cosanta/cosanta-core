@@ -1047,7 +1047,7 @@ std::string ArgsManager::GetDevNetName() const
 bool RenameOver(fs::path src, fs::path dest)
 {
 #ifdef WIN32
-    return MoveFileExA(src.string().c_str(), dest.string().c_str(),
+    return MoveFileExW(src.wstring().c_str(), dest.wstring().c_str(),
                        MOVEFILE_REPLACE_EXISTING) != 0;
 #else
     int rc = std::rename(src.string().c_str(), dest.string().c_str());
