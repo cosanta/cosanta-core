@@ -32,9 +32,6 @@ class InvalidTxRequestTest(BitcoinTestFramework):
         ]]
         self.setup_clean_chain = True
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_wallet()
-
     def bootstrap_p2p(self, *, num_connections=1):
         """Add a P2P connection to the node.
 
@@ -79,7 +76,7 @@ class InvalidTxRequestTest(BitcoinTestFramework):
         node.p2p.send_blocks_and_test([block1, block2], node, success=True)
 
         self.log.info("Mature the block.")
-        self.nodes[0].generate(100)
+        self.nodes[0].generatetoaddress(100, self.nodes[0].get_deterministic_priv_key().address)
 
         # Iterate through a list of known invalid transaction types, ensuring each is
         # rejected. Some are consensus invalid and some just violate policy.
