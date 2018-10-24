@@ -244,7 +244,7 @@ bool LoadGenesisBlock(const CChainParams& chainparams);
  * initializing state if we're running with -reindex. */
 bool LoadBlockIndex(const CChainParams& chainparams) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 /** Update the chain tip based on database information. */
-bool LoadChainTip(const CChainParams& chainparams);
+bool LoadChainTip(const CChainParams& chainparams) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 /** Unload database information */
 void UnloadBlockIndex();
 /** Run instances of script checking worker threads */
@@ -408,7 +408,7 @@ bool ReplayBlocks(const CChainParams& params, CCoinsView* view);
 CBlockIndex* LookupBlockIndex(const uint256& hash);
 
 /** Find the last common block between the parameter chain and a locator. */
-CBlockIndex* FindForkInGlobalIndex(const CChain& chain, const CBlockLocator& locator);
+CBlockIndex* FindForkInGlobalIndex(const CChain& chain, const CBlockLocator& locator) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 
 enum DisconnectResult {
     DISCONNECT_OK,      // All good.
