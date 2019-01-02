@@ -18,6 +18,8 @@ from .script import CScript, OP_TRUE, OP_CHECKSIG
 from .util import assert_equal, hex_str_to_bytes
 from io import BytesIO
 
+MAX_BLOCK_SIGOPS = 20000
+
 def create_block(hashprev, coinbase, ntime=None):
     """Create a block (with regtest difficulty)."""
     block = CBlock()
