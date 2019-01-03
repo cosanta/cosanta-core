@@ -207,7 +207,7 @@ after_success:
         BITCOIN_CONFIG="--enable-reduce-exports --disable-gui-tests"
 
     - stage: test
-      name: 'Win64  [GOAL: deploy]  [no gui or functional tests]'
+      name: 'Win64  [GOAL: deploy]  [no gui tests]'
       env: >-
         HOST=x86_64-w64-mingw32
         PACKAGES="python3 nsis g++-mingw-w64-x86-64 wine-binfmt wine64"
@@ -216,7 +216,7 @@ after_success:
         BITCOIN_CONFIG="--enable-reduce-exports --disable-gui-tests"
 
     - stage: test
-      name: '32-bit + dash  [GOAL: install] [GUI: no BIP70]'
+      name: '32-bit + dash  [GOAL: install]'
       env: >-
         HOST=i686-pc-linux-gnu
         PACKAGES="g++-multilib python3-zmq"
@@ -232,8 +232,8 @@ after_success:
         DEP_OPTS="NO_QT=1 NO_UPNP=1 DEBUG=1 ALLOW_HOST_PACKAGES=1"
         GOAL="install"
         BITCOIN_CONFIG="--enable-zmq --with-gui=qt5 --enable-glibc-back-compat --enable-reduce-exports --enable-debug CXXFLAGS=\"-g0 -O2\""
-# x86_64 Linux (xenial, no depends, only system libs)
     - stage: test
+      name: 'x86_64 Linux  [GOAL: install]  [xenial]  [no depends, only system libs, sanitizers: thread (TSan), no wallet]'
       env: >-
         HOST=x86_64-unknown-linux-gnu
         DOCKER_NAME_TAG=ubuntu:16.04
