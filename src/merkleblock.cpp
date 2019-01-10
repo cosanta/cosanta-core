@@ -84,7 +84,7 @@ uint256 CPartialMerkleTree::CalcHash(int height, unsigned int pos, const std::ve
         else
             right = left;
         // combine subhashes
-        return Hash(BEGIN(left), END(left), BEGIN(right), END(right));
+        return Hash(left.begin(), left.end(), right.begin(), right.end());
     }
 }
 
@@ -140,7 +140,7 @@ uint256 CPartialMerkleTree::TraverseAndExtract(int height, unsigned int pos, uns
             right = left;
         }
         // and combine them before returning
-        return Hash(BEGIN(left), END(left), BEGIN(right), END(right));
+        return Hash(left.begin(), left.end(), right.begin(), right.end());
     }
 }
 
