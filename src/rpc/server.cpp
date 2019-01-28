@@ -58,7 +58,7 @@ struct RPCCommandExecution
     explicit RPCCommandExecution(const std::string& method)
     {
         LOCK(g_rpc_server_info.mutex);
-        it = g_rpc_server_info.active_commands.insert(g_rpc_server_info.active_commands.cend(), {method, GetTimeMicros()});
+        it = g_rpc_server_info.active_commands.insert(g_rpc_server_info.active_commands.end(), {method, GetTimeMicros()});
     }
     ~RPCCommandExecution()
     {
