@@ -6,13 +6,14 @@ reset-files.bash
 *.tar.gz
 
 *.exe
-src/dash
-<<<<<<< HEAD
+src/cosanta
 src/cosantad
 src/cosanta-cli
 src/cosanta-tx
+src/cosanta-wallet
+src/test/fuzz
+!src/test/fuzz/*.*
 src/test/test_cosanta
-src/test/test_cosanta_fuzzy
 src/qt/test/test_cosanta-qt
 src/qt/res/css/colors/*
 src/bench/bench_cosanta
