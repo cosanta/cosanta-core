@@ -162,6 +162,7 @@ BerkeleyEnvironment::BerkeleyEnvironment(const fs::path& dir_path) : strPath(dir
 
 BerkeleyEnvironment::~BerkeleyEnvironment()
 {
+    LOCK(cs_db);
     g_dbenvs.erase(strPath);
     Close();
 }
