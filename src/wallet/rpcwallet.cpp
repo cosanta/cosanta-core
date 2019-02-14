@@ -21,7 +21,7 @@
 #include <rpc/server.h>
 #include <rpc/util.h>
 #include <script/descriptor.h>
-#include <timedata.h>
+#include <util/bip32.h>
 #include <util/fees.h>
 #include <util/system.h>
 #include <util/moneystr.h>
@@ -3799,9 +3799,10 @@ UniValue getaddressinfo(const JSONRPCRequest& request)
             "  \"iscompressed\" : true|false,  (boolean) If the address is compressed\n"
             "  \"label\" :  \"label\"         (string) The label associated with the address, \"\" is the default label\n"
             "  \"timestamp\" : timestamp,      (number, optional) The creation time of the key if available in seconds since epoch (Jan 1 1970 GMT)\n"
+            "  \"hdchainid\" : \"<hash>\"        (string, optional) The ID of the HD chain\n"
             "  \"hdkeypath\" : \"keypath\"       (string, optional) The HD keypath if the key is HD and available\n"
             "  \"hdmasterfingerprint\" : \"<hash160>\" (string, optional) The fingperint of the master key.\n"
-            "  \"labels\"                      (json object) Array of labels associated with the address.\n"
+            "  \"labels\"                      (object) Array of labels associated with the address.\n"
             "    [\n"
             "      { (json object of label data)\n"
             "        \"name\" : \"labelname\" (string) The label\n"
@@ -3866,8 +3867,11 @@ UniValue getaddressinfo(const JSONRPCRequest& request)
         ret.pushKV("timestamp", meta->nCreateTime);
         CHDChain hdChainCurrent;
         if (key_id && pwallet->mapHdPubKeys.count(*key_id) && pwallet->GetHDChain(hdChainCurrent)) {
-            ret.pushKV("hdkeypath", pwallet->mapHdPubKeys[*key_id].GetKeyPath());
             ret.pushKV("hdchainid", hdChainCurrent.GetID().GetHex());
+        }
+        if (meta->has_key_origin) {
+            ret.pushKV("hdkeypath", WriteHDKeypath(meta->key_origin.path));
+            ret.pushKV("hdmasterfingerprint", HexStr(meta->key_origin.fingerprint));
         }
     }
 
