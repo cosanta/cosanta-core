@@ -154,6 +154,7 @@ BITCOIN_CORE_H = \
   coinjoin/util.h \
   coins.h \
   compat.h \
+  compat/assumptions.h \
   compat/byteswap.h \
   compat/endian.h \
   compat/sanity.h \
