@@ -17,8 +17,8 @@
 #include <chainparams.h>
 #include <coins.h>
 #include <consensus/consensus.h>
-#include <consensus/tx_verify.h>
 #include <consensus/merkle.h>
+#include <consensus/tx_verify.h>
 #include <consensus/validation.h>
 #include <hash.h>
 #include <net.h>
@@ -28,8 +28,8 @@
 #include <primitives/transaction.h>
 #include <script/standard.h>
 #include <timedata.h>
-#include <util/system.h>
 #include <util/moneystr.h>
+#include <util/system.h>
 #include <util/validation.h>
 #include <validationinterface.h>
 
@@ -52,14 +52,6 @@
 // CosantaMiner
 //
 
-//
-// Unconfirmed transactions in the memory pool often depend on other
-// transactions in the memory pool. When we select transactions from the
-// pool, we select by highest fee rate of a transaction combined with all
-// its ancestors.
-
-uint64_t nLastBlockTx = 0;
-uint64_t nLastBlockSize = 0;
 int64_t nLastCoinStakeSearchTime = 0;
 
 int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
@@ -120,6 +112,9 @@ void BlockAssembler::resetBlock()
     nBlockTx = 0;
     nFees = 0;
 }
+
+Optional<int64_t> BlockAssembler::m_last_block_num_txs{nullopt};
+Optional<int64_t> BlockAssembler::m_last_block_size{nullopt};
 
 std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         const CScript& scriptPubKeyIn, std::shared_ptr<CWallet> pwallet, int64_t block_time, bool isPos)
@@ -208,8 +203,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         int nDescendantsUpdated = 0;
         addPackageTxs(nPackagesSelected, nDescendantsUpdated);
 
-        nLastBlockTx = nBlockTx;
-        nLastBlockSize = nBlockSize;
+        m_last_block_num_txs = nBlockTx;
+        m_last_block_size = nBlockSize;
         LogPrint(BCLog::STAKING, "CreateNewBlock(): ver %x total size %u txs: %u fees: %ld sigops %d\n", pblock->nVersion, nBlockSize, nBlockTx, nFees, nBlockSigOps);
 
         // Create coinbase transaction.

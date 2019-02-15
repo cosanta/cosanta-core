@@ -8,12 +8,14 @@
 
 #include <threadinterrupt.h>
 #include <wallet/wallet.h>
+#include <optional.h>
 #include <primitives/block.h>
 #include <txmempool.h>
 #include <validation.h>
 
-#include <stdint.h>
 #include <memory>
+#include <stdint.h>
+
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 
@@ -162,6 +164,9 @@ public:
 
     /** Construct a new block template with coinbase to scriptPubKeyIn */
     std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, std::shared_ptr<CWallet> pwallet, int64_t block_time=0, bool isPos = false);
+
+    static Optional<int64_t> m_last_block_num_txs;
+    static Optional<int64_t> m_last_block_size;
 
 private:
     // utility functions
