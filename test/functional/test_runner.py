@@ -126,6 +126,7 @@ BASE_SCRIPTS = [
     'tool_wallet.py',
     'wallet_txn_clone.py',
     'rpc_getchaintips.py',
+    'rpc_misc.py',
     'interface_rest.py',
     'mempool_spend_coinbase.py',
     'mempool_reorg.py',
