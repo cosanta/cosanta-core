@@ -68,6 +68,7 @@ libconftest.dylib*
 *.a
 *.pb.cc
 *.pb.h
+*.dat
 
 *.log
 *.trs
@@ -142,3 +143,6 @@ make
 # CLion
 .idea
 cmake-build-debug
+
+# clang-check
+*.plist
