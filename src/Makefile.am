@@ -148,7 +148,6 @@ BITCOIN_CORE_H = \
   chainparams.h \
   chainparamsbase.h \
   chainparamsseeds.h \
-  checkpoints.h \
   checkqueue.h \
   clientversion.h \
   coinjoin/coinjoin.h \
@@ -367,7 +366,6 @@ libcosanta_server_a_SOURCES = \
   blockencodings.cpp \
   blockfilter.cpp \
   chain.cpp \
-  checkpoints.cpp \
   coinjoin/coinjoin.cpp \
   coinjoin/options.cpp \
   coinjoin/server.cpp \
