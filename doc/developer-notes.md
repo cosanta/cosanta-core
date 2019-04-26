@@ -697,8 +697,8 @@ class AddressBookPage
     Mode m_mode;
 }
 
-AddressBookPage::AddressBookPage(Mode _mode) :
-      m_mode(_mode)
+AddressBookPage::AddressBookPage(Mode _mode)
+    : m_mode(_mode)
 ...
 ```
 
