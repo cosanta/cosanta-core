@@ -12,6 +12,7 @@
 #include <consensus/validation.h>
 #include <interfaces/chain.h>
 #include <key_io.h>
+#include <policy/policy.h>
 #include <rpc/server.h>
 #include <test/util/setup_common.h>
 #include <validation.h>
@@ -44,7 +45,7 @@ BOOST_FIXTURE_TEST_CASE(scan_for_wallet_transactions, TestChain100Setup)
 
     auto chain = interfaces::MakeChain();
     auto locked_chain = chain->lock();
-    LockAnnotation lock(::cs_main); // for PruneOneBlockFile
+    LockAnnotation lock(::cs_main);
 
     // Verify ScanForWalletTransactions accommodates a null start block.
     {
@@ -115,14 +116,13 @@ BOOST_FIXTURE_TEST_CASE(scan_for_wallet_transactions, TestChain100Setup)
 
 BOOST_FIXTURE_TEST_CASE(importmulti_rescan, TestChain100Setup)
 {
-    auto chain = interfaces::MakeChain();
-
     // Cap last block file size, and mine new block in a new block file.
     CBlockIndex* oldTip = ::ChainActive().Tip();
     GetBlockFileInfo(oldTip->GetBlockPos().nFile)->nSize = MAX_BLOCKFILE_SIZE;
     CreateAndProcessBlock({}, GetScriptForRawPubKey(coinbaseKey.GetPubKey()));
     CBlockIndex* newTip = ::ChainActive().Tip();
 
+    auto chain = interfaces::MakeChain();
     auto locked_chain = chain->lock();
     LockAnnotation lock(::cs_main);
 
