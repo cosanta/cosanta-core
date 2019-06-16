@@ -5,3 +5,10 @@ objext
 unselect
 useable
 setban
+wit
+unparseable
+copyable
+cachable
+errorstring
+keyserver
+homogenous
