@@ -9,6 +9,7 @@
 #include <consensus/validation.h>
 #include <key_io.h>
 #include <miner.h>
+#include <node/context.h>
 #include <pow.h>
 #include <scheduler.h>
 #include <script/standard.h>
@@ -47,18 +48,18 @@ void importaddress(CWallet& wallet, const std::string& address)
 }
 #endif // ENABLE_WALLET
 
-CTxIn generatetoaddress(const std::string& address)
+CTxIn generatetoaddress(const NodeContext& node, const std::string& address)
 {
     const auto dest = DecodeDestination(address);
     assert(IsValidDestination(dest));
     const auto coinbase_script = GetScriptForDestination(dest);
 
-    return MineBlock(coinbase_script);
+    return MineBlock(node, coinbase_script);
 }
 
-CTxIn MineBlock(const CScript& coinbase_scriptPubKey)
+CTxIn MineBlock(const NodeContext& node, const CScript& coinbase_scriptPubKey)
 {
-    auto block = PrepareBlock(coinbase_scriptPubKey);
+    auto block = PrepareBlock(node, coinbase_scriptPubKey);
 
     while (!CheckProofOfWork(block->GetHash(), block->nBits, Params().GetConsensus())) {
         ++block->nNonce;
@@ -71,13 +72,14 @@ CTxIn MineBlock(const CScript& coinbase_scriptPubKey)
     return CTxIn{block->vtx[0]->GetHash(), 0};
 }
 
-std::shared_ptr<CBlock> PrepareBlock(const CScript& coinbase_scriptPubKey)
+std::shared_ptr<CBlock> PrepareBlock(const NodeContext& node, const CScript& coinbase_scriptPubKey)
 {
-    auto ptemplate = BlockAssembler(Params()).CreateNewBlock(coinbase_scriptPubKey, GetWallets()[0]);
-    auto block = std::make_shared<CBlock>(*ptemplate->block);
+    assert(node.mempool);
 
+     auto ptemplate = BlockAssembler(*node.mempool, Params()).CreateNewBlock(coinbase_scriptPubKey, GetWallets()[0]);
+     auto block = std::make_shared<CBlock>(*ptemplate->block);
 //    auto block = std::make_shared<CBlock>(
-//        BlockAssembler{Params()}
+//        BlockAssembler{*node.mempool, Params()}
 //            .CreateNewBlock(coinbase_scriptPubKey, GetWallets()[0])
 //            ->block);
 
