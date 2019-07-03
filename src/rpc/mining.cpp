@@ -111,7 +111,6 @@ static UniValue getnetworkhashps(const JSONRPCRequest& request)
 #if ENABLE_MINER
 UniValue generateBlocks(std::shared_ptr<CReserveScript> coinbaseScript, int nGenerate, uint64_t nMaxTries, bool keepScript)
 {
-    static const int nInnerLoopCount = 0x10000;
     int nHeightEnd = 0;
     int nHeight = 0;
 
@@ -134,7 +133,7 @@ UniValue generateBlocks(std::shared_ptr<CReserveScript> coinbaseScript, int nGen
                 LOCK(cs_main);
                 IncrementExtraNonce(pblock.get(), chainActive.Tip(), nExtraNonce);
             }
-            while (nMaxTries > 0 && pblock->nNonce < nInnerLoopCount && !CheckProof(state, *pblock, Params().GetConsensus())) {
+            while (nMaxTries > 0 && pblock->nNonce < std::numeric_limits<uint32_t>::max() && !CheckProof(pblock->GetHash(), pblock->nBits, Params().GetConsensus()) && !ShutdownRequested()) {
                 ++pblock->nNonce;
                 --nMaxTries;
                 state = CValidationState();
