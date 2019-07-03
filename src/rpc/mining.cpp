@@ -138,7 +138,7 @@ UniValue generateBlocks(const CTxMemPool& mempool, std::shared_ptr<CReserveScrip
                 --nMaxTries;
                 state = CValidationState();
             }
-            if (nMaxTries == 0) {
+            if (nMaxTries == 0 || ShutdownRequested()) {
                 break;
             }
             if (pblock->nNonce == std::numeric_limits<uint32_t>::max()) {
@@ -146,7 +146,7 @@ UniValue generateBlocks(const CTxMemPool& mempool, std::shared_ptr<CReserveScrip
             }
         } else if (!CheckProof(state, *pblock, Params().GetConsensus())) {
             --nMaxTries;
-            if (nMaxTries == 0) {
+            if (nMaxTries == 0 || ShutdownRequested()) {
                 break;
             }
             state = CValidationState();
