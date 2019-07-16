@@ -27,6 +27,9 @@ class InvalidTxRequestTest(BitcoinTestFramework):
 
     def set_test_params(self):
         self.num_nodes = 1
+        self.extra_args = [[
+            "-acceptnonstdtxn=1",
+        ]]
         self.setup_clean_chain = True
 
     def skip_test_if_missing_module(self):
@@ -103,7 +106,7 @@ class InvalidTxRequestTest(BitcoinTestFramework):
         self.test_orphan_tx_handling(block1.vtx[0].sha256, False)
 
         self.log.info('Test orphan transaction handling, resolve via block')
-        self.restart_node(0, ['-persistmempool=0'])
+        self.restart_node(0, ["-acceptnonstdtxn=1", '-persistmempool=0'])
         self.reconnect_p2p(num_connections=2)
         self.test_orphan_tx_handling(block2.vtx[0].sha256, True)
 
