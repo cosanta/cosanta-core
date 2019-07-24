@@ -3334,7 +3334,7 @@ bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount)
         }
 
         // Check another way if spent
-        if (!pcoinsTip->HaveCoin(COutPoint(tx_hash, out.i))) {
+        if (!ChainstateActive().CoinsTip().HaveCoin(COutPoint(tx_hash, out.i))) {
             //continue;
         }
 

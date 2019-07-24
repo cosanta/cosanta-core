@@ -1430,6 +1430,7 @@ bool static AlreadyHave(const CInv& inv) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
                 LOCK(g_cs_orphans);
                 if (mapOrphanTransactions.count(inv.hash)) return true;
             }
+            const CCoinsViewCache& coins_cache = ::ChainstateActive().CoinsTip();
 
             // When we receive an islock for a previously rejected transaction, we have to
             // drop the first-seen tx (which such a locked transaction was conflicting with)
@@ -1448,8 +1449,8 @@ bool static AlreadyHave(const CInv& inv) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
             return (!fIgnoreRecentRejects && recentRejects->contains(inv.hash)) ||
                    (inv.type == MSG_DSTX && static_cast<bool>(CCoinJoin::GetDSTX(inv.hash))) ||
                    mempool.exists(inv.hash) ||
-                   pcoinsTip->HaveCoinInCache(COutPoint(inv.hash, 0)) || // Best effort: only try output 0 and 1
-                   pcoinsTip->HaveCoinInCache(COutPoint(inv.hash, 1)) ||
+                   coins_cache.HaveCoinInCache(COutPoint(inv.hash, 0)) || // Best effort: only try output 0 and 1
+                   coins_cache.HaveCoinInCache(COutPoint(inv.hash, 1)) ||
                    (g_txindex != nullptr && g_txindex->HasTx(inv.hash));
         }
 
@@ -2199,7 +2200,7 @@ void static ProcessOrphanTx(CConnman* connman, std::set<uint256>& orphan_work_se
             EraseOrphanTx(orphanHash);
             done = true;
         }
-        mempool.check(pcoinsTip.get());
+        mempool.check(&::ChainstateActive().CoinsTip());
     }
 }
 
@@ -3260,7 +3261,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
                 CCoinJoin::AddDSTX(dstx);
             }
 
-            mempool.check(pcoinsTip.get());
+            mempool.check(&::ChainstateActive().CoinsTip());
             connman->RelayTransaction(tx);
 
             for (unsigned int i = 0; i < tx.vout.size(); i++) {
