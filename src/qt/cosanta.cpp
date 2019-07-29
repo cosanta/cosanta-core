@@ -26,7 +26,8 @@
 #ifdef ENABLE_WALLET
 #include <qt/paymentserver.h>
 #include <qt/walletcontroller.h>
-#endif
+#include <qt/walletmodel.h>
+#endif // ENABLE_WALLET
 
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
@@ -224,12 +225,6 @@ BitcoinApplication::~BitcoinApplication()
 
     delete window;
     window = nullptr;
-#ifdef ENABLE_WALLET
-    delete paymentServer;
-    paymentServer = nullptr;
-    delete m_wallet_controller;
-    m_wallet_controller = nullptr;
-#endif
     // Delete Qt-settings if user clicked on "Reset Options"
     QSettings settings;
     if(optionsModel && optionsModel->resetSettingsOnShutdown){
@@ -349,24 +344,21 @@ void BitcoinApplication::initializeResult(bool success)
     {
         // Log this only after AppInitMain finishes, as then logging setup is guaranteed complete
         qInfo() << "Platform customization:" << gArgs.GetArg("-uiplatform", BitcoinGUI::DEFAULT_UIPLATFORM).c_str();
-#ifdef ENABLE_WALLET
-        m_wallet_controller = new WalletController(m_node, optionsModel, this);
-#ifdef ENABLE_BIP70
-        PaymentServer::LoadRootCAs();
-#endif
-        if (paymentServer) {
-            paymentServer->setOptionsModel(optionsModel);
-#ifdef ENABLE_BIP70
-            connect(m_wallet_controller, &WalletController::coinsSent, paymentServer, &PaymentServer::fetchPaymentACK);
-#endif
-        }
-#endif
-
         clientModel = new ClientModel(m_node, optionsModel);
         window->setClientModel(clientModel);
 #ifdef ENABLE_WALLET
-        window->setWalletController(m_wallet_controller);
+        if (WalletModel::isWalletEnabled()) {
+            m_wallet_controller = new WalletController(m_node, optionsModel, this);
+            window->setWalletController(m_wallet_controller);
+            if (paymentServer) {
+                paymentServer->setOptionsModel(optionsModel);
+#ifdef ENABLE_BIP70
+                PaymentServer::LoadRootCAs();
+                connect(m_wallet_controller, &WalletController::coinsSent, paymentServer, &PaymentServer::fetchPaymentACK);
 #endif
+            }
+        }
+#endif // ENABLE_WALLET
 
         // If -min option passed, start window minimized (iconified) or minimized to tray
         if (!gArgs.GetBoolArg("-min", false)) {
@@ -581,9 +573,11 @@ int GuiMain(int argc, char* argv[])
         exit(EXIT_SUCCESS);
 
     // Start up the payment server early, too, so impatient users that click on
-    // cosanta: links repeatedly have their payment requests routed to this process:
-    app.createPaymentServer();
-#endif
+    // dash: links repeatedly have their payment requests routed to this process:
+    if (WalletModel::isWalletEnabled()) {
+        app.createPaymentServer();
+    }
+#endif // ENABLE_WALLET
 
     /// 9. Main GUI initialization
     // Install global event filter that makes sure that long tooltips can be word-wrapped
