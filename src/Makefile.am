@@ -443,7 +443,7 @@ libcosanta_server_a_SOURCES += dummywallet.cpp
 endif
 
 if ENABLE_ZMQ
-libcosanta_zmq_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(ZMQ_CFLAGS)
+libcosanta_zmq_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(ZMQ_CFLAGS)
 libcosanta_zmq_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libcosanta_zmq_a_SOURCES = \
   zmq/zmqabstractnotifier.cpp \
