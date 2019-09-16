@@ -120,7 +120,7 @@ Q_SIGNALS:
     void created(WalletModel* wallet_model);
 
 private:
-    void askPasshprase();
+    void askPassphrase();
     void createWallet();
     void finish();
 
