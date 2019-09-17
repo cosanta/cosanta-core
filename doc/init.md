@@ -53,11 +53,19 @@ Paths
 
 All three configurations assume several paths that might need to be adjusted.
 
+<<<<<<< HEAD
 Binary:              `/usr/bin/cosantad`  
 Configuration file:  `/etc/cosantacore/cosanta.conf`  
 Data directory:      `/var/lib/cosantad`  
 PID file:            `/var/run/cosantad/cosantad.pid` (OpenRC and Upstart) or `/var/lib/cosantad/cosantad.pid` (systemd)  
 Lock file:           `/var/lock/subsys/cosantad` (CentOS)  
+=======
+Binary:              `/usr/bin/dashd`
+Configuration file:  `/etc/dashcore/dash.conf`
+Data directory:      `/var/lib/dashd`
+PID file:            `/var/run/dashd/dashd.pid` (OpenRC and Upstart) or `/run/dashd/dashd.pid` (systemd)
+Lock file:           `/var/lock/subsys/dashd` (CentOS)
+>>>>>>> 950976893 (Merge #16812: doc: Fix whitespace errs in .md files, bitcoin.conf, and Info.plist.in)
 
 The configuration file, PID directory (if applicable) and data directory
 should all be owned by the cosantacore user and group.  It is advised for security
@@ -83,10 +91,10 @@ OpenRC).
 
 ### macOS
 
-Binary:              `/usr/local/bin/cosantad`  
-Configuration file:  `~/Library/Application Support/CosantaCore/cosanta.conf`  
-Data directory:      `~/Library/Application Support/CosantaCore`  
-Lock file:           `~/Library/Application Support/CosantaCore/.lock`  
+Binary:              `/usr/local/bin/cosantad`
+Configuration file:  `~/Library/Application Support/CosantaCore/cosanta.conf`
+Data directory:      `~/Library/Application Support/CosantaCore`
+Lock file:           `~/Library/Application Support/CosantaCore/.lock`
 
 Installing Service Configuration
 -----------------------------------
