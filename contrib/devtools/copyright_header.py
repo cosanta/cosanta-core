@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2016 The Bitcoin Core developers
+# Copyright (c) 2016-2019 The Bitcoin Core developers
 # Copyright (c) 2019 The Dash Core developers
 # Copyright (c) 2020-2022 The Cosanta Core developers
 # Distributed under the MIT software license, see the accompanying
@@ -38,7 +38,7 @@ EXCLUDE_DIRS = [
     "src/crc32c/",
 ]
 
-INCLUDE = ['*.h', '*.cpp', '*.cc', '*.c', '*.mm', '*.py']
+INCLUDE = ['*.h', '*.cpp', '*.cc', '*.c', '*.mm', '*.py', '*.sh', '*.bash-completion']
 INCLUDE_COMPILED = re.compile('|'.join([fnmatch.translate(m) for m in INCLUDE]))
 
 def applies_to_file(filename):
