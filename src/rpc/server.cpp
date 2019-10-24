@@ -198,7 +198,7 @@ UniValue stop(const JSONRPCRequest& jsonRequest)
     if (jsonRequest.params[0].isNum()) {
         UninterruptibleSleep(std::chrono::milliseconds{jsonRequest.params[0].get_int()});
     }
-    return "Cosanta Core server stopping";
+    return RESULT;
 }
 
 static UniValue uptime(const JSONRPCRequest& jsonRequest)
