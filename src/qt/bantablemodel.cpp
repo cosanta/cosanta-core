@@ -5,11 +5,12 @@
 
 #include <qt/bantablemodel.h>
 
-#include <qt/clientmodel.h>
 #include <qt/guiconstants.h>
 #include <qt/guiutil.h>
 
 #include <interfaces/node.h>
+#include <net_types.h> // For banmap_t
+#include <qt/clientmodel.h>
 #include <sync.h>
 #include <util/time.h>
 
