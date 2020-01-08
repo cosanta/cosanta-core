@@ -15,6 +15,7 @@
 #include <numeric>
 #include <regex>
 
+const std::function<void(const std::string&)> G_TEST_LOG_FUN{};
 namespace {
 
 void GenerateTemplateResults(const std::vector<ankerl::nanobench::Result>& benchmarkResults, const std::string& filename, const char* tpl)
