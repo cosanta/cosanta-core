@@ -44,6 +44,7 @@ FUZZERS_MISSING_CORPORA = [
     "pub_key_deserialize",
     "rolling_bloom_filter",
     "script_deserialize",
+    "strprintf",
     "sub_net_deserialize",
     "tx_in",
     "tx_in_deserialize",
