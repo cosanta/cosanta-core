@@ -54,6 +54,11 @@ class NetTest(BitcoinTestFramework):
         connect_nodes_bi(self.nodes, 0, 1)
 
     def run_test(self):
+        # Wait for one ping/pong to finish so that we can be sure that there is no chatter between nodes for some time
+        # Especially the exchange of messages like getheaders and friends causes test failures here
+        self.nodes[0].ping()
+        wait_until(lambda: all(['pingtime' in n for n in self.nodes[0].getpeerinfo()]))
+
         self._test_connection_count()
         self._test_getnettotals()
         self._test_getnetworkinfo()
