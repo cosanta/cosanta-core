@@ -100,16 +100,6 @@ script: |
   # This is only needed for trusty, as the mingw linker leaks a few bytes of
   # heap, causing non-determinism. See discussion in https://github.com/bitcoin/bitcoin/pull/6900
   for i in $HOSTS; do
-    mkdir -p ${WRAP_DIR}/${i}
-    for prog in collect2; do
-        echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${i}/${prog}
-        echo "# GCCVERSION=${GCCVERSION}" >> ${WRAP_DIR}/${i}/${prog}
-        REAL=$(${i}-gcc -print-prog-name=${prog})
-        echo "export MALLOC_PERTURB_=255" >> ${WRAP_DIR}/${i}/${prog}
-        echo "${REAL} \$@" >> $WRAP_DIR/${i}/${prog}
-        chmod +x ${WRAP_DIR}/${i}/${prog}
-        touch -d "${REFERENCE_DATETIME}" ${WRAP_DIR}/${i}/${prog}
-    done
     for prog in gcc g++; do
         echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${i}-${prog}
         echo "# GCCVERSION=${GCCVERSION}" >> ${WRAP_DIR}/${i}-${prog}
@@ -118,7 +108,6 @@ script: |
         echo "# `${prog} --version | head -1`" >> ${WRAP_DIR}/${i}-${prog}
         echo 'export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1' >> ${WRAP_DIR}/${i}-${prog}
         echo "export FAKETIME=\"$1\"" >> ${WRAP_DIR}/${i}-${prog}
-        echo "export COMPILER_PATH=${WRAP_DIR}/${i}" >> ${WRAP_DIR}/${i}-${prog}
         echo "\$REAL \$@" >> $WRAP_DIR/${i}-${prog}
         chmod +x ${WRAP_DIR}/${i}-${prog}
         touch -d "${REFERENCE_DATETIME}" ${WRAP_DIR}/${i}-${prog}
@@ -147,47 +136,27 @@ script: |
   create_per-host_linker_wrapper "${REFERENCE_DATETIME}"
   export PATH=${WRAP_DIR}:${PATH}
 
-  # Create the release tarball using (arbitrarily) the first host
-  ./autogen.sh
-  CONFIG_SITE=${BASEPREFIX}/$(echo "${HOSTS}" | awk '{print $1;}')/share/config.site ./configure --prefix=/
-  make dist
-  SOURCEDIST=$(echo cosantacore-*.tar.gz)
-  DISTNAME=${SOURCEDIST/%.tar.gz}
-
-  # Correct tar file order
-  mkdir -p temp
-  pushd temp
-  tar -xf ../$SOURCEDIST
-  find cosantacore-* | sort | tar --mtime="$REFERENCE_DATETIME" --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
-  mkdir -p $OUTDIR/src
-  cp ../$SOURCEDIST $OUTDIR/src
-  popd
-
-  # Workaround for tarball not building with the bare tag version (prep)
-  make -C src obj/build.h
+  # Create the git archive, and define DISTNAME and GIT_ARCHIVE variables.
+  # shellcheck source=contrib/gitian-descriptors/make_git_archive
+  source contrib/gitian-descriptors/make_git_archive
 
   ORIGPATH="$PATH"
-  # Extract the release tarball into a dir for each host and build
+  # Extract the git archive into a dir for each host and build
   for i in ${HOSTS}; do
     export PATH=${BASEPREFIX}/${i}/native/bin:${ORIGPATH}
     mkdir -p distsrc-${i}
     cd distsrc-${i}
     INSTALLPATH="${PWD}/installed/${DISTNAME}"
     mkdir -p ${INSTALLPATH}
-    tar --strip-components=1 -xf ../$SOURCEDIST
+    tar -xf $GIT_ARCHIVE
 
-    # Workaround for tarball not building with the bare tag version
-    echo '#!/bin/true' >share/genbuild.sh
-    mkdir src/obj
-    cp ../src/obj/build.h src/obj/
-
+    ./autogen.sh
     CONFIG_SITE=${BASEPREFIX}/${i}/share/config.site ./configure --prefix=/ --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS} CFLAGS="${HOST_CFLAGS}" CXXFLAGS="${HOST_CXXFLAGS}"
     make ${MAKEOPTS}
     make ${MAKEOPTS} -C src check-security
     make deploy
     make install DESTDIR=${INSTALLPATH}
-    rename 's/-setup\.exe$/-setup-unsigned.exe/' "*-setup.exe"
-    cp -f cosantacore-*setup*.exe $OUTDIR/
+    cp -f ./bitcoin-*-win64-setup-unsigned.exe ${OUTDIR}/${DISTNAME}-win64-setup-unsigned.exe
     cd installed
     mv ${DISTNAME}/bin/*.dll ${DISTNAME}/lib/
     find . -name "lib*.la" -delete
@@ -200,10 +169,11 @@ script: |
     cd ../../
     rm -rf distsrc-${i}
   done
+
   cp -rf contrib/windeploy $BUILD_DIR
   cd $BUILD_DIR/windeploy
   mkdir unsigned
-  cp $OUTDIR/cosantacore-*setup-unsigned.exe unsigned/
+  cp ${OUTDIR}/${DISTNAME}-win64-setup-unsigned.exe unsigned/
   find . | sort | tar --mtime="$REFERENCE_DATETIME" --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ${OUTDIR}/${DISTNAME}-win-unsigned.tar.gz
   mv ${OUTDIR}/${DISTNAME}-x86_64-*-debug.zip ${OUTDIR}/${DISTNAME}-win64-debug.zip
   mv ${OUTDIR}/${DISTNAME}-i686-*-debug.zip ${OUTDIR}/${DISTNAME}-win32-debug.zip
