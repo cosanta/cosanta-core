@@ -1587,9 +1587,6 @@ if test "x$use_ccache" != "xno"; then
     AX_CHECK_PREPROC_FLAG([-fmacro-prefix-map=A=B],[DEBUG_CPPFLAGS="$DEBUG_CPPFLAGS -fmacro-prefix-map=\$(abs_top_srcdir)=."],,[[$CXXFLAG_WERROR]])
   fi
 fi
-if test "x$use_ccache" = "xyes"; then
-    AX_CHECK_PREPROC_FLAG([-Qunused-arguments],[CPPFLAGS="-Qunused-arguments $CPPFLAGS"])
-fi
 
 dnl enable wallet
 AC_MSG_CHECKING([if wallet should be enabled])
