@@ -58,7 +58,8 @@ DIST_SHARE = \
   $(top_srcdir)/share/rpcuser
 
 BIN_CHECKS=$(top_srcdir)/contrib/devtools/symbol-check.py \
-           $(top_srcdir)/contrib/devtools/security-check.py
+           $(top_srcdir)/contrib/devtools/security-check.py \
+           $(top_srcdir)/contrib/devtools/pixie.py
 
 WINDOWS_PACKAGING = $(top_srcdir)/share/pixmaps/cosanta.ico \
   $(top_srcdir)/share/pixmaps/nsis-header.bmp \
