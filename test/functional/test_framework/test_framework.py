@@ -986,7 +986,7 @@ class CosantaTestFramework(BitcoinTestFramework):
             all_ok = True
             for node in nodes:
                 s = node.quorum("dkgstatus")
-                if s["session"] == {}:
+                if 'llmq_test' not in s["session"]:
                     continue
                 if "quorumConnections" not in s:
                     all_ok = False
@@ -1016,7 +1016,7 @@ class CosantaTestFramework(BitcoinTestFramework):
 
             for mn in mninfos:
                 s = mn.node.quorum('dkgstatus')
-                if s["session"] == {}:
+                if 'llmq_test' not in s["session"]:
                     continue
                 if "quorumConnections" not in s:
                     return ret()
