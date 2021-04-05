@@ -213,6 +213,7 @@ chain for " target " development."))
         gzip
         xz
         zlib
+        (list zlib "static")
         ;; Build tools
         gnu-make
         libtool
@@ -226,7 +227,8 @@ chain for " target " development."))
         ;; Git
         git
         ;; Native gcc 7 toolchain
-        gcc-toolchain-7)
+        gcc-toolchain-7
+        (list gcc-toolchain-7 "static"))
   (let ((target (getenv "HOST")))
     (cond ((string-suffix? "-mingw32" target)
            ;; Windows
@@ -239,5 +241,5 @@ chain for " target " development."))
           ((string-contains target "-linux-")
            (list (make-bitcoin-cross-toolchain target)))
           ((string-contains target "darwin")
-           (list clang-8 libcap binutils imagemagick libtiff librsvg font-tuffy cmake-3.15.5 xorriso))
+           (list clang-toolchain-8 binutils imagemagick libtiff librsvg font-tuffy cmake xorriso))
           (else '())))))
