@@ -5262,10 +5262,10 @@ std::shared_ptr<CWallet> CWallet::CreateWalletFromFile(interfaces::Chain& chain,
                 CHDChain newHdChain;
                 std::vector<unsigned char> vchSeed = ParseHex(strSeed);
                 if (!newHdChain.SetSeed(SecureVector(vchSeed.begin(), vchSeed.end()), true)) {
-                    throw std::runtime_error(std::string(__func__) + ": SetSeed failed");
+                    return error(_("SetSeed failed"));
                 }
                 if (!walletInstance->SetHDChainSingle(newHdChain, false)) {
-                    throw std::runtime_error(std::string(__func__) + ": SetHDChainSingle failed");
+                    return error(_("SetHDChainSingle failed"));
                 }
                 // add default account
                 newHdChain.AddAccount();
