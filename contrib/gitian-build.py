@@ -182,14 +182,30 @@ def main():
             os.environ['GITIAN_HOST_IP'] = '10.0.3.1'
         if 'LXC_GUEST_IP' not in os.environ.keys():
             os.environ['LXC_GUEST_IP'] = '10.0.3.5'
-    elif args.kvm:
-        os.environ['USE_LXC'] = ''
-        os.environ['USE_DOCKER'] = ''
-    elif args.docker:
-        os.environ['USE_LXC'] = ''
-        os.environ['USE_DOCKER'] = '1'
-    else:
-        print(script_name+': Wrong virtualization option.')
+
+    if args.setup:
+        setup()
+
+    if args.buildsign:
+        args.build = True
+        args.sign = True
+
+    if not args.build and not args.sign and not args.verify:
+        sys.exit(0)
+
+    args.linux = 'l' in args.os
+    args.windows = 'w' in args.os
+    args.macos = 'm' in args.os
+
+    # Disable for MacOS if no SDK found
+    if args.macos and not os.path.isfile('gitian-builder/inputs/Xcode-12.1-12A7403-extracted-SDK-with-libcxx-headers.tar.gz'):
+        print('Cannot build for MacOS, SDK does not exist. Will build for other OSes')
+        args.macos = False
+
+    args.sign_prog = 'true' if args.detach_sign else 'gpg --detach-sign'
+
+    if not args.signer:
+        print(script_name+': Missing signer')
         print('Try '+script_name+' --help for more information')
         exit(1)
 
