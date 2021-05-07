@@ -426,7 +426,7 @@ void OverviewPage::updateCoinJoinProgress()
 
 void OverviewPage::updateAdvancedCJUI(bool fShowAdvancedCJUI)
 {
-    if (!walletModel || !clientModel || !clientModel->coinJoinOptions().isEnabled()) return;
+    if (!walletModel || !clientModel) return;
 
     this->fShowAdvancedCJUI = fShowAdvancedCJUI;
     coinJoinStatus(true);
