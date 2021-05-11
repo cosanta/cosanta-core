@@ -131,6 +131,7 @@ QT_TRANSLATE_NOOP("cosanta-core", ""
 QT_TRANSLATE_NOOP("cosanta-core", "%d of last 100 blocks have unexpected version"),
 QT_TRANSLATE_NOOP("cosanta-core", "%s can't be lower than %s"),
 QT_TRANSLATE_NOOP("cosanta-core", "%s corrupt, salvage failed"),
+QT_TRANSLATE_NOOP("cosanta-core", "%s failed"),
 QT_TRANSLATE_NOOP("cosanta-core", "%s is idle."),
 QT_TRANSLATE_NOOP("cosanta-core", "%s is not a valid backup folder!"),
 QT_TRANSLATE_NOOP("cosanta-core", "%s is set very high!"),

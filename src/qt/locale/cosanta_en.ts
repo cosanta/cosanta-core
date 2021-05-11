@@ -297,8 +297,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
-        <translation>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
+        <translation>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -308,15 +308,15 @@
     <message>
         <location line="+10"/>
         <location line="+12"/>
-        <location line="+60"/>
+        <location line="+59"/>
         <source>Wallet encrypted</source>
         <translation>Wallet encrypted</translation>
     </message>
     <message>
-        <location line="-70"/>
+        <location line="-69"/>
         <location line="+12"/>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your funds from being stolen by malware infecting your computer.</source>
-        <translation>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your funds from being stolen by malware infecting your computer.</translation>
+        <source>Your wallet is now encrypted. Remember that encrypting your wallet cannot fully protect your funds from being stolen by malware infecting your computer.</source>
+        <translation>Your wallet is now encrypted. Remember that encrypting your wallet cannot fully protect your funds from being stolen by malware infecting your computer.</translation>
     </message>
     <message>
         <location line="-8"/>
@@ -329,7 +329,7 @@
         <translation>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <location line="+7"/>
         <location line="+43"/>
         <location line="+6"/>
@@ -400,17 +400,17 @@
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <location filename="../dash.cpp" line="+529"/>
+        <location filename="../dash.cpp" line="+540"/>
         <source>A fatal error occurred. Cosanta Core can no longer continue safely and will quit.</source>
         <translation>A fatal error occurred. Cosanta Core can no longer continue safely and will quit.</translation>
     </message>
     <message>
-        <location filename="../bitcoingui.cpp" line="+1365"/>
+        <location filename="../bitcoingui.cpp" line="+1401"/>
         <source>Cosanta Core</source>
         <translation>Cosanta Core</translation>
     </message>
     <message>
-        <location line="-1226"/>
+        <location line="-1260"/>
         <source>Wallet</source>
         <translation>Wallet</translation>
     </message>
@@ -420,7 +420,7 @@
         <translation>Node</translation>
     </message>
     <message>
-        <location line="+446"/>
+        <location line="+457"/>
         <source>&amp;Overview</source>
         <translation>&amp;Overview</translation>
     </message>
@@ -446,8 +446,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Request payments (generates QR codes and dash: URIs)</source>
-        <translation>Request payments (generates QR codes and dash: URIs)</translation>
+        <source>Request payments (generates QR codes and cosa: URIs)</source>
+        <translation>Request payments (generates QR codes and cosa: URIs)</translation>
     </message>
     <message>
         <location line="+220"/>
@@ -686,8 +686,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Open a dash: URI or payment request</source>
-        <translation>Open a dash: URI or payment request</translation>
+        <source>Open a cosa: URI or payment request</source>
+        <translation>Open a cosa: URI or payment request</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -700,7 +700,12 @@
         <translation>Show the %1 help message to get a list with possible Cosanta command-line options</translation>
     </message>
     <message>
-        <location line="+385"/>
+        <location line="+324"/>
+        <source>default wallet</source>
+        <translation>default wallet</translation>
+    </message>
+    <message>
+        <location line="+84"/>
         <source>%1 client</source>
         <translation>%1 client</translation>
     </message>
@@ -717,7 +722,7 @@
         <translation>Wallet is &lt;b&gt;unencrypted&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-1115"/>
+        <location line="-1138"/>
         <source>&amp;File</source>
         <translation>&amp;File</translation>
     </message>
@@ -752,7 +757,7 @@
         <translation>Tabs toolbar</translation>
     </message>
     <message numerus="yes">
-        <location line="+517"/>
+        <location line="+540"/>
         <source>%n active connection(s) to Cosanta network</source>
         <translation>
             <numerusform>%n active connection to Cosanta network</numerusform>
@@ -1308,8 +1313,8 @@
     </message>
     <message>
         <location line="+4"/>
-        <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 DASH, 0.01 DASH, 0.1 DASH, 1 DASH and 10 DASH -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</source>
-        <translation>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 DASH, 0.01 DASH, 0.1 DASH, 1 DASH and 10 DASH -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</translation>
+        <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</source>
+        <translation>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -1488,7 +1493,7 @@
         <translation>Voting Address</translation>
     </message>
     <message>
-        <location filename="../masternodelist.cpp" line="+94"/>
+        <location filename="../masternodelist.cpp" line="+95"/>
         <source>Copy ProTx Hash</source>
         <translation>Copy ProTx Hash</translation>
     </message>
@@ -1663,7 +1668,7 @@
         <translation>&amp;Main</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+180"/>
         <source>Size of &amp;database cache</source>
         <translation>Size of &amp;database cache</translation>
     </message>
@@ -1683,7 +1688,7 @@
         <translation>(0 = auto, &lt;0 = leave that many cores free)</translation>
     </message>
     <message>
-        <location line="-163"/>
+        <location line="-226"/>
         <source>W&amp;allet</source>
         <translation>W&amp;allet</translation>
     </message>
@@ -1693,7 +1698,27 @@
         <translation>&amp;Appearance</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+80"/>
+        <source>Disables some advanced features but all blocks will still be fully validated. Reverting this setting requires re-downloading the entire blockchain. Actual disk usage may be somewhat higher.</source>
+        <translation>Disables some advanced features but all blocks will still be fully validated. Reverting this setting requires re-downloading the entire blockchain. Actual disk usage may be somewhat higher.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Prune &amp;block storage to</source>
+        <translation>Prune &amp;block storage to</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>GB</source>
+        <translation>GB</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Reverting this setting requires re-downloading the entire blockchain.</source>
+        <translation>Reverting this setting requires re-downloading the entire blockchain.</translation>
+    </message>
+    <message>
+        <location line="+119"/>
         <source>Show additional tab listing all your masternodes in first sub-tab&lt;br/&gt;and all masternodes on the network in second sub-tab.</source>
         <translation>Show additional tab listing all your masternodes in first sub-tab&lt;br/&gt;and all masternodes on the network in second sub-tab.</translation>
     </message>
@@ -1805,7 +1830,7 @@
         <translation>Use separate SOCKS&amp;5 proxy to reach peers via Tor hidden services:</translation>
     </message>
     <message>
-        <location line="-494"/>
+        <location line="-544"/>
         <source>Hide the icon from the system tray.</source>
         <translation>Hide the icon from the system tray.</translation>
     </message>
@@ -1820,7 +1845,7 @@
         <translation>Minimize instead of exit the application when the window is closed. When this option is enabled, the application will be closed only after selecting Exit in the menu.</translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+729"/>
         <location line="+13"/>
         <source>Third party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
         <translation>Third party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</translation>
@@ -1836,7 +1861,7 @@
         <translation>Whether to show coin control features or not.</translation>
     </message>
     <message>
-        <location line="-139"/>
+        <location line="-202"/>
         <source>Automatically start %1 after logging in to the system.</source>
         <translation>Automatically start %1 after logging in to the system.</translation>
     </message>
@@ -1846,7 +1871,7 @@
         <translation>&amp;Start %1 on system login</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+202"/>
         <source>Enable coin &amp;control features</source>
         <translation>Enable coin &amp;control features</translation>
     </message>
@@ -1861,12 +1886,12 @@
         <translation>This setting determines the amount of individual masternodes that an input will be mixed through.&lt;br/&gt;More rounds of mixing gives a higher degree of privacy, but also costs more in fees.</translation>
     </message>
     <message>
-        <location line="-285"/>
+        <location line="-348"/>
         <source>&amp;Network</source>
         <translation>&amp;Network</translation>
     </message>
     <message>
-        <location line="+372"/>
+        <location line="+435"/>
         <source>Map port using &amp;UPnP</source>
         <translation>Map port using &amp;UPnP</translation>
     </message>
@@ -1920,7 +1945,7 @@
         <translation>Connect to the Cosanta network through a separate SOCKS5 proxy for Tor hidden services.</translation>
     </message>
     <message>
-        <location line="-481"/>
+        <location line="-531"/>
         <source>Show only a tray icon after minimizing the window.</source>
         <translation>Show only a tray icon after minimizing the window.</translation>
     </message>
@@ -1935,12 +1960,12 @@
         <translation>M&amp;inimize on close</translation>
     </message>
     <message>
-        <location line="-68"/>
+        <location line="-81"/>
         <source>&amp;Display</source>
         <translation>&amp;Display</translation>
     </message>
     <message>
-        <location line="+646"/>
+        <location line="+709"/>
         <source>User Interface &amp;language:</source>
         <translation>User Interface &amp;language:</translation>
     </message>
@@ -1952,9 +1977,9 @@
     <message>
         <location line="+21"/>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/projects/p/dash/</source>
+https://www.transifex.com/projects/p/cosa/</source>
         <translation>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/projects/p/dash/</translation>
+https://www.transifex.com/projects/p/cosa/</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1997,7 +2022,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>&amp;Cancel</translation>
     </message>
     <message>
-        <location filename="../optionsdialog.cpp" line="+62"/>
+        <location filename="../optionsdialog.cpp" line="+71"/>
         <source>Enable %1 features</source>
         <translation>Enable %1 features</translation>
     </message>
@@ -2007,23 +2032,23 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>default</translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="+213"/>
         <source>Confirm options reset</source>
         <translation>Confirm options reset</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+51"/>
+        <location line="+56"/>
         <source>Client restart required to activate changes.</source>
         <translation>Client restart required to activate changes.</translation>
     </message>
     <message>
-        <location line="-51"/>
+        <location line="-56"/>
         <source>Client will be shut down. Do you want to proceed?</source>
         <translation>Client will be shut down. Do you want to proceed?</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+60"/>
         <source>This change would require a client restart.</source>
         <translation>This change would require a client restart.</translation>
     </message>
@@ -2144,8 +2169,8 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>0 DASH / 0 Rounds</source>
-        <translation>0 DASH / 0 Rounds</translation>
+        <source>0 COSA / 0 Rounds</source>
+        <translation>0 COSA / 0 Rounds</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2344,8 +2369,8 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
     <message>
         <location line="-396"/>
-        <source>Cannot start dash: click-to-pay handler</source>
-        <translation>Cannot start dash: click-to-pay handler</translation>
+        <source>Cannot start cosa: click-to-pay handler</source>
+        <translation>Cannot start cosa: click-to-pay handler</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -2357,8 +2382,8 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
     <message>
         <location line="-41"/>
-        <source>&apos;dash://&apos; is not a valid URI. Use &apos;dash:&apos; instead.</source>
-        <translation>&apos;dash://&apos; is not a valid URI. Use &apos;dash:&apos; instead.</translation>
+        <source>&apos;cosa://&apos; is not a valid URI. Use &apos;cosa:&apos; instead.</source>
+        <translation>&apos;cosa://&apos; is not a valid URI. Use &apos;cosa:&apos; instead.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2558,7 +2583,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>Amount</translation>
     </message>
     <message>
-        <location filename="../guiutil.cpp" line="+282"/>
+        <location filename="../guiutil.cpp" line="+284"/>
         <source>Enter a Cosanta address (e.g. %1)</source>
         <translation>Enter a Cosanta address (e.g. %1)</translation>
     </message>
@@ -2578,7 +2603,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>This can also be adjusted later in the &quot;Appearance&quot; tab of the preferences.</translation>
     </message>
     <message>
-        <location line="+1478"/>
+        <location line="+1462"/>
         <source>%1 d</source>
         <translation>%1 d</translation>
     </message>
@@ -2872,7 +2897,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <location line="+26"/>
         <location line="+23"/>
         <location line="+23"/>
-        <location filename="../rpcconsole.cpp" line="+1246"/>
+        <location filename="../rpcconsole.cpp" line="+1258"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
@@ -2988,8 +3013,8 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
     <message>
         <location line="+55"/>
-        <location filename="../rpcconsole.cpp" line="-716"/>
-        <location line="+878"/>
+        <location filename="../rpcconsole.cpp" line="-726"/>
+        <location line="+893"/>
         <source>Select a peer to view detailed information.</source>
         <translation>Select a peer to view detailed information.</translation>
     </message>
@@ -3220,7 +3245,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>-reindex: Rebuild block chain index from current blk000??.dat files.</translation>
     </message>
     <message>
-        <location filename="../rpcconsole.cpp" line="-771"/>
+        <location filename="../rpcconsole.cpp" line="-786"/>
         <source>&amp;Disconnect</source>
         <translation>&amp;Disconnect</translation>
     </message>
@@ -3258,7 +3283,12 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>&amp;Unban</translation>
     </message>
     <message>
-        <location line="+207"/>
+        <location line="+56"/>
+        <source>default wallet</source>
+        <translation>default wallet</translation>
+    </message>
+    <message>
+        <location line="+161"/>
         <source>Welcome to the %1 RPC console.</source>
         <translation>Welcome to the %1 RPC console.</translation>
     </message>
@@ -3697,8 +3727,8 @@ https://www.transifex.com/projects/p/dash/</translation>
     <message>
         <location line="+30"/>
         <location line="+13"/>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for dash transactions than the network can process.</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for cosa transactions than the network can process.</source>
+        <translation>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for cosa transactions than the network can process.</translation>
     </message>
     <message>
         <location line="-40"/>
@@ -3859,7 +3889,7 @@ https://www.transifex.com/projects/p/dash/</translation>
     <message>
         <location line="-229"/>
         <source>S&amp;end mixed funds</source>
-        <translation type="unfinished">S&amp;end mixed funds</translation>
+        <translation>S&amp;end mixed funds</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4076,8 +4106,8 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
     <message>
         <location line="+10"/>
-        <source>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
-        <translation>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</translation>
+        <source>A message that was attached to the cosa: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <translation>A message that was attached to the cosa: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</translation>
     </message>
     <message>
         <location line="+433"/>
@@ -4119,7 +4149,7 @@ https://www.transifex.com/projects/p/dash/</translation>
 <context>
     <name>ShutdownWindow</name>
     <message>
-        <location filename="../utilitydialog.cpp" line="+74"/>
+        <location filename="../utilitydialog.cpp" line="+72"/>
         <source>%1 is shutting down...</source>
         <translation>%1 is shutting down...</translation>
     </message>
@@ -5091,7 +5121,7 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
 </context>
 <context>
-    <name>dash-core</name>
+    <name>cosanta-core</name>
     <message>
         <location filename="../dashstrings.cpp" line="+39"/>
         <source>Error: Listening for incoming connections failed (listen returned error %s)</source>
@@ -5113,7 +5143,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>Already have that input.</source>
         <translation>Already have that input.</translation>
     </message>
@@ -5188,7 +5218,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>Failed to listen on any port. Use -listen=0 if you want this.</translation>
     </message>
     <message>
-        <location line="-163"/>
+        <location line="-164"/>
         <source>-maxtxfee is set very high! Fees this large could be paid on a single transaction.</source>
         <translation>-maxtxfee is set very high! Fees this large could be paid on a single transaction.</translation>
     </message>
@@ -5218,7 +5248,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>Transaction index can&apos;t be disabled with governance validation enabled. Either start with -disablegovernance command line switch or enable transaction index.</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+53"/>
         <source>Can&apos;t mix: no compatible inputs found!</source>
         <translation>Can&apos;t mix: no compatible inputs found!</translation>
     </message>
@@ -5413,12 +5443,12 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>Can&apos;t find random Masternode.</translation>
     </message>
     <message>
-        <location line="-13"/>
+        <location line="-14"/>
         <source>%s can&apos;t be lower than %s</source>
         <translation>%s can&apos;t be lower than %s</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>%s is idle.</source>
         <translation>%s is idle.</translation>
     </message>
@@ -5443,7 +5473,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>Invalid script detected.</translation>
     </message>
     <message>
-        <location line="-200"/>
+        <location line="-201"/>
         <source>%s file contains all private keys from this wallet. Do not share it with anyone!</source>
         <translation>%s file contains all private keys from this wallet. Do not share it with anyone!</translation>
     </message>
@@ -5528,7 +5558,12 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
+        <source>%s failed</source>
+        <translation>%s failed</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>-litemode is deprecated.</source>
         <translation>-litemode is deprecated.</translation>
     </message>
@@ -5843,7 +5878,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>see debug.log for details.</translation>
     </message>
     <message>
-        <location line="-306"/>
+        <location line="-307"/>
         <source>Cosanta Core</source>
         <translation>Cosanta Core</translation>
     </message>
@@ -5928,7 +5963,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>%s corrupt, salvage failed</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>%s is not a valid backup folder!</source>
         <translation>%s is not a valid backup folder!</translation>
     </message>
