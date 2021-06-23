@@ -117,10 +117,11 @@ private:
     std::unique_ptr<CDKGSession> curSession;
     std::thread phaseHandlerThread;
 
-    CDKGPendingMessages pendingContributions GUARDED_BY(cs);
-    CDKGPendingMessages pendingComplaints GUARDED_BY(cs);
-    CDKGPendingMessages pendingJustifications GUARDED_BY(cs);
-    CDKGPendingMessages pendingPrematureCommitments GUARDED_BY(cs);
+    // Do not guard these, they protect their internals themselves
+    CDKGPendingMessages pendingContributions;
+    CDKGPendingMessages pendingComplaints;
+    CDKGPendingMessages pendingJustifications;
+    CDKGPendingMessages pendingPrematureCommitments;
 
 public:
     CDKGSessionHandler(const Consensus::LLMQParams& _params, CBLSWorker& _blsWorker, CDKGSessionManager& _dkgManager, int _quorumIndex) :
