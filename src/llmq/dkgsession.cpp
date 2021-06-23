@@ -638,6 +638,8 @@ void CDKGSession::VerifyAndJustify(CDKGPendingMessages& pendingMessages)
 
     std::set<uint256> justifyFor;
 
+    LOCK(invCs);
+
     for (const auto& m : members) {
         if (m->bad) {
             continue;
@@ -1179,21 +1181,25 @@ std::vector<CFinalCommitment> CDKGSession::FinalizeCommitments()
     using Key = std::vector<bool>;
     std::map<Key, std::vector<CDKGPrematureCommitment>> commitmentsMap;
 
-    for (const auto& p : prematureCommitments) {
-        auto& qc = p.second;
-        if (!validCommitments.count(p.first)) {
-            continue;
+    {
+        LOCK(invCs);
+
+        for (const auto& p : prematureCommitments) {
+            auto& qc = p.second;
+            if (!validCommitments.count(p.first)) {
+                continue;
+            }
+
+            // should have been verified before
+            assert(qc.CountValidMembers() >= params.minSize);
+
+            auto it = commitmentsMap.find(qc.validMembers);
+            if (it == commitmentsMap.end()) {
+                it = commitmentsMap.emplace(qc.validMembers, std::vector<CDKGPrematureCommitment>()).first;
+            }
+
+            it->second.emplace_back(qc);
         }
-
-        // should have been verified before
-        assert(qc.CountValidMembers() >= params.minSize);
-
-        auto it = commitmentsMap.find(qc.validMembers);
-        if (it == commitmentsMap.end()) {
-            it = commitmentsMap.emplace(qc.validMembers, std::vector<CDKGPrematureCommitment>()).first;
-        }
-
-        it->second.emplace_back(qc);
     }
 
     std::vector<CFinalCommitment> finalCommitments;
