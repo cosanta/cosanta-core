@@ -525,7 +525,7 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
     CBlockIndex* pindex_tx = nullptr;
     CBlockIndex* pindex_prev = nullptr;
 
-    if (!GetTransaction(prevout.hash, txinPrevRef, consensus, txinHashBlock, true)) {
+    if (!GetTransaction(prevout.hash, txinPrevRef, consensus, txinHashBlock)) {
         BlockMap::iterator it = mapBlockIndex.find(header.hashPrevBlock);
         
         if ((it != mapBlockIndex.end()) && chainActive.Contains(it->second)) {
