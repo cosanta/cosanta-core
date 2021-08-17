@@ -156,11 +156,6 @@ static int AppInitRPC(int argc, char* argv[])
         tfm::format(std::cerr, "Error: %s\n", e.what());
         return EXIT_FAILURE;
     }
-    if (gArgs.GetBoolArg("-rpcssl", false))
-    {
-        fprintf(stderr, "Error: SSL mode for RPC (-rpcssl) is no longer supported.\n");
-        return EXIT_FAILURE;
-    }
     return CONTINUE_EXECUTION;
 }
 
