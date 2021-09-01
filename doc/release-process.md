@@ -209,10 +209,10 @@ Create (and optionally verify) the signed macOS binary:
 Create (and optionally verify) the signed Windows binaries:
 
     pushd ./gitian-builder
-    ./bin/gbuild -i --commit signature=v${VERSION} ../cosanta/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../cosanta/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-signed ../cosanta/contrib/gitian-descriptors/gitian-win-signer.yml
-    mv build/out/cosanta-*win64-setup.exe ../cosanta-${VERSION}-win64-setup.exe
+    ./bin/gbuild -i --commit signature=v${VERSION} ../dash/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../dash/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-signed ../dash/contrib/gitian-descriptors/gitian-win-signer.yml
+    mv build/out/dash-*win64-setup.exe ../dash-${VERSION}-win64-setup.exe
     popd
 
 Commit your signature for the signed macOS/Windows binaries:
@@ -235,7 +235,8 @@ sha256sum * > SHA256SUMS
 The list of files should be:
 ```
 cosanta-${VERSION}-aarch64-linux-gnu.tar.gz
-cosanta-${VERSION}-riscv64-linux-gnu.tar.gz
+cosanta-${VERSION}-arm-linux-gnueabihf.tar.gz
+cosanta-${VERSION}-i686-pc-linux-gnu.tar.gz
 cosanta-${VERSION}-x86_64-linux-gnu.tar.gz
 cosanta-${VERSION}-osx64.tar.gz
 cosanta-${VERSION}-osx.dmg

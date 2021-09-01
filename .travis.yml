@@ -87,8 +87,7 @@ jobs:
     - <<: *builddepends
       env: BUILD_TARGET=arm-linux
     - <<: *builddepends
-      env: BUILD_TARGET=win32
-    - <<: *builddepends
+      name: depends-win64
       env: BUILD_TARGET=win64
     - <<: *builddepends
       env: BUILD_TARGET=linux32
@@ -104,8 +103,7 @@ jobs:
     - <<: *buildsrc
       env: BUILD_TARGET=arm-linux
     - <<: *buildsrc
-      env: BUILD_TARGET=win32
-    - <<: *buildsrc
+      name: src-win64
       env: BUILD_TARGET=win64
     - <<: *buildsrc
       env: BUILD_TARGET=linux32
@@ -119,8 +117,7 @@ jobs:
       env: BUILD_TARGET=mac
     # run tests (no tests for arm-linux and mac)
     - <<: *runtests
-      env: BUILD_TARGET=win32
-    - <<: *runtests
+      name: tests-win64
       env: BUILD_TARGET=win64
     - <<: *runtests
       env: BUILD_TARGET=linux32
@@ -210,15 +207,6 @@ after_success:
         RUN_FUNCTIONAL_TESTS=false
         GOAL="install"
         BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
-    - stage: test
-      name: 'Win32  [GOAL: deploy]  [no gui tests]'
-      env: >-
-        HOST=i686-w64-mingw32
-        DPKG_ADD_ARCH="i386"
-        PACKAGES="python3 nsis g++-mingw-w64-i686 wine-binfmt wine32"
-        GOAL="deploy"
-        BITCOIN_CONFIG="--enable-reduce-exports --disable-gui-tests"
-
     - stage: test
       name: 'Win64  [GOAL: deploy]  [no gui tests]'
       env: >-

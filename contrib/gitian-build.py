@@ -97,7 +97,6 @@ def sign():
         subprocess.check_call(['bin/gbuild', '-i', '--commit', 'signature='+args.commit, '../dash/contrib/gitian-descriptors/gitian-win-signer.yml'])
         subprocess.check_call(['bin/gsign', '-p', args.sign_prog, '--signer', args.signer, '--release', args.version+'-win-signed', '--destination', '../gitian.sigs/', '../dash/contrib/gitian-descriptors/gitian-win-signer.yml'])
         subprocess.check_call('mv build/out/cosantacore-*win64-setup.exe ../cosantacore-binaries/'+args.version, shell=True)
-        subprocess.check_call('mv build/out/cosantacore-*win32-setup.exe ../cosantacore-binaries/'+args.version, shell=True)
 
     if args.macos:
         print('\nSigning ' + args.version + ' MacOS')
