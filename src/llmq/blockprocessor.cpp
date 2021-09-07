@@ -188,6 +188,8 @@ static std::tuple<std::string, Consensus::LLMQType, uint32_t> BuildInversedHeigh
 
 bool CQuorumBlockProcessor::ProcessCommitment(int nHeight, const uint256& blockHash, const CFinalCommitment& qc, CValidationState& state, bool fJustCheck)
 {
+    AssertLockHeld(cs_main);
+
     const auto& llmq_params = GetLLMQParams(qc.llmqType);
 
     uint256 quorumHash = GetQuorumBlockHash(qc.llmqType, nHeight);
@@ -376,8 +378,10 @@ bool CQuorumBlockProcessor::IsMiningPhase(Consensus::LLMQType llmqType, int nHei
     return false;
 }
 
-bool CQuorumBlockProcessor::IsCommitmentRequired(Consensus::LLMQType llmqType, int nHeight)
+bool CQuorumBlockProcessor::IsCommitmentRequired(Consensus::LLMQType llmqType, int nHeight) const
 {
+    AssertLockHeld(cs_main);
+
     uint256 quorumHash = GetQuorumBlockHash(llmqType, nHeight);
 
     // perform extra check for quorumHash.IsNull as the quorum hash is unknown for the first block of a session
@@ -403,7 +407,7 @@ uint256 CQuorumBlockProcessor::GetQuorumBlockHash(Consensus::LLMQType llmqType, 
     return quorumBlockHash;
 }
 
-bool CQuorumBlockProcessor::HasMinedCommitment(Consensus::LLMQType llmqType, const uint256& quorumHash)
+bool CQuorumBlockProcessor::HasMinedCommitment(Consensus::LLMQType llmqType, const uint256& quorumHash) const
 {
     bool fExists;
     {
@@ -421,7 +425,7 @@ bool CQuorumBlockProcessor::HasMinedCommitment(Consensus::LLMQType llmqType, con
     return fExists;
 }
 
-CFinalCommitmentPtr CQuorumBlockProcessor::GetMinedCommitment(Consensus::LLMQType llmqType, const uint256& quorumHash, uint256& retMinedBlockHash)
+CFinalCommitmentPtr CQuorumBlockProcessor::GetMinedCommitment(Consensus::LLMQType llmqType, const uint256& quorumHash, uint256& retMinedBlockHash) const
 {
     auto key = std::make_pair(DB_MINED_COMMITMENT, std::make_pair(llmqType, quorumHash));
     std::pair<CFinalCommitment, uint256> p;
@@ -433,7 +437,7 @@ CFinalCommitmentPtr CQuorumBlockProcessor::GetMinedCommitment(Consensus::LLMQTyp
 }
 
 // The returned quorums are in reversed order, so the most recent one is at index 0
-std::vector<const CBlockIndex*> CQuorumBlockProcessor::GetMinedCommitmentsUntilBlock(Consensus::LLMQType llmqType, const CBlockIndex* pindex, size_t maxCount)
+std::vector<const CBlockIndex*> CQuorumBlockProcessor::GetMinedCommitmentsUntilBlock(Consensus::LLMQType llmqType, const CBlockIndex* pindex, size_t maxCount) const
 {
     LOCK(evoDb.cs);
 
@@ -477,7 +481,7 @@ std::vector<const CBlockIndex*> CQuorumBlockProcessor::GetMinedCommitmentsUntilB
 }
 
 // The returned quorums are in reversed order, so the most recent one is at index 0
-std::map<Consensus::LLMQType, std::vector<const CBlockIndex*>> CQuorumBlockProcessor::GetMinedAndActiveCommitmentsUntilBlock(const CBlockIndex* pindex)
+std::map<Consensus::LLMQType, std::vector<const CBlockIndex*>> CQuorumBlockProcessor::GetMinedAndActiveCommitmentsUntilBlock(const CBlockIndex* pindex) const
 {
     std::map<Consensus::LLMQType, std::vector<const CBlockIndex*>> ret;
 
@@ -491,7 +495,7 @@ std::map<Consensus::LLMQType, std::vector<const CBlockIndex*>> CQuorumBlockProce
     return ret;
 }
 
-bool CQuorumBlockProcessor::HasMineableCommitment(const uint256& hash)
+bool CQuorumBlockProcessor::HasMineableCommitment(const uint256& hash) const
 {
     LOCK(minableCommitmentsCs);
     return minableCommitments.count(hash) != 0;
@@ -529,7 +533,7 @@ void CQuorumBlockProcessor::AddMineableCommitment(const CFinalCommitment& fqc)
     }
 }
 
-bool CQuorumBlockProcessor::GetMineableCommitmentByHash(const uint256& commitmentHash, llmq::CFinalCommitment& ret)
+bool CQuorumBlockProcessor::GetMineableCommitmentByHash(const uint256& commitmentHash, llmq::CFinalCommitment& ret) const
 {
     LOCK(minableCommitmentsCs);
     auto it = minableCommitments.find(commitmentHash);
@@ -542,7 +546,7 @@ bool CQuorumBlockProcessor::GetMineableCommitmentByHash(const uint256& commitmen
 
 // Will return false if no commitment should be mined
 // Will return true and a null commitment if no mineable commitment is known and none was mined yet
-bool CQuorumBlockProcessor::GetMineableCommitment(Consensus::LLMQType llmqType, int nHeight, CFinalCommitment& ret)
+bool CQuorumBlockProcessor::GetMineableCommitment(Consensus::LLMQType llmqType, int nHeight, CFinalCommitment& ret) const
 {
     AssertLockHeld(cs_main);
 
@@ -571,7 +575,7 @@ bool CQuorumBlockProcessor::GetMineableCommitment(Consensus::LLMQType llmqType, 
     return true;
 }
 
-bool CQuorumBlockProcessor::GetMineableCommitmentTx(Consensus::LLMQType llmqType, int nHeight, CTransactionRef& ret)
+bool CQuorumBlockProcessor::GetMineableCommitmentTx(Consensus::LLMQType llmqType, int nHeight, CTransactionRef& ret) const
 {
     AssertLockHeld(cs_main);
 

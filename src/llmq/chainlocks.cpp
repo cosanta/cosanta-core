@@ -67,13 +67,13 @@ void CChainLocksHandler::Stop()
     quorumSigningManager->UnregisterRecoveredSigsListener(this);
 }
 
-bool CChainLocksHandler::AlreadyHave(const CInv& inv)
+bool CChainLocksHandler::AlreadyHave(const CInv& inv) const
 {
     LOCK(cs);
     return seenChainLocks.count(inv.hash) != 0;
 }
 
-bool CChainLocksHandler::GetChainLockByHash(const uint256& hash, llmq::CChainLockSig& ret)
+bool CChainLocksHandler::GetChainLockByHash(const uint256& hash, llmq::CChainLockSig& ret) const
 {
     LOCK(cs);
 
@@ -86,7 +86,7 @@ bool CChainLocksHandler::GetChainLockByHash(const uint256& hash, llmq::CChainLoc
     return true;
 }
 
-CChainLockSig CChainLocksHandler::GetBestChainLock()
+CChainLockSig CChainLocksHandler::GetBestChainLock() const
 {
     LOCK(cs);
     return bestChainLock;
@@ -460,7 +460,7 @@ CChainLocksHandler::BlockTxs::mapped_type CChainLocksHandler::GetBlockTxs(const 
     return ret;
 }
 
-bool CChainLocksHandler::IsTxSafeForMining(const uint256& txid)
+bool CChainLocksHandler::IsTxSafeForMining(const uint256& txid) const
 {
     if (!RejectConflictingBlocks()) {
         return true;
@@ -598,13 +598,13 @@ void CChainLocksHandler::HandleNewRecoveredSig(const llmq::CRecoveredSig& recove
     ProcessNewChainLock(-1, clsig, ::SerializeHash(clsig));
 }
 
-bool CChainLocksHandler::HasChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::HasChainLock(int nHeight, const uint256& blockHash) const
 {
     LOCK(cs);
     return InternalHasChainLock(nHeight, blockHash);
 }
 
-bool CChainLocksHandler::InternalHasChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::InternalHasChainLock(int nHeight, const uint256& blockHash) const
 {
     AssertLockHeld(cs);
 
@@ -628,13 +628,13 @@ bool CChainLocksHandler::InternalHasChainLock(int nHeight, const uint256& blockH
     return pAncestor && pAncestor->GetBlockHash() == blockHash;
 }
 
-bool CChainLocksHandler::HasConflictingChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::HasConflictingChainLock(int nHeight, const uint256& blockHash) const
 {
     LOCK(cs);
     return InternalHasConflictingChainLock(nHeight, blockHash);
 }
 
-bool CChainLocksHandler::InternalHasConflictingChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::InternalHasConflictingChainLock(int nHeight, const uint256& blockHash) const
 {
     AssertLockHeld(cs);
 
