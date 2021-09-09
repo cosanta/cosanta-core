@@ -6,14 +6,19 @@
 #
 # Check for shellcheck warnings in shell scripts.
 
-# This script is intentionally locale dependent by not setting "export LC_ALL=C"
-# to allow running certain versions of shellcheck that core dump when LC_ALL=C
-# is set.
+export LC_ALL=C
+
+# The shellcheck binary segfault/coredumps in Travis with LC_ALL=C
+# It does not do so in Ubuntu 14.04, 16.04, 18.04 in versions 0.3.3, 0.3.7, 0.4.6
+# respectively. So export LC_ALL=C is set as required by lint-shell-locale.sh
+# but unset here in case of running in Travis.
+if [ "$TRAVIS" = "true" ]; then
+    unset LC_ALL
+fi
 
 # Disabled warnings:
 disabled=(
     SC1087 # Use braces when expanding arrays, e.g. ${array[idx]} (or ${var}[.. to quiet).
-    SC1117 # Backslash is literal in "\.". Prefer explicit escaping: "\\.".
     SC2001 # See if you can use ${variable//search/replace} instead.
     SC2004 # $/${} is unnecessary on arithmetic variables.
     SC2005 # Useless echo? Instead of 'echo $(cmd)', just use 'cmd'.
@@ -25,10 +30,8 @@ disabled=(
     SC2066 # Since you double quoted this, it will not word split, and the loop will only run once.
     SC2086 # Double quote to prevent globbing and word splitting.
     SC2116 # Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'.
-    SC2148 # Tips depend on target shell and yours is unknown. Add a shebang.
     SC2162 # read without -r will mangle backslashes.
-    SC2166 # Prefer [ p ] && [ q ] as [ p -a q ] is not well defined.
-    SC2166 # Prefer [ p ] || [ q ] as [ p -o q ] is not well defined.
+    SC2166 # Prefer [ p ] {&&,||} [ q ] as [ p -{a,o} q ] is not well defined.
     SC2181 # Check exit code directly with e.g. 'if mycmd;', not indirectly with $?.
     SC2206 # Quote to prevent word splitting, or split robustly with mapfile or read -a.
     SC2207 # Prefer mapfile or read -a to split command output (or quote to avoid splitting).
