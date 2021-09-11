@@ -1311,8 +1311,9 @@ static UniValue ProcessImport(CWallet * const pwallet, const UniValue& data, con
                     throw JSONRPCError(RPC_WALLET_ERROR, "Error adding address to wallet");
                 }
 
-                // add to address book or update label
-                if (IsValidDestination(dest)) {
+                // if not internal add to address book or update label
+                if (!internal) {
+                    assert(IsValidDestination(dest));
                     pwallet->SetAddressBook(dest, label, "receive");
                 }
 
