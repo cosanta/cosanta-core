@@ -19,8 +19,6 @@
 #include <atomic>
 #include <unordered_set>
 
-#include <boost/thread.hpp>
-
 class CBlockIndex;
 class CScheduler;
 
@@ -56,7 +54,7 @@ class CChainLocksHandler : public CRecoveredSigsListener
 
 private:
     CScheduler* scheduler;
-    boost::thread* scheduler_thread;
+    std::thread* scheduler_thread;
     mutable CCriticalSection cs;
     bool tryLockChainTipScheduled GUARDED_BY(cs) {false};
     bool isEnabled GUARDED_BY(cs) {false};
