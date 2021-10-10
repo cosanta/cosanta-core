@@ -21,7 +21,7 @@ class CValidationState;
 class CProRegTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     uint16_t nVersion{CURRENT_VERSION};                    // message version
     uint16_t nType{0};                                     // only 0 supported for now
@@ -87,7 +87,7 @@ public:
 class CProUpServTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     uint16_t nVersion{CURRENT_VERSION}; // message version
     uint256 proTxHash;
@@ -124,7 +124,7 @@ public:
 class CProUpRegTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     uint16_t nVersion{CURRENT_VERSION}; // message version
     uint256 proTxHash;
@@ -172,7 +172,7 @@ public:
 class CProUpRevTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     // these are just informational and do not have any effect on the revocation
     enum {

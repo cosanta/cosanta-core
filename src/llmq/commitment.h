@@ -22,7 +22,7 @@ namespace llmq
 class CFinalCommitment
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
 public:
     uint16_t nVersion{CURRENT_VERSION};
@@ -107,7 +107,7 @@ using CFinalCommitmentPtr = std::shared_ptr<CFinalCommitment>;
 class CFinalCommitmentTxPayload
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
 public:
     uint16_t nVersion{CURRENT_VERSION};

@@ -31,7 +31,7 @@ namespace llmq
 class CDKGSessionManager;
 
 // If true, we will connect to all new quorums and watch their communication
-static const bool DEFAULT_WATCH_QUORUMS = false;
+static constexpr bool DEFAULT_WATCH_QUORUMS{false};
 
 
 /**
@@ -66,7 +66,7 @@ private:
     int64_t nTime;
     bool fProcessed;
 
-    static const int64_t EXPIRATION_TIMEOUT{300};
+    static constexpr int64_t EXPIRATION_TIMEOUT{300};
 
 public:
 
