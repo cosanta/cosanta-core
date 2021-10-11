@@ -323,10 +323,10 @@ public:
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
 
         // long living quorum params
-        consensus.llmqs[Consensus::LLMQ_50_60] = llmq50_60;
-        consensus.llmqs[Consensus::LLMQ_400_60] = llmq400_60;
-        consensus.llmqs[Consensus::LLMQ_400_85] = llmq400_85;
-        consensus.llmqs[Consensus::LLMQ_100_67] = llmq100_67;
+        consensus.llmqs[Consensus::LLMQ_50_60] = Consensus::llmq50_60;
+        consensus.llmqs[Consensus::LLMQ_400_60] = Consensus::llmq400_60;
+        consensus.llmqs[Consensus::LLMQ_400_85] = Consensus::llmq400_85;
+        consensus.llmqs[Consensus::LLMQ_100_67] = Consensus::llmq100_67;
         consensus.llmqTypeChainLocks = Consensus::LLMQ_400_60;
         consensus.llmqTypeInstantSend = Consensus::LLMQ_50_60;
         consensus.llmqTypePlatform = Consensus::LLMQ_100_67;
@@ -524,10 +524,10 @@ public:
         nExtCoinType = 1;
 
         // long living quorum params
-        consensus.llmqs[Consensus::LLMQ_50_60] = llmq50_60;
-        consensus.llmqs[Consensus::LLMQ_400_60] = llmq400_60;
-        consensus.llmqs[Consensus::LLMQ_400_85] = llmq400_85;
-        consensus.llmqs[Consensus::LLMQ_100_67] = llmq100_67;
+        consensus.llmqs[Consensus::LLMQ_50_60] = Consensus::llmq50_60;
+        consensus.llmqs[Consensus::LLMQ_400_60] = Consensus::llmq400_60;
+        consensus.llmqs[Consensus::LLMQ_400_85] = Consensus::llmq400_85;
+        consensus.llmqs[Consensus::LLMQ_100_67] = Consensus::llmq100_67;
         consensus.llmqTypeChainLocks = Consensus::LLMQ_50_60;
         consensus.llmqTypeInstantSend = Consensus::LLMQ_50_60;
         consensus.llmqTypePlatform = Consensus::LLMQ_100_67;
@@ -719,11 +719,11 @@ public:
         nExtCoinType = 1;
 
         // long living quorum params
-        consensus.llmqs[Consensus::LLMQ_DEVNET] = llmq_devnet;
-        consensus.llmqs[Consensus::LLMQ_50_60] = llmq50_60;
-        consensus.llmqs[Consensus::LLMQ_400_60] = llmq400_60;
-        consensus.llmqs[Consensus::LLMQ_400_85] = llmq400_85;
-        consensus.llmqs[Consensus::LLMQ_100_67] = llmq100_67;
+        consensus.llmqs[Consensus::LLMQ_DEVNET] = Consensus::llmq_devnet;
+        consensus.llmqs[Consensus::LLMQ_50_60] = Consensus::llmq50_60;
+        consensus.llmqs[Consensus::LLMQ_400_60] = Consensus::llmq400_60;
+        consensus.llmqs[Consensus::LLMQ_400_85] = Consensus::llmq400_85;
+        consensus.llmqs[Consensus::LLMQ_100_67] = Consensus::llmq100_67;
         consensus.llmqTypeChainLocks = Consensus::LLMQ_50_60;
         consensus.llmqTypeInstantSend = Consensus::LLMQ_50_60;
         consensus.llmqTypePlatform = Consensus::LLMQ_100_67;
@@ -966,8 +966,8 @@ public:
         nExtCoinType = 1;
 
         // long living quorum params
-        consensus.llmqs[Consensus::LLMQ_TEST] = llmq_test;
-        consensus.llmqs[Consensus::LLMQ_TEST_V17] = llmq_test_v17;
+        consensus.llmqs[Consensus::LLMQ_TEST] = Consensus::llmq_test;
+        consensus.llmqs[Consensus::LLMQ_TEST_V17] = Consensus::llmq_test_v17;
         consensus.llmqTypeChainLocks = Consensus::LLMQ_TEST;
         consensus.llmqTypeInstantSend = Consensus::LLMQ_TEST;
         consensus.llmqTypePlatform = Consensus::LLMQ_TEST;
@@ -1192,7 +1192,7 @@ void CDevNetParams::UpdateDevnetLLMQChainLocksFromArgs(const ArgsManager& args)
 {
     if (!args.IsArgSet("-llmqchainlocks")) return;
 
-    std::string strLLMQType = gArgs.GetArg("-llmqchainlocks", consensus.llmqs.at(consensus.llmqTypeChainLocks).name);
+    std::string strLLMQType = gArgs.GetArg("-llmqchainlocks", std::string(consensus.llmqs.at(consensus.llmqTypeChainLocks).name));
     Consensus::LLMQType llmqType = Consensus::LLMQ_NONE;
     for (const auto& p : consensus.llmqs) {
         if (p.second.name == strLLMQType) {
@@ -1210,7 +1210,7 @@ void CDevNetParams::UpdateDevnetLLMQInstantSendFromArgs(const ArgsManager& args)
 {
     if (!args.IsArgSet("-llmqinstantsend")) return;
 
-    std::string strLLMQType = gArgs.GetArg("-llmqinstantsend", consensus.llmqs.at(consensus.llmqTypeInstantSend).name);
+    std::string strLLMQType = gArgs.GetArg("-llmqinstantsend", std::string(consensus.llmqs.at(consensus.llmqTypeInstantSend).name));
     Consensus::LLMQType llmqType = Consensus::LLMQ_NONE;
     for (const auto& p : consensus.llmqs) {
         if (p.second.name == strLLMQType) {
