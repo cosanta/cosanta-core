@@ -54,10 +54,23 @@ struct CSporkDef
 {
     SporkId sporkId{SPORK_INVALID};
     int64_t defaultValue{0};
-    std::string name;
+    std::string_view name;
 };
 
-extern std::vector<CSporkDef> sporkDefs;
+#define MAKE_SPORK_DEF(name, defaultValue) CSporkDef{name, defaultValue, #name}
+[[maybe_unused]] static constexpr std::array sporkDefs = {
+        MAKE_SPORK_DEF(SPORK_2_INSTANTSEND_ENABLED,            4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_3_INSTANTSEND_BLOCK_FILTERING,    4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_9_SUPERBLOCKS_ENABLED,            4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_17_QUORUM_DKG_ENABLED,            4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_19_CHAINLOCKS_ENABLED,            4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_21_QUORUM_ALL_CONNECTED,          4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_23_QUORUM_POSE,                   4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_31_FIRST_POS_BLOCK,               4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_32_FIRST_POS_V2_BLOCK,            4070908800ULL), // OFF
+        MAKE_SPORK_DEF(SPORK_33_LAST_POW_BLOCK,                4070908800ULL), // OFF
+};
+#undef MAKE_SPORK_DEF
 extern CSporkManager sporkManager;
 
 /**
@@ -155,10 +168,8 @@ private:
     static const std::string SERIALIZATION_VERSION_STRING;
 
     mutable CCriticalSection cs;
-    std::unordered_map<SporkId, CSporkDef*> sporkDefsById GUARDED_BY(cs);
 
-    std::unordered_map<std::string, CSporkDef*> sporkDefsByName GUARDED_BY(cs);
-    mutable std::unordered_map<SporkId, bool> mapSporksCachedActive GUARDED_BY(cs);
+    mutable std::unordered_map<const SporkId, bool> mapSporksCachedActive GUARDED_BY(cs);
 
     mutable std::unordered_map<SporkId, int64_t> mapSporksCachedValues GUARDED_BY(cs);
     std::unordered_map<uint256, CSporkMessage, StaticSaltedHasher> mapSporksByHash GUARDED_BY(cs);
@@ -176,7 +187,7 @@ private:
 
 public:
 
-    CSporkManager();
+    CSporkManager() = default;
 
     template<typename Stream>
     void Serialize(Stream &s) const
@@ -254,12 +265,7 @@ public:
     /**
      * GetSporkIDByName returns the internal Spork ID given the spork name.
      */
-    SporkId GetSporkIDByName(const std::string& strName) const;
-
-    /**
-     * GetSporkNameByID returns the spork name as a string, given a Spork ID.
-     */
-    std::string GetSporkNameByID(SporkId nSporkID) const;
+    static SporkId GetSporkIDByName(const std::string& strName) ;
 
     /**
      * GetSporkByHash returns a spork message given a hash of the spork message.
