@@ -112,7 +112,7 @@ static CMutableTransaction CreateProRegTx(SimpleUTXOMap& utxos, int port, const 
     tx.nVersion = 3;
     tx.nType = TRANSACTION_PROVIDER_REGISTER;
     FundTransaction(tx, utxos, scriptPayout, MASTERNODE_COLLATERAL_AMOUNT, coinbaseKey);
-    proTx.inputsHash = CalcTxInputsHash(tx);
+    proTx.inputsHash = CalcTxInputsHash(CTransaction(tx));
     SetTxPayload(tx, proTx);
     SignTransaction(tx, coinbaseKey);
 
@@ -130,7 +130,7 @@ static CMutableTransaction CreateProUpServTx(SimpleUTXOMap& utxos, const uint256
     tx.nVersion = 3;
     tx.nType = TRANSACTION_PROVIDER_UPDATE_SERVICE;
     FundTransaction(tx, utxos, GetScriptForDestination(coinbaseKey.GetPubKey().GetID()), 1 * COIN, coinbaseKey);
-    proTx.inputsHash = CalcTxInputsHash(tx);
+    proTx.inputsHash = CalcTxInputsHash(CTransaction(tx));
     proTx.sig = operatorKey.Sign(::SerializeHash(proTx));
     SetTxPayload(tx, proTx);
     SignTransaction(tx, coinbaseKey);
@@ -150,7 +150,7 @@ static CMutableTransaction CreateProUpRegTx(SimpleUTXOMap& utxos, const uint256&
     tx.nVersion = 3;
     tx.nType = TRANSACTION_PROVIDER_UPDATE_REGISTRAR;
     FundTransaction(tx, utxos, GetScriptForDestination(coinbaseKey.GetPubKey().GetID()), 1 * COIN, coinbaseKey);
-    proTx.inputsHash = CalcTxInputsHash(tx);
+    proTx.inputsHash = CalcTxInputsHash(CTransaction(tx));
     CHashSigner::SignHash(::SerializeHash(proTx), mnKey, proTx.vchSig);
     SetTxPayload(tx, proTx);
     SignTransaction(tx, coinbaseKey);
@@ -167,7 +167,7 @@ static CMutableTransaction CreateProUpRevTx(SimpleUTXOMap& utxos, const uint256&
     tx.nVersion = 3;
     tx.nType = TRANSACTION_PROVIDER_UPDATE_REVOKE;
     FundTransaction(tx, utxos, GetScriptForDestination(coinbaseKey.GetPubKey().GetID()), 1 * COIN, coinbaseKey);
-    proTx.inputsHash = CalcTxInputsHash(tx);
+    proTx.inputsHash = CalcTxInputsHash(CTransaction(tx));
     proTx.sig = operatorKey.Sign(::SerializeHash(proTx));
     SetTxPayload(tx, proTx);
     SignTransaction(tx, coinbaseKey);
@@ -296,8 +296,8 @@ BOOST_FIXTURE_TEST_CASE(dip3_protx, TestChainDIP3Setup)
         auto tx2 = MalleateProTxPayout<CProRegTx>(tx);
         CValidationState dummyState;
         // Technically, the payload is still valid...
-        BOOST_ASSERT(CheckProRegTx(tx, chainActive.Tip(), dummyState, *pcoinsTip.get()));
-        BOOST_ASSERT(CheckProRegTx(tx2, chainActive.Tip(), dummyState, *pcoinsTip.get()));
+        BOOST_ASSERT(CheckProRegTx(CTransaction(tx), chainActive.Tip(), dummyState, *pcoinsTip.get()));
+        BOOST_ASSERT(CheckProRegTx(CTransaction(tx2), chainActive.Tip(), dummyState, *pcoinsTip.get()));
         // But the signature should not verify anymore
         BOOST_ASSERT(CheckTransactionSignature(tx));
         BOOST_ASSERT(!CheckTransactionSignature(tx2));
@@ -399,8 +399,8 @@ BOOST_FIXTURE_TEST_CASE(dip3_protx, TestChainDIP3Setup)
     // check malleability protection again, but this time by also relying on the signature inside the ProUpRegTx
     auto tx2 = MalleateProTxPayout<CProUpRegTx>(tx);
     CValidationState dummyState;
-    BOOST_ASSERT(CheckProUpRegTx(tx, chainActive.Tip(), dummyState, *pcoinsTip.get()));
-    BOOST_ASSERT(!CheckProUpRegTx(tx2, chainActive.Tip(), dummyState, *pcoinsTip.get()));
+    BOOST_ASSERT(CheckProUpRegTx(CTransaction(tx), chainActive.Tip(), dummyState, *pcoinsTip.get()));
+    BOOST_ASSERT(!CheckProUpRegTx(CTransaction(tx2), chainActive.Tip(), dummyState, *pcoinsTip.get()));
     BOOST_ASSERT(CheckTransactionSignature(tx));
     BOOST_ASSERT(!CheckTransactionSignature(tx2));
     // now process the block
@@ -489,7 +489,7 @@ BOOST_FIXTURE_TEST_CASE(dip3_test_mempool_reorg, TestChainDIP3Setup)
     tx_reg.nVersion = 3;
     tx_reg.nType = TRANSACTION_PROVIDER_REGISTER;
     FundTransaction(tx_reg, utxos, scriptPayout, MASTERNODE_COLLATERAL_AMOUNT, coinbaseKey);
-    payload.inputsHash = CalcTxInputsHash(tx_reg);
+    payload.inputsHash = CalcTxInputsHash(CTransaction(tx_reg));
     CMessageSigner::SignMessage(payload.MakeSignString(), payload.vchSig, collateralKey);
     SetTxPayload(tx_reg, payload);
     SignTransaction(tx_reg, coinbaseKey);
@@ -559,7 +559,7 @@ BOOST_FIXTURE_TEST_CASE(dip3_test_mempool_dual_proregtx, TestChainDIP3Setup)
     tx_reg2.nVersion = 3;
     tx_reg2.nType = TRANSACTION_PROVIDER_REGISTER;
     FundTransaction(tx_reg2, utxos, scriptPayout, MASTERNODE_COLLATERAL_AMOUNT, coinbaseKey);
-    payload.inputsHash = CalcTxInputsHash(tx_reg2);
+    payload.inputsHash = CalcTxInputsHash(CTransaction(tx_reg2));
     CMessageSigner::SignMessage(payload.MakeSignString(), payload.vchSig, collateralKey);
     SetTxPayload(tx_reg2, payload);
     SignTransaction(tx_reg2, coinbaseKey);
@@ -570,7 +570,7 @@ BOOST_FIXTURE_TEST_CASE(dip3_test_mempool_dual_proregtx, TestChainDIP3Setup)
 
     testPool.addUnchecked(entry.FromTx(tx_reg1));
     BOOST_CHECK_EQUAL(testPool.size(), 1U);
-    BOOST_CHECK(testPool.existsProviderTxConflict(tx_reg2));
+    BOOST_CHECK(testPool.existsProviderTxConflict(CTransaction(tx_reg2)));
 }
 
 BOOST_FIXTURE_TEST_CASE(dip3_verify_db, TestChainDIP3Setup)
@@ -620,7 +620,7 @@ BOOST_FIXTURE_TEST_CASE(dip3_verify_db, TestChainDIP3Setup)
     tx_reg.nVersion = 3;
     tx_reg.nType = TRANSACTION_PROVIDER_REGISTER;
     FundTransaction(tx_reg, utxos, scriptPayout, MASTERNODE_COLLATERAL_AMOUNT, coinbaseKey);
-    payload.inputsHash = CalcTxInputsHash(tx_reg);
+    payload.inputsHash = CalcTxInputsHash(CTransaction(tx_reg));
     CMessageSigner::SignMessage(payload.MakeSignString(), payload.vchSig, collateralKey);
     SetTxPayload(tx_reg, payload);
     SignTransaction(tx_reg, coinbaseKey);
