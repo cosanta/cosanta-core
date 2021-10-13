@@ -62,7 +62,7 @@ static void gobject_deserialize_help()
         RPCHelpMan {"gobject deserialize",
             "Deserialize governance object from hex string to JSON\n",
             {
-                {"hex_data", RPCArg::Type::STR, false},
+                {"hex_data", RPCArg::Type::STR_HEX, false},
             }}
             .ToString() +
         "\nArguments:\n"
@@ -91,7 +91,7 @@ static void gobject_check_help()
         RPCHelpMan{"gobject check",
             "Validate governance object data (proposal only)\n",
             {
-                {"hex_data", RPCArg::Type::STR, false},
+                {"hex_data", RPCArg::Type::STR_HEX, false},
             }}
             .ToString() +
         "\nArguments:\n"
@@ -138,12 +138,12 @@ static void gobject_prepare_help(CWallet* const pwallet)
             "Prepare governance object by signing and creating tx\n"
             + HelpRequiringPassphrase(pwallet) + "\n",
             {
-                {"parent-hash", RPCArg::Type::STR, false},
+                {"parent-hash", RPCArg::Type::STR_HEX, false},
                 {"revision", RPCArg::Type::NUM, false},
                 {"time", RPCArg::Type::NUM, false},
-                {"data-hex", RPCArg::Type::STR, false},
+                {"data-hex", RPCArg::Type::STR_HEX, false},
                 {"use-IS", RPCArg::Type::BOOL, true},
-                {"outputHash", RPCArg::Type::STR, true},
+                {"outputHash", RPCArg::Type::STR_HEX, true},
                 {"outputIndex", RPCArg::Type::NUM, true},
             }}
             .ToString() +
@@ -319,11 +319,11 @@ static void gobject_submit_help()
         RPCHelpMan{"gobject submit",
             "Submit governance object to network\n",
             {
-                {"parent-hash", RPCArg::Type::STR, false},
+                {"parent-hash", RPCArg::Type::STR_HEX, false},
                 {"revision", RPCArg::Type::NUM, false},
                 {"time", RPCArg::Type::NUM, false},
-                {"data-hex", RPCArg::Type::STR, false},
-                {"fee-txid", RPCArg::Type::STR, true},
+                {"data-hex", RPCArg::Type::STR_HEX, false},
+                {"fee-txid", RPCArg::Type::STR_HEX, true},
             }}
             .ToString() +
         "\nArguments:\n"
@@ -438,7 +438,7 @@ static void gobject_vote_conf_help()
         RPCHelpMan{"gobject vote-conf",
             "Vote on a governance object by masternode configured in cosanta.conf\n",
             {
-                {"governance-hash", RPCArg::Type::STR, false},
+                {"governance-hash", RPCArg::Type::STR_HEX, false},
                 {"vote", RPCArg::Type::STR, false},
                 {"vote-outcome", RPCArg::Type::STR, false},
             }}
@@ -615,7 +615,7 @@ static void gobject_vote_many_help(CWallet* const pwallet)
             "Vote on a governance object by all masternodes for which the voting key is present in the local wallet\n"
             + HelpRequiringPassphrase(pwallet) + "\n",
             {
-                {"governance-hash", RPCArg::Type::STR, false},
+                {"governance-hash", RPCArg::Type::STR_HEX, false},
                 {"vote", RPCArg::Type::STR, false},
                 {"vote-outcome", RPCArg::Type::STR, false},
             }}
@@ -674,10 +674,10 @@ static void gobject_vote_alias_help(CWallet* const pwallet)
             "Vote on a governance object by masternode's voting key (if present in local wallet)\n"
             + HelpRequiringPassphrase(pwallet) + "\n",
             {
-                {"governance-hash", RPCArg::Type::STR, false},
+                {"governance-hash", RPCArg::Type::STR_HEX, false},
                 {"vote", RPCArg::Type::STR, false},
                 {"vote-outcome", RPCArg::Type::STR, false},
-                {"protx-hash", RPCArg::Type::STR, false},
+                {"protx-hash", RPCArg::Type::STR_HEX, false},
             }}
             .ToString() +
         "\nArguments:\n"
@@ -797,8 +797,8 @@ static void gobject_list_help()
         RPCHelpMan{"gobject list",
             "List governance objects (can be filtered by signal and/or object type)\n",
             {
-                {"signal", RPCArg::Type::STR, false},
-                {"type", RPCArg::Type::STR, false},
+                {"signal", RPCArg::Type::STR, true},
+                {"type", RPCArg::Type::STR, true},
             }}
             .ToString() +
         "\nArguments:\n"
@@ -834,8 +834,8 @@ static void gobject_diff_help()
         RPCHelpMan{"gobject diff",
             "List differences since last diff or list\n",
             {
-                {"signal", RPCArg::Type::STR, false},
-                {"type", RPCArg::Type::STR, false},
+                {"signal", RPCArg::Type::STR, true},
+                {"type", RPCArg::Type::STR, true},
             }}
             .ToString() +
         "\nArguments:\n"
@@ -871,7 +871,7 @@ static void gobject_get_help()
         RPCHelpMan{"gobject get",
             "Get governance object by hash\n",
             {
-                {"governance-hash", RPCArg::Type::STR, false},
+                {"governance-hash", RPCArg::Type::STR_HEX, false},
             }}
             .ToString() +
         "\nArguments:\n"
@@ -963,8 +963,8 @@ static void gobject_getcurrentvotes_help()
         RPCHelpMan{"gobject getcurrentvotes",
             "Get only current (tallying) votes for a governance object hash (does not include old votes)\n",
             {
-                {"governance-hash", RPCArg::Type::STR, false},
-                {"txid", RPCArg::Type::STR, true},
+                {"governance-hash", RPCArg::Type::STR_HEX, false},
+                {"txid", RPCArg::Type::STR_HEX, true},
                 {"vout", RPCArg::Type::STR, true},
             }}
             .ToString() +
@@ -1108,9 +1108,9 @@ static UniValue voteraw(const JSONRPCRequest& request)
             RPCHelpMan{"voteraw",
                 "Compile and relay a governance vote with provided external signature instead of signing vote internally\n",
                 {
-                    {"mn-collateral-tx-hash", RPCArg::Type::STR, false},
+                    {"mn-collateral-tx-hash", RPCArg::Type::STR_HEX, false},
                     {"mn-collateral-tx-index", RPCArg::Type::NUM, false},
-                    {"governance-hash", RPCArg::Type::STR, false},
+                    {"governance-hash", RPCArg::Type::STR_HEX, false},
                     {"vote-signal", RPCArg::Type::STR, false},
                     {"vote-outcome", RPCArg::Type::STR, false},
                     {"time", RPCArg::Type::NUM, false},
