@@ -128,7 +128,6 @@ static void potential_deadlock_detected(const LockPair& mismatch, const LockStac
         strOutput += strprintf(" %s\n", i.second.ToString().c_str());
     }
 
-    printf("%s\n", strOutput.c_str());
     LogPrintf("%s\n", strOutput.c_str());
 
     if (g_debug_lockorder_abort) {
