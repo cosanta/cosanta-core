@@ -8,6 +8,7 @@
 
 #include <chainparamsbase.h>
 #include <consensus/params.h>
+#include <llmq/params.h>
 #include <primitives/block.h>
 #include <protocol.h>
 
@@ -141,6 +142,8 @@ protected:
     int64_t nStakeMinAge;
     // POS V2
     uint32_t nFirstPoSv2Block;
+
+    void AddLLMQ(Consensus::LLMQType llmqType);
 };
 
 /**
