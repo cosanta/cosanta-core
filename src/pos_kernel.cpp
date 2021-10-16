@@ -111,10 +111,10 @@ static bool SelectBlockFromCandidates(
             break;
         }
 
-        if (!mapBlockIndex.count(iter->second))
+        if (!::BlockIndex().count(iter->second))
             return error("SelectBlockFromCandidates: failed to find block index for candidate block %s", iter->second.ToString().c_str());
 
-        const CBlockIndex* pindex = mapBlockIndex[iter->second];
+        const CBlockIndex* pindex = ::BlockIndex()[iter->second];
         if (fSelected && pindex->GetBlockTime() > nSelectionIntervalStop) {
             // No point to re-consider the blocks
             vSortedByTimestamp.erase(vSortedByTimestamp.begin(), iter+1);
@@ -525,9 +525,9 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
     CBlockIndex* pindex_prev = nullptr;
 
     if (!GetTransaction(prevout.hash, txinPrevRef, consensus, txinHashBlock)) {
-        BlockMap::iterator it = mapBlockIndex.find(header.hashPrevBlock);
+        BlockMap::iterator it = ::BlockIndex().find(header.hashPrevBlock);
         
-        if ((it != mapBlockIndex.end()) && ::ChainActive().Contains(it->second)) {
+        if ((it != ::BlockIndex().end()) && ::ChainActive().Contains(it->second)) {
             return state.DoS(100, false, REJECT_INVALID, "bad-unkown-stake");
         } else {
             // We do not have the previous block, so the block may be valid
@@ -537,14 +537,14 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
 
     // Check tx input block is known
     {
-        BlockMap::iterator it = mapBlockIndex.find(txinHashBlock);
+        BlockMap::iterator it = ::BlockIndex().find(txinHashBlock);
 
-        if ((it != mapBlockIndex.end()) && ::ChainActive().Contains(it->second)) {
+        if ((it != ::BlockIndex().end()) && ::ChainActive().Contains(it->second)) {
             pindex_tx = it->second;
         } else {
-            it = mapBlockIndex.find(header.hashPrevBlock);
+            it = ::BlockIndex().find(header.hashPrevBlock);
             
-            if ((it != mapBlockIndex.end()) && ::ChainActive().Contains(it->second)) {
+            if ((it != ::BlockIndex().end()) && ::ChainActive().Contains(it->second)) {
                 return state.DoS(100, false, REJECT_INVALID, "bad-stake-mempool",
                                  false, "stake from mempool");
             } else {
@@ -556,10 +556,10 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
 
     // Header-only chain specific validation
     {
-        BlockMap::iterator it = mapBlockIndex.find(header.hashPrevBlock);
+        BlockMap::iterator it = ::BlockIndex().find(header.hashPrevBlock);
 
         // It must never happen as it's part of header validation.
-        if (it == mapBlockIndex.end()) {
+        if (it == ::BlockIndex().end()) {
             return state.DoS(100, false, REJECT_INVALID, "bad-prev-header",
                                 false, "previous PoS header is not known");
         }

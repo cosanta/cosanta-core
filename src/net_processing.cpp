@@ -1910,8 +1910,8 @@ bool static ProcessHeadersMessage(CNode *pfrom, CConnman *connman, std::deque<CB
             return true;
         }
 
-        auto prev_iter = mapBlockIndex.find(headers[0].hashPrevBlock);
-        pindexPrev = (prev_iter == mapBlockIndex.end()) ? nullptr : prev_iter->second;
+        auto prev_iter = ::BlockIndex().find(headers[0].hashPrevBlock);
+        pindexPrev = (prev_iter == ::BlockIndex().end()) ? nullptr : prev_iter->second;
 
         // If this looks like it could be a block announcement (nCount <
         // MAX_BLOCKS_TO_ANNOUNCE), use special logic for handling headers that

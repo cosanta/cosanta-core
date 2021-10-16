@@ -3986,8 +3986,8 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
                  __func__, pWalletTxIn->hashBlock.ToString().c_str());
 
         // Read block header
-        BlockMap::iterator it = mapBlockIndex.find(pWalletTxIn->hashBlock);
-        if (it != mapBlockIndex.end())
+        BlockMap::iterator it = ::BlockIndex().find(pWalletTxIn->hashBlock);
+        if (it != ::BlockIndex().end())
             pcoin_index = it->second;
         else {
             LogPrintf("%s : failed to find block index for %s \n",
