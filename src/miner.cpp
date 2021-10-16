@@ -155,7 +155,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         LOCK2(cs_main, mempool.cs);
 
         nTime1 = GetTimeMicros();
-        pindexPrev = chainActive.Tip();
+        pindexPrev = ::ChainActive().Tip();
 
         // Common header
         //--------------
@@ -316,7 +316,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         LOCK(cs_main);
         CValidationState state;
 
-        if (pindexPrev != chainActive.Tip()) {
+        if (pindexPrev != ::ChainActive().Tip()) {
             LogPrint(BCLog::STAKING, "%s: the network has already found another block", __func__);
         }
 
@@ -626,7 +626,7 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
         }
 
         {
-            CBlockIndex* pindexPrev = chainActive.Tip();
+            CBlockIndex* pindexPrev = ::ChainActive().Tip();
             
             if (!pindexPrev) {
                 interrupt.sleep_for(std::chrono::seconds(1));
@@ -660,14 +660,14 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
             continue;
         }
 
-        if (last_height == chainActive.Height())
+        if (last_height == ::ChainActive().Height())
         {
             if ((GetTime() - hash_interval) < nLastCoinStakeSearchTime)
             {
                 continue;
             }
         } else {
-            last_height = chainActive.Height();
+            last_height = ::ChainActive().Height();
             start_block_time = 0;
         }
 

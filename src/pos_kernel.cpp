@@ -527,7 +527,7 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
     if (!GetTransaction(prevout.hash, txinPrevRef, consensus, txinHashBlock)) {
         BlockMap::iterator it = mapBlockIndex.find(header.hashPrevBlock);
         
-        if ((it != mapBlockIndex.end()) && chainActive.Contains(it->second)) {
+        if ((it != mapBlockIndex.end()) && ::ChainActive().Contains(it->second)) {
             return state.DoS(100, false, REJECT_INVALID, "bad-unkown-stake");
         } else {
             // We do not have the previous block, so the block may be valid
@@ -539,12 +539,12 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
     {
         BlockMap::iterator it = mapBlockIndex.find(txinHashBlock);
 
-        if ((it != mapBlockIndex.end()) && chainActive.Contains(it->second)) {
+        if ((it != mapBlockIndex.end()) && ::ChainActive().Contains(it->second)) {
             pindex_tx = it->second;
         } else {
             it = mapBlockIndex.find(header.hashPrevBlock);
             
-            if ((it != mapBlockIndex.end()) && chainActive.Contains(it->second)) {
+            if ((it != mapBlockIndex.end()) && ::ChainActive().Contains(it->second)) {
                 return state.DoS(100, false, REJECT_INVALID, "bad-stake-mempool",
                                  false, "stake from mempool");
             } else {
@@ -565,7 +565,7 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
         }
 
         pindex_prev = it->second;
-        const auto pindex_fork = chainActive.FindFork(pindex_prev);
+        const auto pindex_fork = ::ChainActive().FindFork(pindex_prev);
 
         // Just in case, it must never happen.
         if (!pindex_fork) {
@@ -597,7 +597,7 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
 
     // Check stake maturity (double checking with other functionality for DoS mitigation)
     if (txinPrevRef->IsCoinBase() &&
-        ((chainActive.Tip()->nHeight - pindex_tx->nHeight) <= COINBASE_MATURITY)
+        ((::ChainActive().Tip()->nHeight - pindex_tx->nHeight) <= COINBASE_MATURITY)
     ) {
         return state.DoS(100, false, REJECT_INVALID, "bad-stake-coinbase-maturity",
                             false, "coinbase maturity mismatch for stake");
