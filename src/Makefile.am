@@ -931,11 +931,8 @@ endif
 osx_debug: $(bin_PROGRAMS)
 	for i in $(bin_PROGRAMS); do mkdir -p $$i.dSYM/Contents/Resources/DWARF && $(DSYMUTIL_FLAT) -o $$i.dSYM/Contents/Resources/DWARF/$$(basename $$i) $$i &> /dev/null ; done
 
-if EMBEDDED_LEVELDB
 include Makefile.crc32c.include
 include Makefile.leveldb.include
-endif
-
 include Makefile.test_util.include
 
 if ENABLE_TESTS
