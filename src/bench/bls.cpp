@@ -9,18 +9,6 @@
 
 #include <iostream>
 
-CBLSWorker blsWorker;
-
-void InitBLSTests()
-{
-    blsWorker.Start();
-}
-
-void CleanupBLSTests()
-{
-    blsWorker.Stop();
-}
-
 static void BuildTestVectors(size_t count, size_t invalidCount,
                              BLSPublicKeyVector& pubKeys, BLSSecretKeyVector& secKeys, BLSSignatureVector& sigs,
                              std::vector<uint256>& msgHashes,
@@ -327,6 +315,9 @@ static void BLS_Verify_BatchedParallel(benchmark::Bench& bench)
         return cancel;
     };
 
+    CBLSWorker blsWorker;
+    blsWorker.Start();
+
     // Benchmark.
     bench.minEpochIterations(1000).run([&] {
         if (futures.size() < 100) {
@@ -358,6 +349,8 @@ static void BLS_Verify_BatchedParallel(benchmark::Bench& bench)
     {
         UninterruptibleSleep(std::chrono::milliseconds{100});
     }
+
+    blsWorker.Stop();
 }
 
 BENCHMARK(BLS_PubKeyAggregate_Normal)
