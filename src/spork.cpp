@@ -5,9 +5,11 @@
 #include <spork.h>
 
 #include <chainparams.h>
+#include <consensus/params.h>
 #include <key_io.h>
-#include <validation.h>
+#include <logging.h>
 #include <messagesigner.h>
+#include <net.h>
 #include <net_processing.h>
 #include <netmessagemaker.h>
 #include <primitives/block.h>
@@ -15,7 +17,7 @@
 #include <script/standard.h>
 #include <timedata.h>
 #include <util/ranges.h>
-#include <util/validation.h> // for strMessageMagic
+#include <validation.h>
 
 #include <string>
 

@@ -6,6 +6,7 @@
 
 #include <miner.h>
 #include <chain.h>
+#include <chainparams.h>
 #include <clientversion.h>
 #include <consensus/consensus.h>
 #include <core_io.h>

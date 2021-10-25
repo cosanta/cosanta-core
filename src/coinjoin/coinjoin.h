@@ -5,8 +5,6 @@
 #ifndef BITCOIN_COINJOIN_COINJOIN_H
 #define BITCOIN_COINJOIN_COINJOIN_H
 
-#include <chainparams.h>
-#include <core_io.h>
 #include <netaddress.h>
 #include <primitives/block.h>
 #include <primitives/transaction.h>
@@ -458,8 +456,8 @@ public:
     static std::string GetMessageByID(PoolMessage nMessageID);
 
     /// Get the minimum/maximum number of participants for the pool
-    static int GetMinPoolParticipants() { return Params().PoolMinParticipants(); }
-    static int GetMaxPoolParticipants() { return Params().PoolMaxParticipants(); }
+    static int GetMinPoolParticipants();
+    static int GetMaxPoolParticipants();
 
     static constexpr CAmount GetMaxPoolAmount() { return COINJOIN_ENTRY_MAX_SIZE * vecStandardDenominations.front(); }
 

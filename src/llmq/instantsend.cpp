@@ -2,9 +2,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include <llmq/instantsend.h>
+
 #include <llmq/chainlocks.h>
 #include <llmq/quorums.h>
-#include <llmq/instantsend.h>
 #include <llmq/utils.h>
 #include <llmq/commitment.h>
 
@@ -21,8 +22,6 @@
 #include <util/validation.h>
 
 #include <cxxtimer.hpp>
-
-#include <boost/algorithm/string/replace.hpp>
 
 namespace llmq
 {
