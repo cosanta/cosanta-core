@@ -15,7 +15,7 @@
 #include <qt/test/uritests.h>
 #include <qt/test/compattests.h>
 #include <qt/test/trafficgraphdatatests.h>
-#include <test/test_dash.h>
+#include <test/setup_common.h>
 
 #ifdef ENABLE_WALLET
 #include <qt/test/addressbooktests.h>
