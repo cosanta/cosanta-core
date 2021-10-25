@@ -1651,6 +1651,7 @@ static UniValue listsinceblock(const JSONRPCRequest& request)
     pwallet->BlockUntilSyncedToCurrentChain();
 
     auto locked_chain = pwallet->chain().lock();
+    LockAnnotation lock(::cs_main);
     LOCK(pwallet->cs_wallet);
 
     const CBlockIndex* pindex = nullptr;    // Block index of the specified block or the common ancestor, if the block provided was in a deactivated chain.
@@ -1663,6 +1664,7 @@ static UniValue listsinceblock(const JSONRPCRequest& request)
 
         blockId.SetHex(request.params[0].get_str());
         paltindex = pindex = LookupBlockIndex(blockId);
+
         if (!pindex) {
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found");
         }

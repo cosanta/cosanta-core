@@ -1306,7 +1306,8 @@ bool CWallet::AbandonTransaction(interfaces::Chain::Lock& locked_chain, const ui
 void CWallet::MarkConflicted(const uint256& hashBlock, const uint256& hashTx)
 {
     auto locked_chain = chain().lock();
-    LOCK(cs_wallet); // check "LOCK2(cs_main, pwallet->cs_wallet);" in WalletBatch::LoadWallet()
+    LockAnnotation lock(::cs_main);
+    LOCK(cs_wallet); // check WalletBatch::LoadWallet()
 
     int conflictconfirms = 0;
     CBlockIndex* pindex = LookupBlockIndex(hashBlock);
@@ -4241,6 +4242,7 @@ bool CWallet::CommitTransaction(CTransactionRef tx, mapValue_t mapValue, std::ve
 DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
 {
     auto locked_chain = chain().lock();
+    LockAnnotation lock(::cs_main);
     LOCK(cs_wallet);
 
     fFirstRunRet = false;
@@ -4955,6 +4957,7 @@ void CWallet::ListProTxCoins(std::vector<COutPoint>& vOutpts) const
 /** @} */ // end of Actions
 
 void CWallet::GetKeyBirthTimes(interfaces::Chain::Lock& locked_chain, std::map<CTxDestination, int64_t> &mapKeyBirth) const {
+    AssertLockHeld(::cs_main); // LookupBlockIndex
     AssertLockHeld(cs_wallet); // mapKeyMetadata
     mapKeyBirth.clear();
 
@@ -5028,6 +5031,7 @@ void CWallet::GetKeyBirthTimes(interfaces::Chain::Lock& locked_chain, std::map<C
  */
 unsigned int CWallet::ComputeTimeSmart(const CWalletTx& wtx) const
 {
+    AssertLockHeld(::cs_main);
     unsigned int nTimeSmart = wtx.nTimeReceived;
     if (!wtx.hashUnset()) {
         if (const CBlockIndex* pindex = LookupBlockIndex(wtx.hashBlock)) {
