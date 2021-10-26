@@ -132,7 +132,7 @@ public:
     void StopThread();
 
 private:
-    bool InitNewQuorum(const CBlockIndex* pindexQuorum);
+    bool InitNewQuorum(const CBlockIndex* pQuorumBaseBlockIndex);
 
     std::pair<QuorumPhase, uint256> GetPhaseAndQuorumHash() const;
 
