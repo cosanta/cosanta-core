@@ -189,9 +189,9 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
                         ? nMedianTimePast
                         : pblock->GetBlockTime();
         if (fDIP0003Active_context) {
-            for (const Consensus::LLMQType& type : llmq::CLLMQUtils::GetEnabledQuorumTypes(pindexPrev)) {
+            for (const Consensus::LLMQParams& params : llmq::CLLMQUtils::GetEnabledQuorumParams(pindexPrev)) {
                 CTransactionRef qcTx;
-                if (llmq::quorumBlockProcessor->GetMineableCommitmentTx(type,
+                if (llmq::quorumBlockProcessor->GetMineableCommitmentTx(params,
                                                                         nHeight,
                                                                         qcTx)) {
                 
