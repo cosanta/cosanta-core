@@ -146,3 +146,7 @@ cmake-build-debug
 
 # clang-check
 *.plist
+
+osx_volname
+dist/
+*.background.tiff
