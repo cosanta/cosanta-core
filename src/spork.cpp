@@ -17,7 +17,7 @@
 #include <script/standard.h>
 #include <timedata.h>
 #include <util/ranges.h>
-#include <validation.h>
+#include <util/validation.h> // for strMessageMagic
 
 #include <string>
 

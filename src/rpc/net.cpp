@@ -15,6 +15,7 @@
 #include <net_types.h> // For banmap_t
 #include <netbase.h>
 #include <policy/policy.h>
+#include <policy/settings.h>
 #include <rpc/protocol.h>
 #include <rpc/util.h>
 #include <sync.h>

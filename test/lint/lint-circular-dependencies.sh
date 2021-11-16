@@ -12,6 +12,7 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "chainparamsbase -> util/system -> chainparamsbase"
     "index/txindex -> validation -> index/txindex"
     "policy/fees -> txmempool -> policy/fees"
+    "policy/policy -> policy/settings -> policy/policy"
     "qt/addresstablemodel -> qt/walletmodel -> qt/addresstablemodel"
     "qt/bantablemodel -> qt/clientmodel -> qt/bantablemodel"
     "qt/bitcoingui -> qt/utilitydialog -> qt/bitcoingui"
@@ -26,6 +27,9 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "wallet/fees -> wallet/wallet -> wallet/fees"
     "wallet/wallet -> wallet/walletdb -> wallet/wallet"
     "wallet/coincontrol -> wallet/wallet -> wallet/coincontrol"
+    "policy/fees -> policy/policy -> validation -> policy/fees"
+    "policy/policy -> validation -> policy/policy"
+    "qt/addressbookpage -> qt/bitcoingui -> qt/walletview -> qt/addressbookpage"
     "txmempool -> validation -> validationinterface -> txmempool"
     "wallet/ismine -> wallet/wallet -> wallet/ismine"
     # Dash
