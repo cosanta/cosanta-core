@@ -65,6 +65,10 @@ For linux RISC-V 64-bit cross compilation (there are no packages for 32-bit):
 RISC-V known issue: gcc-7.3.0 and gcc-7.3.1 result in a broken `test_dash` executable (see https://github.com/bitcoin/bitcoin/pull/13543),
 this is apparently fixed in gcc-8.1.0.
 
+For linux S390X cross compilation:
+
+    sudo apt-get install g++-s390x-linux-gnu binutils-s390x-linux-gnu
+
 ### Dependency Options
 The following can be set when running make: `make FOO=bar`
 
