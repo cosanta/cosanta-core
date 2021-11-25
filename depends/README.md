@@ -48,7 +48,7 @@ The paths are automatically configured and no other options are needed unless ta
 
 Common linux dependencies:
 
-    sudo apt-get install make automake cmake curl g++-multilib libtool binutils-gold bsdmainutils pkg-config python3
+    sudo apt-get install make automake cmake curl g++-multilib libtool binutils-gold bsdmainutils pkg-config python3 patch bison
 
 For linux ARM cross compilation:
 
