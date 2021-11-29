@@ -112,7 +112,7 @@ private:
     int currentHeight GUARDED_BY(cs) {-1};
     uint256 quorumHash GUARDED_BY(cs);
 
-    std::shared_ptr<CDKGSession> curSession;
+    std::unique_ptr<CDKGSession> curSession;
     std::thread phaseHandlerThread;
 
     CDKGPendingMessages pendingContributions GUARDED_BY(cs);
