@@ -7,7 +7,6 @@
 #include <config/cosanta-config.h>
 #endif
 
-#include <chainparams.h>
 #include <interfaces/node.h>
 #include <qt/cosanta.h>
 #include <qt/test/apptests.h>

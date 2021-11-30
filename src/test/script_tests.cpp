@@ -13,12 +13,12 @@
 #include <util/system.h>
 #include <util/strencodings.h>
 #include <test/setup_common.h>
+#include <streams.h>
 
 #if defined(HAVE_CONSENSUS_LIB)
 #include <script/cosantaconsensus.h>
 #endif
 
-#include <fstream>
 #include <stdint.h>
 #include <string>
 #include <vector>
