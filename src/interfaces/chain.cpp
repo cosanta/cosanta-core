@@ -354,7 +354,11 @@ public:
     CFeeRate relayMinFee() override { return ::minRelayTxFee; }
     CFeeRate relayIncrementalFee() override { return ::incrementalRelayFee; }
     CFeeRate relayDustFee() override { return ::dustRelayFee; }
-    bool getPruneMode() override { return ::fPruneMode; }
+    bool havePruned() override
+    {
+        LOCK(cs_main);
+        return ::fHavePruned;
+    }
     bool p2pEnabled() override { return g_connman != nullptr; }
     bool isReadyToBroadcast() override { return !::fImporting && !::fReindex && !::ChainstateActive().IsInitialBlockDownload(); }
     bool isInitialBlockDownload() override { return ::ChainstateActive().IsInitialBlockDownload(); }
