@@ -82,16 +82,8 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "llmq/chainlocks -> validation -> llmq/chainlocks"
     "coinjoin/coinjoin -> llmq/chainlocks -> net -> coinjoin/coinjoin"
     "evo/deterministicmns -> llmq/utils -> net -> evo/deterministicmns"
-    "policy/fees -> txmempool -> validation -> policy/fees"
-    "policy/policy -> policy/settings -> policy/policy"
-    "evo/specialtxman -> validation -> evo/specialtxman"
-    "bloom -> llmq/commitment -> llmq/utils -> net -> bloom"
-
-    "evo/simplifiedmns -> llmq/blockprocessor -> net_processing -> llmq/snapshot -> evo/simplifiedmns"
-    "llmq/blockprocessor -> net_processing -> llmq/snapshot -> llmq/blockprocessor"
-    "llmq/dkgsession -> llmq/dkgsessionmgr -> llmq/quorums -> llmq/dkgsession"
-    "llmq/dkgsessionmgr -> llmq/quorums -> llmq/dkgsessionmgr"
-    "llmq/snapshot -> llmq/utils -> llmq/snapshot"
+    "evo/deterministicmns -> llmq/utils -> net -> masternode/sync -> evo/deterministicmns"
+    "evo/mnhftx -> evo/specialtx -> evo/mnhftx"
 )
 
 EXIT_CODE=0
