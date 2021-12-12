@@ -77,7 +77,7 @@ TransactionError BroadcastTransaction(const CTransactionRef tx, std::string& err
     }
 
     if (relay) {
-        g_connman->RelayTransaction(*tx);
+        RelayTransaction(hashTx, *g_connman);
     }
 
     return TransactionError::OK;
