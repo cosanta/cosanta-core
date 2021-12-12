@@ -66,15 +66,6 @@ class WalletTest(BitcoinTestFramework):
         assert_equal(self.nodes[1].getbalance(), 500)
         assert_equal(self.nodes[2].getbalance(), 0)
 
-        # Check getbalance with different arguments
-        assert_equal(self.nodes[0].getbalance("*"), 500)
-        assert_equal(self.nodes[0].getbalance("*", 1), 500)
-        assert_equal(self.nodes[0].getbalance("*", 1, True), 500)
-        assert_equal(self.nodes[0].getbalance(minconf=1), 500)
-
-        # first argument of getbalance must be excluded or set to "*"
-        assert_raises_rpc_error(-32, "dummy first argument must be excluded or set to \"*\"", self.nodes[0].getbalance, "")
-
         # Check that only first and second nodes have UTXOs
         utxos = self.nodes[0].listunspent()
         assert_equal(len(utxos), 1)
@@ -225,7 +216,13 @@ class WalletTest(BitcoinTestFramework):
 
         self.start_node(3)
         connect_nodes_bi(self.nodes, 0, 3)
-        self.sync_all()
+        self.sync_blocks()
+
+        relayed = self.nodes[0].resendwallettransactions()
+        assert_equal(set(relayed), {txid1, txid2})
+        self.sync_mempools()
+
+        assert txid1 in self.nodes[3].getrawmempool()
 
         # check if we can list zero value tx as available coins
         # 1. create raw_tx
