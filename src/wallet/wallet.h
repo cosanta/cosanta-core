@@ -574,7 +574,7 @@ public:
     }
 };
 
-/** Private key that includes an expiration date in case it never gets used. */
+// TODO: Back compatibility for PirateCash wallet (need remove after fork 1f61b27399c815ea89ebc7b379283921815a800c )
 class CWalletKey
 {
 public:
