@@ -2342,13 +2342,11 @@ CWallet::ScanResult CWallet::ScanForWalletTransactions(const uint256& start_bloc
     return result;
 }
 
-void CWallet::ReacceptWalletTransactions()
+void CWallet::ReacceptWalletTransactions(interfaces::Chain::Lock& locked_chain)
 {
     // If transactions aren't being broadcasted, don't let them into local mempool either
     if (!fBroadcastTransactions)
         return;
-    auto locked_chain = chain().lock();
-    LOCK2(mempool.cs, cs_wallet);
     std::map<int64_t, CWalletTx*> mapSorted;
 
     // Sort pending wallet transactions based on their initial wallet insertion order
@@ -2357,7 +2355,7 @@ void CWallet::ReacceptWalletTransactions()
         CWalletTx& wtx = item.second;
         assert(wtx.GetHash() == wtxid);
 
-        int nDepth = wtx.GetDepthInMainChain(*locked_chain);
+        int nDepth = wtx.GetDepthInMainChain(locked_chain);
 
         if (!wtx.IsCoinBase() && !wtx.IsCoinStake() && (nDepth == 0 && !wtx.IsLockedByInstantSend() && !wtx.isAbandoned())) {
             mapSorted.insert(std::make_pair(wtx.nOrderPos, &wtx));
@@ -2368,7 +2366,7 @@ void CWallet::ReacceptWalletTransactions()
     for (const std::pair<const int64_t, CWalletTx*>& item : mapSorted) {
         CWalletTx& wtx = *(item.second);
         std::string unused_err_string;
-        wtx.SubmitMemoryPoolAndRelay(unused_err_string, false, *locked_chain);
+        wtx.SubmitMemoryPoolAndRelay(unused_err_string, false, locked_chain);
     }
 }
 
@@ -2673,9 +2671,9 @@ void CWallet::ResendWalletTransactions()
 
     int submitted_tx_count = 0;
 
-    { // locked_chain, mempool.cs and cs_wallet scope
+    { // locked_chain and cs_wallet scope
         auto locked_chain = chain().lock();
-        LOCK2(mempool.cs, cs_wallet);
+        LOCK(cs_wallet);
 
         // Relay transactions
         for (std::pair<const uint256, CWalletTx>& item : mapWallet) {
@@ -2686,7 +2684,7 @@ void CWallet::ResendWalletTransactions()
             std::string unused_err_string;
             if (wtx.SubmitMemoryPoolAndRelay(unused_err_string, true, *locked_chain)) ++submitted_tx_count;
         }
-    } // locked_chain, mempool.cs and cs_wallet
+    } // locked_chain and cs_wallet
 
     if (submitted_tx_count > 0) {
         WalletLogPrintf("%s: resubmit %u unconfirmed transactions\n", __func__, submitted_tx_count);
@@ -3236,7 +3234,7 @@ bool CWallet::FundTransaction(CMutableTransaction& tx, CAmount& nFeeRet, int& nC
     // Acquire the locks to prevent races to the new locked unspents between the
     // CreateTransaction call and LockCoin calls (when lockUnspents is true).
     auto locked_chain = chain().lock();
-    LOCK2(mempool.cs, cs_wallet);
+    LOCK(cs_wallet);
 
     int nExtraPayloadSize = 0;
     if (tx.nVersion == 3 && tx.nType != TRANSACTION_NORMAL)
@@ -3751,7 +3749,7 @@ bool CWallet::CreateTransaction(interfaces::Chain::Lock& locked_chain, const std
     {
         std::vector<CInputCoin> vecCoins;
         auto locked_chain = chain().lock();
-        LOCK2(mempool.cs, cs_wallet);
+        LOCK(cs_wallet);
         {
             CAmount nAmountAvailable{0};
             std::vector<COutput> vAvailableCoins;
@@ -4343,7 +4341,7 @@ bool CWallet::CommitTransaction(CTransactionRef tx, mapValue_t mapValue, std::ve
 {
     {
         auto locked_chain = chain().lock();
-        LOCK2(mempool.cs, cs_wallet);
+        LOCK(cs_wallet);
 
         CWalletTx wtxNew(this, std::move(tx));
         wtxNew.mapValue = std::move(mapValue);
@@ -5701,9 +5699,15 @@ std::shared_ptr<CWallet> CWallet::CreateWalletFromFile(interfaces::Chain& chain,
 
 void CWallet::postInitProcess()
 {
+    auto locked_chain = chain().lock();
+    LOCK(cs_wallet);
+
     // Add wallet transactions that aren't already in a block to mempool
     // Do this here as mempool requires genesis block to be loaded
-    ReacceptWalletTransactions();
+    ReacceptWalletTransactions(*locked_chain);
+
+    // Update wallet transactions with current mempool transactions.
+    chain().requestMempoolTransactions(*this);
 }
 
 bool CWallet::InitAutoBackup()

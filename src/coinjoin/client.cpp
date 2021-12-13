@@ -15,7 +15,7 @@
 #include <netmessagemaker.h>
 #include <script/sign.h>
 #include <shutdown.h>
-#include <txmempool.h>
+#include <util/moneystr.h>
 #include <util/ranges.h>
 #include <util/moneystr.h>
 #include <util/system.h>
@@ -514,7 +514,7 @@ bool CCoinJoinClientSession::SignFinalTransaction(const CTransaction& finalTrans
     if (!mixingMasternode) return false;
 
     LOCK(cs_main);
-    LOCK2(mempool.cs, mixingWallet.cs_wallet);
+    LOCK(mixingWallet.cs_wallet);
     LOCK(cs_coinjoin);
 
     finalMutableTransaction = CMutableTransaction{finalTransactionNew};
@@ -738,8 +738,7 @@ bool CCoinJoinClientSession::DoAutomaticDenominating(CConnman& connman, bool fDr
     CAmount nBalanceNeedsAnonymized;
 
     {
-        LOCK2(cs_main, mempool.cs);
-        LOCK(mixingWallet.cs_wallet);
+        LOCK2(cs_main, mixingWallet.cs_wallet);
 
         if (!fDryRun && mixingWallet.IsLocked(true)) {
             strAutoDenomResult = _("Wallet is locked.");
@@ -1197,8 +1196,7 @@ bool CCoinJoinClientManager::MarkAlreadyJoinedQueueAsTried(CCoinJoinQueue& dsq) 
 
 bool CCoinJoinClientSession::SubmitDenominate(CConnman& connman)
 {
-    LOCK2(cs_main, mempool.cs);
-    LOCK(mixingWallet.cs_wallet);
+    LOCK2(cs_main, mixingWallet.cs_wallet);
 
     std::string strError;
     std::vector<CTxDSIn> vecTxDSIn;
@@ -1341,8 +1339,7 @@ bool CCoinJoinClientSession::MakeCollateralAmounts()
 {
     if (!CCoinJoinClientOptions::IsEnabled()) return false;
 
-    LOCK2(cs_main, mempool.cs);
-    LOCK(mixingWallet.cs_wallet);
+    LOCK2(cs_main, mixingWallet.cs_wallet);
 
     // NOTE: We do not allow txes larger than 100 kB, so we have to limit number of inputs here.
     // We still want to consume a lot of inputs to avoid creating only smaller denoms though.
@@ -1380,7 +1377,6 @@ bool CCoinJoinClientSession::MakeCollateralAmounts()
 bool CCoinJoinClientSession::MakeCollateralAmounts(const CompactTallyItem& tallyItem, bool fTryDenominated)
 {
     AssertLockHeld(cs_main);
-    AssertLockHeld(mempool.cs);
     AssertLockHeld(mixingWallet.cs_wallet);
 
     if (!CCoinJoinClientOptions::IsEnabled()) return false;
@@ -1526,8 +1522,7 @@ bool CCoinJoinClientSession::CreateDenominated(CAmount nBalanceToDenominate)
 {
     if (!CCoinJoinClientOptions::IsEnabled()) return false;
 
-    LOCK2(cs_main, mempool.cs);
-    LOCK(mixingWallet.cs_wallet);
+    LOCK2(cs_main, mixingWallet.cs_wallet);
 
     // NOTE: We do not allow txes larger than 100 kB, so we have to limit number of inputs here.
     // We still want to consume a lot of inputs to avoid creating only smaller denoms though.
@@ -1559,7 +1554,6 @@ bool CCoinJoinClientSession::CreateDenominated(CAmount nBalanceToDenominate)
 bool CCoinJoinClientSession::CreateDenominated(CAmount nBalanceToDenominate, const CompactTallyItem& tallyItem, bool fCreateMixingCollaterals)
 {
     AssertLockHeld(cs_main);
-    AssertLockHeld(mempool.cs);
     AssertLockHeld(mixingWallet.cs_wallet);
 
     if (!CCoinJoinClientOptions::IsEnabled()) return false;
