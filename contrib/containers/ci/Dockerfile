@@ -69,6 +69,7 @@ RUN mkdir /cosanta-src && \
   chown $USER_ID:$GROUP_ID /cosanta-src && \
   chown $USER_ID:$GROUP_ID /cache && \
   chown $USER_ID:$GROUP_ID /cache -R
+
 WORKDIR /cosanta-src
 
 USER cosanta
