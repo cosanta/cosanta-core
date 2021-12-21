@@ -10,6 +10,12 @@
 #include <messagesigner.h>
 #include <net_processing.h>
 #include <netmessagemaker.h>
+#include <primitives/block.h>
+#include <protocol.h>
+#include <script/standard.h>
+#include <timedata.h>
+#include <util/ranges.h>
+#include <util/validation.h> // for strMessageMagic
 
 #include <string>
 
@@ -230,22 +236,21 @@ int64_t CSporkManager::GetSporkValue(SporkId nSporkID) const
         return nSporkValue;
     }
 
-    for (const auto& sporkDef : sporkDefs) {
-        if (sporkDef.sporkId == nSporkID) {
-            return sporkDef.defaultValue;
-        }
-    }
 
-    LogPrint(BCLog::SPORK, "CSporkManager::GetSporkValue -- Unknown Spork ID %d\n", nSporkID);
-    return -1;
+    if (auto optSpork = ranges::find_if_opt(sporkDefs,
+                                            [&nSporkID](const auto& sporkDef){return sporkDef.sporkId == nSporkID;})) {
+        return optSpork->defaultValue;
+    } else {
+        LogPrint(BCLog::SPORK, "CSporkManager::GetSporkValue -- Unknown Spork ID %d\n", nSporkID);
+        return -1;
+    }
 }
 
 SporkId CSporkManager::GetSporkIDByName(const std::string& strName)
 {
-    for (const auto& sporkDef : sporkDefs) {
-        if (sporkDef.name == strName) {
-            return sporkDef.sporkId;
-        }
+    if (auto optSpork = ranges::find_if_opt(sporkDefs,
+                                            [&strName](const auto& sporkDef){return sporkDef.name == strName;})) {
+        return optSpork->sporkId;
     }
 
     LogPrint(BCLog::SPORK, "CSporkManager::GetSporkIDByName -- Unknown Spork name '%s'\n", strName);
