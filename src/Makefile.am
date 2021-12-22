@@ -201,7 +201,6 @@ BITCOIN_CORE_H = \
   interfaces/wallet.h \
   key.h \
   key_io.h \
-  keepass.h \
   keystore.h \
   dbwrapper.h \
   limitedmap.h \
@@ -464,7 +463,6 @@ libcosanta_wallet_a_SOURCES = \
   coinjoin/util.cpp \
   interfaces/wallet.cpp \
   pos_kernel.cpp \
-  keepass.cpp \
   wallet/coincontrol.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \

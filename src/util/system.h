@@ -139,7 +139,6 @@ enum class OptionsCategory {
     WALLET,
     WALLET_FEE,
     WALLET_HD,
-    WALLET_KEEPASS,
     WALLET_COINJOIN,
     WALLET_DEBUG_TEST,
     ZMQ,
