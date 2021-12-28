@@ -55,7 +55,7 @@ private:
     }
 
 public:
-    DKG(int quorumSize)
+    explicit DKG(int quorumSize)
     {
         members.reserve(quorumSize);
         ids.reserve(quorumSize);
