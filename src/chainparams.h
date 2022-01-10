@@ -108,6 +108,9 @@ public:
     bool BIP9CheckMasternodesUpgraded() const { return fBIP9CheckMasternodesUpgraded; }
     int64_t MinStakeAge() const { return nStakeMinAge; }
     uint32_t FirstPoSv2Block() const { return nFirstPoSv2Block; }
+    const Consensus::LLMQParams& GetLLMQ(Consensus::LLMQType llmqType) const;
+    bool HasLLMQ(Consensus::LLMQType llmqType) const;
+
 protected:
     CChainParams() {}
 

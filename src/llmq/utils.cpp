@@ -340,9 +340,9 @@ std::vector<Consensus::LLMQType> CLLMQUtils::GetEnabledQuorumTypes(const CBlockI
 {
     std::vector<Consensus::LLMQType> ret;
     ret.reserve(Params().GetConsensus().llmqs.size());
-    for (const auto& [type, _] : Params().GetConsensus().llmqs) {
-        if (IsQuorumTypeEnabled(type, pindex)) {
-            ret.push_back(type);
+    for (const auto& params : Params().GetConsensus().llmqs) {
+        if (IsQuorumTypeEnabled(params.type, pindex)) {
+            ret.push_back(params.type);
         }
     }
     return ret;
@@ -352,11 +352,10 @@ std::vector<std::reference_wrapper<const Consensus::LLMQParams>> CLLMQUtils::Get
 {
     std::vector<std::reference_wrapper<const Consensus::LLMQParams>> ret;
     ret.reserve(Params().GetConsensus().llmqs.size());
-    for (const auto& [type, params] : Params().GetConsensus().llmqs) {
-        if (IsQuorumTypeEnabled(type, pindex)) {
-            ret.emplace_back(params);
-        }
-    }
+
+    std::copy_if(Params().GetConsensus().llmqs.begin(), Params().GetConsensus().llmqs.end(), std::back_inserter(ret),
+                 [&pindex](const auto& params){return IsQuorumTypeEnabled(params.type, pindex);});
+
     return ret;
 }
 
@@ -387,8 +386,8 @@ std::map<Consensus::LLMQType, QvvecSyncMode> CLLMQUtils::GetEnabledQuorumVvecSyn
         }
 
         if (auto optLLMQParams = ranges::find_if_opt(Params().GetConsensus().llmqs,
-                                                     [&strLLMQType](const auto& p){return p.second.name == strLLMQType;})) {
-            llmqType = optLLMQParams->first;
+                                                     [&strLLMQType](const auto& params){return params.name == strLLMQType;})) {
+            llmqType = optLLMQParams->type;
         } else {
             throw std::invalid_argument(strprintf("Invalid llmqType in -llmq-qvvec-sync: %s", strEntry));
         }
@@ -422,8 +421,8 @@ template <typename CacheType>
 void CLLMQUtils::InitQuorumsCache(CacheType& cache)
 {
     for (auto& llmq : Params().GetConsensus().llmqs) {
-        cache.emplace(std::piecewise_construct, std::forward_as_tuple(llmq.first),
-                      std::forward_as_tuple(llmq.second.signingActiveQuorumCount + 1));
+        cache.emplace(std::piecewise_construct, std::forward_as_tuple(llmq.type),
+                      std::forward_as_tuple(llmq.signingActiveQuorumCount + 1));
     }
 }
 template void CLLMQUtils::InitQuorumsCache<std::map<Consensus::LLMQType, unordered_lru_cache<uint256, bool, StaticSaltedHasher>>>(std::map<Consensus::LLMQType, unordered_lru_cache<uint256, bool, StaticSaltedHasher>>& cache);
@@ -432,7 +431,7 @@ template void CLLMQUtils::InitQuorumsCache<std::map<Consensus::LLMQType, unorder
 
 const Consensus::LLMQParams& GetLLMQParams(Consensus::LLMQType llmqType)
 {
-    return Params().GetConsensus().llmqs.at(llmqType);
+    return Params().GetLLMQ(llmqType);
 }
 
 } // namespace llmq
