@@ -58,7 +58,6 @@ BasicTestingSetup::BasicTestingSetup(const std::string& chainName)
     SetupNetworking();
     InitSignatureCache();
     InitScriptExecutionCache();
-    CCoinJoin::InitStandardDenominations();
     fCheckBlockIndex = true;
     // Make sure CreateAndProcessBlock() support building <deployment_name> blocks before activating it in these tests.
     //gArgs.ForceSetArg("-vbparams", strprintf("deployment_name:0:%d", (int64_t)Consensus::BIP9Deployment::NO_TIMEOUT));
