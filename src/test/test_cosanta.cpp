@@ -25,9 +25,11 @@
 
 #include <util/validation.h>
 
+#include <bls/bls.h>
 #include <coinjoin/coinjoin.h>
 #include <evo/specialtx.h>
 #include <evo/deterministicmns.h>
+#include <evo/evodb.h>
 #include <evo/cbtx.h>
 #include <llmq/init.h>
 

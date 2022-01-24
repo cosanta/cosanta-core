@@ -36,8 +36,6 @@
 #include <governance/governance.h>
 #include <masternode/sync.h>
 
-#include <evo/deterministicmns.h>
-
 #include <memory>
 #include <stdint.h>
 

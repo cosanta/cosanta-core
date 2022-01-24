@@ -31,6 +31,7 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     # Dash
     "coinjoin/server -> net_processing -> coinjoin/server"
     "evo/cbtx -> evo/simplifiedmns -> evo/cbtx"
+    "evo/deterministicmns -> evo/providertx -> evo/deterministicmns"
     "evo/deterministicmns -> evo/simplifiedmns -> evo/deterministicmns"
     "evo/deterministicmns -> llmq/commitment -> evo/deterministicmns"
     "evo/deterministicmns -> llmq/utils -> evo/deterministicmns"
@@ -80,11 +81,12 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "llmq/dkgsession -> llmq/dkgsessionmgr -> llmq/dkgsession"
     "evo/deterministicmns -> validationinterface -> txmempool -> evo/deterministicmns"
     "llmq/chainlocks -> llmq/instantsend -> validation -> llmq/chainlocks"
-    "evo/deterministicmns -> evo/simplifiedmns -> llmq/blockprocessor -> net_processing -> masternode/payments -> evo/deterministicmns"
-    "governance/governance -> net_processing -> masternode/payments -> governance/governance"
     "coinjoin/coinjoin -> llmq/chainlocks -> net -> coinjoin/coinjoin"
     "evo/deterministicmns -> llmq/utils -> net -> evo/deterministicmns"
-    "evo/deterministicmns -> llmq/utils -> net -> masternode/sync -> evo/deterministicmns"
+    "policy/fees -> txmempool -> validation -> policy/fees"
+    "policy/policy -> policy/settings -> policy/policy"
+    "evo/specialtxman -> validation -> evo/specialtxman"
+    "bloom -> llmq/commitment -> llmq/utils -> net -> bloom"
 )
 
 EXIT_CODE=0

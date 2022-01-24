@@ -49,8 +49,9 @@
 
 #include <masternode/payments.h>
 
+#include <evo/evodb.h>
 #include <evo/specialtx.h>
-#include <evo/deterministicmns.h>
+#include <evo/specialtxman.h>
 
 #include <llmq/instantsend.h>
 #include <llmq/chainlocks.h>

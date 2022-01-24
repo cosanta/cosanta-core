@@ -166,6 +166,7 @@ BITCOIN_CORE_H = \
   evo/providertx.h \
   evo/simplifiedmns.h \
   evo/specialtx.h \
+  evo/specialtxman.h \
   dsnotificationinterface.h \
   governance/governance.h \
   governance/classes.h \
@@ -351,6 +352,7 @@ libcosanta_server_a_SOURCES = \
   evo/providertx.cpp \
   evo/simplifiedmns.cpp \
   evo/specialtx.cpp \
+  evo/specialtxman.cpp \
   flatfile.cpp \
   httprpc.cpp \
   httpserver.cpp \

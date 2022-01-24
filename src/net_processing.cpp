@@ -40,7 +40,6 @@
 
 #include <spork.h>
 #include <governance/governance.h>
-#include <masternode/payments.h>
 #include <masternode/sync.h>
 #include <masternode/meta.h>
 #ifdef ENABLE_WALLET
