@@ -2166,7 +2166,9 @@ bool AppInitMain(InitInterfaces& interfaces)
                         break;
                     }
 
-                    ResetBlockFailureFlags(nullptr);
+                    if (gArgs.GetArg("-checklevel", DEFAULT_CHECKLEVEL) >= 3) {
+                        ResetBlockFailureFlags(nullptr);
+                    }
                 }
             } catch (const std::exception& e) {
                 LogPrintf("%s\n", e.what());

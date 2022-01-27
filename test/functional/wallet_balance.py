@@ -140,6 +140,52 @@ class WalletTest(BitcoinTestFramework):
         after = self.nodes[1].getunconfirmedbalance()
         assert_equal(before + Decimal('0.1'), after)
 
+        # Create 3 more wallet txs, where the last is not accepted to the
+        # mempool because it is the third descendant of the tx above
+        for _ in range(3):
+            # Set amount high enough such that all coins are spent by each tx
+            txid = self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), 999)
+
+        self.log.info('Check that wallet txs not in the mempool are untrusted')
+        assert txid not in self.nodes[0].getrawmempool()
+        assert_equal(self.nodes[0].gettransaction(txid)['trusted'], False)
+        assert_equal(self.nodes[0].getbalance(minconf=0), 0)
+
+        self.log.info("Test replacement and reorg of non-mempool tx")
+        tx_orig = self.nodes[0].gettransaction(txid)['hex']
+        # Increase fee by 1 coin
+        tx_replace = tx_orig.replace(
+            struct.pack("<q", 999 * 10**8).hex(),
+            struct.pack("<q", 998 * 10**8).hex(),
+        )
+        tx_replace = self.nodes[0].signrawtransactionwithwallet(tx_replace)['hex']
+        # Total balance is given by the sum of outputs of the tx
+        total_amount = sum([o['value'] for o in self.nodes[0].decoderawtransaction(tx_replace)['vout']])
+        self.sync_all()
+        self.nodes[1].sendrawtransaction(hexstring=tx_replace, maxfeerate=0)
+
+        # Now confirm tx_replace
+        block_reorg = self.nodes[1].generatetoaddress(1, ADDRESS_WATCHONLY)[0]
+        self.sync_all()
+        assert_equal(self.nodes[0].getbalance(minconf=0), total_amount)
+
+        self.log.info('Put txs back into mempool of node 1 (not node 0)')
+        self.nodes[0].invalidateblock(block_reorg)
+        self.nodes[1].invalidateblock(block_reorg)
+        assert_equal(self.nodes[0].getbalance(minconf=0), 0)  # wallet txs not in the mempool are untrusted
+        self.nodes[0].generatetoaddress(1, ADDRESS_WATCHONLY)
+        assert_equal(self.nodes[0].getbalance(minconf=0), 0)  # wallet txs not in the mempool are untrusted
+
+        # Now confirm tx_orig
+        self.restart_node(1, ['-persistmempool=0', '-checklevel=0'])
+        connect_nodes(self.nodes[0], 1)
+        connect_nodes(self.nodes[1], 0)
+        sync_blocks(self.nodes)
+        self.nodes[1].sendrawtransaction(tx_orig)
+        self.nodes[1].generatetoaddress(1, ADDRESS_WATCHONLY)
+        self.sync_all()
+        assert_equal(self.nodes[0].getbalance(minconf=0), total_amount + 1)  # The reorg recovered our fee of 1 coin
+
 
 if __name__ == '__main__':
     WalletTest().main()
