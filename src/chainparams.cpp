@@ -276,7 +276,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nThresholdMin = 2420; // 60% of 4032
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nFalloffCoeff = 5; // this corresponds to 10 periods
 
-        // Deployment of decreased proposal fee
+        // Deployment of decreased proposal fee, script addresses for Governance Proposals
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].bit = 7;
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].nStartTime = 1638316800; // Dec 1st, 2021
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].nTimeout = 1669852800; // Dec 1st, 2022
@@ -493,7 +493,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nThresholdMin = 60; // 60% of 100
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nFalloffCoeff = 5; // this corresponds to 10 periods
 
-        // Deployment of decreased proposal fee
+        // Deployment of decreased proposal fee, script addresses for Governance Proposals
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].bit = 7;
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].nStartTime = 999999999999ULL; // TODO renable this before first RC
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].nTimeout = 999999999999ULL;
@@ -698,7 +698,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nThresholdMin = 60; // 60% of 100
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nFalloffCoeff = 5; // this corresponds to 10 periods
 
-        // Deployment of decreased proposal fee
+        // Deployment of decreased proposal fee, script addresses for Governance Proposals
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].bit = 7;
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].nStartTime = 1635724800; // Nov 1st, 2021
         consensus.vDeployments[Consensus::DEPLOYMENT_GOV_FEE].nTimeout = 999999999999ULL;
