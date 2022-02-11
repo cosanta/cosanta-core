@@ -368,7 +368,7 @@ void UnloadWallets()
 void WalletInit::AutoLockMasternodeCollaterals() const
 {
     // we can't do this before DIP3 is fully initialized
-    for (const auto pwallet : GetWallets()) {
+    for (const auto& pwallet : GetWallets()) {
         pwallet->AutoLockMasternodeCollaterals();
     }
 }
