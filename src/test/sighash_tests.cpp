@@ -10,8 +10,7 @@
 #include <script/script.h>
 #include <serialize.h>
 #include <streams.h>
-#include <test/setup_common.h>
-#include <util/system.h>
+#include <test/util/setup_common.h>
 #include <util/strencodings.h>
 #include <version.h>
 

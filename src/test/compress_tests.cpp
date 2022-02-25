@@ -3,8 +3,8 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <compressor.h>
-#include <util/system.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
+#include <script/standard.h>
 
 #include <stdint.h>
 

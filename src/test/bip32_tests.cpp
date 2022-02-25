@@ -10,7 +10,7 @@
 #include <streams.h>
 #include <util/system.h>
 #include <util/strencodings.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 
 #include <string>
 #include <vector>

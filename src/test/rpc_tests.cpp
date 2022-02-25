@@ -9,9 +9,7 @@
 #include <core_io.h>
 #include <init.h>
 #include <interfaces/chain.h>
-#include <key_io.h>
-#include <netbase.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 #include <util/time.h>
 
 #include <boost/algorithm/string.hpp>

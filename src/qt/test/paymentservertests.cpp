@@ -14,6 +14,7 @@
 #include <script/script.h>
 #include <script/standard.h>
 #include <util/system.h>
+#include <test/util/setup_common.h>
 #include <util/strencodings.h>
 
 #if USE_OPENSSL

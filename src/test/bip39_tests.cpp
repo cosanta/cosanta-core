@@ -8,7 +8,7 @@
 #include <key_io.h>
 #include <util/system.h>
 #include <util/strencodings.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 #include <bip39.h>
 
 #include <boost/test/unit_test.hpp>

@@ -12,8 +12,9 @@
 #include <script/sign.h>
 #include <util/system.h>
 #include <util/strencodings.h>
-#include <test/setup_common.h>
-#include <test/lib/transaction_utils.h>
+#include <rpc/util.h>
+#include <test/util/setup_common.h>
+#include <test/util/transaction_utils.h>
 #include <streams.h>
 
 #if defined(HAVE_CONSENSUS_LIB)

@@ -12,6 +12,8 @@
 #include <qt/networkstyle.h>
 #include <qt/rpcconsole.h>
 #include <shutdown.h>
+#include <test/util/setup_common.h>
+#include <univalue.h>
 #include <validation.h>
 
 #if defined(HAVE_CONFIG_H)
