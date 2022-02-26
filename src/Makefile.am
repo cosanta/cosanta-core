@@ -224,6 +224,7 @@ BITCOIN_CORE_H = \
   llmq/params.h \
   logging.h \
   logging/timer.h \
+  mapport.h \
   masternode/node.h \
   masternode/meta.h \
   masternode/payments.h \
@@ -362,6 +363,7 @@ libcosanta_server_a_SOURCES = \
   coinjoin/options.cpp \
   coinjoin/server.cpp \
   consensus/tx_verify.cpp \
+  dbwrapper.cpp \
   dsnotificationinterface.cpp \
   evo/cbtx.cpp \
   evo/deterministicmns.cpp \
@@ -382,7 +384,6 @@ libcosanta_server_a_SOURCES = \
   interfaces/chain.cpp \
   interfaces/node.cpp \
   init.cpp \
-  dbwrapper.cpp \
   governance/governance.cpp \
   governance/classes.cpp \
   governance/object.cpp \
@@ -404,6 +405,7 @@ libcosanta_server_a_SOURCES = \
   llmq/signing.cpp \
   llmq/signing_shares.cpp \
   llmq/utils.cpp \
+  mapport.cpp \
   masternode/node.cpp \
   masternode/meta.cpp \
   masternode/payments.cpp \
@@ -756,7 +758,7 @@ cosantad_LDADD = \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-cosantad_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
+cosantad_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
 
 # cosanta-cli binary #
 cosanta_cli_SOURCES = dash-cli.cpp
@@ -825,7 +827,7 @@ cosanta_wallet_LDADD = \
   $(LIBSECP256K1) \
   $(LIBUNIVALUE)
 
-cosanta_wallet_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
+cosanta_wallet_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
 #
 
 # cosantaconsensus library #
