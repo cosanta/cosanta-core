@@ -150,11 +150,8 @@ static std::string LabelFromValue(const UniValue& value)
 UniValue getnewaddress(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 1)
         throw std::runtime_error(
@@ -204,11 +201,8 @@ UniValue getnewaddress(const JSONRPCRequest& request)
 static UniValue getrawchangeaddress(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 0)
         throw std::runtime_error(
@@ -251,11 +245,8 @@ static UniValue getrawchangeaddress(const JSONRPCRequest& request)
 static UniValue setlabel(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 2)
         throw std::runtime_error(
@@ -334,11 +325,8 @@ static CTransactionRef SendMoney(interfaces::Chain::Lock& locked_chain, CWallet 
 static UniValue sendtoaddress(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 9)
         throw std::runtime_error(
@@ -438,11 +426,8 @@ static UniValue instantsendtoaddress(const JSONRPCRequest& request)
 static UniValue listaddressgroupings(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 0)
         throw std::runtime_error(
@@ -501,9 +486,8 @@ static UniValue listaddressgroupings(const JSONRPCRequest& request)
 static UniValue listaddressbalances(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp))
-        return NullUniValue;
 
     if (request.fHelp || request.params.size() > 1)
         throw std::runtime_error(
@@ -548,11 +532,8 @@ static UniValue listaddressbalances(const JSONRPCRequest& request)
 static UniValue signmessage(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 2)
         throw std::runtime_error(
@@ -615,11 +596,8 @@ static UniValue signmessage(const JSONRPCRequest& request)
 static UniValue getreceivedbyaddress(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 3)
         throw std::runtime_error(
@@ -689,11 +667,8 @@ static UniValue getreceivedbyaddress(const JSONRPCRequest& request)
 static UniValue getreceivedbylabel(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 3)
         throw std::runtime_error(
@@ -760,11 +735,8 @@ static UniValue getreceivedbylabel(const JSONRPCRequest& request)
 static UniValue getbalance(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || (request.params.size() > 4))
         throw std::runtime_error(
@@ -827,11 +799,8 @@ static UniValue getbalance(const JSONRPCRequest& request)
 static UniValue getunconfirmedbalance(const JSONRPCRequest &request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 0)
         throw std::runtime_error(
@@ -856,11 +825,8 @@ static UniValue getunconfirmedbalance(const JSONRPCRequest &request)
 static UniValue sendmany(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     const RPCHelpMan help{"sendmany",
                 "\nSend multiple times. Amounts are double-precision floating point numbers." +
@@ -1002,11 +968,8 @@ static UniValue sendmany(const JSONRPCRequest& request)
 static UniValue addmultisigaddress(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 3)
     {
@@ -1241,11 +1204,8 @@ static UniValue ListReceived(interfaces::Chain::Lock& locked_chain, CWallet * co
 static UniValue listreceivedbyaddress(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 5)
         throw std::runtime_error(
@@ -1297,11 +1257,8 @@ static UniValue listreceivedbyaddress(const JSONRPCRequest& request)
 static UniValue listreceivedbylabel(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 4)
         throw std::runtime_error(
@@ -1439,11 +1396,8 @@ static void ListTransactions(interfaces::Chain::Lock& locked_chain, CWallet* con
 static UniValue listtransactions(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 4)
         throw std::runtime_error(
@@ -1565,11 +1519,8 @@ static UniValue listtransactions(const JSONRPCRequest& request)
 static UniValue listsinceblock(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 4)
         throw std::runtime_error(
@@ -1708,11 +1659,8 @@ static UniValue listsinceblock(const JSONRPCRequest& request)
 static UniValue gettransaction(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 2)
         throw std::runtime_error(
@@ -1807,11 +1755,8 @@ static UniValue gettransaction(const JSONRPCRequest& request)
 static UniValue abandontransaction(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 1) {
         throw std::runtime_error(
@@ -1856,11 +1801,8 @@ static UniValue abandontransaction(const JSONRPCRequest& request)
 static UniValue backupwallet(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -1895,11 +1837,8 @@ static UniValue backupwallet(const JSONRPCRequest& request)
 static UniValue keypoolrefill(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 1)
         throw std::runtime_error(
@@ -1945,11 +1884,8 @@ static UniValue keypoolrefill(const JSONRPCRequest& request)
 static UniValue walletpassphrase(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 3) {
         throw std::runtime_error(
@@ -2041,11 +1977,8 @@ static UniValue walletpassphrase(const JSONRPCRequest& request)
 static UniValue walletpassphrasechange(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 2) {
         throw std::runtime_error(
@@ -2096,11 +2029,8 @@ static UniValue walletpassphrasechange(const JSONRPCRequest& request)
 static UniValue walletlock(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 0) {
         throw std::runtime_error(
@@ -2140,11 +2070,8 @@ static UniValue walletlock(const JSONRPCRequest& request)
 static UniValue encryptwallet(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 1) {
         throw std::runtime_error(
@@ -2201,11 +2128,8 @@ static UniValue encryptwallet(const JSONRPCRequest& request)
 static UniValue lockunspent(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 2)
         throw std::runtime_error(
@@ -2334,11 +2258,8 @@ static UniValue lockunspent(const JSONRPCRequest& request)
 static UniValue listlockunspent(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 0)
         throw std::runtime_error(
@@ -2392,11 +2313,8 @@ static UniValue listlockunspent(const JSONRPCRequest& request)
 static UniValue settxfee(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 1) {
         throw std::runtime_error(
@@ -2435,9 +2353,8 @@ static UniValue settxfee(const JSONRPCRequest& request)
 static UniValue setcoinjoinrounds(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp))
-        return NullUniValue;
 
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -2468,9 +2385,8 @@ static UniValue setcoinjoinrounds(const JSONRPCRequest& request)
 static UniValue setcoinjoinamount(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp))
-        return NullUniValue;
 
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -2501,10 +2417,8 @@ static UniValue setcoinjoinamount(const JSONRPCRequest& request)
 static UniValue getwalletinfo(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 0)
         throw std::runtime_error(
@@ -2737,11 +2651,8 @@ static UniValue listwallets(const JSONRPCRequest& request)
 static UniValue upgradetohd(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp)
         throw std::runtime_error(
@@ -3000,11 +2911,8 @@ static UniValue unloadwallet(const JSONRPCRequest& request)
 static UniValue listunspent(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 5)
         throw std::runtime_error(
@@ -3311,11 +3219,8 @@ void FundTransaction(CWallet* const pwallet, CMutableTransaction& tx, CAmount& f
 static UniValue fundrawtransaction(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 3)
         throw std::runtime_error(
@@ -3399,11 +3304,8 @@ static UniValue fundrawtransaction(const JSONRPCRequest& request)
 UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 3)
         throw std::runtime_error(
@@ -3478,12 +3380,8 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)
 UniValue generate(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 2) {
         throw std::runtime_error(
@@ -3534,11 +3432,8 @@ UniValue generate(const JSONRPCRequest& request)
 static UniValue rescanblockchain(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 2) {
         throw std::runtime_error(
@@ -3690,11 +3585,8 @@ static UniValue AddressBookDataToJSON(const CAddressBookData& data, const bool v
 UniValue getaddressinfo(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 1) {
         throw std::runtime_error(
@@ -3820,11 +3712,8 @@ UniValue getaddressinfo(const JSONRPCRequest& request)
 static UniValue getaddressesbylabel(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -3881,11 +3770,8 @@ static UniValue getaddressesbylabel(const JSONRPCRequest& request)
 static UniValue listlabels(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() > 1)
         throw std::runtime_error(
@@ -3964,11 +3850,8 @@ void AddKeypathToMap(const CWallet* pwallet, const CKeyID& keyID, std::map<CPubK
 UniValue walletprocesspsbt(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 4)
         throw std::runtime_error(
@@ -4037,11 +3920,8 @@ UniValue walletprocesspsbt(const JSONRPCRequest& request)
 UniValue walletcreatefundedpsbt(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
     CWallet* const pwallet = wallet.get();
-
-    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
-        return NullUniValue;
-    }
 
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 5)
         throw std::runtime_error(
