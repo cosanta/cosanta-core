@@ -13,13 +13,13 @@
 #include <chainparams.h>
 #include <checkpoints.h>
 #include <coins.h>
-#include <node/coinstats.h>
 #include <core_io.h>
 #include <hash.h>
 #include <consensus/validation.h>
 #include <index/blockfilterindex.h>
-#include <key_io.h>
 #include <index/txindex.h>
+#include <key_io.h>
+#include <node/coinstats.h>
 #include <policy/feerate.h>
 #include <policy/policy.h>
 #include <primitives/transaction.h>
@@ -44,7 +44,6 @@
 #include <llmq/chainlocks.h>
 #include <llmq/instantsend.h>
 
-#include <assert.h>
 #include <stdint.h>
 
 #include <univalue.h>
