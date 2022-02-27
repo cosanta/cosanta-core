@@ -247,6 +247,10 @@ public:
     /** If the supplied number of args is neither too small nor too high */
     bool IsValidNumArgs(size_t num_args) const;
 
+    [[ noreturn ]] inline void Throw() const {
+        throw std::runtime_error(ToString());
+    }
+
 private:
     const std::string m_name;
     const std::string m_description;
