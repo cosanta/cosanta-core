@@ -27,6 +27,7 @@ KNOWN_VIOLATIONS=(
     "src/test/util/setup_common.cpp.*std::to_string"
     "src/test/util_tests.cpp.*std::to_string"
     "src/test/util_threadnames_tests.cpp.*std::to_string"
+    "src/test/fuzz/parse_numbers.cpp:.*atoi"
     "src/torcontrol.cpp:.*atoi"
     "src/torcontrol.cpp:.*strtol"
     "src/util/strencodings.cpp:.*atoi"
