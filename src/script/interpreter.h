@@ -17,6 +17,7 @@
 class CPubKey;
 class CScript;
 class CTransaction;
+class CTxOut;
 class uint256;
 
 /** Signature hash types/flags */
@@ -111,11 +112,12 @@ struct PrecomputedTransactionData
 {
     uint256 hashPrevouts, hashSequence, hashOutputs;
     bool m_ready = false;
+    std::vector<CTxOut> m_spent_outputs;
 
     PrecomputedTransactionData() = default;
 
     template <class T>
-    void Init(const T& tx);
+    void Init(const T& tx, std::vector<CTxOut>&& spent_outputs);
 
     template <class T>
     explicit PrecomputedTransactionData(const T& tx);
