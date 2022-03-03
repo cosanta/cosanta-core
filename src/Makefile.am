@@ -324,6 +324,7 @@ BITCOIN_CORE_H = \
   versionbits.h \
   versionbitsinfo.h \
   walletinitinterface.h \
+  wallet/bdb.h \
   wallet/coincontrol.h \
   wallet/crypter.h \
   wallet/db.h \
@@ -486,6 +487,7 @@ libcosanta_wallet_a_SOURCES = \
   coinjoin/util.cpp \
   interfaces/wallet.cpp \
   pos_kernel.cpp \
+  wallet/bdb.cpp \
   wallet/coincontrol.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \
