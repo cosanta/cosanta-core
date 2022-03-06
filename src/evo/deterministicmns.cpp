@@ -1194,7 +1194,6 @@ bool CDeterministicMNManager::UpgradeDBIfNeeded()
     return true;
 }
 
-// Seperate into new file?
 template <typename ProTx>
 static bool CheckService(const ProTx& proTx, CValidationState& state)
 {
