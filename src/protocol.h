@@ -316,6 +316,9 @@ extern const char *CLSIG;
 extern const char *ISLOCK;
 extern const char *ISDLOCK;
 extern const char *MNAUTH;
+extern const char *GETHEADERS2;
+extern const char *SENDHEADERS2;
+extern const char *HEADERS2;
 extern const char *GETQUORUMROTATIONINFO;
 extern const char *QUORUMROTATIONINFO;
 };
@@ -349,6 +352,8 @@ enum ServiceFlags : uint64_t {
     // serving the last 288 blocks
     // See BIP159 for details on how this is implemented.
     NODE_NETWORK_LIMITED = (1 << 10),
+    // description will be provided
+    NODE_HEADERS_COMPRESSED = (1 << 11),
 
     // Bits 24-31 are reserved for temporary experiments. Just pick a bit that
     // isn't getting used, or one not being used much, and notify the

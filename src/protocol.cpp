@@ -90,6 +90,9 @@ MAKE_MSG(CLSIG, "clsig");
 MAKE_MSG(ISLOCK, "islock");
 MAKE_MSG(ISDLOCK, "isdlock");
 MAKE_MSG(MNAUTH, "mnauth");
+MAKE_MSG(GETHEADERS2, "getheaders2");
+MAKE_MSG(SENDHEADERS2, "sendheaders2");
+MAKE_MSG(HEADERS2, "headers2");
 MAKE_MSG(GETQUORUMROTATIONINFO, "getqrinfo");
 MAKE_MSG(QUORUMROTATIONINFO, "qrinfo");
 }; // namespace NetMsgType
@@ -170,7 +173,9 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::ISLOCK,
     NetMsgType::ISDLOCK,
     NetMsgType::MNAUTH,
-};
+    NetMsgType::GETHEADERS2,
+    NetMsgType::SENDHEADERS2,
+    NetMsgType::HEADERS2};
 const static std::vector<std::string> allNetMessageTypesVec(allNetMessageTypes, allNetMessageTypes+ARRAYLEN(allNetMessageTypes));
 
 CMessageHeader::CMessageHeader(const MessageStartChars& pchMessageStartIn)
@@ -352,6 +357,7 @@ static std::string serviceFlagToStr(size_t bit)
     case NODE_XTHIN:           return "XTHIN";
     case NODE_COMPACT_FILTERS: return "COMPACT_FILTERS";
     case NODE_NETWORK_LIMITED: return "NETWORK_LIMITED";
+    case NODE_HEADERS_COMPRESSED: return "HEADERS_COMPRESSED";
     // Not using default, so we get warned when a case is missing
     }
 
