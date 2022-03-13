@@ -70,10 +70,6 @@ static void RescanWallet(CWallet& wallet, const WalletRescanReserver& reserver, 
 
 UniValue importprivkey(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 3)
         throw std::runtime_error(
             RPCHelpMan{"importprivkey",
@@ -100,6 +96,10 @@ UniValue importprivkey(const JSONRPCRequest& request)
             + HelpExampleRpc("importprivkey", "\"mykey\", \"testing\", false")
                 },
             }.ToString());
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     if (pwallet->IsWalletFlagSet(WALLET_FLAG_DISABLE_PRIVATE_KEYS)) {
         throw JSONRPCError(RPC_WALLET_ERROR, "Cannot import private keys to a wallet with private keys disabled");
@@ -166,10 +166,6 @@ UniValue importprivkey(const JSONRPCRequest& request)
 
 UniValue abortrescan(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() > 0)
         throw std::runtime_error(
             RPCHelpMan{"abortrescan",
@@ -186,10 +182,14 @@ UniValue abortrescan(const JSONRPCRequest& request)
                 },
             }.ToString());
 
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
+
     if (!pwallet->IsScanning() || pwallet->IsAbortingRescan()) return false;
-    pwallet->AbortRescan();
-    return true;
-}
+        pwallet->AbortRescan();
+        return true;
+    }
 
 static void ImportAddress(CWallet*, const CTxDestination& dest, const std::string& strLabel);
 static void ImportScript(CWallet * const pwallet, const CScript& script, const std::string& strLabel, bool isRedeemScript) EXCLUSIVE_LOCKS_REQUIRED(pwallet->cs_wallet)
@@ -231,10 +231,6 @@ static void ImportAddress(CWallet * const pwallet, const CTxDestination& dest, c
 
 UniValue importaddress(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 4)
         throw std::runtime_error(
             RPCHelpMan{"importaddress",
@@ -261,6 +257,9 @@ UniValue importaddress(const JSONRPCRequest& request)
                 },
             }.ToString());
 
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     std::string strLabel;
     if (!request.params[1].isNull())
@@ -320,10 +319,6 @@ UniValue importaddress(const JSONRPCRequest& request)
 
 UniValue importprunedfunds(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() != 2)
         throw std::runtime_error(
             RPCHelpMan{"importprunedfunds",
@@ -336,6 +331,10 @@ UniValue importprunedfunds(const JSONRPCRequest& request)
                 RPCExamples{""},
             }.ToString()
         );
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     CMutableTransaction tx;
     if (!DecodeHexTx(tx, request.params[0].get_str()))
@@ -387,10 +386,6 @@ UniValue importprunedfunds(const JSONRPCRequest& request)
 
 UniValue removeprunedfunds(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
             RPCHelpMan{"removeprunedfunds",
@@ -405,6 +400,10 @@ UniValue removeprunedfunds(const JSONRPCRequest& request)
             + HelpExampleRpc("removeprunedfunds", "\"a8d0c0184dde994a09ec054286f1ce581bebf46446a512166eae7628734ea0a5\"")
                 },
             }.ToString());
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     auto locked_chain = pwallet->chain().lock();
     LOCK(pwallet->cs_wallet);
@@ -428,11 +427,7 @@ UniValue removeprunedfunds(const JSONRPCRequest& request)
 
 UniValue importpubkey(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
-    if (request.fHelp || request.params.size() < 1 || request.params.size() > 4)
+    if (request.fHelp || request.params.size() < 1 || request.params.size() > 3)
         throw std::runtime_error(
             RPCHelpMan{"importpubkey",
                 "\nAdds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend. Requires a new wallet backup.\n"
@@ -454,6 +449,9 @@ UniValue importpubkey(const JSONRPCRequest& request)
                 },
             }.ToString());
 
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     std::string strLabel;
     if (!request.params[1].isNull())
@@ -506,10 +504,6 @@ UniValue importpubkey(const JSONRPCRequest& request)
 
 UniValue importwallet(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
             RPCHelpMan{"importwallet",
@@ -527,6 +521,10 @@ UniValue importwallet(const JSONRPCRequest& request)
             + HelpExampleRpc("importwallet", "\"test\"")
                 },
             }.ToString());
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     if (pwallet->chain().havePruned()) {
         // Exit early and print an error.
@@ -669,10 +667,6 @@ UniValue importwallet(const JSONRPCRequest& request)
 
 UniValue importelectrumwallet(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 2)
         throw std::runtime_error(
             RPCHelpMan{"importselectrumwallet",
@@ -691,6 +685,10 @@ UniValue importelectrumwallet(const JSONRPCRequest& request)
             + HelpExampleRpc("importelectrumwallet", "\"test.json\"")
                 },
             }.ToString());
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     if (fPruneMode)
         throw JSONRPCError(RPC_WALLET_ERROR, "Importing wallets is disabled in pruned mode");
@@ -819,10 +817,6 @@ UniValue importelectrumwallet(const JSONRPCRequest& request)
 
 UniValue dumpprivkey(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
             RPCHelpMan{"dumpprivkey",
@@ -840,6 +834,10 @@ UniValue dumpprivkey(const JSONRPCRequest& request)
             + HelpExampleRpc("dumpprivkey", "\"myaddress\"")
                 },
             }.ToString());
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     auto locked_chain = pwallet->chain().lock();
     LOCK(pwallet->cs_wallet);
@@ -864,10 +862,6 @@ UniValue dumpprivkey(const JSONRPCRequest& request)
 
 UniValue dumphdinfo(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() != 0)
         throw std::runtime_error(
             RPCHelpMan{"dumphdinfo",
@@ -885,6 +879,10 @@ UniValue dumphdinfo(const JSONRPCRequest& request)
             + HelpExampleRpc("dumphdinfo", "")
                 },
             }.ToString());
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     LOCK(pwallet->cs_wallet);
 
@@ -911,10 +909,6 @@ UniValue dumphdinfo(const JSONRPCRequest& request)
 
 UniValue dumpwallet(const JSONRPCRequest& request)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
             RPCHelpMan{"dumpwallet",
@@ -937,6 +931,10 @@ UniValue dumpwallet(const JSONRPCRequest& request)
             + HelpExampleRpc("dumpwallet", "\"test\"")
                 },
             }.ToString());
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     auto locked_chain = pwallet->chain().lock();
     LockAnnotation lock(::cs_main);
@@ -1448,10 +1446,6 @@ static int64_t GetImportTimestamp(const UniValue& data, int64_t now)
 
 UniValue importmulti(const JSONRPCRequest& mainRequest)
 {
-    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(mainRequest);
-    if (!wallet) return NullUniValue;
-    CWallet* const pwallet = wallet.get();
-
     if (mainRequest.fHelp || mainRequest.params.size() < 1 || mainRequest.params.size() > 2)
         throw std::runtime_error(
             RPCHelpMan{"importmulti",
@@ -1517,6 +1511,10 @@ UniValue importmulti(const JSONRPCRequest& mainRequest)
     RPCTypeCheck(mainRequest.params, {UniValue::VARR, UniValue::VOBJ});
 
     const UniValue& requests = mainRequest.params[0];
+
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(mainRequest);
+    if (!wallet) return NullUniValue;
+    CWallet* const pwallet = wallet.get();
 
     //Default options
     bool fRescan = true;
