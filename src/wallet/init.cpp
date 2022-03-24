@@ -11,6 +11,7 @@
 #include <util/error.h>
 #include <util/system.h>
 #include <util/moneystr.h>
+#include <util/translation.h>
 #include <validation.h>
 #include <walletinitinterface.h>
 #include <wallet/rpcwallet.h>
@@ -106,7 +107,7 @@ bool WalletInit::ParameterInteraction() const
 
         return true;
     } else if (gArgs.IsArgSet("-masternodeblsprivkey")) {
-        return InitError(_("You can not start a masternode with wallet enabled."));
+        return InitError(_("You can not start a masternode with wallet enabled.").translated);
     }
 
     const bool is_multiwallet = gArgs.GetArgs("-wallet").size() > 1;
@@ -134,7 +135,7 @@ bool WalletInit::ParameterInteraction() const
     int rescan_mode = gArgs.GetArg("-rescan", 0);
     if (rescan_mode < 0 || rescan_mode > 2) {
         LogPrintf("%s: Warning: incorrect -rescan mode, falling back to default value.\n", __func__);
-        InitWarning(_("Incorrect -rescan mode, falling back to default value"));
+        InitWarning(_("Incorrect -rescan mode, falling back to default value").translated);
         gArgs.ForceRemoveArg("-rescan");
     }
 
@@ -147,17 +148,17 @@ bool WalletInit::ParameterInteraction() const
     if (gArgs.GetBoolArg("-sysperms", false))
         return InitError("-sysperms is not allowed in combination with enabled wallet functionality");
     if (gArgs.GetArg("-prune", 0) && gArgs.GetBoolArg("-rescan", false))
-        return InitError(_("Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again."));
+        return InitError(_("Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.").translated);
 
     if (gArgs.IsArgSet("-walletbackupsdir")) {
         if (!fs::is_directory(gArgs.GetArg("-walletbackupsdir", ""))) {
-            InitWarning(strprintf(_("Warning: incorrect parameter %s, path must exist! Using default path."), "-walletbackupsdir"));
+            InitWarning(strprintf(_("Warning: incorrect parameter %s, path must exist! Using default path.").translated, "-walletbackupsdir"));
             gArgs.ForceRemoveArg("-walletbackupsdir");
         }
     }
 
     if (gArgs.IsArgSet("-hdseed") && IsHex(gArgs.GetArg("-hdseed", "not hex")) && (gArgs.IsArgSet("-mnemonic") || gArgs.IsArgSet("-mnemonicpassphrase"))) {
-        InitWarning(strprintf(_("Warning: can't use %s and %s together, will prefer %s"), "-hdseed", "-mnemonic/-mnemonicpassphrase", "-hdseed"));
+        InitWarning(strprintf(_("Warning: can't use %s and %s together, will prefer %s").translated, "-hdseed", "-mnemonic/-mnemonicpassphrase", "-hdseed"));
         gArgs.ForceRemoveArg("-mnemonic");
         gArgs.ForceRemoveArg("-mnemonicpassphrase");
     }
@@ -165,7 +166,7 @@ bool WalletInit::ParameterInteraction() const
     // begin PrivateSend -> CoinJoin migration
     if (gArgs.IsArgSet("-privatesendrounds")) {
         int nRoundsDeprecated = gArgs.GetArg("-privatesendrounds", DEFAULT_COINJOIN_ROUNDS);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendrounds", "-coinjoinrounds"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-privatesendrounds", "-coinjoinrounds"));
         if (gArgs.SoftSetArg("-coinjoinrounds", itostr(nRoundsDeprecated))) {
             LogPrintf("%s: parameter interaction: -privatesendrounds=%d -> setting -coinjoinrounds=%d\n", __func__, nRoundsDeprecated, nRoundsDeprecated);
         }
@@ -173,7 +174,7 @@ bool WalletInit::ParameterInteraction() const
     }
     if (gArgs.IsArgSet("-privatesendamount")) {
         int nAmountDeprecated = gArgs.GetArg("-privatesendamount", DEFAULT_COINJOIN_AMOUNT);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendamount", "-coinjoinamount"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-privatesendamount", "-coinjoinamount"));
         if (gArgs.SoftSetArg("-coinjoinamount", itostr(nAmountDeprecated))) {
             LogPrintf("%s: parameter interaction: -privatesendamount=%d -> setting -coinjoinamount=%d\n", __func__, nAmountDeprecated, nAmountDeprecated);
         }
@@ -181,7 +182,7 @@ bool WalletInit::ParameterInteraction() const
     }
     if (gArgs.IsArgSet("-privatesenddenomsgoal")) {
         int nDenomsGoalDeprecated = gArgs.GetArg("-privatesenddenomsgoal", DEFAULT_COINJOIN_DENOMS_GOAL);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesenddenomsgoal", "-coinjoindenomsgoal"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-privatesenddenomsgoal", "-coinjoindenomsgoal"));
         if (gArgs.SoftSetArg("-coinjoindenomsgoal", itostr(nDenomsGoalDeprecated))) {
             LogPrintf("%s: parameter interaction: -privatesenddenomsgoal=%d -> setting -coinjoindenomsgoal=%d\n", __func__, nDenomsGoalDeprecated, nDenomsGoalDeprecated);
         }
@@ -189,7 +190,7 @@ bool WalletInit::ParameterInteraction() const
     }
     if (gArgs.IsArgSet("-privatesenddenomshardcap")) {
         int nDenomsHardcapDeprecated = gArgs.GetArg("-privatesenddenomshardcap", DEFAULT_COINJOIN_DENOMS_HARDCAP);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesenddenomshardcap", "-coinjoindenomshardcap"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-privatesenddenomshardcap", "-coinjoindenomshardcap"));
         if (gArgs.SoftSetArg("-coinjoindenomshardcap", itostr(nDenomsHardcapDeprecated))) {
             LogPrintf("%s: parameter interaction: -privatesenddenomshardcap=%d -> setting -coinjoindenomshardcap=%d\n", __func__, nDenomsHardcapDeprecated, nDenomsHardcapDeprecated);
         }
@@ -197,7 +198,7 @@ bool WalletInit::ParameterInteraction() const
     }
     if (gArgs.IsArgSet("-privatesendsessions")) {
         int nSessionsDeprecated = gArgs.GetArg("-privatesendsessions", DEFAULT_COINJOIN_SESSIONS);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendsessions", "-coinjoinsessions"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-privatesendsessions", "-coinjoinsessions"));
         if (gArgs.SoftSetArg("-coinjoinsessions", itostr(nSessionsDeprecated))) {
             LogPrintf("%s: parameter interaction: -privatesendsessions=%d -> setting -coinjoinsessions=%d\n", __func__, nSessionsDeprecated, nSessionsDeprecated);
         }
@@ -205,7 +206,7 @@ bool WalletInit::ParameterInteraction() const
     }
     if (gArgs.IsArgSet("-enableprivatesend")) {
         bool fEnablePSDeprecated = gArgs.GetBoolArg("-enableprivatesend", 0);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-enableprivatesend", "-enablecoinjoin"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-enableprivatesend", "-enablecoinjoin"));
         if (gArgs.SoftSetBoolArg("-enablecoinjoin", fEnablePSDeprecated)) {
             LogPrintf("%s: parameter interaction: -enableprivatesend=%d -> setting -enablecoinjoin=%d\n", __func__, fEnablePSDeprecated, fEnablePSDeprecated);
         }
@@ -213,7 +214,7 @@ bool WalletInit::ParameterInteraction() const
     }
     if (gArgs.IsArgSet("-privatesendautostart")) {
         bool fAutoStartDeprecated = gArgs.GetBoolArg("-privatesendautostart", DEFAULT_COINJOIN_AUTOSTART);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendautostart", "-coinjoinautostart"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-privatesendautostart", "-coinjoinautostart"));
         if (gArgs.SoftSetBoolArg("-coinjoinautostart", fAutoStartDeprecated)) {
             LogPrintf("%s: parameter interaction: -privatesendautostart=%d -> setting -coinjoinautostart=%d\n", __func__, fAutoStartDeprecated, fAutoStartDeprecated);
         }
@@ -221,7 +222,7 @@ bool WalletInit::ParameterInteraction() const
     }
     if (gArgs.IsArgSet("-privatesendmultisession")) {
         bool fMultiSessionDeprecated = gArgs.GetBoolArg("-privatesendmultisession", DEFAULT_COINJOIN_MULTISESSION);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendmultisession", "-coinjoinmultisession"));
+        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead").translated, "-privatesendmultisession", "-coinjoinmultisession"));
         if (gArgs.SoftSetBoolArg("-coinjoinmultisession", fMultiSessionDeprecated)) {
             LogPrintf("%s: parameter interaction: -privatesendmultisession=%d -> setting -coinjoinmultisession=%d\n", __func__, fMultiSessionDeprecated, fMultiSessionDeprecated);
         }
@@ -230,7 +231,7 @@ bool WalletInit::ParameterInteraction() const
     // end PrivateSend -> CoinJoin migration
 
     if (gArgs.GetArg("-coinjoindenomshardcap", DEFAULT_COINJOIN_DENOMS_HARDCAP) < gArgs.GetArg("-coinjoindenomsgoal", DEFAULT_COINJOIN_DENOMS_GOAL)) {
-        return InitError(strprintf(_("%s can't be lower than %s"), "-coinjoindenomshardcap", "-coinjoindenomsgoal"));
+        return InitError(strprintf(_("%s can't be lower than %s").translated, "-coinjoindenomshardcap", "-coinjoindenomsgoal"));
     }
 
     return true;

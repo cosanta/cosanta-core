@@ -4,6 +4,8 @@
 
 #include <qt/cosanta.h>
 
+#include <util/translation.h>
+
 #include <QCoreApplication>
 
 #include <functional>
