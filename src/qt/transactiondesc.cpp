@@ -21,6 +21,7 @@
 #include <script/script.h>
 #include <timedata.h>
 #include <util/system.h>
+#include <wallet/ismine.h>
 
 #include <stdint.h>
 #include <string>

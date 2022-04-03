@@ -12,6 +12,8 @@
 #include <timedata.h>
 #include <validation.h>
 
+#include <wallet/ismine.h>
+
 #include <stdint.h>
 
 #include <QDateTime>
