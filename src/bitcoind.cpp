@@ -15,6 +15,7 @@
 #include <interfaces/chain.h>
 #include <rpc/server.h>
 #include <init.h>
+#include <node/context.h>
 #include <noui.h>
 #include <shutdown.h>
 #include <ui_interface.h>
@@ -31,29 +32,13 @@
 
 const std::function<std::string(const char*)> G_TRANSLATION_FUN = nullptr;
 
-/* Introduction text for doxygen: */
-
-/*! \mainpage Developer documentation
- *
- * \section intro_sec Introduction
- *
- * This is the developer documentation of the reference client for an experimental new digital currency called Cosanta (https://www.dash.org/),
- * which enables instant payments to anyone, anywhere in the world. Cosanta uses peer-to-peer technology to operate
- * with no central authority: managing transactions and issuing money are carried out collectively by the network.
- *
- * The software is a community-driven open source project, released under the MIT license.
- *
- * \section Navigation
- * Use the buttons <code>Namespaces</code>, <code>Classes</code> or <code>Files</code> at the top of the page to start navigating the code.
- */
-
-static void WaitForShutdown()
+static void WaitForShutdown(NodeContext& node)
 {
     while (!ShutdownRequested())
     {
         UninterruptibleSleep(std::chrono::milliseconds{200});
     }
-    Interrupt();
+    Interrupt(node);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,8 +47,8 @@ static void WaitForShutdown()
 //
 static bool AppInit(int argc, char* argv[])
 {
-    InitInterfaces interfaces;
-    interfaces.chain = interfaces::MakeChain();
+    NodeContext node;
+    node.chain = interfaces::MakeChain(node);
 
     bool fRet = false;
 
@@ -174,18 +159,18 @@ static bool AppInit(int argc, char* argv[])
             // If locking the data directory failed, exit immediately
             return false;
         }
-        fRet = AppInitMain(interfaces);
+        fRet = AppInitMain(node);
     } catch (...) {
         PrintExceptionContinue(std::current_exception(), "AppInit()");
     }
 
     if (!fRet)
     {
-        Interrupt();
+        Interrupt(node);
     } else {
-        WaitForShutdown();
+        WaitForShutdown(node);
     }
-    Shutdown(interfaces);
+    Shutdown(node);
 
     return fRet;
 }

@@ -37,7 +37,8 @@ public:
     CTransactionBuilderTestSetup()
     {
         CreateAndProcessBlock({}, GetScriptForRawPubKey(coinbaseKey.GetPubKey()));
-        chain = interfaces::MakeChain();
+        NodeContext node;
+        chain = interfaces::MakeChain(node);
         wallet = MakeUnique<CWallet>(chain.get(), WalletLocation(), CreateMockWalletDatabase());
         bool firstRun;
         wallet->LoadWallet(firstRun);
