@@ -16,7 +16,6 @@
 #include <univalue.h>
 #include <util/ranges.h>
 #include <util/translation.h>
-#include <version.h>
 
 #include <utility>
 
@@ -443,7 +442,7 @@ public:
     */
     static std::string DenominationToString(int nDenom);
 
-    static std::string GetMessageByID(PoolMessage nMessageID);
+    static bilingual_str GetMessageByID(PoolMessage nMessageID);
 
     /// Get the minimum/maximum number of participants for the pool
     static int GetMinPoolParticipants();
