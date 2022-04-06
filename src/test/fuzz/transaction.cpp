@@ -8,6 +8,7 @@
 #include <core_io.h>
 #include <core_memusage.h>
 #include <policy/policy.h>
+#include <policy/settings.h>
 #include <primitives/transaction.h>
 #include <streams.h>
 #include <test/fuzz/fuzz.h>
