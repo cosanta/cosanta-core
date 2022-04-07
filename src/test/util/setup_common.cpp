@@ -93,7 +93,7 @@ BasicTestingSetup::BasicTestingSetup(const std::string& chainName)
     fCheckBlockIndex = true;
     SelectParams(chainName);
     evoDb.reset(new CEvoDB(1 << 20, true, true));
-    deterministicMNManager.reset(new CDeterministicMNManager(*evoDb));
+    deterministicMNManager.reset(new CDeterministicMNManager(*evoDb, *g_connman));
     llmq::quorumSnapshotManager.reset(new llmq::CQuorumSnapshotManager(*evoDb));
     static bool noui_connected = false;
     if (!noui_connected) {
@@ -134,7 +134,7 @@ TestingSetup::TestingSetup(const std::string& chainName) : BasicTestingSetup(cha
     assert(!::ChainstateActive().CanFlushToDisk());
     g_txindex = MakeUnique<TxIndex>(1 << 20, true);
     g_txindex->Start();
-    llmq::InitLLMQSystem(*evoDb, true);
+    llmq::InitLLMQSystem(*evoDb, *g_connman, true);
     ::ChainstateActive().InitCoinsCache();
     assert(::ChainstateActive().CanFlushToDisk());
     if (!LoadGenesisBlock(chainparams)) {
