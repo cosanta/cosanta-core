@@ -254,7 +254,6 @@ void CMasternodeSync::ProcessTick(CConnman& connman)
                 }
                 netfulfilledman.AddFulfilledRequest(pnode->addr, "governance-sync");
 
-                if (pnode->nVersion < MIN_GOVERNANCE_PEER_PROTO_VERSION) continue;
                 nTriedPeerCount++;
 
                 SendGovernanceSyncRequest(pnode, connman);
