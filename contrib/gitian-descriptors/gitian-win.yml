@@ -1,5 +1,5 @@
 ---
-name: "cosanta-win-0.15"
+name: "cosanta-win-18.0"
 enable_cache: true
 suites:
 - "bionic"
@@ -24,7 +24,7 @@ packages:
 - "rename"
 - "ccache"
 remotes:
-- "url": "https://github.com/dashpay/dash.git"
+- "url": "contrib/gitian-descriptors/gitian-win.yml"
   "dir": "cosanta"
 files: []
 script: |

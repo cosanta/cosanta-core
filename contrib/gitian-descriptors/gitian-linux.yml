@@ -1,5 +1,5 @@
 ---
-name: "cosanta-linux-0.15"
+name: "dash-linux-18.0"
 enable_cache: true
 suites:
 - "bionic"
@@ -33,7 +33,7 @@ packages:
 - "binutils-riscv64-linux-gnu"
 - "g++-8-riscv64-linux-gnu"
 remotes:
-- "url": "https://github.com/dashpay/dash.git"
+- "url": "https://github.com/cosanta/cosanta-core.git"
   "dir": "cosanta"
 files: []
 script: |
