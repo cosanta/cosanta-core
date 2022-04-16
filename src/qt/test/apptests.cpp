@@ -71,6 +71,7 @@ void AppTests::appTests()
     ECC_Stop(); // Already started by the common test setup, so stop it to avoid interference
     LogInstance().DisconnectTestLogger();
 
+    qRegisterMetaType<interfaces::BlockAndHeaderTipInfo>("interfaces::BlockAndHeaderTipInfo");
     m_app.parameterSetup();
     GUIUtil::loadFonts();
     m_app.createOptionsModel(true /* reset settings */);
