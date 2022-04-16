@@ -106,6 +106,7 @@ private:
     std::atomic<bool> stopRequested{false};
 
     const Consensus::LLMQParams& params;
+    const int quorumIndex;
     CBLSWorker& blsWorker;
     CDKGSessionManager& dkgManager;
 
@@ -122,10 +123,11 @@ private:
     CDKGPendingMessages pendingPrematureCommitments GUARDED_BY(cs);
 
 public:
-    CDKGSessionHandler(const Consensus::LLMQParams& _params, CBLSWorker& _blsWorker, CDKGSessionManager& _dkgManager) :
+    CDKGSessionHandler(const Consensus::LLMQParams& _params, CBLSWorker& _blsWorker, CDKGSessionManager& _dkgManager, int _quorumIndex) :
             params(_params),
             blsWorker(_blsWorker),
             dkgManager(_dkgManager),
+            quorumIndex(_quorumIndex),
             curSession(std::make_unique<CDKGSession>(_params, _blsWorker, _dkgManager)),
             pendingContributions((size_t)_params.size * 2, MSG_QUORUM_CONTRIB), // we allow size*2 messages as we need to make sure we see bad behavior (double messages)
             pendingComplaints((size_t)_params.size * 2, MSG_QUORUM_COMPLAINT),

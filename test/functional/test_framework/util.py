@@ -248,7 +248,7 @@ def wait_until(predicate, *, attempts=float('inf'), timeout=float('inf'), sleep=
 ############################################
 
 # The maximum number of nodes a single test can spawn
-MAX_NODES = 15
+MAX_NODES = 20
 # Don't assign rpc or p2p ports lower than this
 PORT_MIN = 11000
 # The number of ports to "reserve" for p2p and rpc, each

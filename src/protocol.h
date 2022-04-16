@@ -317,6 +317,8 @@ extern const char *CLSIG;
 extern const char *ISLOCK;
 extern const char *ISDLOCK;
 extern const char *MNAUTH;
+extern const char *GETQUORUMROTATIONINFO;
+extern const char *QUORUMROTATIONINFO;
 };
 
 /* Get a vector of all valid message types (see above) */
