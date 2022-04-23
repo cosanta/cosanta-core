@@ -19,6 +19,7 @@
 #include <noui.h>
 #include <shutdown.h>
 #include <ui_interface.h>
+#include <util/ref.h>
 #include <util/system.h>
 #include <httpserver.h>
 #include <httprpc.h>
@@ -84,6 +85,7 @@ static bool AppInit(int argc, char* argv[])
         return true;
     }
 
+    util::Ref context{node};
     try
     {
         bool datadirFromCmdLine = gArgs.IsArgSet("-datadir");
@@ -159,7 +161,7 @@ static bool AppInit(int argc, char* argv[])
             // If locking the data directory failed, exit immediately
             return false;
         }
-        fRet = AppInitMain(node);
+        fRet = AppInitMain(context, node);
     } catch (...) {
         PrintExceptionContinue(std::current_exception(), "AppInit()");
     }

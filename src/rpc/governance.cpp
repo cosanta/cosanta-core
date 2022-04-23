@@ -400,11 +400,12 @@ static UniValue gobject_submit(const JSONRPCRequest& request)
 
     LogPrintf("gobject(submit) -- Adding locally created governance object - %s\n", strHash);
 
+    const NodeContext& node = EnsureNodeContext(request.context);
     if (fMissingConfirmations) {
         governance.AddPostponedObject(govobj);
-        govobj.Relay(*g_rpc_node->connman);
+        govobj.Relay(*node.connman);
     } else {
-        governance.AddGovernanceObject(govobj, *g_rpc_node->connman);
+        governance.AddGovernanceObject(govobj, *node.connman);
     }
 
     return govobj.GetHash().ToString();
@@ -501,7 +502,8 @@ static UniValue gobject_vote_conf(const JSONRPCRequest& request)
     }
 
     CGovernanceException exception;
-    if (governance.ProcessVoteAndRelay(vote, exception, *g_rpc_node->connman)) {
+    const NodeContext& node = EnsureNodeContext(request.context);
+    if (governance.ProcessVoteAndRelay(vote, exception, *node.connman)) {
         nSuccessful++;
         statusObj.pushKV("result", "success");
     } else {
@@ -518,10 +520,11 @@ static UniValue gobject_vote_conf(const JSONRPCRequest& request)
     return returnObj;
 }
 
-static UniValue VoteWithMasternodes(const std::map<uint256, CKey>& keys,
+static UniValue VoteWithMasternodes(const JSONRPCRequest& request, const std::map<uint256, CKey>& keys,
                              const uint256& hash, vote_signal_enum_t eVoteSignal,
                              vote_outcome_enum_t eVoteOutcome)
 {
+    const NodeContext& node = EnsureNodeContext(request.context);
     {
         LOCK(governance.cs);
         CGovernanceObject *pGovObj = governance.FindGovernanceObject(hash);
@@ -562,7 +565,7 @@ static UniValue VoteWithMasternodes(const std::map<uint256, CKey>& keys,
         }
 
         CGovernanceException exception;
-        if (governance.ProcessVoteAndRelay(vote, exception, *g_rpc_node->connman)) {
+        if (governance.ProcessVoteAndRelay(vote, exception, *node.connman)) {
             nSuccessful++;
             statusObj.pushKV("result", "success");
         } else {
@@ -633,7 +636,7 @@ static UniValue gobject_vote_many(const JSONRPCRequest& request)
         }
     });
 
-    return VoteWithMasternodes(votingKeys, hash, eVoteSignal, eVoteOutcome);
+    return VoteWithMasternodes(request, votingKeys, hash, eVoteSignal, eVoteOutcome);
 }
 
 static void gobject_vote_alias_help(const JSONRPCRequest& request)
@@ -692,7 +695,7 @@ static UniValue gobject_vote_alias(const JSONRPCRequest& request)
     std::map<uint256, CKey> votingKeys;
     votingKeys.emplace(proTxHash, votingKey);
 
-    return VoteWithMasternodes(votingKeys, hash, eVoteSignal, eVoteOutcome);
+    return VoteWithMasternodes(request, votingKeys, hash, eVoteSignal, eVoteOutcome);
 }
 #endif
 
@@ -1121,7 +1124,8 @@ static UniValue voteraw(const JSONRPCRequest& request)
     }
 
     CGovernanceException exception;
-    if (governance.ProcessVoteAndRelay(vote, exception, *g_rpc_node->connman)) {
+    const NodeContext& node = EnsureNodeContext(request.context);
+    if (governance.ProcessVoteAndRelay(vote, exception, *node.connman)) {
         return "Voted successfully";
     } else {
         throw JSONRPCError(RPC_INTERNAL_ERROR, "Error voting : " + exception.GetMessage());
