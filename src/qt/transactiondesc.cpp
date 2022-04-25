@@ -266,27 +266,11 @@ QString TransactionDesc::toHTML(interfaces::Node& node, interfaces::Wallet& wall
     strHTML += "<b>" + tr("Output index") + ":</b> " + QString::number(rec->getOutputIndex()) + "<br>";
     strHTML += "<b>" + tr("Transaction total size") + ":</b> " + QString::number(wtx.tx->GetTotalSize()) + " bytes<br>";
 
-    // Message from normal cosanta:URI (cosanta:XyZ...?message=example)
-    for (const std::pair<std::string, std::string>& r : orderForm)
+    // Message from normal dash:URI (dash:XyZ...?message=example)
+    for (const std::pair<std::string, std::string>& r : orderForm) {
         if (r.first == "Message")
             strHTML += "<br><b>" + tr("Message") + ":</b><br>" + GUIUtil::HtmlEscape(r.second, true) + "<br>";
-
-#ifdef ENABLE_BIP70
-    //
-    // PaymentRequest info:
-    //
-    for (const std::pair<std::string, std::string>& r : orderForm)
-    {
-        if (r.first == "PaymentRequest")
-        {
-            PaymentRequestPlus req;
-            req.parse(QByteArray::fromRawData(r.second.data(), r.second.size()));
-            QString merchant;
-            if (req.getMerchant(PaymentServer::getCertStore(), merchant))
-                strHTML += "<b>" + tr("Merchant") + ":</b> " + GUIUtil::HtmlEscape(merchant) + "<br>";
-        }
     }
-#endif
 
     if (wtx.is_coinbase)
     {

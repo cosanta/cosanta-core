@@ -51,43 +51,6 @@
     </dict>
   </array>
 
-  <key>UTExportedTypeDeclarations</key>
-  <array>
-    <dict>
-      <key>UTTypeIdentifier</key>
-      <string>net.cosanta</string>
-      <key>UTTypeDescription</key>
-      <string>Cosanta</string>
-      <key>UTTypeConformsTo</key>
-      <array>
-        <string>public.data</string>
-      </array>
-      <key>UTTypeTagSpecification</key>
-      <dict>
-        <key>public.mime-type</key>
-        <string>application/x-cosanta</string>
-        <key>public.filename-extension</key>
-        <array>
-          <string>cosanta</string>
-        </array>
-      </dict>
-    </dict>
-  </array>
-
-  <key>CFBundleDocumentTypes</key>
-  <array>
-    <dict>
-      <key>CFBundleTypeRole</key>
-      <string>Editor</string>
-      <key>LSItemContentTypes</key>
-      <array>
-        <string>net.cosanta</string>
-      </array>
-      <key>LSHandlerRank</key>
-      <string>Owner</string>
-    </dict>
-  </array>
-
   <key>NSPrincipalClass</key>
     <string>NSApplication</string>
 
