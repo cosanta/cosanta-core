@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # Copyright (c) 2015-2020 The Dash Core developers
-# Copyright (c) 2020-2022 The Cosanta Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -52,8 +51,8 @@ class TestP2PConn(P2PInterface):
 
 class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
     def set_test_params(self):
-        self.set_cosanta_test_params(4, 3, fast_dip3_enforcement=True)
-        #disable_mocktime()
+        self.set_dash_test_params(5, 4, fast_dip3_enforcement=True)
+        self.set_dash_llmq_test_params(4, 4)
 
     def run_test(self):
         self.activate_dip8()
@@ -73,6 +72,14 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
         self.test_chainlock_overrides_islock(True, False)
         self.test_chainlock_overrides_islock(True, True)
         self.test_chainlock_overrides_islock_overrides_nonchainlock(False)
+        self.activate_dip0024()
+        self.log.info("Activated DIP0024 at height:" + str(self.nodes[0].getblockcount()))
+        self.test_chainlock_overrides_islock_overrides_nonchainlock(False)
+        # At this point, we need to move forward 3 cycles (3 x 24 blocks) so the first 3 quarters can be created (without DKG sessions)
+        self.move_to_next_cycle()
+        self.move_to_next_cycle()
+        self.move_to_next_cycle()
+        self.mine_cycle_quorum()
         self.test_chainlock_overrides_islock_overrides_nonchainlock(True)
 
     def test_chainlock_overrides_islock(self, test_block_conflict, mine_confllicting=False):
@@ -321,7 +328,7 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
 
         coinbase.calc_sha256()
 
-        block = create_block(int(tip_hash, 16), coinbase, ntime=bt['curtime'])
+        block = create_block(int(tip_hash, 16), coinbase, ntime=bt['curtime'], version=bt['version'])
         block.vtx += vtx
 
         # Add quorum commitments from template
