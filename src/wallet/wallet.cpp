@@ -5474,7 +5474,9 @@ bool CWallet::Verify(interfaces::Chain& chain, const WalletLocation& location, s
     std::unique_ptr<WalletDatabase> database = CreateWalletDatabase(wallet_path);
 
     try {
-        return database->Verify(error_string);
+        if (!database->Verify(error_string)) {
+            return false;
+        }
     } catch (const fs::filesystem_error& e) {
         error_string = strprintf("Error loading wallet %s. %s", location.GetName(), fsbridge::get_filesystem_error_message(e));
         return false;
@@ -5485,6 +5487,8 @@ bool CWallet::Verify(interfaces::Chain& chain, const WalletLocation& location, s
     if (!tempWallet->AutoBackupWallet(wallet_path, warning_string, error_string) && !error_string.empty()) {
         return false;
     }
+
+    return true;
 }
 
 std::shared_ptr<CWallet> CWallet::CreateWalletFromFile(interfaces::Chain& chain, const WalletLocation& location, uint64_t wallet_creation_flags)
