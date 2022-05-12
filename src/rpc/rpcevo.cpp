@@ -337,12 +337,12 @@ static void protx_register_fund_help(const JSONRPCRequest& request)
             GetRpcArg("fundAddress"),
             GetRpcArg("submit"),
         },
-        RPCResults{
-            {"if \"submit\" is not set or set to true",
-    "\"txid\"                        (string) The transaction id.\n"
-            }, {"if \"submit\" is set to false",
-    "\"hex\"                         (string) The serialized signed ProTx in hex format.\n"
-        }},
+        {
+            RPCResult{"if \"submit\" is not set or set to true",
+                RPCResult::Type::STR_HEX, "txid", "The transaction id"},
+            RPCResult{"if \"submit\" is set to false",
+                RPCResult::Type::STR_HEX, "hex", "The serialized signed ProTx in hex format"},
+        },
         RPCExamples{
             HelpExampleCli("protx", "register_fund \"XrVhS9LogauRJGJu2sHuryjhpuex4RNPSb\" \"1.2.3.4:1234\" \"Xt9AMWaYSz7tR7Uo7gzXA3m4QmeWgrR3rr\" \"93746e8731c57f87f79b3620a7982924e2931717d49540a85864bd543de11c43fb868fd63e501a1db37e19ed59ae6db4\" \"Xt9AMWaYSz7tR7Uo7gzXA3m4QmeWgrR3rr\" 0 \"XrVhS9LogauRJGJu2sHuryjhpuex4RNPSb\"")
         },
@@ -368,12 +368,12 @@ static void protx_register_help(const JSONRPCRequest& request)
             GetRpcArg("feeSourceAddress"),
             GetRpcArg("submit"),
         },
-        RPCResults{
-            {"if \"submit\" is not set or set to true",
-    "\"txid\"                        (string) The transaction id.\n"
-            }, {"if \"submit\" is set to false",
-    "\"hex\"                         (string) The serialized signed ProTx in hex format.\n"
-        }},
+        {
+            RPCResult{"if \"submit\" is not set or set to true",
+                RPCResult::Type::STR_HEX, "txid", "The transaction id"},
+            RPCResult{"if \"submit\" is set to false",
+                RPCResult::Type::STR_HEX, "hex", "The serialized signed ProTx in hex format"},
+        },
         RPCExamples{
             HelpExampleCli("protx", "register \"0123456701234567012345670123456701234567012345670123456701234567\" 0 \"1.2.3.4:1234\" \"Xt9AMWaYSz7tR7Uo7gzXA3m4QmeWgrR3rr\" \"93746e8731c57f87f79b3620a7982924e2931717d49540a85864bd543de11c43fb868fd63e501a1db37e19ed59ae6db4\" \"Xt9AMWaYSz7tR7Uo7gzXA3m4QmeWgrR3rr\" 0 \"XrVhS9LogauRJGJu2sHuryjhpuex4RNPSb\"")
         },
@@ -398,13 +398,12 @@ static void protx_register_prepare_help(const JSONRPCRequest& request)
             GetRpcArg("feeSourceAddress"),
         },
         RPCResult{
-    "{                             (json object)\n"
-    "  \"tx\" :                      (string) The serialized unsigned ProTx in hex format.\n"
-    "  \"collateralAddress\" :       (string) The collateral address.\n"
-    "  \"signMessage\" :             (string) The string message that needs to be signed with\n"
-    "                              the collateral key.\n"
-    "}\n"
-        },
+            RPCResult::Type::OBJ, "", "",
+            {
+                {RPCResult::Type::STR_HEX, "tx", "The serialized unsigned ProTx in hex format"},
+                {RPCResult::Type::STR_HEX, "collateralAddress", "The collateral address"},
+                {RPCResult::Type::STR_HEX, "signMessage", "The string message that needs to be signed with the collateral key"},
+            }},
         RPCExamples{
             HelpExampleCli("protx", "register_prepare \"0123456701234567012345670123456701234567012345670123456701234567\" 0 \"1.2.3.4:1234\" \"Xt9AMWaYSz7tR7Uo7gzXA3m4QmeWgrR3rr\" \"93746e8731c57f87f79b3620a7982924e2931717d49540a85864bd543de11c43fb868fd63e501a1db37e19ed59ae6db4\" \"Xt9AMWaYSz7tR7Uo7gzXA3m4QmeWgrR3rr\" 0 \"XrVhS9LogauRJGJu2sHuryjhpuex4RNPSb\"")
         },
@@ -423,7 +422,7 @@ static void protx_register_submit_help(const JSONRPCRequest& request)
             {"sig", RPCArg::Type::STR, RPCArg::Optional::NO, "The signature signed with the collateral key. Must be in base64 format."},
         },
         RPCResult{
-    "\"txid\"                  (string) The transaction id.\n"
+            RPCResult::Type::STR_HEX, "txid", "The transaction id"
         },
         RPCExamples{
             HelpExampleCli("protx", "register_submit \"tx\" \"sig\"")
@@ -434,15 +433,15 @@ static void protx_register_submit_help(const JSONRPCRequest& request)
 // handles register, register_prepare and register_fund in one method
 static UniValue protx_register(const JSONRPCRequest& request)
 {
-    bool isExternalRegister = request.params[0].get_str() == "register";
-    bool isFundRegister = request.params[0].get_str() == "register_fund";
-    bool isPrepareRegister = request.params[0].get_str() == "register_prepare";
+    bool isExternalRegister = request.strMethod == "protxregister";
+    bool isFundRegister = request.strMethod == "protxregister_fund";
+    bool isPrepareRegister = request.strMethod == "protxregister_prepare";
 
-    if (isFundRegister && (request.fHelp || (request.params.size() < 8 || request.params.size() > 10))) {
+    if (isFundRegister && (request.fHelp || (request.params.size() < 7 || request.params.size() > 9))) {
         protx_register_fund_help(request);
-    } else if (isExternalRegister && (request.fHelp || (request.params.size() < 9 || request.params.size() > 11))) {
+    } else if (isExternalRegister && (request.fHelp || (request.params.size() < 8 || request.params.size() > 10))) {
         protx_register_help(request);
-    } else if (isPrepareRegister && (request.fHelp || (request.params.size() != 9 && request.params.size() != 10))) {
+    } else if (isPrepareRegister && (request.fHelp || (request.params.size() != 8 && request.params.size() != 9))) {
         protx_register_prepare_help(request);
     }
 
@@ -454,7 +453,7 @@ static UniValue protx_register(const JSONRPCRequest& request)
         EnsureWalletIsUnlocked(pwallet);
     }
 
-    size_t paramIdx = 1;
+    size_t paramIdx = 0;
 
     CAmount collateralAmount = MASTERNODE_COLLATERAL_AMOUNT;
 
@@ -595,9 +594,7 @@ static UniValue protx_register(const JSONRPCRequest& request)
 
 static UniValue protx_register_submit(const JSONRPCRequest& request)
 {
-    if (request.fHelp || request.params.size() != 3) {
-        protx_register_submit_help(request);
-    }
+    protx_register_submit_help(request);
 
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
     if (!wallet) return NullUniValue;
@@ -606,7 +603,7 @@ static UniValue protx_register_submit(const JSONRPCRequest& request)
     EnsureWalletIsUnlocked(pwallet);
 
     CMutableTransaction tx;
-    if (!DecodeHexTx(tx, request.params[1].get_str())) {
+    if (!DecodeHexTx(tx, request.params[0].get_str())) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "transaction not deserializable");
     }
     if (tx.nType != TRANSACTION_PROVIDER_REGISTER) {
@@ -620,7 +617,7 @@ static UniValue protx_register_submit(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "payload signature not empty");
     }
 
-    ptx.vchSig = DecodeBase64(request.params[2].get_str().c_str());
+    ptx.vchSig = DecodeBase64(request.params[1].get_str().c_str());
 
     SetTxPayload(tx, ptx);
     return SignAndSendSpecialTx(tx);
@@ -641,7 +638,7 @@ static void protx_update_service_help(const JSONRPCRequest& request)
             GetRpcArg("feeSourceAddress"),
         },
         RPCResult{
-    "\"txid\"                        (string) The transaction id.\n"
+            RPCResult::Type::STR_HEX, "txid", "The transaction id"
         },
         RPCExamples{
             HelpExampleCli("protx", "update_service \"0123456701234567012345670123456701234567012345670123456701234567\" \"1.2.3.4:1234\" 5a2e15982e62f1e0b7cf9783c64cf7e3af3f90a52d6c40f6f95d624c0b1621cd")
@@ -651,8 +648,7 @@ static void protx_update_service_help(const JSONRPCRequest& request)
 
 static UniValue protx_update_service(const JSONRPCRequest& request)
 {
-    if (request.fHelp || (request.params.size() < 4 || request.params.size() > 6))
-        protx_update_service_help(request);
+    protx_update_service_help(request);
 
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
     if (!wallet) return NullUniValue;
@@ -662,13 +658,13 @@ static UniValue protx_update_service(const JSONRPCRequest& request)
 
     CProUpServTx ptx;
     ptx.nVersion = CProUpServTx::CURRENT_VERSION;
-    ptx.proTxHash = ParseHashV(request.params[1], "proTxHash");
+    ptx.proTxHash = ParseHashV(request.params[0], "proTxHash");
 
-    if (!Lookup(request.params[2].get_str().c_str(), ptx.addr, Params().GetDefaultPort(), false)) {
-        throw std::runtime_error(strprintf("invalid network address %s", request.params[2].get_str()));
+    if (!Lookup(request.params[1].get_str().c_str(), ptx.addr, Params().GetDefaultPort(), false)) {
+        throw std::runtime_error(strprintf("invalid network address %s", request.params[1].get_str()));
     }
 
-    CBLSSecretKey keyOperator = ParseBLSSecretKey(request.params[3].get_str(), "operatorKey");
+    CBLSSecretKey keyOperator = ParseBLSSecretKey(request.params[2].get_str(), "operatorKey");
 
     auto dmn = deterministicMNManager->GetListAtChainTip().GetMN(ptx.proTxHash);
     if (!dmn) {
@@ -684,13 +680,13 @@ static UniValue protx_update_service(const JSONRPCRequest& request)
     tx.nType = TRANSACTION_PROVIDER_UPDATE_SERVICE;
 
     // param operatorPayoutAddress
-    if (!request.params[4].isNull()) {
-        if (request.params[4].get_str().empty()) {
+    if (!request.params[3].isNull()) {
+        if (request.params[3].get_str().empty()) {
             ptx.scriptOperatorPayout = dmn->pdmnState->scriptOperatorPayout;
         } else {
-            CTxDestination payoutDest = DecodeDestination(request.params[4].get_str());
+            CTxDestination payoutDest = DecodeDestination(request.params[3].get_str());
             if (!IsValidDestination(payoutDest)) {
-                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("invalid operator payout address: %s", request.params[4].get_str()));
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("invalid operator payout address: %s", request.params[3].get_str()));
             }
             ptx.scriptOperatorPayout = GetScriptForDestination(payoutDest);
         }
@@ -701,10 +697,10 @@ static UniValue protx_update_service(const JSONRPCRequest& request)
     CTxDestination feeSource;
 
     // param feeSourceAddress
-    if (!request.params[5].isNull()) {
-        feeSource = DecodeDestination(request.params[5].get_str());
+    if (!request.params[4].isNull()) {
+        feeSource = DecodeDestination(request.params[4].get_str());
         if (!IsValidDestination(feeSource))
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, std::string("Invalid Cosanta address: ") + request.params[5].get_str());
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, std::string("Invalid Cosanta address: ") + request.params[4].get_str());
     } else {
         if (ptx.scriptOperatorPayout != CScript()) {
             // use operator reward address as default source for fees
@@ -738,7 +734,7 @@ static void protx_update_registrar_help(const JSONRPCRequest& request)
             GetRpcArg("feeSourceAddress"),
         },
         RPCResult{
-    "\"txid\"                        (string) The transaction id.\n"
+            RPCResult::Type::STR_HEX, "txid", "The transaction id"
         },
         RPCExamples{
             HelpExampleCli("protx", "update_registrar \"0123456701234567012345670123456701234567012345670123456701234567\" \"982eb34b7c7f614f29e5c665bc3605f1beeef85e3395ca12d3be49d2868ecfea5566f11cedfad30c51b2403f2ad95b67\" \"XwnLY9Tf7Zsef8gMGL2fhWA9ZmMjt4KPwG\"")
@@ -748,9 +744,7 @@ static void protx_update_registrar_help(const JSONRPCRequest& request)
 
 static UniValue protx_update_registrar(const JSONRPCRequest& request)
 {
-    if (request.fHelp || (request.params.size() != 5 && request.params.size() != 6)) {
-        protx_update_registrar_help(request);
-    }
+    protx_update_registrar_help(request);
 
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
     if (!wallet) return NullUniValue;
@@ -760,7 +754,7 @@ static UniValue protx_update_registrar(const JSONRPCRequest& request)
 
     CProUpRegTx ptx;
     ptx.nVersion = CProUpRegTx::CURRENT_VERSION;
-    ptx.proTxHash = ParseHashV(request.params[1], "proTxHash");
+    ptx.proTxHash = ParseHashV(request.params[0], "proTxHash");
 
     auto dmn = deterministicMNManager->GetListAtChainTip().GetMN(ptx.proTxHash);
     if (!dmn) {
@@ -770,19 +764,19 @@ static UniValue protx_update_registrar(const JSONRPCRequest& request)
     ptx.keyIDVoting = dmn->pdmnState->keyIDVoting;
     ptx.scriptPayout = dmn->pdmnState->scriptPayout;
 
-    if (request.params[2].get_str() != "") {
-        ptx.pubKeyOperator = ParseBLSPubKey(request.params[2].get_str(), "operator BLS address");
+    if (request.params[1].get_str() != "") {
+        ptx.pubKeyOperator = ParseBLSPubKey(request.params[1].get_str(), "operator BLS address");
     }
-    if (request.params[3].get_str() != "") {
-        ptx.keyIDVoting = ParsePubKeyIDFromAddress(request.params[3].get_str(), "voting address");
+    if (request.params[2].get_str() != "") {
+        ptx.keyIDVoting = ParsePubKeyIDFromAddress(request.params[2].get_str(), "voting address");
     }
 
     CTxDestination payoutDest;
     ExtractDestination(ptx.scriptPayout, payoutDest);
-    if (request.params[4].get_str() != "") {
-        payoutDest = DecodeDestination(request.params[4].get_str());
+    if (request.params[3].get_str() != "") {
+        payoutDest = DecodeDestination(request.params[3].get_str());
         if (!IsValidDestination(payoutDest)) {
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("invalid payout address: %s", request.params[4].get_str()));
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("invalid payout address: %s", request.params[3].get_str()));
         }
         ptx.scriptPayout = GetScriptForDestination(payoutDest);
     }
@@ -800,10 +794,10 @@ static UniValue protx_update_registrar(const JSONRPCRequest& request)
     ptx.vchSig.resize(65);
 
     CTxDestination feeSourceDest = payoutDest;
-    if (!request.params[5].isNull()) {
-        feeSourceDest = DecodeDestination(request.params[5].get_str());
+    if (!request.params[4].isNull()) {
+        feeSourceDest = DecodeDestination(request.params[4].get_str());
         if (!IsValidDestination(feeSourceDest))
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, std::string("Invalid Cosanta address: ") + request.params[5].get_str());
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, std::string("Invalid Cosanta address: ") + request.params[4].get_str());
     }
 
     FundSpecialTx(pwallet, tx, ptx, feeSourceDest);
@@ -828,7 +822,7 @@ static void protx_revoke_help(const JSONRPCRequest& request)
             GetRpcArg("feeSourceAddress"),
         },
         RPCResult{
-        "\"txid\"                        (string) The transaction id.\n"
+            RPCResult::Type::STR_HEX, "txid", "The transaction id"
         },
         RPCExamples{
             HelpExampleCli("protx", "revoke \"0123456701234567012345670123456701234567012345670123456701234567\" \"072f36a77261cdd5d64c32d97bac417540eddca1d5612f416feb07ff75a8e240\"")
@@ -838,9 +832,7 @@ static void protx_revoke_help(const JSONRPCRequest& request)
 
 static UniValue protx_revoke(const JSONRPCRequest& request)
 {
-    if (request.fHelp || (request.params.size() < 3 || request.params.size() > 5)) {
-        protx_revoke_help(request);
-    }
+    protx_revoke_help(request);
 
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
     if (!wallet) return NullUniValue;
@@ -850,12 +842,12 @@ static UniValue protx_revoke(const JSONRPCRequest& request)
 
     CProUpRevTx ptx;
     ptx.nVersion = CProUpRevTx::CURRENT_VERSION;
-    ptx.proTxHash = ParseHashV(request.params[1], "proTxHash");
+    ptx.proTxHash = ParseHashV(request.params[0], "proTxHash");
 
-    CBLSSecretKey keyOperator = ParseBLSSecretKey(request.params[2].get_str(), "operatorKey");
+    CBLSSecretKey keyOperator = ParseBLSSecretKey(request.params[1].get_str(), "operatorKey");
 
-    if (!request.params[3].isNull()) {
-        int32_t nReason = ParseInt32V(request.params[3], "reason");
+    if (!request.params[2].isNull()) {
+        int32_t nReason = ParseInt32V(request.params[2], "reason");
         if (nReason < 0 || nReason > CProUpRevTx::REASON_LAST) {
             throw JSONRPCError(RPC_INVALID_PARAMETER, strprintf("invalid reason %d, must be between 0 and %d", nReason, CProUpRevTx::REASON_LAST));
         }
@@ -875,10 +867,10 @@ static UniValue protx_revoke(const JSONRPCRequest& request)
     tx.nVersion = 3;
     tx.nType = TRANSACTION_PROVIDER_UPDATE_REVOKE;
 
-    if (!request.params[4].isNull()) {
-        CTxDestination feeSourceDest = DecodeDestination(request.params[4].get_str());
+    if (!request.params[3].isNull()) {
+        CTxDestination feeSourceDest = DecodeDestination(request.params[3].get_str());
         if (!IsValidDestination(feeSourceDest))
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, std::string("Invalid Cosanta address: ") + request.params[4].get_str());
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, std::string("Invalid Cosanta address: ") + request.params[3].get_str());
         FundSpecialTx(pwallet, tx, ptx, feeSourceDest);
     } else if (dmn->pdmnState->scriptOperatorPayout != CScript()) {
         // Using funds from previousely specified operator payout address
@@ -907,13 +899,13 @@ static void protx_list_help(const JSONRPCRequest& request)
         "\nLists all ProTxs in your wallet or on-chain, depending on the given type.\n",
         {
             {"type", RPCArg::Type::STR, /* default */ "registered",
-    "\nAvailable types:\n"
-    "  registered   - List all ProTx which are registered at the given chain height.\n"
-    "                 This will also include ProTx which failed PoSe verification.\n"
-    "  valid        - List only ProTx which are active/valid at the given chain height.\n"
+                "\nAvailable types:\n"
+                "  registered   - List all ProTx which are registered at the given chain height.\n"
+                "                 This will also include ProTx which failed PoSe verification.\n"
+                "  valid        - List only ProTx which are active/valid at the given chain height.\n"
 #ifdef ENABLE_WALLET
-    "  wallet       - List only ProTx which are found in your wallet at the given chain height.\n"
-    "                 This will also include ProTx which failed PoSe verification.\n"
+                "  wallet       - List only ProTx which are found in your wallet at the given chain height.\n"
+                "                 This will also include ProTx which failed PoSe verification.\n"
 #endif
             },
             {"detailed", RPCArg::Type::BOOL, /* default */ "false", "If not specified, only the hashes of the ProTx will be returned."},
@@ -991,9 +983,7 @@ static UniValue BuildDMNListEntry(CWallet* pwallet, const CDeterministicMN& dmn,
 
 static UniValue protx_list(const JSONRPCRequest& request)
 {
-    if (request.fHelp) {
-        protx_list_help(request);
-    }
+    protx_list_help(request);
 
     CWallet* pwallet;
 #ifdef ENABLE_WALLET
@@ -1008,8 +998,8 @@ static UniValue protx_list(const JSONRPCRequest& request)
 #endif
 
     std::string type = "registered";
-    if (!request.params[1].isNull()) {
-        type = request.params[1].get_str();
+    if (!request.params[0].isNull()) {
+        type = request.params[0].get_str();
     }
 
     UniValue ret(UniValue::VARR);
@@ -1029,9 +1019,9 @@ static UniValue protx_list(const JSONRPCRequest& request)
             protx_list_help(request);
         }
 
-        bool detailed = !request.params[2].isNull() ? ParseBoolV(request.params[2], "detailed") : false;
+        bool detailed = !request.params[1].isNull() ? ParseBoolV(request.params[1], "detailed") : false;
 
-        int height = !request.params[3].isNull() ? ParseInt32V(request.params[3], "height") : ::ChainActive().Height();
+        int height = !request.params[2].isNull() ? ParseInt32V(request.params[2], "height") : ::ChainActive().Height();
         if (height < 1 || height > ::ChainActive().Height()) {
             throw JSONRPCError(RPC_INVALID_PARAMETER, "invalid height specified");
         }
@@ -1055,15 +1045,15 @@ static UniValue protx_list(const JSONRPCRequest& request)
         });
 #endif
     } else if (type == "valid" || type == "registered") {
-        if (request.params.size() > 4) {
+        if (request.params.size() > 3) {
             protx_list_help(request);
         }
 
         LOCK(cs_main);
 
-        bool detailed = !request.params[2].isNull() ? ParseBoolV(request.params[2], "detailed") : false;
+        bool detailed = !request.params[1].isNull() ? ParseBoolV(request.params[1], "detailed") : false;
 
-        int height = !request.params[3].isNull() ? ParseInt32V(request.params[3], "height") : ::ChainActive().Height();
+        int height = !request.params[2].isNull() ? ParseInt32V(request.params[2], "height") : ::ChainActive().Height();
         if (height < 1 || height > ::ChainActive().Height()) {
             throw JSONRPCError(RPC_INVALID_PARAMETER, "invalid height specified");
         }
@@ -1088,8 +1078,10 @@ static void protx_info_help(const JSONRPCRequest& request)
             GetRpcArg("proTxHash"),
         },
         RPCResult{
-    "{                             (json object) Details about a specific deterministic masternode\n"
-    "}\n"
+            RPCResult::Type::OBJ, "", "Details about a specific deterministic masternode",
+            {
+                {RPCResult::Type::ELISION, "", ""}
+            }
         },
         RPCExamples{
             HelpExampleCli("protx", "info \"0123456701234567012345670123456701234567012345670123456701234567\"")
@@ -1099,9 +1091,7 @@ static void protx_info_help(const JSONRPCRequest& request)
 
 static UniValue protx_info(const JSONRPCRequest& request)
 {
-    if (request.fHelp || request.params.size() != 2) {
-        protx_info_help(request);
-    }
+    protx_info_help(request);
 
     CWallet* pwallet;
 #ifdef ENABLE_WALLET
@@ -1119,7 +1109,7 @@ static UniValue protx_info(const JSONRPCRequest& request)
         g_txindex->BlockUntilSyncedToCurrentChain();
     }
 
-    uint256 proTxHash = ParseHashV(request.params[1], "proTxHash");
+    uint256 proTxHash = ParseHashV(request.params[0], "proTxHash");
     auto mnList = deterministicMNManager->GetListAtChainTip();
     auto dmn = mnList.GetMN(proTxHash);
     if (!dmn) {
@@ -1157,13 +1147,11 @@ static uint256 ParseBlock(const UniValue& v, std::string strName) EXCLUSIVE_LOCK
 
 static UniValue protx_diff(const JSONRPCRequest& request)
 {
-    if (request.fHelp || request.params.size() != 3) {
-        protx_diff_help(request);
-    }
+    protx_diff_help(request);
 
     LOCK(cs_main);
-    uint256 baseBlockHash = ParseBlock(request.params[1], "baseBlock");
-    uint256 blockHash = ParseBlock(request.params[2], "block");
+    uint256 baseBlockHash = ParseBlock(request.params[0], "baseBlock");
+    uint256 blockHash = ParseBlock(request.params[1], "block");
 
     CSimplifiedMNListDiff mnListDiff;
     std::string strError;
@@ -1206,34 +1194,28 @@ static UniValue protx_diff(const JSONRPCRequest& request)
 
 static UniValue protx(const JSONRPCRequest& request)
 {
-    if (request.fHelp && request.params.empty()) {
-        protx_help();
-    }
-
-    std::string command;
-    if (!request.params[0].isNull()) {
-        command = request.params[0].get_str();
-    }
+    const JSONRPCRequest new_request{request.strMethod == "protx" ? request.squashed() : request};
+    const std::string command{new_request.strMethod};
 
 #ifdef ENABLE_WALLET
-    if (command == "register" || command == "register_fund" || command == "register_prepare") {
-        return protx_register(request);
-    } else if (command == "register_submit") {
-        return protx_register_submit(request);
-    } else if (command == "update_service") {
-        return protx_update_service(request);
-    } else if (command == "update_registrar") {
-        return protx_update_registrar(request);
-    } else if (command == "revoke") {
-        return protx_revoke(request);
+    if (command == "protxregister" || command == "protxregister_fund" || command == "protxregister_prepare") {
+        return protx_register(new_request);
+    } else if (command == "protxregister_submit") {
+        return protx_register_submit(new_request);
+    } else if (command == "protxupdate_service") {
+        return protx_update_service(new_request);
+    } else if (command == "protxupdate_registrar") {
+        return protx_update_registrar(new_request);
+    } else if (command == "protxrevoke") {
+        return protx_revoke(new_request);
     } else
 #endif
-    if (command == "list") {
-        return protx_list(request);
-    } else if (command == "info") {
-        return protx_info(request);
-    } else if (command == "diff") {
-        return protx_diff(request);
+    if (command == "protxlist") {
+        return protx_list(new_request);
+    } else if (command == "protxinfo") {
+        return protx_info(new_request);
+    } else if (command == "protxdiff") {
+        return protx_diff(new_request);
     } else {
         protx_help();
     }
@@ -1245,11 +1227,11 @@ static void bls_generate_help(const JSONRPCRequest& request)
         "\nReturns a BLS secret/public key pair.\n",
         {},
         RPCResult{
-    "{\n"
-    "  \"secret\" : \"xxxx\",        (string) BLS secret key\n"
-    "  \"public\" : \"xxxx\",        (string) BLS public key\n"
-    "}\n"
-        },
+            RPCResult::Type::OBJ, "", "",
+            {
+                {RPCResult::Type::STR_HEX, "secret", "BLS secret key"},
+                {RPCResult::Type::STR_HEX, "public", "BLS public key"},
+            }},
         RPCExamples{
             HelpExampleCli("bls generate", "")
         },
@@ -1258,9 +1240,7 @@ static void bls_generate_help(const JSONRPCRequest& request)
 
 static UniValue bls_generate(const JSONRPCRequest& request)
 {
-    if (request.fHelp || request.params.size() != 1) {
-        bls_generate_help(request);
-    }
+    bls_generate_help(request);
 
     CBLSSecretKey sk;
     sk.MakeNewKey();
@@ -1279,11 +1259,11 @@ static void bls_fromsecret_help(const JSONRPCRequest& request)
             {"secret", RPCArg::Type::STR, RPCArg::Optional::NO, "The BLS secret key"},
         },
         RPCResult{
-    "{\n"
-    "  \"secret\" : \"xxxx\",        (string) BLS secret key\n"
-    "  \"public\" : \"xxxx\",        (string) BLS public key\n"
-    "}\n"
-        },
+            RPCResult::Type::OBJ, "", "",
+            {
+                {RPCResult::Type::STR_HEX, "secret", "BLS secret key"},
+                {RPCResult::Type::STR_HEX, "public", "BLS public key"},
+            }},
         RPCExamples{
             HelpExampleCli("bls fromsecret", "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
         },
@@ -1292,12 +1272,10 @@ static void bls_fromsecret_help(const JSONRPCRequest& request)
 
 static UniValue bls_fromsecret(const JSONRPCRequest& request)
 {
-    if (request.fHelp || request.params.size() != 2) {
-        bls_fromsecret_help(request);
-    }
+    bls_fromsecret_help(request);
 
     CBLSSecretKey sk;
-    if (!sk.SetHexStr(request.params[1].get_str())) {
+    if (!sk.SetHexStr(request.params[0].get_str())) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, strprintf("Secret key must be a valid hex string of length %d", sk.SerSize*2));
     }
 
@@ -1325,19 +1303,13 @@ static UniValue bls_fromsecret(const JSONRPCRequest& request)
 
 static UniValue _bls(const JSONRPCRequest& request)
 {
-    if (request.fHelp && request.params.empty()) {
-        bls_help();
-    }
+    const JSONRPCRequest new_request{request.strMethod == "bls" ? request.squashed() : request};
+    const std::string command{new_request.strMethod};
 
-    std::string command;
-    if (!request.params[0].isNull()) {
-        command = request.params[0].get_str();
-    }
-
-    if (command == "generate") {
-        return bls_generate(request);
-    } else if (command == "fromsecret") {
-        return bls_fromsecret(request);
+    if (command == "blsgenerate") {
+        return bls_generate(new_request);
+    } else if (command == "blsfromsecret") {
+        return bls_fromsecret(new_request);
     } else {
         bls_help();
     }
