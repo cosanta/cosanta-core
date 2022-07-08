@@ -69,10 +69,7 @@ static bool AppInit(int argc, char* argv[])
 
     util::ThreadSetInternalName("init");
 
-    //
-    // Parameters
-    //
-    // If Qt is used, parameters/cosanta.conf are parsed in qt/cosanta.cpp's main()
+    // If Qt is used, parameters/dash.conf are parsed in qt/bitcoin.cpp's main()
     SetupServerArgs();
     std::string error;
     if (!gArgs.ParseParameters(argc, argv, error)) {

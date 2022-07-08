@@ -7,7 +7,7 @@
 #include <chainparams.h>
 #include <init.h>
 #include <key.h>
-#include <qt/dash.h>
+#include <qt/bitcoin.h>
 #include <qt/bitcoingui.h>
 #include <qt/networkstyle.h>
 #include <qt/rpcconsole.h>

@@ -402,7 +402,7 @@
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <location filename="../dash.cpp" line="+395"/>
+        <location filename="../bitcoin.cpp" line="+395"/>
         <source>A fatal error occurred. Cosanta Core can no longer continue safely and will quit.</source>
         <translation>A fatal error occurred. Cosanta Core can no longer continue safely and will quit.</translation>
     </message>
@@ -2666,7 +2666,7 @@ https://www.transifex.com/projects/p/cosa/</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dash.cpp" line="+14"/>
+        <location filename="../bitcoin.cpp" line="+14"/>
         <source>Choose data directory on startup (default: %u)</source>
         <translation>Choose data directory on startup (default: %u)</translation>
     </message>

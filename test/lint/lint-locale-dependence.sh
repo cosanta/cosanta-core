@@ -4,8 +4,10 @@ export LC_ALL=C
 
 KNOWN_VIOLATIONS=(
     "src/bench/string_cast.cpp.*atoi"
-    "src/dash-tx.cpp.*stoul"
-    "src/dash-tx.cpp.*trim_right"
+    "src/bench/string_cast.cpp.*std::to_string"
+    "src/bitcoin-tx.cpp.*stoul"
+    "src/bitcoin-tx.cpp.*std::to_string"
+    "src/bitcoin-tx.cpp.*trim_right"
     "src/dbwrapper.cpp.*stoul"
     "src/dbwrapper.cpp:.*vsnprintf"
     "src/httprpc.cpp.*trim"
