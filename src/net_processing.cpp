@@ -2742,7 +2742,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         // Tell our peer that he should send us CoinJoin queue messages
         connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::SENDDSQUEUE, true));
 
-        if (llmq::CLLMQUtils::IsWatchQuorumsEnabled() && !pfrom->m_masternode_connection) {
+        if (llmq::CLLMQUtils::IsWatchQuorumsEnabled() && connman->IsMasternodeQuorumNode(pfrom)) {
             connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::QWATCH));
         }
 
