@@ -369,6 +369,10 @@ void BitcoinApplication::initializeResult(bool success)
         {
             window->showMinimized();
         }
+        else
+        {
+            window->show();
+        }
         Q_EMIT splashFinished();
         Q_EMIT windowShown(window);
 
