@@ -19,7 +19,7 @@
              (gnu packages linux)
              (gnu packages llvm)
              (gnu packages mingw)
-             (gnu packages perl)
+             (gnu packages moreutils)
              (gnu packages pkg-config)
              (gnu packages python)
              (gnu packages shells)
@@ -222,8 +222,7 @@ chain for " target " development."))
         pkg-config
         bison
         ;; Scripting
-        perl
-        python-3.7
+        python-minimal ;; (3.9)
         ;; Git
         git
         ;; Native gcc 7 toolchain
