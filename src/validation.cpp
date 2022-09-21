@@ -2434,7 +2434,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     }
 
     int64_t nTime5_1 = GetTimeMicros(); nTimeISFilter += nTime5_1 - nTime4;
-    LogPrint(BCLog::BENCHMARK, "      - IS filter: %.2fms [%.2fs]\n", MICRO * (nTime5_1 - nTime4), nTimeISFilter * MICRO, nTimeISFilter * MILLI / nBlocksTotal);
+    LogPrint(BCLog::BENCHMARK, "      - IS filter: %.2fms [%.2fs (%.2fms/blk)]\n", MICRO * (nTime5_1 - nTime4), nTimeISFilter * MICRO, nTimeISFilter * MILLI / nBlocksTotal);
 
     // COSANTA : MODIFIED TO CHECK MASTERNODE PAYMENTS AND SUPERBLOCKS
 
