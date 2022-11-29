@@ -1218,59 +1218,57 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
         // CPU mining era
         nSubsidyBase = 10 * COIN / 100;
     } else if (nPrevHeight < 222222) {
-        // CPU mining era
         nSubsidyBase = 20 * COIN / 100;
     } else if (nPrevHeight < 333333) {
-        // CPU mining era
         nSubsidyBase = 30 * COIN / 100;
     } else if (nPrevHeight < 444444) {
-        // CPU mining era
         nSubsidyBase = 40 * COIN / 100;
     } else if (nPrevHeight < 555555) {
-        // CPU mining era
         nSubsidyBase = 50 * COIN / 100;
     } else if (nPrevHeight < 666666) {
-        // CPU mining era
         nSubsidyBase = 60 * COIN / 100;
     } else if (nPrevHeight < 700000) {
-        // CPU mining era
-        nSubsidyBase = 1 * COIN;
-    } else if (nPrevHeight < 710000) {
-        // CPU mining era
-        nSubsidyBase = 2 * COIN;
-    } else if (nPrevHeight < 720000) {
-        // CPU mining era
-        nSubsidyBase = 3 * COIN;
-    } else if (nPrevHeight < 730000) {
-        // CPU mining era
-        nSubsidyBase = 4 * COIN;
-    } else if (nPrevHeight < 740000) {
-        // CPU mining era
-        nSubsidyBase = 5 * COIN;
-    } else if (nPrevHeight < 750000) {
-        // CPU mining era
-        nSubsidyBase = 6 * COIN;
-    } else if (nPrevHeight < 760000) {
-        // CPU mining era
-        nSubsidyBase = 7 * COIN;
-    } else if (nPrevHeight < 770000) {
-        // CPU mining era
-        nSubsidyBase = 8 * COIN;
-    } else if (nPrevHeight < 780000) {
-        // CPU mining era
-        nSubsidyBase = 9 * COIN;
-    } else if (nPrevHeight < 790000) {
-        // CPU mining era
-        nSubsidyBase = 10 * COIN;
+        nSubsidyBase = 70 * COIN / 100;
     } else if (nPrevHeight < 800000) {
-        // CPU mining era
-        nSubsidyBase = 20 * COIN;
-    } else if (nPrevHeight < 850000) {
-        // CPU mining era
-        nSubsidyBase = 30 * COIN;
+        nSubsidyBase = 80 * COIN / 100;
     } else if (nPrevHeight < 900000) {
-        // CPU mining era
+        nSubsidyBase = 90 * COIN / 100;
+    } else if (nPrevHeight < 910000) {
+        nSubsidyBase = 1 * COIN;
+    } else if (nPrevHeight < 920000) {
+        nSubsidyBase = 2 * COIN;
+    } else if (nPrevHeight < 930000) {
+        nSubsidyBase = 3 * COIN;
+    } else if (nPrevHeight < 940000) {
+        nSubsidyBase = 4 * COIN;
+    } else if (nPrevHeight < 950000) {
+        nSubsidyBase = 5 * COIN;
+    } else if (nPrevHeight < 960000) {
+        nSubsidyBase = 6 * COIN;
+    } else if (nPrevHeight < 970000) {
+        nSubsidyBase = 7 * COIN;
+    } else if (nPrevHeight < 980000) {
+        nSubsidyBase = 8 * COIN;
+    } else if (nPrevHeight < 990000) {
+        nSubsidyBase = 9 * COIN;
+    } else if (nPrevHeight < 991000) {
+        nSubsidyBase = 10 * COIN;
+    } else if (nPrevHeight < 992000) {
+        nSubsidyBase = 15 * COIN;
+    } else if (nPrevHeight < 993000) {
+        nSubsidyBase = 20 * COIN;
+    } else if (nPrevHeight < 994000) {
+        nSubsidyBase = 25 * COIN;
+    } else if (nPrevHeight < 995000) {
+        nSubsidyBase = 30 * COIN;
+    } else if (nPrevHeight < 996000) {
+        nSubsidyBase = 35 * COIN;
+    } else if (nPrevHeight < 997000) {
         nSubsidyBase = 40 * COIN;
+    } else if (nPrevHeight < 998000) {
+        nSubsidyBase = 425 * COIN / 10;
+    } else if (nPrevHeight < 999000) {
+        nSubsidyBase = 45 * COIN;
     } else {
         nSubsidyBase = 50 * COIN;
     }
@@ -1290,7 +1288,8 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, int nReallocActiva
     CAmount ret = 0;
     const Consensus::Params& consensusParams = Params().GetConsensus();
     if (nHeight >= consensusParams.nMasternodePaymentsStartBlock) {
-        ret = blockValue * 3 / 5; // start at 60%
+        // We'll increase percent for Masternode owners each time when new service on masternode will be available.
+        ret = blockValue / 1000;
     }
 
     return ret;
