@@ -3328,10 +3328,11 @@ bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount)
 {
     LOCK2(cs_main, cs_wallet);
     std::vector<COutput> vCoins;
-    AvailableCoins(*chain().lock(), vCoins, true);
+    CCoinControl coin_control;
+    coin_control.nCoinType = CoinType::ALL_COINS;
+    AvailableCoins(*chain().lock(), vCoins, true, &coin_control, MIN_STAKE_AMOUNT);
     auto curr_time = GetTime();
     auto min_age = Params().MinStakeAge();
-    std::sort(vCoins.begin(), vCoins.end(),std::greater<COutput>());
 
     for (const COutput& out : vCoins) {
         CAmount out_value = out.tx->tx->vout[out.i].nValue;
@@ -3372,7 +3373,7 @@ bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount)
         }
 
         //add to our stake set
-        setCoins.emplace(out.tx->tx->vout[out.i].nValue, out.tx, out.i);
+        setCoins.emplace_back(out.tx->tx->vout[out.i].nValue, out.tx, out.i, out_value);
     }
 
     return !setCoins.empty();
@@ -3996,6 +3997,9 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
             LogPrint(BCLog::STAKING, "%s : no inputs eligable for staking\n", __func__);
             return false;
         }
+        std::sort(setStakeCoins.begin(), setStakeCoins.end(),[](const auto& lhs, const auto& rhs) {
+            return std::get<3>(lhs) > std::get<3>(rhs);
+        });
 
         nLastStakeSetUpdate = GetTime();
     }

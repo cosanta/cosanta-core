@@ -503,6 +503,7 @@ public:
                 {201010, uint256S("0x0000000003b9bd34fa0047a2b238e9be27bdadd603fe0d0dcf93c8c373c16159")},
                 {227510, uint256S("0x0000a1c4fa380e46b9f52ef1793ed8992e4c735a1b0a6fdf8180284ef94676ba")},
                 {329066, uint256S("0x0000d4f1c5d27c25201f01d9f335c2a5e4345258941cb785ff302ee935cd995c")},
+                {341606, uint256S("0x000084bcb3ca5c12fee6183b068ed37775ca81ef4cc502bab41df2059de857ed")},
             }
         };
 

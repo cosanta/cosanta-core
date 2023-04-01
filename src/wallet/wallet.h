@@ -99,7 +99,7 @@ static const int64_t TIMESTAMP_MIN = 0;
 //! if set, all keys will be derived by using BIP39/BIP44
 static const bool DEFAULT_USE_HD_WALLET = false;
 
-static const size_t DEFAULT_STAKE_SPLIT_THRESHOLD = 3000;
+static const size_t DEFAULT_STAKE_SPLIT_THRESHOLD = 300;
 static const size_t DEFAULT_STAKE_MAX_SPLIT = 500;
 
 enum {
@@ -107,7 +107,7 @@ enum {
     AUTOCOMBINE_SAME = 1,
     AUTOCOMBINE_ANY = 2,
  };
-static const int DEFAULT_STAKE_AUTOCOMBINE = AUTOCOMBINE_DISABLE;
+static const int DEFAULT_STAKE_AUTOCOMBINE = AUTOCOMBINE_SAME;
 
 class CBlockIndex;
 class CCoinControl;
@@ -625,16 +625,6 @@ public:
 
     std::string ToString() const;
 
-    bool operator > (const COutput& str) const
-    {
-        return (nDepth > str.nDepth);
-    }
-
-    bool operator < (const COutput& str) const
-    {
-        return (nDepth < str.nDepth);
-    }
-
     inline CInputCoin GetInputCoin() const
     {
         return CInputCoin(tx->tx, i, nInputBytes);
@@ -854,8 +844,8 @@ public:
     int nStakeMaxSplit;
     int fAutocombine;
     int nStakeSetUpdateTime;
-    using StakeCandidate = std::tuple<CAmount, const CWalletTx*, unsigned int>;
-    using StakeCandidates = std::set<StakeCandidate>;
+    using StakeCandidate = std::tuple<CAmount, const CWalletTx*, unsigned int, CAmount>;
+    using StakeCandidates = std::vector<StakeCandidate>;
     StakeCandidates setStakeCoins;
     int nLastStakeSetUpdate;
 
