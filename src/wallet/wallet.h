@@ -844,7 +844,7 @@ public:
     int nStakeMaxSplit;
     int fAutocombine;
     int nStakeSetUpdateTime;
-    using StakeCandidate = std::tuple<CAmount, const CWalletTx*, unsigned int, CAmount>;
+    using StakeCandidate = std::tuple<CAmount, const CWalletTx*, unsigned int>;
     using StakeCandidates = std::vector<StakeCandidate>;
     StakeCandidates setStakeCoins;
     int nLastStakeSetUpdate;

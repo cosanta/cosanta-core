@@ -3373,7 +3373,7 @@ bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount)
         }
 
         //add to our stake set
-        setCoins.emplace_back(out.tx->tx->vout[out.i].nValue, out.tx, out.i, out_value);
+        setCoins.emplace_back(out_value, out.tx, out.i);
     }
 
     return !setCoins.empty();
@@ -3998,7 +3998,7 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
             return false;
         }
         std::sort(setStakeCoins.begin(), setStakeCoins.end(),[](const auto& lhs, const auto& rhs) {
-            return std::get<3>(lhs) > std::get<3>(rhs);
+            return std::get<0>(lhs) > std::get<0>(rhs);
         });
 
         nLastStakeSetUpdate = GetTime();
