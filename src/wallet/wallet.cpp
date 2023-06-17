@@ -4056,7 +4056,9 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
             const auto &tx_in = pWalletTxIn->tx->vout[prevoutStake.n];
             const auto &scriptPubKeyKernel = tx_in.scriptPubKey;
 
-            if (!Solver(scriptPubKeyKernel, whichType, vSolutions)) {
+            whichType = Solver(scriptPubKeyKernel, vSolutions);
+
+            if (whichType == TX_NONSTANDARD) {
                 LogPrint(BCLog::STAKING, "%s : failed to parse kernel\n", __func__);
                 continue;
             }

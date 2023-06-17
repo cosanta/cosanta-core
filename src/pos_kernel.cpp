@@ -611,7 +611,9 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
         CKeyID key_id;
         const auto &spk = txinPrevRef->vout[prevout.n].scriptPubKey;
 
-        if (!Solver(spk, whichType, vSolutions)) {
+        whichType = Solver(spk, vSolutions);
+
+        if (whichType == TX_NONSTANDARD) {
             return state.DoS(100, false, REJECT_MALFORMED, "bad-pos-input",
                              false, "invalid Stake Input script");
         }
