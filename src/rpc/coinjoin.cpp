@@ -11,7 +11,6 @@
 #endif // ENABLE_WALLET
 #include <coinjoin/server.h>
 #include <rpc/server.h>
-#include <version.h>
 #include <util/strencodings.h>
 
 #include <univalue.h>
