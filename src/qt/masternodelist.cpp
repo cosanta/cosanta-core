@@ -84,6 +84,7 @@ MasternodeList::MasternodeList(QWidget* parent) :
     ui->tableWidgetMasternodesDIP3->setColumnHidden(COLUMN_PROTX_HASH, true);
 
     ui->tableWidgetMasternodesDIP3->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tableWidgetMasternodesDIP3->verticalHeader()->setVisible(false);
 
     ui->filterLineEditDIP3->setPlaceholderText(tr("Filter by any property (e.g. address or protx hash)"));
     ui->checkBoxMyMasternodesOnly->setEnabled(false);
