@@ -98,7 +98,7 @@ static const int64_t TIMESTAMP_MIN = 0;
 //! if set, all keys will be derived by using BIP39/BIP44
 static const bool DEFAULT_USE_HD_WALLET = false;
 
-static const size_t DEFAULT_STAKE_SPLIT_THRESHOLD = 300;
+static const size_t DEFAULT_STAKE_SPLIT_THRESHOLD = 500;
 static const size_t DEFAULT_STAKE_MAX_SPLIT = 500;
 
 enum {
@@ -824,7 +824,7 @@ public:
         nStakeSplitThreshold = gArgs.GetArg("-stakesplitthreshold", DEFAULT_STAKE_SPLIT_THRESHOLD);
         nStakeMaxSplit = gArgs.GetArg("-stakemaxsplit", DEFAULT_STAKE_MAX_SPLIT);
         fAutocombine = gArgs.GetArg("-stakeautocombine", DEFAULT_STAKE_AUTOCOMBINE);
-        nHashInterval = gArgs.GetArg("-poshashinterval", 2);
+        nHashInterval = gArgs.GetArg("-poshashinterval", 1);
         nStakeSetUpdateTime = 300; // 5 minutes
         setStakeCoins.clear();
         nLastStakeSetUpdate = 0;
