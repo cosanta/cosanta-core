@@ -1,10 +1,9 @@
-// Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef COSANTA_CRYPTO_BLS_H
-#define COSANTA_CRYPTO_BLS_H
+#ifndef DASH_CRYPTO_BLS_H
+#define DASH_CRYPTO_BLS_H
 
 #include <hash.h>
 #include <serialize.h>
@@ -455,4 +454,4 @@ using BLSSignatureVectorPtr = std::shared_ptr<BLSSignatureVector>;
 
 bool BLSInit();
 
-#endif // COSANTA_CRYPTO_BLS_H
+#endif // DASH_CRYPTO_BLS_H

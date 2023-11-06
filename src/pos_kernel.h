@@ -1,4 +1,3 @@
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // Copyright (c) 2012-2013 The PPCoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
