@@ -694,7 +694,7 @@ nodist_libcosanta_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
 # cosantad binary #
-cosantad_SOURCES = cosantad.cpp
+cosantad_SOURCES = dashd.cpp
 cosantad_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 cosantad_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 cosantad_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
@@ -721,7 +721,7 @@ cosantad_LDADD = \
 cosantad_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
 
 # cosanta-cli binary #
-cosanta_cli_SOURCES = cosanta-cli.cpp
+cosanta_cli_SOURCES = dash-cli.cpp
 cosanta_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
 cosanta_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 cosanta_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
@@ -739,7 +739,7 @@ cosanta_cli_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $
 #
 
 # cosanta-tx binary #
-cosanta_tx_SOURCES = cosanta-tx.cpp
+cosanta_tx_SOURCES = dash-tx.cpp
 cosanta_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 cosanta_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 cosanta_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
