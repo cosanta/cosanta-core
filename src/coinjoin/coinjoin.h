@@ -5,6 +5,8 @@
 #ifndef BITCOIN_COINJOIN_COINJOIN_H
 #define BITCOIN_COINJOIN_COINJOIN_H
 
+#include <chainparams.h>
+#include <core_io.h>
 #include <netaddress.h>
 #include <primitives/block.h>
 #include <primitives/transaction.h>
