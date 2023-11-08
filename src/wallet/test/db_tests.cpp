@@ -7,7 +7,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <fs.h>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 #include <wallet/db.h>
 
 

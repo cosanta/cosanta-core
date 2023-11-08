@@ -8,7 +8,7 @@
 #include <script/script.h>
 #include <script/standard.h>
 #include <uint256.h>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 
 #include <vector>
 

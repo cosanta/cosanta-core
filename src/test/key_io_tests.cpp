@@ -10,7 +10,7 @@
 #include <key_io.h>
 #include <script/script.h>
 #include <util/strencodings.h>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 
 #include <boost/test/unit_test.hpp>
 

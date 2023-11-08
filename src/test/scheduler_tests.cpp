@@ -6,7 +6,7 @@
 #include <scheduler.h>
 #include <util/time.h>
 
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 
 #include <boost/thread.hpp>
 #include <boost/test/unit_test.hpp>

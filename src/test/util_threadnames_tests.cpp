@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <util/threadnames.h>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 
 #include <thread>
 #include <vector>

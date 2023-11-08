@@ -8,7 +8,7 @@
 #include <amount.h>
 #include <primitives/transaction.h>
 #include <random.h>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 #include <validation.h>
 #include <wallet/test/wallet_test_fixture.h>
 

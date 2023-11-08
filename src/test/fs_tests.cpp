@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 //
 #include <fs.h>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 #include <util/getuniquepath.h>
 
 #include <boost/test/unit_test.hpp>

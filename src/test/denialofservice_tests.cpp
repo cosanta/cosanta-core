@@ -15,7 +15,7 @@
 #include <util/system.h>
 #include <validation.h>
 
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 
 #include <stdint.h>
 

@@ -6,7 +6,7 @@
 #include <coins.h>
 #include <consensus/validation.h>
 #include <script/standard.h>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 #include <uint256.h>
 #include <undo.h>
 #include <util/strencodings.h>

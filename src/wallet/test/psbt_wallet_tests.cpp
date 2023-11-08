@@ -11,7 +11,7 @@
 #include <univalue.h>
 
 #include <boost/test/unit_test.hpp>
-#include <test/test_cosanta.h>
+#include <test/test_dash.h>
 #include <wallet/test/wallet_test_fixture.h>
 
 BOOST_FIXTURE_TEST_SUITE(psbt_wallet_tests, WalletTestingSetup)
