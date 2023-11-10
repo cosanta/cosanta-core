@@ -14,7 +14,6 @@
 #include <crypto/sph_sha2.h>
 #include <crypto/sph_haval.h>
 #include <crypto/sph_streebog.h>
-#include <crypto/scrypt.h>
 #include <crypto/algos/Lyra2Z/Lyra2.h>
 #include <crypto/common.h>
 #include <crypto/ripemd160.h>
