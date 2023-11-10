@@ -47,7 +47,6 @@
 #include <utility>
 #include <boost/thread.hpp>
 
-#include <boost/thread.hpp>
 //////////////////////////////////////////////////////////////////////////////
 //
 // CosantaMiner
@@ -66,14 +65,7 @@ int64_t nLastCoinStakeSearchTime = 0;
 int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
 {
     int64_t nOldTime = pblock->nTime;
-    auto nNewTime = pindexPrev->GetMedianTimePast()+1;
-    auto now = GetAdjustedTime();
-
-    // NOTE: This requires consensus change for proper average block time enforcement.
-    // Compensate, if block times go in the future
-    //if (pindexPrev->GetBlockTime() < now) {
-        nNewTime = std::max(nNewTime, now);
-    //}
+    int64_t nNewTime = std::max(pindexPrev->GetMedianTimePast()+1, GetAdjustedTime());
 
     if (nOldTime < nNewTime)
         pblock->nTime = nNewTime;
