@@ -75,10 +75,13 @@ CTxIn MineBlock(const CScript& coinbase_scriptPubKey)
 
 std::shared_ptr<CBlock> PrepareBlock(const CScript& coinbase_scriptPubKey)
 {
-    auto block = std::make_shared<CBlock>(
-        BlockAssembler{Params()}
-            .CreateNewBlock(coinbase_scriptPubKey, GetWallets()[0])
-            ->block);
+    auto ptemplate = BlockAssembler(Params()).CreateNewBlock(coinbase_scriptPubKey, GetWallets()[0]);
+    auto block = std::make_shared<CBlock>(*ptemplate->block);
+
+//    auto block = std::make_shared<CBlock>(
+//        BlockAssembler{Params()}
+//            .CreateNewBlock(coinbase_scriptPubKey, GetWallets()[0])
+//            ->block);
 
     block->nTime = ::ChainActive().Tip()->GetMedianTimePast() + 1;
     block->hashMerkleRoot = BlockMerkleRoot(*block);
