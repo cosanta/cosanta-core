@@ -4074,8 +4074,7 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
                 std::vector<CInputCoin> ac_candidates;
                 // find candidates
                 {
-                    std::vector<CompactTallyItem> vecTallyRet;
-                    SelectCoinsGroupedByAddresses(vecTallyRet);
+                    std::vector<CompactTallyItem> vecTallyRet = SelectCoinsGroupedByAddresses();
                     if (fAutocombine == AUTOCOMBINE_SAME) {
                         // Autocombine same
                         CTxDestination reqdest{scriptPubKeyID};
