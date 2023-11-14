@@ -2379,6 +2379,8 @@ bool CWalletTx::SubmitMemoryPoolAndRelay(std::string& err_string, bool relay, in
     // Don't try to submit coinbase transactions. These would fail anyway but would
     // cause log spam.
     if (IsCoinBase()) return false;
+    // Don't try to submit coinstake transactions.
+    if (IsCoinStake()) return false;
     // Don't try to submit conflicted or confirmed transactions.
     if (GetDepthInMainChain(locked_chain) != 0) return false;
     // Don't try to submit transactions locked via InstantSend.
