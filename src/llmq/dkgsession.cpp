@@ -637,8 +637,6 @@ void CDKGSession::VerifyAndJustify(CDKGPendingMessages& pendingMessages)
 
     std::set<uint256> justifyFor;
 
-    LOCK(invCs);
-
     for (const auto& m : members) {
         if (m->bad) {
             continue;
