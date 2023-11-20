@@ -12,8 +12,8 @@
 #include <random.h>
 #include <sync.h>
 #include <timedata.h>
-#include <util/system.h>
 #include <tinyformat.h>
+#include <util/system.h>
 
 #include <fs.h>
 #include <hash.h>

@@ -5,8 +5,11 @@
 #ifndef BITCOIN_LLMQ_DKGSESSIONHANDLER_H
 #define BITCOIN_LLMQ_DKGSESSIONHANDLER_H
 
+
 #include <ctpl_stl.h>
 #include <net.h>
+
+#include <optional>
 
 class CBLSWorker;
 class CBlockIndex;

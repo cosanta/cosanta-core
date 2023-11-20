@@ -8,7 +8,6 @@
 #include <chain.h>
 #include <chainparams.h>
 #include <consensus/validation.h>
-#include <core_io.h>
 #include <llmq/chainlocks.h>
 #include <llmq/instantsend.h>
 #include <masternode/node.h>

@@ -6,11 +6,11 @@
 #ifndef BITCOIN_COINS_H
 #define BITCOIN_COINS_H
 
-#include <primitives/transaction.h>
 #include <compressor.h>
 #include <core_memusage.h>
 #include <crypto/siphash.h>
 #include <memusage.h>
+#include <primitives/transaction.h>
 #include <serialize.h>
 #include <uint256.h>
 

@@ -9,7 +9,6 @@
 #include <script/script.h>
 #include <script/standard.h>
 #include <uint256.h>
-#include <key_io.h>
 
 class CTxOut;
 class CTransaction;

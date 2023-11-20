@@ -12,7 +12,6 @@
 #include <chainparams.h>
 #include <net_processing.h>
 #include <spork.h>
-#include <validation.h>
 
 namespace llmq
 {
