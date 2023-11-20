@@ -4,7 +4,7 @@ NOTE : 12.1 -- REWRITE
 Masternode Budget API
 =======================
 
-Dash now supports full decentralized budgets that are paid directly from the blockchain via superblocks once per month.
+Cosanta now supports full decentralized budgets that are paid directly from the blockchain via superblocks once per month.
 
 Budgets go through a series of stages before being paid:
  * prepare - create a special transaction that destroys coins in order to make a proposal
@@ -19,11 +19,11 @@ Budgets go through a series of stages before being paid:
 1. Prepare collateral transaction
 --
 
-In this transaction we prepare collateral for "_cool-project_". This proposal will pay _1200_ COSANTA, _12_ times over the course of a year totaling _24000_ COSANTA.
+In this transaction we prepare collateral for "_cool-project_". This proposal will pay _1200_ COSA, _12_ times over the course of a year totaling _24000_ COSA.
 
 **Warning: if you change any fields within this command, the collateral transaction will become invalid.**
 
-Format: ```mngovernance prepare proposal-name url payment-count block-start dash-address monthly-payment-dash```
+Format: ```mngovernance prepare proposal-name url payment-count block-start cosanta-address monthly-payment-cosanta```
 
 Example: ```mngovernance prepare cool-project http://www.cool-project/one.json 12 100000 y6R9oN12KnB9zydzTLc3LikD9cCjjQzYG7 1200 true```
 
@@ -36,7 +36,7 @@ This is the collateral hash, copy this output for the next step.
 
 Now we can submit our proposal to the network.
 
-Format: ```mngovernance submit proposal-name url payment-count block-start dash-address monthly-payment-dash fee-tx```
+Format: ```mngovernance submit proposal-name url payment-count block-start cosanta-address monthly-payment-cosanta fee-tx```
 
 Example: ```mngovernance submit cool-project http://www.cool-project/one.json 12 100000 y6R9oN12KnB9zydzTLc3LikD9cCjjQzYG7 1200 464a0eb70ea91c94295214df48c47baa72b3876cfb658744aaf863c7b5bf1ff0```
 
@@ -128,7 +128,7 @@ After you get enough votes, execute ```mngovernance projection``` to see if you 
 6. Get paid
 --
 
-When block ```1000000``` is reached you'll receive a payment for ```1200``` COSANTA to ```y6R9oN12KnB9zydzTLc3LikD9cCjjQzYG7```.
+When block ```1000000``` is reached you'll receive a payment for ```1200``` COSA to ```y6R9oN12KnB9zydzTLc3LikD9cCjjQzYG7```.
 
 7. Command list
 --
