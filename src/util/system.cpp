@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,13 +9,11 @@
 #include <support/allocators/secure.h>
 #include <chainparamsbase.h>
 #include <ctpl_stl.h>
-#include <random.h>
-#include <serialize.h>
 #include <stacktraces.h>
 #include <util/getuniquepath.h>
 #include <util/strencodings.h>
+#include <util/string.h>
 
-#include <stdarg.h>
 
 #if (defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__))
 #include <pthread.h>

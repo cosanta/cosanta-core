@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <map>
 #include <vector>
-#include <assert.h>
 #include <crypto/common.h>
 
 namespace {
