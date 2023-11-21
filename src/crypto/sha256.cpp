@@ -7,7 +7,6 @@
 
 #include <assert.h>
 #include <string.h>
-#include <atomic>
 
 #if defined(__linux__) && defined(ENABLE_ARM_SHANI) && !defined(BUILD_BITCOIN_INTERNAL)
 #include <sys/auxv.h>
