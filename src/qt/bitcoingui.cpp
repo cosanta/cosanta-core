@@ -232,7 +232,7 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const NetworkStyle* networkStyle,
 #endif
 
     QTimer* timerStakingIcon = new QTimer(labelStakingIcon);
-    connect(timerStakingIcon, SIGNAL(timeout()), this, SLOT(setStakingStatus()));
+    connect(timerStakingIcon, &QTimer::timeout, this, &BitcoinGUI::setStakingStatus);
     timerStakingIcon->start(10000);
     setStakingStatus();
 
@@ -490,7 +490,7 @@ void BitcoinGUI::createActions()
         connect(changePassphraseAction, &QAction::triggered, walletFrame, &WalletFrame::changePassphrase);
         connect(unlockWalletAction, &QAction::triggered, walletFrame, &WalletFrame::unlockWallet);
         connect(lockWalletAction, &QAction::triggered, walletFrame, &WalletFrame::lockWallet);
-        connect(startStakingAction, SIGNAL(triggered()), walletFrame, SLOT(unlockWalletForMixingOnly()));
+        connect(startStakingAction, &QAction::triggered, walletFrame, &WalletFrame::unlockWalletForMixingOnly);
         connect(signMessageAction, &QAction::triggered, this, static_cast<void (BitcoinGUI::*)()>(&BitcoinGUI::showNormalIfMinimized));
         connect(signMessageAction, &QAction::triggered, [this]{ gotoSignMessageTab(); });
         connect(verifyMessageAction, &QAction::triggered, this, static_cast<void (BitcoinGUI::*)()>(&BitcoinGUI::showNormalIfMinimized));
