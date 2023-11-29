@@ -24,7 +24,7 @@ struct TxInUndoFormatter
 {
     template<typename Stream>
     void Ser(Stream &s, const Coin& txout) {
-        ::Serialize(s, VARINT(txout.nHeight * 4 + (txout.fCoinBase ? 2u : 0u) + (txout.fCoinStake ? 1u : 0u)));
+        ::Serialize(s, VARINT(txout.nHeight * uint32_t{4} + (txout.fCoinBase ? uint32_t{2} : uint32_t{0}) + (txout.fCoinStake ? uint32_t{1} : uint32_t{0})));
         if (txout.nHeight > 0) {
             // Required to maintain compatibility with older undo format.
             ::Serialize(s, (unsigned char)0);
@@ -34,7 +34,7 @@ struct TxInUndoFormatter
 
     template<typename Stream>
     void Unser(Stream &s, Coin& txout) {
-        unsigned int nCode = 0;
+        uint32_t nCode = 0;
         ::Unserialize(s, VARINT(nCode));
         txout.nHeight = nCode >> 2;
         txout.fCoinBase = nCode >> 1;

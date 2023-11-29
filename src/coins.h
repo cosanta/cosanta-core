@@ -65,7 +65,7 @@ public:
     template<typename Stream>
     void Serialize(Stream &s) const {
         assert(!IsSpent());
-        uint32_t code = nHeight * 4 + fCoinBase * 2 + (fCoinStake ? 1 : 0);
+        uint32_t code = nHeight * uint32_t{4} + fCoinBase * uint32_t{2} + (fCoinStake ? uint32_t{1} : uint32_t{0});
         ::Serialize(s, VARINT(code));
         ::Serialize(s, Using<TxOutCompression>(out));
     }
