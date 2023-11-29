@@ -112,10 +112,7 @@ $(package)_config_opts += -no-feature-undostack
 $(package)_config_opts += -no-feature-undoview
 $(package)_config_opts += -no-feature-vnc
 $(package)_config_opts += -no-feature-wizard
-
-$(package)_config_opts += -feature-xmlstream
-$(package)_config_opts += -feature-xmlstreamreader
-$(package)_config_opts += -no-feature-xmlstreamwriter
+$(package)_config_opts += -no-feature-xml
 
 $(package)_config_opts_darwin = -no-dbus
 $(package)_config_opts_darwin += -no-opengl
