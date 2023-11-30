@@ -2,6 +2,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#if defined(HAVE_CONFIG_H)
+#include <config/cosanta-config.h>
+#endif
+
 #include <sync.h>
 
 #include <logging.h>
@@ -9,10 +13,8 @@
 #include <util/strencodings.h>
 #include <util/threadnames.h>
 
-#include <stdio.h>
 
 #include <map>
-#include <memory>
 #include <set>
 #include <system_error>
 #include <thread>

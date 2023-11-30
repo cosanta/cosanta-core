@@ -68,7 +68,6 @@
 #include <malloc.h>
 #endif
 
-#include <boost/thread.hpp>
 #include <thread>
 
 // Application startup time (used for uptime calculation)
