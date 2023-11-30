@@ -7,7 +7,7 @@
 #include <config/cosanta-config.h>
 #endif
 
-#include <qt/cosanta.h>
+#include <qt/dash.h>
 #include <qt/bitcoingui.h>
 
 #include <chainparams.h>
