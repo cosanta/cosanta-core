@@ -10,12 +10,9 @@
 #include <ui_interface.h>
 #include <util/translation.h>
 
-#include <cstdio>
-#include <stdint.h>
 #include <string>
 
 #include <boost/signals2/connection.hpp>
-#include <boost/signals2/signal.hpp>
 
 /** Store connections so we can disconnect them when suppressing output */
 boost::signals2::connection noui_ThreadSafeMessageBoxConn;

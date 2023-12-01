@@ -10,7 +10,6 @@
 
 #include <wallet/wallet.h>
 
-#include <checkpoints.h>
 #include <chain.h>
 #include <chainparams.h>
 #include <consensus/consensus.h>

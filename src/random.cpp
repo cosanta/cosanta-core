@@ -16,14 +16,12 @@
 #include <util/time.h> // for GetTimeMicros()
 
 #include <stdlib.h>
-#include <chrono>
 #include <thread>
 
 #include <support/allocators/secure.h>
 
 #ifndef WIN32
 #include <fcntl.h>
-#include <sys/time.h>
 #endif
 
 #ifdef HAVE_SYS_GETRANDOM
@@ -41,7 +39,6 @@
 #include <sys/sysctl.h>
 #endif
 
-#include <mutex>
 
 #if defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
 #include <cpuid.h>
