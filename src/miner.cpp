@@ -301,6 +301,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
 
         if (pindexPrev != ::ChainActive().Tip()) {
             LogPrint(BCLog::STAKING, "%s: the network has already found another block", __func__);
+            return nullptr;
         }
 
         if (!TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)) {
