@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -48,11 +47,6 @@ public:
      * will cause the wrong path to be cached.
      */
     static bool pickDataDirectory(interfaces::Node& node);
-
-    /**
-     * Determine default data directory for operating system.
-     */
-    static QString getDefaultDataDirectory();
 
 Q_SIGNALS:
     void requestCheck();

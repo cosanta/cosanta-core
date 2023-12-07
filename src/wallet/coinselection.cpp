@@ -4,13 +4,12 @@
 
 #include <wallet/coinselection.h>
 
+#include <optional.h>
 #include <util/system.h>
 #include <util/moneystr.h>
 
 #include <llmq/instantsend.h>
 #include <coinjoin/coinjoin.h>
-
-#include <boost/optional.hpp>
 
 // Descending order comparator
 struct {
@@ -25,7 +24,7 @@ struct {
  * set that can pay for the spending target and does not exceed the spending target by more than the
  * cost of creating and spending a change output. The algorithm uses a depth-first search on a binary
  * tree. In the binary tree, each node corresponds to the inclusion or the omission of a UTXO. UTXOs
- * are sorted by their effective values and the trees is explored deterministically per the inclusion
+ * are sorted by their effective values and the tree is explored deterministically per the inclusion
  * branch first. At each node, the algorithm checks whether the selection is within the target range.
  * While the selection has not reached the target range, more UTXOs are included. When a selection's
  * value exceeds the target range, the complete subtree deriving from this selection can be omitted.
@@ -35,7 +34,7 @@ struct {
  * The search continues to search for better solutions after one solution has been found. The best
  * solution is chosen by minimizing the waste metric. The waste metric is defined as the cost to
  * spend the current inputs at the given fee rate minus the long term expected cost to spend the
- * inputs, plus the amount the selection exceeds the spending target:
+ * inputs, plus the amount by which the selection exceeds the spending target:
  *
  * waste = selectionTotal - target + inputs × (currentFeeRate - longTermFeeRate)
  *
@@ -110,6 +109,9 @@ bool SelectCoinsBnB(std::vector<OutputGroup>& utxo_pool, const CAmount& target_v
                 best_selection = curr_selection;
                 best_selection.resize(utxo_pool.size());
                 best_waste = curr_waste;
+                if (best_waste == 0) {
+                    break;
+                }
             }
             curr_waste -= (curr_value - actual_target); // Remove the excess value as we will be selecting different coins now
             backtrack = true;
@@ -249,7 +251,7 @@ bool KnapsackSolver(const CAmount& nTargetValue, std::vector<OutputGroup>& group
     nValueRet = 0;
 
     // List of values less than target
-    boost::optional<OutputGroup> lowest_larger;
+    Optional<OutputGroup> lowest_larger;
     std::vector<OutputGroup> applicable_groups;
     CAmount nTotalLower = 0;
 
@@ -364,12 +366,12 @@ void OutputGroup::Insert(const CInputCoin& output, int depth, bool from_me, size
     m_from_me &= from_me;
     m_value += output.effective_value;
     m_depth = std::min(m_depth, depth);
-    // m_ancestors is currently the max ancestor count for all coins in the group; however, this is
-    // not ideal, as a wallet will consider e.g. thirty 2-ancestor coins as having two ancestors,
-    // when in reality it has 60 ancestors.
-    m_ancestors = std::max(m_ancestors, ancestors);
-    // m_descendants is the count as seen from the top ancestor, not the descendants as seen from the
-    // coin itself; thus, this value is accurate
+    // ancestors here express the number of ancestors the new coin will end up having, which is
+    // the sum, rather than the max; this will overestimate in the cases where multiple inputs
+    // have common ancestors
+    m_ancestors += ancestors;
+    // descendants is the count as seen from the top ancestor, not the descendants as seen from the
+    // coin itself; thus, this value is counted as the max, not the sum
     m_descendants = std::max(m_descendants, descendants);
     effective_value = m_value;
 }

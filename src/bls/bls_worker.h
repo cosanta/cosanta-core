@@ -1,10 +1,9 @@
-// Copyright (c) 2018-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2021 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef COSANTA_CRYPTO_BLS_WORKER_H
-#define COSANTA_CRYPTO_BLS_WORKER_H
+#ifndef DASH_CRYPTO_BLS_WORKER_H
+#define DASH_CRYPTO_BLS_WORKER_H
 
 #include <bls/bls.h>
 
@@ -193,4 +192,4 @@ private:
     }
 };
 
-#endif //COSANTA_CRYPTO_BLS_WORKER_H
+#endif //DASH_CRYPTO_BLS_WORKER_H

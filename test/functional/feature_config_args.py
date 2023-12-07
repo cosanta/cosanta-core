@@ -14,9 +14,6 @@ class ConfArgsTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         self.num_nodes = 1
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_wallet()
-
     def test_config_file_parser(self):
         # Assume node is stopped
 
@@ -24,25 +21,45 @@ class ConfArgsTest(BitcoinTestFramework):
         with open(os.path.join(self.nodes[0].datadir, 'bitcoin.conf'), 'a', encoding='utf-8') as conf:
             conf.write('includeconf={}\n'.format(inc_conf_file_path))
 
+        self.nodes[0].assert_start_raises_init_error(
+            expected_msg='Error: Error parsing command line arguments: Invalid parameter -dash_cli',
+            extra_args=['-dash_cli=1'],
+        )
+        with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
+            conf.write('dash_conf=1\n')
+        with self.nodes[0].assert_debug_log(expected_msgs=['Ignoring unknown configuration value dash_conf']):
+            self.start_node(0)
+        self.stop_node(0)
+
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
             conf.write('-dash=1\n')
-        self.nodes[0].assert_start_raises_init_error(expected_msg='Error reading configuration file: parse error on line 1: -dash=1, options in configuration file must be specified without leading -')
+        self.nodes[0].assert_start_raises_init_error(expected_msg='Error: Error reading configuration file: parse error on line 1: -dash=1, options in configuration file must be specified without leading -')
+
+        if self.is_wallet_compiled():
+            with open(inc_conf_file_path, 'w', encoding='utf8') as conf:
+                conf.write("wallet=foo\n")
+            self.nodes[0].assert_start_raises_init_error(expected_msg='Error: Config setting for -wallet only applied on regtest network when in [regtest] section.')
+
+        with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
+            conf.write('regtest=0\n') # mainnet
+            conf.write('acceptnonstdtxn=1\n')
+        self.nodes[0].assert_start_raises_init_error(expected_msg='Error: acceptnonstdtxn is not currently supported for main chain')
 
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
             conf.write('nono\n')
-        self.nodes[0].assert_start_raises_init_error(expected_msg='Error reading configuration file: parse error on line 1: nono, if you intended to specify a negated option, use nono=1 instead')
+        self.nodes[0].assert_start_raises_init_error(expected_msg='Error: Error reading configuration file: parse error on line 1: nono, if you intended to specify a negated option, use nono=1 instead')
 
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
             conf.write('server=1\nrpcuser=someuser\nrpcpassword=some#pass')
-        self.nodes[0].assert_start_raises_init_error(expected_msg='Error reading configuration file: parse error on line 3, using # in rpcpassword can be ambiguous and should be avoided')
+        self.nodes[0].assert_start_raises_init_error(expected_msg='Error: Error reading configuration file: parse error on line 3, using # in rpcpassword can be ambiguous and should be avoided')
 
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
             conf.write('server=1\nrpcuser=someuser\nmain.rpcpassword=some#pass')
-        self.nodes[0].assert_start_raises_init_error(expected_msg='Error reading configuration file: parse error on line 3, using # in rpcpassword can be ambiguous and should be avoided')
+        self.nodes[0].assert_start_raises_init_error(expected_msg='Error: Error reading configuration file: parse error on line 3, using # in rpcpassword can be ambiguous and should be avoided')
 
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
             conf.write('server=1\nrpcuser=someuser\n[main]\nrpcpassword=some#pass')
-        self.nodes[0].assert_start_raises_init_error(expected_msg='Error reading configuration file: parse error on line 4, using # in rpcpassword can be ambiguous and should be avoided')
+        self.nodes[0].assert_start_raises_init_error(expected_msg='Error: Error reading configuration file: parse error on line 4, using # in rpcpassword can be ambiguous and should be avoided')
 
         inc_conf_file2_path = os.path.join(self.nodes[0].datadir, 'include2.conf')
         with open(os.path.join(self.nodes[0].datadir, 'dash.conf'), 'a', encoding='utf-8') as conf:
@@ -53,7 +70,7 @@ class ConfArgsTest(BitcoinTestFramework):
         with open(inc_conf_file2_path, 'w', encoding='utf-8') as conf:
             conf.write('[testnet]\n')
         self.restart_node(0)
-        self.nodes[0].stop_node(expected_stderr='Warning: ' + inc_conf_file_path + ':1 Section [testnot] is not recognized.' + os.linesep + 'Warning: ' + inc_conf_file2_path + ':1 Section [testnet] is not recognized.')
+        self.nodes[0].stop_node(expected_stderr='Warning: ' + inc_conf_file_path + ':1 Section [testnot] is not recognized.' + os.linesep + inc_conf_file2_path + ':1 Section [testnet] is not recognized.')
 
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
             conf.write('')  # clear
@@ -93,19 +110,27 @@ class ConfArgsTest(BitcoinTestFramework):
         with open(conf_file, 'w', encoding='utf8') as f:
             f.write("datadir=" + new_data_dir + "\n")
             f.write(conf_file_contents)
-        self.nodes[0].assert_start_raises_init_error(['-conf=' + conf_file], 'Error reading configuration file: specified data directory "' + new_data_dir + '" does not exist.')
+
+        # Temporarily disabled, because this test would access the user's home dir (~/.bitcoin)
+        #self.nodes[0].assert_start_raises_init_error(['-conf=' + conf_file], 'Error reading configuration file: specified data directory "' + new_data_dir + '" does not exist.')
 
         # Create the directory and ensure the config file now works
         os.mkdir(new_data_dir)
-        self.start_node(0, ['-conf='+conf_file, '-wallet=w1'])
-        self.stop_node(0)
-        assert os.path.exists(os.path.join(new_data_dir, self.chain, 'wallets', 'w1'))
+        # Temporarily disabled, because this test would access the user's home dir (~/.bitcoin)
+        #self.start_node(0, ['-conf='+conf_file, '-wallet=w1'])
+        #self.stop_node(0)
+        #assert os.path.exists(os.path.join(new_data_dir, self.chain, 'blocks'))
+        #if self.is_wallet_compiled():
+        #assert os.path.exists(os.path.join(new_data_dir, self.chain, 'wallets', 'w1'))
 
         # Ensure command line argument overrides datadir in conf
         os.mkdir(new_data_dir_2)
         self.nodes[0].datadir = new_data_dir_2
         self.start_node(0, ['-datadir='+new_data_dir_2, '-conf='+conf_file, '-wallet=w2'])
-        assert os.path.exists(os.path.join(new_data_dir_2, self.chain, 'wallets', 'w2'))
+        assert os.path.exists(os.path.join(new_data_dir_2, self.chain, 'blocks'))
+        if self.is_wallet_compiled():
+            assert os.path.exists(os.path.join(new_data_dir_2, self.chain, 'wallets', 'w2'))
+
 
 if __name__ == '__main__':
     ConfArgsTest().main()

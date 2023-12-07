@@ -22,7 +22,7 @@ Configuration
 
 At a bare minimum, cosantad requires that the rpcpassword setting be set
 when running as a daemon.  If the configuration file does not exist or this
-setting is not set, cosantad will shutdown promptly after startup.
+setting is not set, cosantad will shut down promptly after startup.
 
 This password does not have to be remembered or typed as it is mostly used
 as a fixed token that cosantad and client programs read from the configuration
@@ -53,11 +53,19 @@ Paths
 
 All three configurations assume several paths that might need to be adjusted.
 
+<<<<<<< HEAD
 Binary:              `/usr/bin/cosantad`  
 Configuration file:  `/etc/cosantacore/cosanta.conf`  
 Data directory:      `/var/lib/cosantad`  
 PID file:            `/var/run/cosantad/cosantad.pid` (OpenRC and Upstart) or `/var/lib/cosantad/cosantad.pid` (systemd)  
 Lock file:           `/var/lock/subsys/cosantad` (CentOS)  
+=======
+Binary:              `/usr/bin/dashd`
+Configuration file:  `/etc/dashcore/dash.conf`
+Data directory:      `/var/lib/dashd`
+PID file:            `/var/run/dashd/dashd.pid` (OpenRC and Upstart) or `/run/dashd/dashd.pid` (systemd)
+Lock file:           `/var/lock/subsys/dashd` (CentOS)
+>>>>>>> 950976893 (Merge #16812: doc: Fix whitespace errs in .md files, bitcoin.conf, and Info.plist.in)
 
 The configuration file, PID directory (if applicable) and data directory
 should all be owned by the cosantacore user and group.  It is advised for security
@@ -65,12 +73,28 @@ reasons to make the configuration file and data directory only readable by the
 cosantacore user and group.  Access to cosanta-cli and other cosantad rpc clients
 can then be controlled by group membership.
 
+NOTE: When using the systemd .service file, the creation of the aforementioned
+directories and the setting of their permissions is automatically handled by
+systemd. Directories are given a permission of 710, giving the cosantacore user and group
+access to files under it _if_ the files themselves give permission to the
+cosantacore user and group to do so (e.g. when `-sysperms` is specified). This does not allow
+for the listing of files under the directory.
+
+NOTE: It is not currently possible to override `datadir` in
+`/etc/cosanta/cosanta.conf` with the current systemd, OpenRC, and Upstart init
+files out-of-the-box. This is because the command line options specified in the
+init files take precedence over the configurations in
+`/etc/cosanta/cosanta.conf`. However, some init systems have their own
+configuration mechanisms that would allow for overriding the command line
+options specified in the init files (e.g. setting `BITCOIND_DATADIR` for
+OpenRC).
+
 ### macOS
 
-Binary:              `/usr/local/bin/cosantad`  
-Configuration file:  `~/Library/Application Support/CosantaCore/cosanta.conf`  
-Data directory:      `~/Library/Application Support/CosantaCore`  
-Lock file:           `~/Library/Application Support/CosantaCore/.lock`  
+Binary:              `/usr/local/bin/cosantad`
+Configuration file:  `~/Library/Application Support/CosantaCore/cosanta.conf`
+Data directory:      `~/Library/Application Support/CosantaCore`
+Lock file:           `~/Library/Application Support/CosantaCore/.lock`
 
 Installing Service Configuration
 -----------------------------------
@@ -83,6 +107,8 @@ Installing this .service file consists of just copying it to
 
 To test, run `systemctl start cosantad` and to enable for system startup run
 `systemctl enable cosantad`
+
+NOTE: When installing for systemd in Debian/Ubuntu the .service file needs to be copied to the /lib/systemd/system directory instead.
 
 ### OpenRC
 

@@ -1,3 +1,15 @@
+# Unit tests
+
+The sources in this directory are unit test cases. Boost includes a
+unit testing framework, and since Dash Core already uses Boost, it makes
+sense to simply use this framework rather than require developers to
+configure some other framework (we want as few impediments to creating
+unit tests as possible).
+
+The build system is set up to compile an executable called `test_dash`
+that runs all of the unit tests. The main source file for the test library is found in
+`util/setup_common.cpp`.
+
 ### Compiling/running unit tests
 
 Unit tests will be automatically compiled if dependencies were met in `./configure`
@@ -39,7 +51,7 @@ unit tests as possible).
 
 The build system is setup to compile an executable called `test_cosanta`
 that runs all of the unit tests.  The main source file is called
-test_cosanta.cpp. To add a new unit test file to our test suite you need
+setup_common.cpp. To add a new unit test file to our test suite you need
 to add the file to `src/Makefile.test.include`. The pattern is to create
 one test file for each class or source file for which you want to create
 unit tests.  The file naming convention is `<source_filename>_tests.cpp`

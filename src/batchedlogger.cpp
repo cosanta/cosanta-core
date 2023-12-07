@@ -1,10 +1,8 @@
-// Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2021 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <batchedlogger.h>
-#include <util/system.h>
 
 CBatchedLogger::CBatchedLogger(BCLog::LogFlags _category, const std::string& _header) :
     accept(LogAcceptCategory(_category)), header(_header)

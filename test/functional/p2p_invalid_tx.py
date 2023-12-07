@@ -6,7 +6,7 @@
 
 In this test we connect to one node over p2p, and test tx requests."""
 
-from test_framework.blocktools import create_block, create_coinbase, create_tx_with_script
+from test_framework.blocktools import create_block, create_coinbase
 from test_framework.messages import (
     COIN,
     COutPoint,
@@ -20,16 +20,17 @@ from test_framework.util import (
     assert_equal,
     wait_until,
 )
+from data import invalid_txs
 
 
 class InvalidTxRequestTest(BitcoinTestFramework):
 
     def set_test_params(self):
         self.num_nodes = 1
+        self.extra_args = [[
+            "-acceptnonstdtxn=1",
+        ]]
         self.setup_clean_chain = True
-
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_wallet()
 
     def bootstrap_p2p(self, *, num_connections=1):
         """Add a P2P connection to the node.
@@ -37,7 +38,6 @@ class InvalidTxRequestTest(BitcoinTestFramework):
         Helper to connect and wait for version handshake."""
         for _ in range(num_connections):
             self.nodes[0].add_p2p_connection(P2PDataStore())
-        self.nodes[0].p2p.wait_for_verack()
 
     def reconnect_p2p(self, **kwargs):
         """Tear down and bootstrap the P2P connection to the node.
@@ -76,14 +76,23 @@ class InvalidTxRequestTest(BitcoinTestFramework):
         node.p2p.send_blocks_and_test([block1, block2], node, success=True)
 
         self.log.info("Mature the block.")
-        self.nodes[0].generate(100)
+        self.nodes[0].generatetoaddress(100, self.nodes[0].get_deterministic_priv_key().address)
 
-        # b'\x64' is OP_NOTIF
-        # Transaction will be rejected with code 16 (REJECT_INVALID)
-        # and we get disconnected immediately
-        self.log.info('Test a transaction that is rejected')
-        tx1 = create_tx_with_script(block1.vtx[0], 0, script_sig=b'\x64' * 35, amount=50 * COIN)
-        node.p2p.send_txs_and_test([tx1], node, success=False, expect_disconnect=True)
+        # Iterate through a list of known invalid transaction types, ensuring each is
+        # rejected. Some are consensus invalid and some just violate policy.
+        for BadTxTemplate in invalid_txs.iter_all_templates():
+            self.log.info("Testing invalid transaction: %s", BadTxTemplate.__name__)
+            template = BadTxTemplate(spend_block=block1)
+            tx = template.get_tx()
+            node.p2p.send_txs_and_test(
+                [tx], node, success=False,
+                expect_disconnect=template.expect_disconnect,
+                reject_reason=template.reject_reason,
+            )
+
+            if template.expect_disconnect:
+                self.log.info("Reconnecting to peer")
+                self.reconnect_p2p()
 
         # Make two p2p connections to provide the node with orphans
         # * p2ps[0] will send valid orphan txs (one with low fee)
@@ -93,20 +102,8 @@ class InvalidTxRequestTest(BitcoinTestFramework):
         self.log.info('Test orphan transaction handling ... ')
         self.test_orphan_tx_handling(block1.vtx[0].sha256, False)
 
-        # restart node with sending BIP61 messages disabled, check that it disconnects without sending the reject message
-        self.log.info('Test a transaction that is rejected, with BIP61 disabled')
-        self.restart_node(0, ['-enablebip61=0', '-persistmempool=0'])
-        self.reconnect_p2p(num_connections=1)
-        with node.assert_debug_log(expected_msgs=[
-            "{} from peer=0 was not accepted: mandatory-script-verify-flag-failed (Invalid OP_IF construction) (code 16)".format(tx1.hash),
-            "disconnecting peer=0",
-        ]):
-            node.p2p.send_txs_and_test([tx1], node, success=False, expect_disconnect=True)
-        # send_txs_and_test will have waited for disconnect, so we can safely check that no reject has been received
-        assert_equal(node.p2p.reject_code_received, None)
-
         self.log.info('Test orphan transaction handling, resolve via block')
-        self.restart_node(0, ['-persistmempool=0'])
+        self.restart_node(0, ["-acceptnonstdtxn=1", '-persistmempool=0'])
         self.reconnect_p2p(num_connections=2)
         self.test_orphan_tx_handling(block2.vtx[0].sha256, True)
 
@@ -162,8 +159,9 @@ class InvalidTxRequestTest(BitcoinTestFramework):
             block.solve()
             node.p2p.send_blocks_and_test([block], node, success=True)
         else:
-            # Test orphan handling/resolution by publishing the withhold TX via the mempool
-            node.p2p.send_txs_and_test([tx_withhold], node, success=True)
+            with node.assert_debug_log(expected_msgs=["bad-txns-in-belowout"]):
+                # Test orphan handling/resolution by publishing the withhold TX via the mempool
+                node.p2p.send_txs_and_test([tx_withhold], node, success=True)
 
         # Transactions that should end up in the mempool
         expected_mempool = {
@@ -183,7 +181,6 @@ class InvalidTxRequestTest(BitcoinTestFramework):
 
         wait_until(lambda: 1 == len(node.getpeerinfo()), timeout=12)  # p2ps[1] is no longer connected
         assert_equal(expected_mempool, set(node.getrawmempool()))
-
 
 
 if __name__ == '__main__':

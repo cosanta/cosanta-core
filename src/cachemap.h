@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2021 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -124,7 +123,7 @@ public:
         if(it == mapIndex.end()) {
             return false;
         }
-        item_t& item = *(it->second);
+        const item_t& item = *(it->second);
         value = item.value;
         return true;
     }

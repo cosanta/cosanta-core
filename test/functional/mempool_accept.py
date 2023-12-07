@@ -5,6 +5,8 @@
 """Test mempool acceptance of raw transactions."""
 
 from io import BytesIO
+import math
+
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.messages import (
     BIP125_SEQUENCE_NUMBER,
@@ -37,7 +39,6 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
             '-checkmempool',
             '-txindex',
             '-reindex',  # Need reindex for txindex
-            '-acceptnonstdtxn=0',  # Try to mimic main-net
         ]] * self.num_nodes
 
     def skip_test_if_missing_module(self):
@@ -68,8 +69,9 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
             inputs=[{'txid': coin['txid'], 'vout': coin['vout']}],
             outputs=[{node.getnewaddress(): 0.3}, {node.getnewaddress(): 49}],
         ))['hex']
-        txid_in_block = node.sendrawtransaction(hexstring=raw_tx_in_block, allowhighfees=True)
+        txid_in_block = node.sendrawtransaction(hexstring=raw_tx_in_block, maxfeerate=0)
         node.generate(1)
+        self.mempool_size = 0
         self.check_mempool_result(
             result_expected=[{'txid': txid_in_block, 'allowed': False, 'reject-reason': '18: txn-already-known'}],
             rawtxs=[raw_tx_in_block],
@@ -89,9 +91,25 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
             rawtxs=[raw_tx_0],
         )
 
+        self.log.info('A final transaction not in the mempool')
+        coin = node.listunspent()[0]  # Pick a random coin(base) to spend
+        raw_tx_final = node.signrawtransactionwithwallet(node.createrawtransaction(
+            inputs=[{'txid': coin['txid'], 'vout': coin['vout'], "sequence": 0xffffffff}],  # SEQUENCE_FINAL
+            outputs=[{node.getnewaddress(): 0.025}],
+            locktime=node.getblockcount() + 2000,  # Can be anything
+        ))['hex']
+        tx.deserialize(BytesIO(hex_str_to_bytes(raw_tx_final)))
+        self.check_mempool_result(
+            result_expected=[{'txid': tx.rehash(), 'allowed': True}],
+            rawtxs=[tx.serialize().hex()],
+            maxfeerate=0,
+        )
+        node.sendrawtransaction(hexstring=raw_tx_final, maxfeerate=0)
+        self.mempool_size += 1
+
         self.log.info('A transaction in the mempool')
         node.sendrawtransaction(hexstring=raw_tx_0)
-        self.mempool_size = 1
+        self.mempool_size += 1
         self.check_mempool_result(
             result_expected=[{'txid': txid_0, 'allowed': False, 'reject-reason': '18: txn-already-in-mempool'}],
             rawtxs=[raw_tx_0],
@@ -112,7 +130,7 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
 
         self.log.info('A transaction that conflicts with an unconfirmed tx')
         # Send the transaction that replaces the mempool transaction and opts out of replaceability
-        # node.sendrawtransaction(hexstring=tx.serialize().hex(), allowhighfees=True)
+        # node.sendrawtransaction(hexstring=tx.serialize().hex(), maxfeerate=0)
         # take original raw_tx_0
         tx.deserialize(BytesIO(hex_str_to_bytes(raw_tx_0)))
         tx.vout[0].nValue -= int(4 * fee * COIN)  # Set more fee
@@ -120,7 +138,7 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
         self.check_mempool_result(
             result_expected=[{'txid': tx.rehash(), 'allowed': False, 'reject-reason': '18: txn-mempool-conflict'}],
             rawtxs=[tx.serialize().hex()],
-            allowhighfees=True,
+            maxfeerate=0,
         )
 
         self.log.info('A transaction with missing inputs, that never existed')
@@ -136,7 +154,7 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
         tx.deserialize(BytesIO(hex_str_to_bytes(raw_tx_0)))
         tx.vin[0].prevout.n = 1  # Set vout to 1, to spend the other outpoint (49 coins) of the in-chain-tx we want to double spend
         raw_tx_1 = node.signrawtransactionwithwallet(tx.serialize().hex())['hex']
-        txid_1 = node.sendrawtransaction(hexstring=raw_tx_1, allowhighfees=True)
+        txid_1 = node.sendrawtransaction(hexstring=raw_tx_1, maxfeerate=0)
         # Now spend both to "clearly hide" the outputs, ie. remove the coins from the utxo set by spending them
         raw_tx_spend_both = node.signrawtransactionwithwallet(node.createrawtransaction(
             inputs=[
@@ -145,7 +163,7 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
             ],
             outputs=[{node.getnewaddress(): 0.1}]
         ))['hex']
-        txid_spend_both = node.sendrawtransaction(hexstring=raw_tx_spend_both, allowhighfees=True)
+        txid_spend_both = node.sendrawtransaction(hexstring=raw_tx_spend_both, maxfeerate=0)
         node.generate(1)
         self.mempool_size = 0
         # Now see if we can add the coins back to the utxo set by sending the exact txs again
@@ -182,7 +200,7 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
 
         self.log.info('A really large transaction')
         tx.deserialize(BytesIO(hex_str_to_bytes(raw_tx_reference)))
-        tx.vin = [tx.vin[0]] * (MAX_BLOCK_SIZE // len(tx.vin[0].serialize()))
+        tx.vin = [tx.vin[0]] * math.ceil(MAX_BLOCK_SIZE / len(tx.vin[0].serialize()))
         self.check_mempool_result(
             result_expected=[{'txid': tx.rehash(), 'allowed': False, 'reject-reason': '16: bad-txns-oversize'}],
             rawtxs=[tx.serialize().hex()],
@@ -196,6 +214,7 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
             rawtxs=[tx.serialize().hex()],
         )
 
+        # The following two validations prevent overflow of the output amounts (see CVE-2010-5139).
         self.log.info('A transaction with too large output value')
         tx.deserialize(BytesIO(hex_str_to_bytes(raw_tx_reference)))
         tx.vout[0].nValue = 21000000 * COIN + 1
@@ -288,7 +307,7 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
         self.check_mempool_result(
             result_expected=[{'txid': tx.rehash(), 'allowed': False, 'reject-reason': '64: non-BIP68-final'}],
             rawtxs=[tx.serialize().hex()],
-            allowhighfees=True,
+            maxfeerate=0,
         )
 
 

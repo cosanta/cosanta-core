@@ -9,9 +9,9 @@
 #include <script/script_error.h>
 #include <script/interpreter.h>
 #include <script/sign.h>
-#include <script/ismine.h>
+#include <tinyformat.h>
 #include <uint256.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 
 #include <boost/test/unit_test.hpp>

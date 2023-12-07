@@ -1,12 +1,16 @@
+// Copyright (c) 2015-2019 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include <qt/test/wallettests.h>
 #include <qt/test/util.h>
 
 #include <coinjoin/client.h>
+#include <init.h>
 #include <interfaces/chain.h>
 #include <interfaces/node.h>
 #include <base58.h>
 #include <qt/bitcoinamountfield.h>
-#include <qt/callback.h>
 #include <qt/clientmodel.h>
 #include <qt/optionsmodel.h>
 #include <qt/qvalidatedlineedit.h>
@@ -16,7 +20,7 @@
 #include <qt/transactionview.h>
 #include <qt/walletmodel.h>
 #include <key_io.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 #include <validation.h>
 #include <wallet/wallet.h>
 #include <qt/overviewpage.h>
@@ -42,7 +46,7 @@ namespace
 //! Press "Yes" or "Cancel" buttons in modal send confirmation dialog.
 void ConfirmSend(QString* text = nullptr, bool cancel = false)
 {
-    QTimer::singleShot(0, makeCallback([text, cancel](Callback* callback) {
+    QTimer::singleShot(0, [text, cancel]() {
         for (QWidget* widget : QApplication::topLevelWidgets()) {
             if (widget->inherits("SendConfirmationDialog")) {
                 SendConfirmationDialog* dialog = qobject_cast<SendConfirmationDialog*>(widget);
@@ -52,8 +56,7 @@ void ConfirmSend(QString* text = nullptr, bool cancel = false)
                 button->click();
             }
         }
-        delete callback;
-    }), &Callback::call);
+    });
 }
 
 //! Send coins to address and return txid.
@@ -97,9 +100,9 @@ QModelIndex FindTx(const QAbstractItemModel& model, const uint256& txid)
 //
 // This also requires overriding the default minimal Qt platform:
 //
-//     src/qt/test/test_dash-qt -platform xcb      # Linux
-//     src/qt/test/test_dash-qt -platform windows  # Windows
-//     src/qt/test/test_dash-qt -platform cocoa    # macOS
+//     QT_QPA_PLATFORM=xcb     src/qt/test/test_dash-qt  # Linux
+//     QT_QPA_PLATFORM=windows src/qt/test/test_dash-qt  # Windows
+//     QT_QPA_PLATFORM=cocoa   src/qt/test/test_dash-qt  # macOS
 void TestGUI()
 {
     // Set up wallet and chain with 105 blocks (5 mature blocks for spending).
@@ -108,7 +111,7 @@ void TestGUI()
         test.CreateAndProcessBlock({}, GetScriptForRawPubKey(test.coinbaseKey.GetPubKey()));
     }
     auto chain = interfaces::MakeChain();
-    std::shared_ptr<CWallet> wallet = std::make_shared<CWallet>(*chain, WalletLocation(), WalletDatabase::CreateMock());
+    std::shared_ptr<CWallet> wallet = std::make_shared<CWallet>(*chain, WalletLocation(), CreateMockWalletDatabase());
     AddWallet(wallet);
     bool firstRun;
     wallet->LoadWallet(firstRun);
@@ -119,15 +122,14 @@ void TestGUI()
     }
     {
         auto locked_chain = wallet->chain().lock();
+        LockAnnotation lock(::cs_main);
+
         WalletRescanReserver reserver(wallet.get());
         reserver.reserve();
-        const CBlockIndex* const null_block = nullptr;
-        const CBlockIndex *stop_block, *failed_block;
-        QCOMPARE(
-            wallet->ScanForWalletTransactions(chainActive.Genesis(), nullptr, reserver, failed_block, stop_block, true /* fUpdate */),
-            CWallet::ScanResult::SUCCESS);
-        QCOMPARE(stop_block, chainActive.Tip());
-        QCOMPARE(failed_block, null_block);
+        CWallet::ScanResult result = wallet->ScanForWalletTransactions(locked_chain->getBlockHash(0), {} /* stop_block */, reserver, true /* fUpdate */);
+        QCOMPARE(result.status, CWallet::ScanResult::SUCCESS);
+        QCOMPARE(result.last_scanned_block, ::ChainActive().Tip()->GetBlockHash());
+        QVERIFY(result.last_failed_block.IsNull());
     }
     wallet->SetBroadcastTransactions(true);
 
@@ -219,5 +221,16 @@ void TestGUI()
 
 void WalletTests::walletTests()
 {
+#ifdef Q_OS_MAC
+    if (QApplication::platformName() == "minimal") {
+        // Disable for mac on "minimal" platform to avoid crashes inside the Qt
+        // framework when it tries to look up unimplemented cocoa functions,
+        // and fails to handle returned nulls
+        // (https://bugreports.qt.io/browse/QTBUG-49686).
+        QWARN("Skipping WalletTests on mac build with 'minimal' platform set due to Qt bugs. To run AppTests, invoke "
+              "with 'QT_QPA_PLATFORM=cocoa test_dash-qt' on mac, or else use a linux or windows build.");
+        return;
+    }
+#endif
     TestGUI();
 }

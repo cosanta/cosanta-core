@@ -1,6 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2009-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,7 +15,6 @@
 #include <uint256.h>
 #include <version.h>
 
-#include <atomic>
 #include <stdint.h>
 #include <string>
 
@@ -39,6 +37,10 @@ public:
     typedef unsigned char MessageStartChars[MESSAGE_START_SIZE];
 
     explicit CMessageHeader(const MessageStartChars& pchMessageStartIn);
+
+    /** Construct a P2P message header from message-start characters, a command and the size of the message.
+     * @note Passing in a `pszCommand` longer than COMMAND_SIZE will result in a run-time assertion error.
+     */
     CMessageHeader(const MessageStartChars& pchMessageStartIn, const char* pszCommand, unsigned int nMessageSizeIn);
 
     std::string GetCommand() const;
@@ -314,6 +316,8 @@ extern const char *CLSIG;
 extern const char *ISLOCK;
 extern const char *ISDLOCK;
 extern const char *MNAUTH;
+extern const char *GETQUORUMROTATIONINFO;
+extern const char *QUORUMROTATIONINFO;
 };
 
 /* Get a vector of all valid message types (see above) */
@@ -355,7 +359,12 @@ enum ServiceFlags : uint64_t {
     // BIP process.
 };
 
-std::string serviceFlagToStr(uint64_t mask, int bit);
+/**
+ * Convert service flags (a bitmask of NODE_*) to human readable strings.
+ * It supports unknown service flags which will be returned as "UNKNOWN[...]".
+ * @param[in] flags multiple NODE_* bitwise-OR-ed together
+ */
+std::vector<std::string> serviceFlagsToStr(uint64_t flags);
 
 /**
  * Gets the set of service flags which are "desirable" for a given peer.

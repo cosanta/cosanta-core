@@ -1,6 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -49,6 +48,7 @@
 class CScheduler;
 class CNode;
 class BanMan;
+struct bilingual_str;
 
 /** Default for -whitelistrelay. */
 static const bool DEFAULT_WHITELISTRELAY = true;
@@ -77,12 +77,6 @@ static const int MAX_ADDNODE_CONNECTIONS = 8;
 static const int INBOUND_EVICTION_PROTECTION_TIME = 1;
 /** -listen default */
 static const bool DEFAULT_LISTEN = true;
-/** -upnp default */
-#ifdef USE_UPNP
-static const bool DEFAULT_UPNP = USE_UPNP;
-#else
-static const bool DEFAULT_UPNP = false;
-#endif
 /** The maximum number of peer connections to maintain.
  *  Masternodes are forced to accept at least this many connections
  */
@@ -148,6 +142,9 @@ public:
         CONNECTIONS_IN = (1U << 0),
         CONNECTIONS_OUT = (1U << 1),
         CONNECTIONS_ALL = (CONNECTIONS_IN | CONNECTIONS_OUT),
+        CONNECTIONS_VERIFIED = (1U << 2),
+        CONNECTIONS_VERIFIED_IN = (CONNECTIONS_VERIFIED | CONNECTIONS_IN),
+        CONNECTIONS_VERIFIED_OUT = (CONNECTIONS_VERIFIED | CONNECTIONS_OUT),
     };
 
     enum SocketEventsMode {
@@ -490,7 +487,7 @@ private:
         NetPermissionFlags m_permissions;
     };
 
-    bool BindListenPort(const CService& bindAddr, std::string& strError, NetPermissionFlags permissions);
+    bool BindListenPort(const CService& bindAddr, bilingual_str& strError, NetPermissionFlags permissions);
     bool Bind(const CService& addr, unsigned int flags, NetPermissionFlags permissions);
     bool InitBinds(const std::vector<CService>& binds, const std::vector<NetWhitebindPermissions>& whiteBinds);
     void ThreadOpenAddedConnections();
@@ -671,9 +668,6 @@ private:
 extern std::unique_ptr<CConnman> g_connman;
 extern std::unique_ptr<BanMan> g_banman;
 void Discover();
-void StartMapPort();
-void InterruptMapPort();
-void StopMapPort();
 unsigned short GetListenPort();
 
 struct CombinerAll
@@ -715,7 +709,7 @@ enum
     LOCAL_NONE,   // unknown
     LOCAL_IF,     // address a local interface listens on
     LOCAL_BIND,   // address explicit bound to
-    LOCAL_UPNP,   // address reported by UPnP
+    LOCAL_MAPPED, // address reported by UPnP or NAT-PMP
     LOCAL_MANUAL, // address explicitly specified (-externalip=)
 
     LOCAL_MAX
@@ -1176,17 +1170,22 @@ public:
         addrKnown.insert(_addr.GetKey());
     }
 
+    /**
+     * Whether the peer supports the address. For example, a peer that does not
+     * implement BIP155 cannot receive Tor v3 addresses because it requires
+     * ADDRv2 (BIP155) encoding.
+     */
+    bool IsAddrCompatible(const CAddress& addr) const
+    {
+        return m_wants_addrv2 || addr.IsAddrV1Compatible();
+    }
+
     void PushAddress(const CAddress& _addr, FastRandomContext &insecure_rand)
     {
-        // Whether the peer supports the address in `_addr`. For example,
-        // nodes that do not implement BIP155 cannot receive Tor v3 addresses
-        // because they require ADDRv2 (BIP155) encoding.
-        const bool addr_format_supported = m_wants_addrv2 || _addr.IsAddrV1Compatible();
-
         // Known checking here is only to save space from duplicates.
         // SendMessages will filter it again for knowns that were added
         // after addresses were pushed.
-        if (_addr.IsValid() && !addrKnown.contains(_addr.GetKey()) && addr_format_supported) {
+        if (_addr.IsValid() && !addrKnown.contains(_addr.GetKey()) && IsAddrCompatible(_addr)) {
             if (vAddrToSend.size() >= MAX_ADDR_TO_SEND) {
                 vAddrToSend[insecure_rand.randrange(vAddrToSend.size())] = _addr;
             } else {

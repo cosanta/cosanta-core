@@ -1,8 +1,11 @@
 # Copyright (c) 2013-2016 The Bitcoin Core developers
 # Copyright (c) 2014-2018 The Dash Core developers
-# Copyright (c) 2020-2022 The Cosanta Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+# Pattern rule to print variables, e.g. make print-top_srcdir
+print-%:
+	@echo '$*' = '$($*)'
 
 DIST_SUBDIRS = secp256k1 univalue
 
@@ -41,7 +44,7 @@ else
 LIBUNIVALUE = $(UNIVALUE_LIBS)
 endif
 
-BITCOIN_INCLUDES=-I$(builddir) $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
+BITCOIN_INCLUDES=-I$(builddir) $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS)
 
 BITCOIN_INCLUDES += -I$(srcdir)/secp256k1/include
 BITCOIN_INCLUDES += $(UNIVALUE_CFLAGS)
@@ -65,6 +68,7 @@ LIBBITCOINCONSENSUS=libcosantaconsensus.la
 endif
 if ENABLE_WALLET
 LIBBITCOIN_WALLET=libcosanta_wallet.a
+LIBBITCOIN_WALLET_TOOL=libcosanta_wallet_tool.a
 endif
 
 LIBBITCOIN_CRYPTO= $(LIBBITCOIN_CRYPTO_BASE)
@@ -76,9 +80,13 @@ if ENABLE_AVX2
 LIBBITCOIN_CRYPTO_AVX2 = crypto/libcosanta_crypto_avx2.a
 LIBBITCOIN_CRYPTO += $(LIBBITCOIN_CRYPTO_AVX2)
 endif
-if ENABLE_SHANI
-LIBBITCOIN_CRYPTO_SHANI = crypto/libcosanta_crypto_shani.a
-LIBBITCOIN_CRYPTO += $(LIBBITCOIN_CRYPTO_SHANI)
+if ENABLE_X86_SHANI
+LIBBITCOIN_CRYPTO_X86_SHANI = crypto/libcosanta_crypto_x86_shani.a
+LIBBITCOIN_CRYPTO += $(LIBBITCOIN_CRYPTO_X86_SHANI)
+endif
+if ENABLE_ARM_SHANI
+LIBBITCOIN_CRYPTO_ARM_SHANI = crypto/libcosanta_crypto_arm_shani.a
+LIBBITCOIN_CRYPTO += $(LIBBITCOIN_CRYPTO_ARM_SHANI)
 endif
 
 $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
@@ -94,6 +102,7 @@ EXTRA_LIBRARIES += \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_CLI) \
   $(LIBBITCOIN_WALLET) \
+  $(LIBBITCOIN_WALLET_TOOL) \
   $(LIBBITCOIN_ZMQ)
 
 lib_LTLIBRARIES = $(LIBBITCOINCONSENSUS)
@@ -112,6 +121,11 @@ if BUILD_BITCOIN_CLI
 endif
 if BUILD_BITCOIN_TX
   bin_PROGRAMS += cosanta-tx
+endif
+if ENABLE_WALLET
+if BUILD_BITCOIN_WALLET
+  bin_PROGRAMS += cosanta-wallet
+endif
 endif
 
 .PHONY: FORCE check-symbols check-security
@@ -137,7 +151,6 @@ BITCOIN_CORE_H = \
   chainparams.h \
   chainparamsbase.h \
   chainparamsseeds.h \
-  checkpoints.h \
   checkqueue.h \
   clientversion.h \
   coinjoin/coinjoin.h \
@@ -147,11 +160,13 @@ BITCOIN_CORE_H = \
   coinjoin/util.h \
   coins.h \
   compat.h \
+  compat/assumptions.h \
   compat/byteswap.h \
   compat/endian.h \
   compat/sanity.h \
   compressor.h \
   consensus/consensus.h \
+  consensus/tx_check.h \
   consensus/tx_verify.h \
   core_io.h \
   core_memusage.h \
@@ -160,11 +175,14 @@ BITCOIN_CORE_H = \
   cxxtimer.hpp \
   evo/cbtx.h \
   evo/deterministicmns.h \
+  evo/dmnstate.h \
   evo/evodb.h \
   evo/mnauth.h \
+  evo/mnhftx.h \
   evo/providertx.h \
   evo/simplifiedmns.h \
   evo/specialtx.h \
+  evo/specialtxman.h \
   dsnotificationinterface.h \
   governance/governance.h \
   governance/classes.h \
@@ -192,7 +210,6 @@ BITCOIN_CORE_H = \
   interfaces/wallet.h \
   key.h \
   key_io.h \
-  keepass.h \
   keystore.h \
   dbwrapper.h \
   limitedmap.h \
@@ -200,17 +217,21 @@ BITCOIN_CORE_H = \
   llmq/blockprocessor.h \
   llmq/commitment.h \
   llmq/chainlocks.h \
+  llmq/clsig.h \
   llmq/debug.h \
   llmq/dkgsessionhandler.h \
   llmq/dkgsessionmgr.h \
   llmq/dkgsession.h \
   llmq/init.h \
   llmq/instantsend.h \
+  llmq/snapshot.h \
   llmq/signing.h \
   llmq/signing_shares.h \
   llmq/utils.h \
+  llmq/params.h \
   logging.h \
   logging/timer.h \
+  mapport.h \
   masternode/node.h \
   masternode/meta.h \
   masternode/payments.h \
@@ -223,16 +244,20 @@ BITCOIN_CORE_H = \
   net.h \
   net_permissions.h \
   net_processing.h \
+  net_types.h \
   netaddress.h \
   netbase.h \
   netfulfilledman.h \
   netmessagemaker.h \
+  node/coin.h \
   node/coinstats.h \
   node/transaction.h \
   noui.h \
+  optional.h \
   policy/feerate.h \
   policy/fees.h \
   policy/policy.h \
+  policy/settings.h \
   pow.h \
   protocol.h \
   psbt.h \
@@ -242,14 +267,14 @@ BITCOIN_CORE_H = \
   rpc/client.h \
   rpc/mining.h \
   rpc/protocol.h \
-  rpc/server.h \
-  rpc/rawtransaction.h \
+  rpc/rawtransaction_util.h \
   rpc/register.h \
+  rpc/request.h \
+  rpc/server.h \
   rpc/util.h \
   saltedhasher.h \
   scheduler.h \
   script/descriptor.h \
-  script/ismine.h \
   script/sigcache.h \
   script/sign.h \
   script/standard.h \
@@ -275,19 +300,24 @@ BITCOIN_CORE_H = \
   ui_interface.h \
   undo.h \
   unordered_lru_cache.h \
+  util/bip32.h \
   util/bytevectorhash.h \
+  util/check.h \
   util/error.h \
   util/fees.h \
+  util/spanparsing.h \
   util/system.h \
   util/asmap.h \
   util/getuniquepath.h \
   util/macros.h \
   util/memory.h \
   util/moneystr.h \
+  util/ranges.h \
   util/serfloat.h \
   util/string.h \
   util/time.h \
   util/threadnames.h \
+  util/translation.h \
   util/vector.h \
   util/url.h \
   util/validation.h \
@@ -296,14 +326,19 @@ BITCOIN_CORE_H = \
   versionbits.h \
   versionbitsinfo.h \
   walletinitinterface.h \
+  wallet/bdb.h \
   wallet/coincontrol.h \
   wallet/crypter.h \
   wallet/db.h \
   wallet/fees.h \
+  wallet/ismine.h \
+  wallet/load.h \
   wallet/psbtwallet.h \
   wallet/rpcwallet.h \
+  wallet/salvage.h \
   wallet/wallet.h \
   wallet/walletdb.h \
+  wallet/wallettool.h \
   wallet/walletutil.h \
   wallet/coinselection.h \
   warnings.h \
@@ -321,30 +356,35 @@ obj/build.h: FORCE
 libcosanta_util_a-clientversion.$(OBJEXT): obj/build.h
 
 # server: shared between cosantad and cosanta-qt
-libcosanta_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
+# Contains code accessing mempool and chain state that is meant to be separated
+# from wallet and gui code (see node/README.md). Shared code should go in
+# libcosanta_common or libcosanta_util libraries, instead.
+libcosanta_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(NATPMP_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 libcosanta_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libcosanta_server_a_SOURCES = \
   addrdb.cpp \
   addrman.cpp \
   banman.cpp \
   batchedlogger.cpp \
-  bloom.cpp \
   blockencodings.cpp \
   blockfilter.cpp \
   chain.cpp \
-  checkpoints.cpp \
   coinjoin/coinjoin.cpp \
   coinjoin/options.cpp \
   coinjoin/server.cpp \
   consensus/tx_verify.cpp \
+  dbwrapper.cpp \
   dsnotificationinterface.cpp \
   evo/cbtx.cpp \
   evo/deterministicmns.cpp \
+  evo/dmnstate.cpp \
   evo/evodb.cpp \
   evo/mnauth.cpp \
+  evo/mnhftx.cpp \
   evo/providertx.cpp \
   evo/simplifiedmns.cpp \
   evo/specialtx.cpp \
+  evo/specialtxman.cpp \
   flatfile.cpp \
   httprpc.cpp \
   httpserver.cpp \
@@ -352,10 +392,8 @@ libcosanta_server_a_SOURCES = \
   index/blockfilterindex.cpp \
   index/txindex.cpp \
   interfaces/chain.cpp \
-  interfaces/handler.cpp \
   interfaces/node.cpp \
   init.cpp \
-  dbwrapper.cpp \
   governance/governance.cpp \
   governance/classes.cpp \
   governance/object.cpp \
@@ -366,31 +404,35 @@ libcosanta_server_a_SOURCES = \
   llmq/blockprocessor.cpp \
   llmq/commitment.cpp \
   llmq/chainlocks.cpp \
+  llmq/clsig.cpp \
   llmq/debug.cpp \
   llmq/dkgsessionhandler.cpp \
   llmq/dkgsessionmgr.cpp \
   llmq/dkgsession.cpp \
   llmq/init.cpp \
   llmq/instantsend.cpp \
+  llmq/snapshot.cpp \
   llmq/signing.cpp \
   llmq/signing_shares.cpp \
   llmq/utils.cpp \
+  mapport.cpp \
   masternode/node.cpp \
   masternode/meta.cpp \
   masternode/payments.cpp \
   masternode/sync.cpp \
   masternode/utils.cpp \
-  merkleblock.cpp \
   messagesigner.cpp \
   miner.cpp \
   net.cpp \
   netfulfilledman.cpp \
   net_processing.cpp \
+  node/coin.cpp \
   node/coinstats.cpp \
   node/transaction.cpp \
   noui.cpp \
   policy/fees.cpp \
   policy/policy.cpp \
+  policy/settings.cpp \
   pow.cpp \
   rest.cpp \
   rpc/blockchain.cpp \
@@ -404,7 +446,6 @@ libcosanta_server_a_SOURCES = \
   rpc/rpcquorums.cpp \
   rpc/server.cpp \
   rpc/coinjoin.cpp \
-  rpc/util.cpp \
   script/sigcache.cpp \
   shutdown.cpp \
   spork.cpp \
@@ -427,7 +468,7 @@ libcosanta_server_a_SOURCES += dummywallet.cpp
 endif
 
 if ENABLE_ZMQ
-libcosanta_zmq_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(ZMQ_CFLAGS)
+libcosanta_zmq_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(ZMQ_CFLAGS)
 libcosanta_zmq_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libcosanta_zmq_a_SOURCES = \
   zmq/zmqabstractnotifier.cpp \
@@ -448,19 +489,27 @@ libcosanta_wallet_a_SOURCES = \
   coinjoin/util.cpp \
   interfaces/wallet.cpp \
   pos_kernel.cpp \
-  keepass.cpp \
+  wallet/bdb.cpp \
   wallet/coincontrol.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \
   wallet/fees.cpp \
-  wallet/init.cpp \
+  wallet/ismine.cpp \
+  wallet/load.cpp \
   wallet/psbtwallet.cpp \
   wallet/rpcdump.cpp \
   wallet/rpcwallet.cpp \
+  wallet/salvage.cpp \
   wallet/wallet.cpp \
   wallet/walletdb.cpp \
   wallet/walletutil.cpp \
   wallet/coinselection.cpp \
+  $(BITCOIN_CORE_H)
+
+libcosanta_wallet_tool_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+libcosanta_wallet_tool_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcosanta_wallet_tool_a_SOURCES = \
+  wallet/wallettool.cpp \
   $(BITCOIN_CORE_H)
 
 # crypto primitives library
@@ -482,12 +531,12 @@ crypto_libcosanta_crypto_base_a_SOURCES = \
   crypto/hmac_sha512.h \
   crypto/poly1305.h \
   crypto/poly1305.cpp \
+  crypto/pkcs5_pbkdf2_hmac_sha512.cpp \
+  crypto/pkcs5_pbkdf2_hmac_sha512.h \
   crypto/ripemd160.cpp \
   crypto/aes_helper.c \
   crypto/ripemd160.h \
-  crypto/scrypt.cpp \
   crypto/scrypt-sse2.cpp \
-  crypto/scrypt.h \
   crypto/sha1.cpp \
   crypto/sha1.h \
   crypto/sha256.cpp \
@@ -553,11 +602,17 @@ crypto_libcosanta_crypto_base_a_SOURCES += \
   crypto/algos/Lyra2Z/Lyra2Z.c \
   crypto/algos/Lyra2Z/Sponge.c
 
-crypto_libcosanta_crypto_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-crypto_libcosanta_crypto_shani_a_CPPFLAGS = $(AM_CPPFLAGS)
-crypto_libcosanta_crypto_shani_a_CXXFLAGS += $(SHANI_CXXFLAGS)
-crypto_libcosanta_crypto_shani_a_CPPFLAGS += -DENABLE_SHANI
-crypto_libcosanta_crypto_shani_a_SOURCES = crypto/sha256_shani.cpp
+crypto_libcosanta_crypto_x86_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+crypto_libcosanta_crypto_x86_shani_a_CPPFLAGS = $(AM_CPPFLAGS)
+crypto_libcosanta_crypto_x86_shani_a_CXXFLAGS += $(X86_SHANI_CXXFLAGS)
+crypto_libcosanta_crypto_x86_shani_a_CPPFLAGS += -DENABLE_X86_SHANI
+crypto_libcosanta_crypto_x86_shani_a_SOURCES = crypto/sha256_x86_shani.cpp
+
+crypto_libcosanta_crypto_arm_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+crypto_libcosanta_crypto_arm_shani_a_CPPFLAGS = $(AM_CPPFLAGS)
+crypto_libcosanta_crypto_arm_shani_a_CXXFLAGS += $(ARM_SHANI_CXXFLAGS)
+crypto_libcosanta_crypto_arm_shani_a_CPPFLAGS += -DENABLE_ARM_SHANI
+crypto_libcosanta_crypto_arm_shani_a_SOURCES = crypto/sha256_arm_shani.cpp
 
 # consensus: shared between all executables that validate any consensus rules.
 libcosanta_consensus_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
@@ -571,6 +626,7 @@ libcosanta_consensus_a_SOURCES = \
   consensus/merkle.cpp \
   consensus/merkle.h \
   consensus/params.h \
+  consensus/tx_check.cpp \
   consensus/validation.h \
   hash.cpp \
   hash.h \
@@ -605,6 +661,7 @@ libcosanta_common_a_SOURCES = \
   base58.cpp \
   bech32.cpp \
   bip39.cpp \
+  bloom.cpp \
   chainparams.cpp \
   coins.cpp \
   compressor.cpp \
@@ -614,16 +671,19 @@ libcosanta_common_a_SOURCES = \
   key.cpp \
   key_io.cpp \
   keystore.cpp \
+  merkleblock.cpp \
   netaddress.cpp \
   netbase.cpp \
   net_permissions.cpp \
   policy/feerate.cpp \
+  policy/policy.cpp \
   psbt.cpp \
   protocol.cpp \
+  rpc/rawtransaction_util.cpp \
+  rpc/util.cpp \
   saltedhasher.cpp \
   scheduler.cpp \
   script/descriptor.cpp \
-  script/ismine.cpp \
   script/sign.cpp \
   script/standard.cpp \
   versionbitsinfo.cpp \
@@ -644,17 +704,20 @@ libcosanta_util_a_SOURCES = \
   support/lockedpool.cpp \
   chainparamsbase.cpp \
   clientversion.cpp \
+  compat/glibc_sanity_fdelt.cpp \
   compat/glibc_sanity.cpp \
   compat/glibcxx_sanity.cpp \
   compat/strnlen.cpp \
   fs.cpp \
+  interfaces/handler.cpp \
   logging.cpp \
   random.cpp \
-  rpc/protocol.cpp \
+  rpc/request.cpp \
   stacktraces.cpp \
   support/cleanse.cpp \
   sync.cpp \
   threadinterrupt.cpp \
+  util/bip32.cpp \
   util/bytevectorhash.cpp \
   util/error.cpp \
   util/fees.cpp \
@@ -662,6 +725,7 @@ libcosanta_util_a_SOURCES = \
   util/system.cpp \
   util/asmap.cpp \
   util/moneystr.cpp \
+  util/spanparsing.cpp \
   util/strencodings.cpp \
   util/time.cpp \
   util/serfloat.cpp \
@@ -673,23 +737,23 @@ libcosanta_util_a_SOURCES = \
 
 if GLIBC_BACK_COMPAT
 libcosanta_util_a_SOURCES += compat/glibc_compat.cpp
-AM_LDFLAGS += -Wl,--wrap=log2f -Wl,--wrap=__divmoddi4
-AM_LDFLAGS += -Wl,--wrap=exp -Wl,--wrap=exp2 -Wl,--wrap=fcntl
-AM_LDFLAGS += -Wl,--wrap=log -Wl,--wrap=log2 -Wl,--wrap=pow
+AM_LDFLAGS += $(COMPAT_LDFLAGS)
 endif
 
 # cli: shared between cosanta-cli and cosanta-qt
 libcosanta_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libcosanta_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libcosanta_cli_a_SOURCES = \
+  compat/stdin.h \
+  compat/stdin.cpp \
   rpc/client.cpp \
   $(BITCOIN_CORE_H)
 
 nodist_libcosanta_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# cosantad binary #
-cosantad_SOURCES = cosantad.cpp
+# dashd binary #
+cosantad_SOURCES = bitcoind.cpp
 cosantad_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 cosantad_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 cosantad_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
@@ -713,10 +777,10 @@ cosantad_LDADD = \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-cosantad_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
+cosantad_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
 
 # cosanta-cli binary #
-cosanta_cli_SOURCES = cosanta-cli.cpp
+cosanta_cli_SOURCES = bitcoin-cli.cpp
 cosanta_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
 cosanta_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 cosanta_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
@@ -730,11 +794,11 @@ cosanta_cli_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
-cosanta_cli_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS) $(BLS_LIBS) $(GMP_LIBS)
+cosanta_cli_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS) $(BLS_LIBS) $(GMP_LIBS)
 #
 
 # cosanta-tx binary #
-cosanta_tx_SOURCES = cosanta-tx.cpp
+cosanta_tx_SOURCES = bitcoin-tx.cpp
 cosanta_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 cosanta_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 cosanta_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
@@ -754,6 +818,37 @@ cosanta_tx_LDADD = \
 cosanta_tx_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(CRYPTO_LIBS) $(BLS_LIBS) $(GMP_LIBS)
 #
 
+# cosanta-wallet binary #
+cosanta_wallet_SOURCES = bitcoin-wallet.cpp
+cosanta_wallet_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+cosanta_wallet_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+cosanta_wallet_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+
+if TARGET_WINDOWS
+cosanta_wallet_SOURCES += dash-wallet-res.rc
+endif
+
+# Libraries below may be listed more than once to resolve circular dependencies (see
+# https://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking#circular-dependency)
+cosanta_wallet_LDADD = \
+  $(LIBBITCOIN_WALLET_TOOL) \
+  $(LIBBITCOIN_SERVER) \
+  $(LIBBITCOIN_WALLET) \
+  $(LIBBITCOIN_SERVER) \
+  $(LIBBITCOIN_COMMON) \
+  $(LIBBITCOIN_CONSENSUS) \
+  $(LIBBITCOIN_UTIL) \
+  $(LIBBITCOIN_CRYPTO) \
+  $(LIBBITCOIN_ZMQ) \
+  $(LIBLEVELDB) \
+  $(LIBLEVELDB_SSE42) \
+  $(LIBMEMENV) \
+  $(LIBSECP256K1) \
+  $(LIBUNIVALUE)
+
+cosanta_wallet_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(ZMQ_LIBS) $(BLS_LIBS) $(GMP_LIBS)
+#
+
 # cosantaconsensus library #
 if BUILD_BITCOIN_LIBS
 include_HEADERS = script/cosantaconsensus.h
@@ -765,7 +860,7 @@ endif
 
 libcosantaconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
 libcosantaconsensus_la_LIBADD = $(LIBSECP256K1) $(BLS_LIBS) $(GMP_LIBS)
-libcosantaconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL
+libcosantaconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) $(LEVELDB_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL
 libcosantaconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 endif
@@ -782,12 +877,18 @@ CLEANFILES = $(EXTRA_LIBRARIES)
 CLEANFILES += *.gcda *.gcno
 CLEANFILES += compat/*.gcda compat/*.gcno
 CLEANFILES += consensus/*.gcda consensus/*.gcno
+CLEANFILES += crc32c/src/*.gcda crc32c/src/*.gcno
 CLEANFILES += crypto/*.gcda crypto/*.gcno
+CLEANFILES += index/*.gcda index/*.gcno
+CLEANFILES += interfaces/*.gcda interfaces/*.gcno
+CLEANFILES += node/*.gcda node/*.gcno
 CLEANFILES += policy/*.gcda policy/*.gcno
 CLEANFILES += primitives/*.gcda primitives/*.gcno
+CLEANFILES += rpc/*.gcda rpc/*.gcno
 CLEANFILES += script/*.gcda script/*.gcno
 CLEANFILES += support/*.gcda support/*.gcno
 CLEANFILES += univalue/*.gcda univalue/*.gcno
+CLEANFILES += util/*.gcda util/*.gcno
 CLEANFILES += wallet/*.gcda wallet/*.gcno
 CLEANFILES += wallet/test/*.gcda wallet/test/*.gcno
 CLEANFILES += zmq/*.gcda zmq/*.gcno
@@ -821,31 +922,29 @@ clean-local:
 	  $(CPPFLAGS) $(AM_CXXFLAGS) $(QT_INCLUDES) $(AM_CXXFLAGS) $(PIE_FLAGS) $(CXXFLAGS) -c -o $@ $<
 
 check-symbols: $(bin_PROGRAMS)
+if TARGET_DARWIN
+	@echo "Checking macOS dynamic libraries..."
+	$(AM_V_at) OTOOL=$(OTOOL) $(PYTHON) $(top_srcdir)/contrib/devtools/symbol-check.py $(bin_PROGRAMS)
+endif
+
 if GLIBC_BACK_COMPAT
 	@echo "Checking glibc back compat..."
-	$(AM_V_at) READELF=$(READELF) CPPFILT=$(CPPFILT) $(PYTHON) $(top_srcdir)/contrib/devtools/symbol-check.py < $(bin_PROGRAMS)
+	$(AM_V_at) CPPFILT=$(CPPFILT) $(PYTHON) $(top_srcdir)/contrib/devtools/symbol-check.py $(bin_PROGRAMS)
 endif
 
 check-security: $(bin_PROGRAMS)
 if HARDEN
 	@echo "Checking binary security..."
-	$(AM_V_at) READELF=$(READELF) OBJDUMP=$(OBJDUMP) $(PYTHON) $(top_srcdir)/contrib/devtools/security-check.py < $(bin_PROGRAMS)
+	$(AM_V_at) OBJDUMP=$(OBJDUMP) OTOOL=$(OTOOL) $(PYTHON) $(top_srcdir)/contrib/devtools/security-check.py $(bin_PROGRAMS)
 endif
 
 
 osx_debug: $(bin_PROGRAMS)
 	for i in $(bin_PROGRAMS); do mkdir -p $$i.dSYM/Contents/Resources/DWARF && $(DSYMUTIL_FLAT) -o $$i.dSYM/Contents/Resources/DWARF/$$(basename $$i) $$i &> /dev/null ; done
 
-if ENABLE_BIP70
-%.pb.cc %.pb.h: %.proto
-	@test -f $(PROTOC)
-	$(AM_V_GEN) $(PROTOC) --cpp_out=$(@D) --proto_path=$(<D) $<
-endif
-
-if EMBEDDED_LEVELDB
 include Makefile.crc32c.include
 include Makefile.leveldb.include
-endif
+include Makefile.test_util.include
 
 if ENABLE_TESTS
 include Makefile.test.include

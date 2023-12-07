@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,6 +15,7 @@
 #include <script/interpreter.h>
 #include <shutdown.h>
 #include <txmempool.h>
+#include <util/ranges.h>
 #include <util/system.h>
 #include <util/moneystr.h>
 #include <validation.h>
@@ -24,6 +24,7 @@
 #include <univalue.h>
 
 CCoinJoinServer coinJoinServer;
+constexpr static CAmount DEFAULT_MAX_RAW_TX_FEE{COIN / 10};
 
 void CCoinJoinServer::ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman, bool enable_bip61)
 {
@@ -46,17 +47,6 @@ void CCoinJoinServer::ProcessMessage(CNode* pfrom, const std::string& strCommand
 
 void CCoinJoinServer::ProcessDSACCEPT(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman, bool enable_bip61)
 {
-    if (pfrom->nVersion < MIN_COINJOIN_PEER_PROTO_VERSION) {
-        LogPrint(BCLog::COINJOIN, "DSACCEPT -- peer=%d using obsolete version %i\n", pfrom->GetId(), pfrom->nVersion);
-        if (enable_bip61) {
-            connman.PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::REJECT, strCommand,
-                                                                                  REJECT_OBSOLETE, strprintf(
-                                "Version must be %d or greater", MIN_COINJOIN_PEER_PROTO_VERSION)));
-        }
-        PushStatus(pfrom, STATUS_REJECTED, ERR_VERSION, connman);
-        return;
-    }
-
     if (IsSessionReady()) {
         // too many users in this session already, reject new ones
         LogPrint(BCLog::COINJOIN, "DSACCEPT -- queue is already full!\n");
@@ -81,13 +71,14 @@ void CCoinJoinServer::ProcessDSACCEPT(CNode* pfrom, const std::string& strComman
             TRY_LOCK(cs_vecqueue, lockRecv);
             if (!lockRecv) return;
 
-            for (const auto& q : vecCoinJoinQueue) {
-                if (WITH_LOCK(activeMasternodeInfoCs, return q.masternodeOutpoint == activeMasternodeInfo.outpoint)) {
-                    // refuse to create another queue this often
-                    LogPrint(BCLog::COINJOIN, "DSACCEPT -- last dsq is still in queue, refuse to mix\n");
-                    PushStatus(pfrom, STATUS_REJECTED, ERR_RECENT, connman);
-                    return;
-                }
+            auto mnOutpoint = WITH_LOCK(activeMasternodeInfoCs, return activeMasternodeInfo.outpoint);
+
+            if (ranges::any_of(vecCoinJoinQueue,
+                               [&mnOutpoint](const auto& q){return q.masternodeOutpoint == mnOutpoint;})) {
+                // refuse to create another queue this often
+                LogPrint(BCLog::COINJOIN, "DSACCEPT -- last dsq is still in queue, refuse to mix\n");
+                PushStatus(pfrom, STATUS_REJECTED, ERR_RECENT, connman);
+                return;
             }
         }
 
@@ -121,16 +112,6 @@ void CCoinJoinServer::ProcessDSACCEPT(CNode* pfrom, const std::string& strComman
 
 void CCoinJoinServer::ProcessDSQUEUE(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman, bool enable_bip61)
 {
-    if (pfrom->nVersion < MIN_COINJOIN_PEER_PROTO_VERSION) {
-        LogPrint(BCLog::COINJOIN, "DSQUEUE -- peer=%d using obsolete version %i\n", pfrom->GetId(), pfrom->nVersion);
-        if (enable_bip61) {
-            connman.PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::REJECT, strCommand,
-                                                                                  REJECT_OBSOLETE, strprintf(
-                                "Version must be %d or greater", MIN_COINJOIN_PEER_PROTO_VERSION)));
-        }
-        return;
-    }
-
     CCoinJoinQueue dsq;
     vRecv >> dsq;
 
@@ -187,17 +168,6 @@ void CCoinJoinServer::ProcessDSQUEUE(CNode* pfrom, const std::string& strCommand
 
 void CCoinJoinServer::ProcessDSVIN(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman, bool enable_bip61)
 {
-    if (pfrom->nVersion < MIN_COINJOIN_PEER_PROTO_VERSION) {
-        LogPrint(BCLog::COINJOIN, "DSVIN -- peer=%d using obsolete version %i\n", pfrom->GetId(), pfrom->nVersion);
-        if (enable_bip61) {
-            connman.PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::REJECT, strCommand,
-                                                                                  REJECT_OBSOLETE, strprintf(
-                                "Version must be %d or greater", MIN_COINJOIN_PEER_PROTO_VERSION)));
-        }
-        PushStatus(pfrom, STATUS_REJECTED, ERR_VERSION, connman);
-        return;
-    }
-
     //do we have enough users in the current session?
     if (!IsSessionReady()) {
         LogPrint(BCLog::COINJOIN, "DSVIN -- session not complete!\n");
@@ -224,16 +194,6 @@ void CCoinJoinServer::ProcessDSVIN(CNode* pfrom, const std::string& strCommand, 
 
 void CCoinJoinServer::ProcessDSSIGNFINALTX(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman, bool enable_bip61)
 {
-    if (pfrom->nVersion < MIN_COINJOIN_PEER_PROTO_VERSION) {
-        LogPrint(BCLog::COINJOIN, "DSSIGNFINALTX -- peer=%d using obsolete version %i\n", pfrom->GetId(), pfrom->nVersion);
-        if (enable_bip61) {
-            connman.PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::REJECT, strCommand,
-                                                                                  REJECT_OBSOLETE, strprintf(
-                                "Version must be %d or greater", MIN_COINJOIN_PEER_PROTO_VERSION)));
-        }
-        return;
-    }
-
     std::vector<CTxIn> vecTxIn;
     vRecv >> vecTxIn;
 
@@ -271,10 +231,10 @@ void CCoinJoinServer::CheckPool(CConnman& connman)
 {
     if (!fMasternodeMode) return;
 
-    LogPrint(BCLog::COINJOIN, "CCoinJoinServer::CheckPool -- entries count %lu\n", GetEntriesCount());
+    if (int entries = GetEntriesCount(); entries != 0) LogPrint(BCLog::COINJOIN, "CCoinJoinServer::CheckPool -- entries count %lu\n", entries);
 
     // If we have an entry for each collateral, then create final tx
-    if (nState == POOL_STATE_ACCEPTING_ENTRIES && GetEntriesCount() == vecSessionCollaterals.size()) {
+    if (nState == POOL_STATE_ACCEPTING_ENTRIES && size_t(GetEntriesCount()) == vecSessionCollaterals.size()) {
         LogPrint(BCLog::COINJOIN, "CCoinJoinServer::CheckPool -- FINALIZE TRANSACTIONS\n");
         CreateFinalTransaction(connman);
         return;
@@ -342,7 +302,7 @@ void CCoinJoinServer::CommitFinalTransaction(CConnman& connman)
         TRY_LOCK(cs_main, lockMain);
         CValidationState validationState;
         mempool.PrioritiseTransaction(hashTx, 0.1 * COIN);
-        if (!lockMain || !AcceptToMemoryPool(mempool, validationState, finalTransaction, nullptr /* pfMissingInputs */, false /* bypass_limits */, maxTxFee /* nAbsurdFee */)) {
+        if (!lockMain || !AcceptToMemoryPool(mempool, validationState, finalTransaction, nullptr /* pfMissingInputs */, false /* bypass_limits */, DEFAULT_MAX_RAW_TX_FEE /* nAbsurdFee */)) {
             LogPrint(BCLog::COINJOIN, "CCoinJoinServer::CommitFinalTransaction -- AcceptToMemoryPool() error: Transaction not valid\n");
             SetNull();
             // not much we can do in this case, just notify clients
@@ -400,13 +360,9 @@ void CCoinJoinServer::ChargeFees(CConnman& connman) const
     if (nState == POOL_STATE_ACCEPTING_ENTRIES) {
         LOCK(cs_coinjoin);
         for (const auto& txCollateral : vecSessionCollaterals) {
-            bool fFound = false;
-            for (const auto& entry : vecEntries) {
-                if (*entry.txCollateral == *txCollateral) {
-                    fFound = true;
-                    break;
-                }
-            }
+            bool fFound = ranges::any_of(vecEntries, [&txCollateral](const auto& entry){
+                return *entry.txCollateral == *txCollateral;
+            });
 
             // This queue entry didn't send us the promised transaction
             if (!fFound) {
@@ -433,10 +389,10 @@ void CCoinJoinServer::ChargeFees(CConnman& connman) const
     if (vecOffendersCollaterals.empty()) return;
 
     //mostly offending? Charge sometimes
-    if ((int)vecOffendersCollaterals.size() >= vecSessionCollaterals.size() - 1 && GetRandInt(100) > 33) return;
+    if (vecOffendersCollaterals.size() >= vecSessionCollaterals.size() - 1 && GetRandInt(100) > 33) return;
 
     //everyone is an offender? That's not right
-    if ((int)vecOffendersCollaterals.size() >= vecSessionCollaterals.size()) return;
+    if (vecOffendersCollaterals.size() >= vecSessionCollaterals.size()) return;
 
     //charge one of the offenders randomly
     Shuffle(vecOffendersCollaterals.begin(), vecOffendersCollaterals.end(), FastRandomContext());
@@ -584,7 +540,7 @@ bool CCoinJoinServer::AddEntry(CConnman& connman, const CCoinJoinEntry& entry, P
 {
     if (!fMasternodeMode) return false;
 
-    if (GetEntriesCount() >= vecSessionCollaterals.size()) {
+    if (size_t(GetEntriesCount()) >= vecSessionCollaterals.size()) {
         LogPrint(BCLog::COINJOIN, "CCoinJoinServer::%s -- ERROR: entries is full!\n", __func__);
         nMessageIDRet = ERR_ENTRIES_FULL;
         return false;
@@ -608,19 +564,22 @@ bool CCoinJoinServer::AddEntry(CConnman& connman, const CCoinJoinEntry& entry, P
         LogPrint(BCLog::COINJOIN, "CCoinJoinServer::%s -- txin=%s\n", __func__, txin.ToString());
         LOCK(cs_coinjoin);
         for (const auto& inner_entry : vecEntries) {
-            for (const auto& txdsin : inner_entry.vecTxDSIn) {
-                if (txdsin.prevout == txin.prevout) {
-                    LogPrint(BCLog::COINJOIN, "CCoinJoinServer::%s -- ERROR: already have this txin in entries\n", __func__);
-                    nMessageIDRet = ERR_ALREADY_HAVE;
-                    // Two peers sent the same input? Can't really say who is the malicious one here,
-                    // could be that someone is picking someone else's inputs randomly trying to force
-                    // collateral consumption. Do not punish.
-                    return false;
-                }
+            if (ranges::any_of(inner_entry.vecTxDSIn,
+                            [&txin](const auto& txdsin){
+                                    return txdsin.prevout == txin.prevout;
+                            })) {
+                LogPrint(BCLog::COINJOIN, "CCoinJoinServer::%s -- ERROR: already have this txin in entries\n", __func__);
+                nMessageIDRet = ERR_ALREADY_HAVE;
+                // Two peers sent the same input? Can't really say who is the malicious one here,
+                // could be that someone is picking someone else's inputs randomly trying to force
+                // collateral consumption. Do not punish.
+                return false;
             }
         }
         vin.emplace_back(txin);
     }
+
+    LOCK(cs_main);
 
     bool fConsumeCollateral{false};
     if (!IsValidInOuts(vin, entry.vecTxOut, nMessageIDRet, &fConsumeCollateral)) {
@@ -645,11 +604,10 @@ bool CCoinJoinServer::AddScriptSig(const CTxIn& txinNew)
 
     LOCK(cs_coinjoin);
     for (const auto& entry : vecEntries) {
-        for (const auto& txdsin : entry.vecTxDSIn) {
-            if (txdsin.scriptSig == txinNew.scriptSig) {
-                LogPrint(BCLog::COINJOIN, "CCoinJoinServer::AddScriptSig -- already exists\n");
-                return false;
-            }
+        if (ranges::any_of(entry.vecTxDSIn,
+                        [&txinNew](const auto& txdsin){ return txdsin.scriptSig == txinNew.scriptSig; })){
+            LogPrint(BCLog::COINJOIN, "CCoinJoinServer::AddScriptSig -- already exists\n");
+            return false;
         }
     }
 
@@ -681,13 +639,10 @@ bool CCoinJoinServer::AddScriptSig(const CTxIn& txinNew)
 bool CCoinJoinServer::IsSignaturesComplete() const
 {
     LOCK(cs_coinjoin);
-    for (const auto& entry : vecEntries) {
-        for (const auto& txdsin : entry.vecTxDSIn) {
-            if (!txdsin.fHasSig) return false;
-        }
-    }
 
-    return true;
+    return ranges::all_of(vecEntries, [](const auto& entry){
+        return ranges::all_of(entry.vecTxDSIn, [](const auto& txdsin){return txdsin.fHasSig;});
+    });
 }
 
 bool CCoinJoinServer::IsAcceptableDSA(const CCoinJoinAccept& dsa, PoolMessage& nMessageIDRet) const

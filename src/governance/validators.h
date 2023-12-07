@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,10 +15,11 @@ private:
     UniValue objJSON;
     bool fJSONValid;
     bool fAllowLegacyFormat;
+    bool fAllowScript;
     std::string strErrorMessages;
 
 public:
-    explicit CProposalValidator(const std::string& strDataHexIn = std::string(), bool fAllowLegacyFormat = true);
+    explicit CProposalValidator(const std::string& strDataHexIn = std::string(), bool fAllowLegacyFormat = true, bool fAllowScript = false);
 
     bool Validate(bool fCheckExpiration = true);
 

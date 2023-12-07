@@ -7,8 +7,7 @@
 
 #include <amount.h>                    // For CAmount
 #include <fs.h>                        // For fs::path
-#include <pubkey.h>                    // For CTxDestination (CKeyID and CScriptID)
-#include <script/ismine.h>             // For isminefilter, isminetype
+#include <pubkey.h>                    // For CKeyID and CScriptID (definitions needed in CTxDestination instantiation)
 #include <script/standard.h>           // For CTxDestination
 #include <support/allocators/secure.h> // For SecureString
 #include <ui_interface.h>              // For ChangeType
@@ -26,13 +25,15 @@ class CCoinControl;
 class CFeeRate;
 class CKey;
 class CWallet;
+enum isminetype : unsigned int;
 enum class FeeReason;
+typedef uint8_t isminefilter;
+struct bilingual_str;
 struct CRecipient;
 
 namespace interfaces {
 
 class Handler;
-class PendingWalletTx;
 struct WalletAddress;
 struct WalletBalances;
 struct WalletTx;
@@ -95,7 +96,7 @@ public:
     virtual bool backupWallet(const std::string& filename) = 0;
 
     //! Automatically backup up wallet.
-    virtual bool autoBackupWallet(const fs::path& wallet_path, std::string& strBackupWarningRet, std::string& strBackupErrorRet) = 0;
+    virtual bool autoBackupWallet(const fs::path& wallet_path, bilingual_str& error_string, std::vector<bilingual_str>& warnings) = 0;
 
     //! Get the number of keys since the last auto backup
     virtual int64_t getKeysLeftSinceAutoBackup() = 0;
@@ -159,12 +160,17 @@ public:
     virtual void listProTxCoins(std::vector<COutPoint>& vOutpts) = 0;
 
     //! Create transaction.
-    virtual std::unique_ptr<PendingWalletTx> createTransaction(const std::vector<CRecipient>& recipients,
+    virtual CTransactionRef createTransaction(const std::vector<CRecipient>& recipients,
         const CCoinControl& coin_control,
         bool sign,
         int& change_pos,
         CAmount& fee,
-        std::string& fail_reason) = 0;
+        bilingual_str& fail_reason) = 0;
+
+    //! Commit transaction.
+    virtual void commitTransaction(CTransactionRef tx,
+        WalletValueMap value_map,
+        WalletOrderForm order_form) = 0;
 
     //! Return whether transaction can be abandoned.
     virtual bool transactionCanBeAbandoned(const uint256& txid) = 0;
@@ -261,10 +267,19 @@ public:
     // Return whether HD enabled.
     virtual bool hdEnabled() = 0;
 
+    // Return whether the wallet is blank.
+    virtual bool canGetAddresses() = 0;
+
     // check if a certain wallet flag is set.
     virtual bool IsWalletFlagSet(uint64_t flag) = 0;
 
     virtual CoinJoin::Client& coinJoin() = 0;
+
+    //! Get max tx fee.
+    virtual CAmount getDefaultMaxTxFee() = 0;
+
+    // Remove wallet.
+    virtual void remove() = 0;
 
     //! Register handler for unload message.
     using UnloadFn = std::function<void()>;
@@ -305,21 +320,6 @@ public:
     //! Register handler for keypool changed messages.
     using CanGetAddressesChangedFn = std::function<void()>;
     virtual std::unique_ptr<Handler> handleCanGetAddressesChanged(CanGetAddressesChangedFn fn) = 0;
-};
-
-//! Tracking object returned by CreateTransaction and passed to CommitTransaction.
-class PendingWalletTx
-{
-public:
-    virtual ~PendingWalletTx() {}
-
-    //! Get transaction data.
-    virtual const CTransaction& get() = 0;
-
-    //! Send pending transaction and commit to wallet.
-    virtual bool commit(WalletValueMap value_map,
-        WalletOrderForm order_form,
-        std::string& reject_reason) = 0;
 };
 
 //! Information about one wallet address.
@@ -381,7 +381,6 @@ struct WalletTxStatus
     int block_height;
     int blocks_to_maturity;
     int depth_in_main_chain;
-    int request_count;
     unsigned int time_received;
     uint32_t lock_time;
     bool is_final;

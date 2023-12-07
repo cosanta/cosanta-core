@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -21,7 +20,7 @@ class CGovernanceVote;
 
 extern CGovernanceManager governance;
 
-static const int RATE_BUFFER_SIZE = 5;
+static constexpr int RATE_BUFFER_SIZE = 5;
 
 class CDeterministicMNList;
 using CDeterministicMNListPtr = std::shared_ptr<CDeterministicMNList>;
@@ -155,7 +154,7 @@ public: // Types
     using hash_s_t = std::set<uint256>;
 
 private:
-    static const int MAX_CACHE_SIZE = 1000000;
+    static constexpr int MAX_CACHE_SIZE = 1000000;
 
     static const std::string SERIALIZATION_VERSION_STRING;
 
@@ -241,7 +240,7 @@ public:
 
     // These commands are only used in RPC
     std::vector<CGovernanceVote> GetCurrentVotes(const uint256& nParentHash, const COutPoint& mnCollateralOutpointFilter) const;
-    std::vector<const CGovernanceObject*> GetAllNewerThan(int64_t nMoreThanTime) const;
+    std::vector<CGovernanceObject> GetAllNewerThan(int64_t nMoreThanTime) const;
 
     void AddGovernanceObject(CGovernanceObject& govobj, CConnman& connman, const CNode* pfrom = nullptr);
 

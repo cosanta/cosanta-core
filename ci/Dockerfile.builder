@@ -18,11 +18,10 @@ RUN pip3 install jinja2
 RUN pip3 install flake8==3.5.0
 RUN pip3 install codespell==1.13.0
 RUN pip3 install vulture==0.29
-RUN pip3 install yq
 
-# cosanta_hash
-RUN git clone https://github.com/dashpay/cosanta_hash
-RUN cd cosanta_hash && python3 setup.py install
+# dash_hash
+RUN git clone https://github.com/dashpay/dash_hash
+RUN cd dash_hash && python3 setup.py install
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -30,14 +29,13 @@ ARG GROUP_ID=1000
 # add user with specified (or default) user/group ids
 ENV USER_ID ${USER_ID}
 ENV GROUP_ID ${GROUP_ID}
-RUN groupadd -g ${GROUP_ID} cosanta
-RUN useradd -u ${USER_ID} -g cosanta -s /bin/bash -m -d /cosanta cosanta
+RUN groupadd -g ${GROUP_ID} dash
+RUN useradd -u ${USER_ID} -g dash -s /bin/bash -m -d /dash dash
 
 # Packages needed for all target builds
 RUN dpkg --add-architecture i386
 RUN apt-get update && apt-get install $APT_ARGS g++-7-multilib && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install $APT_ARGS g++-arm-linux-gnueabihf && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install $APT_ARGS g++-mingw-w64-i686 && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install $APT_ARGS g++-mingw-w64-x86-64 && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install $APT_ARGS wine-stable wine32 wine64 bc nsis && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install $APT_ARGS python3-zmq && rm -rf /var/lib/apt/lists/*
@@ -52,19 +50,17 @@ RUN ln -s x86_64-linux-gnu/asm /usr/include/asm
 
 # Make sure std::thread and friends is available
 RUN \
-  update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix; \
-  update-alternatives --set i686-w64-mingw32-g++  /usr/bin/i686-w64-mingw32-g++-posix; \
   update-alternatives --set x86_64-w64-mingw32-gcc  /usr/bin/x86_64-w64-mingw32-gcc-posix; \
   update-alternatives --set x86_64-w64-mingw32-g++  /usr/bin/x86_64-w64-mingw32-g++-posix; \
   exit 0
 
-RUN mkdir /cosanta-src && \
+RUN mkdir /dash-src && \
   mkdir -p /cache/ccache && \
   mkdir /cache/depends && \
   mkdir /cache/sdk-sources && \
-  chown $USER_ID:$GROUP_ID /cosanta-src && \
+  chown $USER_ID:$GROUP_ID /dash-src && \
   chown $USER_ID:$GROUP_ID /cache && \
   chown $USER_ID:$GROUP_ID /cache -R
-WORKDIR /cosanta-src
+WORKDIR /dash-src
 
-USER cosanta
+USER dash

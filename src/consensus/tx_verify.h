@@ -1,5 +1,4 @@
 // Copyright (c) 2017-2017 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,9 +16,6 @@ class CTransaction;
 class CValidationState;
 
 /** Transaction validation functions */
-
-/** Context-independent validity checks */
-bool CheckTransaction(const CTransaction& tx, CValidationState& state);
 
 namespace Consensus {
 /**

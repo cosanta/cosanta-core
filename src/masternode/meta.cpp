@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +8,7 @@
 
 CMasternodeMetaMan mmetaman;
 
-const std::string CMasternodeMetaMan::SERIALIZATION_VERSION_STRING = "CMasternodeMetaMan-Version-2";
+const std::string CMasternodeMetaMan::SERIALIZATION_VERSION_STRING = "CMasternodeMetaMan-Version-3";
 
 UniValue CMasternodeMetaInfo::ToJson() const
 {
@@ -19,6 +18,7 @@ UniValue CMasternodeMetaInfo::ToJson() const
 
     ret.pushKV("lastDSQ", nLastDsq);
     ret.pushKV("mixingTxCount", nMixingTxCount);
+    ret.pushKV("outboundAttemptCount", outboundAttemptCount);
     ret.pushKV("lastOutboundAttempt", lastOutboundAttempt);
     ret.pushKV("lastOutboundAttemptElapsed", now - lastOutboundAttempt);
     ret.pushKV("lastOutboundSuccess", lastOutboundSuccess);
@@ -63,7 +63,6 @@ CMasternodeMetaInfoPtr CMasternodeMetaMan::GetMetaInfo(const uint256& proTxHash,
 // masternodes before we ever see a masternode that we know already mixed someone's funds earlier.
 int64_t CMasternodeMetaMan::GetDsqThreshold(const uint256& proTxHash, int nMnCount)
 {
-    LOCK(cs);
     auto metaInfo = GetMetaInfo(proTxHash);
     if (metaInfo == nullptr) {
         // return a threshold which is slightly above nDsqCount i.e. a no-go
@@ -74,26 +73,20 @@ int64_t CMasternodeMetaMan::GetDsqThreshold(const uint256& proTxHash, int nMnCou
 
 void CMasternodeMetaMan::AllowMixing(const uint256& proTxHash)
 {
-    LOCK(cs);
     auto mm = GetMetaInfo(proTxHash);
     nDsqCount++;
-    LOCK(mm->cs);
-    mm->nLastDsq = nDsqCount;
+    mm->nLastDsq = nDsqCount.load();
     mm->nMixingTxCount = 0;
 }
 
 void CMasternodeMetaMan::DisallowMixing(const uint256& proTxHash)
 {
-    LOCK(cs);
     auto mm = GetMetaInfo(proTxHash);
-
-    LOCK(mm->cs);
     mm->nMixingTxCount++;
 }
 
 bool CMasternodeMetaMan::AddGovernanceVote(const uint256& proTxHash, const uint256& nGovernanceObjectHash)
 {
-    LOCK(cs);
     auto mm = GetMetaInfo(proTxHash);
     mm->AddGovernanceVote(nGovernanceObjectHash);
     return true;
@@ -102,7 +95,7 @@ bool CMasternodeMetaMan::AddGovernanceVote(const uint256& proTxHash, const uint2
 void CMasternodeMetaMan::RemoveGovernanceObject(const uint256& nGovernanceObjectHash)
 {
     LOCK(cs);
-    for(auto& p : metaInfos) {
+    for(const auto& p : metaInfos) {
         p.second->RemoveGovernanceObject(nGovernanceObjectHash);
     }
 }
@@ -122,15 +115,10 @@ void CMasternodeMetaMan::Clear()
     vecDirtyGovernanceObjectHashes.clear();
 }
 
-void CMasternodeMetaMan::CheckAndRemove()
-{
-
-}
-
 std::string CMasternodeMetaMan::ToString() const
 {
     std::ostringstream info;
-
+    LOCK(cs);
     info << "Masternodes: meta infos object count: " << (int)metaInfos.size() <<
          ", nDsqCount: " << (int)nDsqCount;
     return info.str();

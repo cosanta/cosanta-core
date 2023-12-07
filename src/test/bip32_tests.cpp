@@ -4,12 +4,13 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <clientversion.h>
 #include <key.h>
 #include <key_io.h>
-#include <uint256.h>
+#include <streams.h>
 #include <util/system.h>
 #include <util/strencodings.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <string>
 #include <vector>

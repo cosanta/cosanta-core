@@ -5,20 +5,18 @@
 
 #include <netbase.h>
 
-#include <hash.h>
 #include <sync.h>
-#include <uint256.h>
-#include <random.h>
 #include <tinyformat.h>
 #include <util/system.h>
 #include <util/strencodings.h>
 
 #include <atomic>
 #include <cstdint>
-#include <limits>
 
 #ifndef WIN32
 #include <fcntl.h>
+#else
+#include <codecvt>
 #endif
 
 #ifdef USE_POLL
@@ -40,8 +38,8 @@ bool fNameLookup = DEFAULT_NAME_LOOKUP;
 static const int SOCKS5_RECV_TIMEOUT = 20 * 1000;
 static std::atomic<bool> interruptSocks5Recv(false);
 
-enum Network ParseNetwork(std::string net) {
-    Downcase(net);
+enum Network ParseNetwork(const std::string& net_in) {
+    std::string net = ToLower(net_in);
     if (net == "ipv4") return NET_IPV4;
     if (net == "ipv6") return NET_IPV6;
     if (net == "onion") return NET_ONION;
@@ -88,9 +86,6 @@ bool static LookupIntern(const char *pszName, std::vector<CNetAddr>& vIP, unsign
     aiHint.ai_protocol = IPPROTO_TCP;
     // We don't care which address family (IPv4 or IPv6) is returned
     aiHint.ai_family = AF_UNSPEC;
-#ifdef WIN32
-    aiHint.ai_flags = fAllowLookup ? 0 : AI_NUMERICHOST;
-#else
     // If we allow lookups of hostnames, use the AI_ADDRCONFIG flag to only
     // return addresses whose family we have an address configured for.
     //
@@ -98,7 +93,6 @@ bool static LookupIntern(const char *pszName, std::vector<CNetAddr>& vIP, unsign
     // getaddrinfo to only decode numerical network addresses and suppress
     // hostname lookups.
     aiHint.ai_flags = fAllowLookup ? AI_ADDRCONFIG : AI_NUMERICHOST;
-#endif
     struct addrinfo *aiRes = nullptr;
     int nErr = getaddrinfo(pszName, nullptr, &aiHint, &aiRes);
     if (nErr)
@@ -612,7 +606,7 @@ static void LogConnectFailure(bool manual_connection, const char* fmt, const Arg
  * @param nTimeout Wait this many milliseconds for the connection to be
  *                 established.
  * @param manual_connection Whether or not the connection was manually requested
- *                          (e.g. thru the addnode RPC)
+ *                          (e.g. through the addnode RPC)
  *
  * @returns Whether or not a connection was successfully made.
  */
@@ -716,7 +710,7 @@ bool GetProxy(enum Network net, proxyType &proxyInfoOut) {
 
 /**
  * Set the name proxy to use for all connections to nodes specified by a
- * hostname. After setting this proxy, connecting to a node sepcified by a
+ * hostname. After setting this proxy, connecting to a node specified by a
  * hostname won't result in a local lookup of said hostname, rather, connect to
  * the node by asking the name proxy for a proxy connection to the hostname,
  * effectively delegating the hostname lookup to the specified proxy.
@@ -852,13 +846,13 @@ bool LookupSubNet(const char* pszName, CSubNet& ret)
 #ifdef WIN32
 std::string NetworkErrorString(int err)
 {
-    char buf[256];
+    wchar_t buf[256];
     buf[0] = 0;
-    if(FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_MAX_WIDTH_MASK,
+    if(FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_MAX_WIDTH_MASK,
             nullptr, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-            buf, sizeof(buf), nullptr))
+            buf, ARRAYSIZE(buf), nullptr))
     {
-        return strprintf("%s (%d)", buf, err);
+        return strprintf("%s (%d)", std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>,wchar_t>().to_bytes(buf), err);
     }
     else
     {

@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,6 +8,7 @@
 #include <qt/guiutil.h>
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QColor>
 #include <QTimer>
 
@@ -173,8 +173,8 @@ void TrafficGraphWidget::paintEvent(QPaintEvent *)
     QFontMetrics fmTotal(fontTotal);
     QFontMetrics fmInOut(fontInOut);
     const int nSizeMark = fmInOut.height() + 2 * nPadding;
-    const int nWidthText = fmInOut.width(strReceived) + 2 * nPadding;
-    const int nWidthBytes = fmInOut.width("1000 GB") + 2 * nPadding;
+    const int nWidthText = GUIUtil::TextWidth(fmInOut, strReceived) + 2 * nPadding;
+    const int nWidthBytes = GUIUtil::TextWidth(fmInOut, "1000 GB") + 2 * nPadding;
     const int nHeightTotals = fmTotal.height() + 2 * nPadding;
     const int nHeightInOut = fmInOut.height() + 2 * nPadding;
     const int nWidthStats = nSizeMark + nWidthText + nWidthBytes + 2 * nPadding;

@@ -31,17 +31,27 @@ import http.client
 import random
 import time
 
-from test_framework.messages import COIN, COutPoint, CTransaction, CTxIn, CTxOut, ToHex
+from test_framework.messages import (
+    COIN,
+    COutPoint,
+    CTransaction,
+    CTxIn,
+    CTxOut,
+    ToHex,
+)
 from test_framework.test_framework import BitcoinTestFramework
-from test_framework.util import assert_equal, create_confirmed_utxos, hex_str_to_bytes
+from test_framework.util import (
+    assert_equal,
+    create_confirmed_utxos,
+    hex_str_to_bytes,
+)
 
 
 class ChainstateWriteCrashTest(BitcoinTestFramework):
     def set_test_params(self):
         self.num_nodes = 4
         self.setup_clean_chain = False
-        # Need a bit of extra time for the nodes to start up for this test
-        self.rpc_timeout = 90
+        self.rpc_timeout = 180
 
         # Set -maxmempool=0 to turn off mempool memory sharing with dbcache
         # Set -rpcservertimeout=900 to reduce socket disconnects in this
@@ -49,13 +59,14 @@ class ChainstateWriteCrashTest(BitcoinTestFramework):
         self.base_args = ["-limitdescendantsize=0", "-maxmempool=0", "-rpcservertimeout=900", "-dbbatchsize=200000"]
 
         # Set different crash ratios and cache sizes.  Note that not all of
-        # -dbcache goes to pcoinsTip.
+        # -dbcache goes to the in-memory coins cache.
         self.node0_args = ["-dbcrashratio=8", "-dbcache=4"] + self.base_args
         self.node1_args = ["-dbcrashratio=16", "-dbcache=8"] + self.base_args
         self.node2_args = ["-dbcrashratio=24", "-dbcache=16"] + self.base_args
 
         # Node3 is a normal node with default args, will mine full blocks
-        self.node3_args = []
+        # and non-standard txs (e.g. txs with "dust" outputs)
+        self.node3_args = ["-acceptnonstdtxn"]
         self.extra_args = [self.node0_args, self.node1_args, self.node2_args, self.node3_args]
 
     def skip_test_if_missing_module(self):

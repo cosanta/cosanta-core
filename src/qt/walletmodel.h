@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,15 +14,11 @@
 #include <config/cosanta-config.h>
 #endif
 
-#ifdef ENABLE_BIP70
-#include <qt/paymentrequestplus.h>
-#endif
 #include <qt/walletmodeltransaction.h>
 
 #include <interfaces/wallet.h>
 #include <support/allocators/secure.h>
 
-#include <map>
 #include <vector>
 
 #include <QObject>
@@ -66,18 +61,6 @@ public:
     CAmount amount;
     // If from a payment request, this is used for storing the memo
     QString message;
-
-#ifdef ENABLE_BIP70
-    // If from a payment request, paymentRequest.IsInitialized() will be true
-    PaymentRequestPlus paymentRequest;
-#else
-    // If building with BIP70 is disabled, keep the payment request around as
-    // serialized string to ensure load/store is lossless
-    std::string sPaymentRequest;
-#endif
-    // Empty if no authentication or invalid signature/cert/etc.
-    QString authenticatedMerchant;
-
     bool fSubtractFeeFromAmount; // memory only
 
     static const int CURRENT_VERSION = 1;
@@ -85,33 +68,16 @@ public:
 
     SERIALIZE_METHODS(SendCoinsRecipient, obj)
     {
-        std::string address_str, label_str, message_str, auth_merchant_str, sPaymentRequest;
-#ifdef ENABLE_BIP70
-        PaymentRequestPlus paymentRequest;
-#endif
-
+        std::string address_str, label_str, message_str;
         SER_WRITE(obj, address_str = obj.address.toStdString());
         SER_WRITE(obj, label_str = obj.label.toStdString());
         SER_WRITE(obj, message_str = obj.message.toStdString());
-        SER_WRITE(obj, auth_merchant_str = obj.authenticatedMerchant.toStdString());
-#ifdef ENABLE_BIP70
-        SER_WRITE(obj, paymentRequest = obj.paymentRequest);
-        if (paymentRequest.IsInitialized()) {
-            paymentRequest.SerializeToString(&sPaymentRequest);
-        }
-#endif
 
-        READWRITE(obj.nVersion, address_str, label_str, obj.amount, message_str, sPaymentRequest, auth_merchant_str);
+        READWRITE(obj.nVersion, address_str, label_str, obj.amount, message_str);
 
         SER_READ(obj, obj.address = QString::fromStdString(address_str));
         SER_READ(obj, obj.label = QString::fromStdString(label_str));
         SER_READ(obj, obj.message = QString::fromStdString(message_str));
-        SER_READ(obj, obj.authenticatedMerchant = QString::fromStdString(auth_merchant_str));
-#ifdef ENABLE_BIP70
-        if (!sPaymentRequest.empty()) {
-            SER_READ(obj, obj.paymentRequest.parse(QByteArray::fromRawData(sPaymentRequest.data(), sPaymentRequest.size())));
-        }
-#endif
     }
 };
 
@@ -133,7 +99,6 @@ public:
         AmountWithFeeExceedsBalance,
         DuplicateAddress,
         TransactionCreationFailed, // Error returned when wallet is still locked
-        TransactionCommitFailed,
         AbsurdFee,
         PaymentRequestExpired
     };
@@ -193,16 +158,19 @@ public:
 
         bool isValid() const { return valid; }
 
-        // Copy operator and constructor transfer the context
-        UnlockContext(const UnlockContext& obj) { CopyFrom(obj); }
-        UnlockContext& operator=(const UnlockContext& rhs) { CopyFrom(rhs); return *this; }
+        // Copy constructor is disabled.
+        UnlockContext(const UnlockContext&) = delete;
+        // Move operator and constructor transfer the context
+        UnlockContext(UnlockContext&& obj) { CopyFrom(std::move(obj)); }
+        UnlockContext& operator=(UnlockContext&& rhs) { CopyFrom(std::move(rhs)); return *this; }
     private:
         WalletModel *wallet;
         bool valid;
         mutable bool was_locked; // mutable, as it can be set to false by copying
         mutable bool was_mixing; // mutable, as it can be set to false by copying
 
-        void CopyFrom(const UnlockContext& rhs);
+        UnlockContext& operator=(const UnlockContext&) = default;
+        void CopyFrom(UnlockContext&& rhs);
     };
 
     UnlockContext requestUnlock(bool fForMixingOnly=false);

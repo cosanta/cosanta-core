@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,6 +9,7 @@
 #include <coinjoin/coinjoin.h>
 
 #include <utility>
+#include <atomic>
 
 class CDeterministicMN;
 using CDeterministicMNCPtr = std::shared_ptr<const CDeterministicMN>;
@@ -32,19 +32,14 @@ extern CCoinJoinClientQueueManager coinJoinClientQueueManager;
 class CPendingDsaRequest
 {
 private:
-    static const int TIMEOUT = 15;
+    static constexpr int TIMEOUT = 15;
 
     CService addr;
     CCoinJoinAccept dsa;
-    int64_t nTimeCreated;
+    int64_t nTimeCreated{0};
 
 public:
-    CPendingDsaRequest() :
-        addr(CService()),
-        dsa(CCoinJoinAccept()),
-        nTimeCreated(0)
-    {
-    }
+    CPendingDsaRequest() = default;
 
     CPendingDsaRequest(CService addr_, CCoinJoinAccept dsa_) :
         addr(std::move(addr_)),
@@ -123,13 +118,6 @@ private:
 
 public:
     explicit CCoinJoinClientSession(CWallet& pwallet) :
-        vecOutPointLocked(),
-        strLastMessage(),
-        strAutoDenomResult(),
-        mixingMasternode(),
-        txMyCollateral(),
-        pendingDsaRequest(),
-        keyHolderStorage(),
         mixingWallet(pwallet)
     {
     }
@@ -179,7 +167,7 @@ private:
     // TODO: or map<denom, CCoinJoinClientSession> ??
     std::deque<CCoinJoinClientSession> deqSessions GUARDED_BY(cs_deqsessions);
 
-    bool fMixing{false};
+    std::atomic<bool> fMixing{false};
 
     int nCachedLastSuccessBlock{0};
     int nMinBlocksToWait{1}; // how many blocks to wait for after one successful mixing tx in non-multisession mode

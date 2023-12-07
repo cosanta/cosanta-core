@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -121,16 +120,16 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz
     m_chain_state_size(chain_state_size)
 {
     ui->setupUi(this);
-    ui->welcomeLabel->setText(ui->welcomeLabel->text().arg(tr(PACKAGE_NAME)));
-    ui->storageLabel->setText(ui->storageLabel->text().arg(tr(PACKAGE_NAME)));
+    ui->welcomeLabel->setText(ui->welcomeLabel->text().arg(PACKAGE_NAME));
+    ui->storageLabel->setText(ui->storageLabel->text().arg(PACKAGE_NAME));
 
     ui->lblExplanation1->setText(ui->lblExplanation1->text()
-        .arg(tr(PACKAGE_NAME))
+        .arg(PACKAGE_NAME)
         .arg(m_blockchain_size)
         .arg(2020)
         .arg("Cosanta")
     );
-    ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(tr(PACKAGE_NAME)));
+    ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));
 
     uint64_t pruneTarget = std::max<int64_t>(0, gArgs.GetArg("-prune", 0));
     requiredSpace = m_blockchain_size;
@@ -147,7 +146,7 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz
     }
     requiredSpace += m_chain_state_size;
     ui->sizeWarningLabel->setText(
-        tr("%1 will download and store a copy of the Cosanta block chain.").arg(tr(PACKAGE_NAME)) + " " +
+        tr("%1 will download and store a copy of the Cosanta block chain.").arg(PACKAGE_NAME) + " " +
         storageRequiresMsg.arg(requiredSpace) + " " +
         tr("The wallet will also be stored in this directory.")
     );
@@ -171,7 +170,7 @@ QString Intro::getDataDirectory()
 void Intro::setDataDirectory(const QString &dataDir)
 {
     ui->dataDirectory->setText(dataDir);
-    if(dataDir == getDefaultDataDirectory())
+    if(dataDir == GUIUtil::getDefaultDataDirectory())
     {
         ui->dataDirDefault->setChecked(true);
         ui->dataDirectory->setEnabled(false);
@@ -183,11 +182,6 @@ void Intro::setDataDirectory(const QString &dataDir)
     }
 }
 
-QString Intro::getDefaultDataDirectory()
-{
-    return GUIUtil::boostPathToQString(GetDefaultDataDir());
-}
-
 bool Intro::pickDataDirectory(interfaces::Node& node)
 {
     QSettings settings;
@@ -196,13 +190,13 @@ bool Intro::pickDataDirectory(interfaces::Node& node)
     if(!gArgs.GetArg("-datadir", "").empty())
         return true;
     /* 1) Default data directory for operating system */
-    QString dataDirDefaultCurrent = getDefaultDataDirectory();
+    QString dataDirDefaultCurrent = GUIUtil::getDefaultDataDirectory();
     /* 2) Allow QSettings to override default dir */
     QString dataDir = settings.value("strDataDir", dataDirDefaultCurrent).toString();
     /* 3) Check to see if default datadir is the one we expect */
     QString dataDirDefaultSettings = settings.value("strDataDirDefault").toString();
 
-    if(!fs::exists(GUIUtil::qstringToBoostPath(dataDir)) || gArgs.GetBoolArg("-choosedatadir", DEFAULT_CHOOSE_DATADIR) || dataDirDefaultCurrent != dataDirDefaultSettings)
+    if(!fs::exists(GUIUtil::qstringToBoostPath(dataDir)) || gArgs.GetBoolArg("-choosedatadir", DEFAULT_CHOOSE_DATADIR) || dataDirDefaultCurrent != dataDirDefaultSettings || settings.value("fReset", false).toBool() || gArgs.GetBoolArg("-resetguisettings", false))
     {
         /* Use selectParams here to guarantee Params() can be used by node interface */
         try {
@@ -233,7 +227,7 @@ bool Intro::pickDataDirectory(interfaces::Node& node)
                 }
                 break;
             } catch (const fs::filesystem_error&) {
-                QMessageBox::critical(nullptr, tr(PACKAGE_NAME),
+                QMessageBox::critical(nullptr, PACKAGE_NAME,
                     tr("Error: Specified data directory \"%1\" cannot be created.").arg(dataDir));
                 /* fall through, back to choosing screen */
             }
@@ -241,12 +235,13 @@ bool Intro::pickDataDirectory(interfaces::Node& node)
 
         settings.setValue("strDataDir", dataDir);
         settings.setValue("strDataDirDefault", dataDirDefaultCurrent);
+        settings.setValue("fReset", false);
     }
     /* Only override -datadir if different from the default, to make it possible to
      * override -datadir in the cosanta.conf file in the default data directory
      * (to be consistent with cosantad behavior)
      */
-    if(dataDir != dataDirDefaultCurrent) {
+    if(dataDir != GUIUtil::getDefaultDataDirectory()) {
         node.softSetArg("-datadir", GUIUtil::qstringToBoostPath(dataDir).string()); // use OS locale for path setting
     }
     return true;
@@ -300,7 +295,7 @@ void Intro::on_ellipsisButton_clicked()
 
 void Intro::on_dataDirDefault_clicked()
 {
-    setDataDirectory(getDefaultDataDirectory());
+    setDataDirectory(GUIUtil::getDefaultDataDirectory());
 }
 
 void Intro::on_dataDirCustom_clicked()

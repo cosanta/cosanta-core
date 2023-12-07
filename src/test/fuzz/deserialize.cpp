@@ -2,6 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include <addrdb.h>
 #include <addrman.h>
 #include <blockencodings.h>
 #include <blockfilter.h>
@@ -15,8 +16,6 @@
 #include <primitives/block.h>
 #include <protocol.h>
 #include <psbt.h>
-#include <pubkey.h>
-#include <script/script.h>
 #include <script/sign.h>
 #include <streams.h>
 #include <undo.h>
@@ -26,13 +25,11 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include <algorithm>
-#include <memory>
 #include <vector>
 
 #include <test/fuzz/fuzz.h>
 
-void test_one_input(std::vector<uint8_t> buffer)
+void test_one_input(const std::vector<uint8_t>& buffer)
 {
     CDataStream ds(buffer, SER_NETWORK, INIT_PROTO_VERSION);
     try {

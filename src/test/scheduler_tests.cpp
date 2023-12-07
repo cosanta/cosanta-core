@@ -6,7 +6,7 @@
 #include <scheduler.h>
 #include <util/time.h>
 
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <boost/thread.hpp>
 #include <boost/test/unit_test.hpp>
@@ -126,11 +126,13 @@ BOOST_AUTO_TEST_CASE(singlethreadedscheduler_ordered)
     // the callbacks should run in exactly the order in which they were enqueued
     for (int i = 0; i < 100; ++i) {
         queue1.AddToProcessQueue([i, &counter1]() {
-            BOOST_CHECK_EQUAL(i, counter1++);
+            bool expectation = i == counter1++;
+            assert(expectation);
         });
 
         queue2.AddToProcessQueue([i, &counter2]() {
-            BOOST_CHECK_EQUAL(i, counter2++);
+            bool expectation = i == counter2++;
+            assert(expectation);
         });
     }
 

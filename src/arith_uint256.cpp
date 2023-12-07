@@ -1,17 +1,13 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <arith_uint256.h>
 
 #include <uint256.h>
-#include <util/strencodings.h>
 #include <crypto/common.h>
 
-#include <stdio.h>
-#include <string.h>
 
 template <unsigned int BITS>
 base_uint<BITS>::base_uint(const std::string& str)

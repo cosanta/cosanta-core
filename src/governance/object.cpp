@@ -1,15 +1,15 @@
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <governance/object.h>
 
+#include <bls/bls.h>
+#include <chainparams.h>
 #include <core_io.h>
 #include <evo/deterministicmns.h>
-#include <governance/validators.h>
 #include <governance/governance.h>
-#include <evo/deterministicmns.h>
+#include <governance/validators.h>
 #include <masternode/meta.h>
 #include <masternode/sync.h>
 #include <messagesigner.h>
@@ -263,14 +263,12 @@ std::set<uint256> CGovernanceObject::RemoveInvalidVotes(const COutPoint& mnOutpo
         mapCurrentMNVotes.erase(it);
     }
 
-    if (!removedVotes.empty()) {
-        std::string removedStr;
-        for (auto& h : removedVotes) {
-            removedStr += strprintf("  %s\n", h.ToString());
-        }
-        LogPrintf("CGovernanceObject::%s -- Removed %d invalid votes for %s from MN %s:\n%s", __func__, removedVotes.size(), nParentHash.ToString(), mnOutpoint.ToString(), removedStr); /* Continued */
-        fDirtyCache = true;
+    std::string removedStr;
+    for (auto& h : removedVotes) {
+        removedStr += strprintf("  %s\n", h.ToString());
     }
+    LogPrintf("CGovernanceObject::%s -- Removed %d invalid votes for %s from MN %s:\n%s", __func__, removedVotes.size(), nParentHash.ToString(), mnOutpoint.ToString(), removedStr); /* Continued */
+    fDirtyCache = true;
 
     return removedVotes;
 }
@@ -440,7 +438,7 @@ UniValue CGovernanceObject::ToJson() const
 
 void CGovernanceObject::UpdateLocalValidity()
 {
-    LOCK(cs_main);
+    AssertLockHeld(cs_main);
     // THIS DOES NOT CHECK COLLATERAL, THIS IS CHECKED UPON ORIGINAL ARRIVAL
     fCachedLocalValidity = IsValidLocally(strLocalValidityError, false);
 }
@@ -455,6 +453,8 @@ bool CGovernanceObject::IsValidLocally(std::string& strError, bool fCheckCollate
 
 bool CGovernanceObject::IsValidLocally(std::string& strError, bool& fMissingConfirmations, bool fCheckCollateral) const
 {
+    AssertLockHeld(cs_main);
+
     fMissingConfirmations = false;
 
     if (fUnparsable) {
@@ -464,7 +464,9 @@ bool CGovernanceObject::IsValidLocally(std::string& strError, bool& fMissingConf
 
     switch (nObjectType) {
     case GOVERNANCE_OBJECT_PROPOSAL: {
-        CProposalValidator validator(GetDataAsHexString(), true);
+        bool fAllowScript = (VersionBitsTipState(Params().GetConsensus(), Consensus::DEPLOYMENT_DIP0024) == ThresholdState::ACTIVE);
+        bool fAllowLegacyFormat = !fAllowScript; // reusing the same bit to stop accepting proposals in legacy format
+        CProposalValidator validator(GetDataAsHexString(), fAllowLegacyFormat, fAllowScript);
         // Note: It's ok to have expired proposals
         // they are going to be cleared by CGovernanceManager::UpdateCachesAndClean()
         // TODO: should they be tagged as "expired" to skip vote downloading?
@@ -508,12 +510,13 @@ bool CGovernanceObject::IsValidLocally(std::string& strError, bool& fMissingConf
     }
 }
 
-CAmount CGovernanceObject::GetMinCollateralFee() const
+CAmount CGovernanceObject::GetMinCollateralFee(bool fork_active) const
 {
     // Only 1 type has a fee for the moment but switch statement allows for future object types
     switch (nObjectType) {
     case GOVERNANCE_OBJECT_PROPOSAL:
-        return GOVERNANCE_PROPOSAL_FEE_TX;
+        if (fork_active) return GOVERNANCE_PROPOSAL_FEE_TX;
+        else return GOVERNANCE_PROPOSAL_FEE_TX_OLD;
     case GOVERNANCE_OBJECT_TRIGGER:
         return 0;
     default:
@@ -523,9 +526,11 @@ CAmount CGovernanceObject::GetMinCollateralFee() const
 
 bool CGovernanceObject::IsCollateralValid(std::string& strError, bool& fMissingConfirmations) const
 {
+    AssertLockHeld(cs_main);
+    AssertLockHeld(::mempool.cs); // because of GetTransaction
+
     strError = "";
     fMissingConfirmations = false;
-    CAmount nMinFee = GetMinCollateralFee();
     uint256 nExpectedHash = GetHash();
 
     CTransactionRef txCollateral;
@@ -533,7 +538,7 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError, bool& fMissingC
 
     // RETRIEVE TRANSACTION IN QUESTION
 
-    if (!GetTransaction(nCollateralHash, txCollateral, Params().GetConsensus(), nBlockHash, true)) {
+    if (!GetTransaction(nCollateralHash, txCollateral, Params().GetConsensus(), nBlockHash)) {
         strError = strprintf("Can't find collateral tx %s", nCollateralHash.ToString());
         LogPrintf("CGovernanceObject::IsCollateralValid -- %s\n", strError);
         return false;
@@ -555,6 +560,10 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError, bool& fMissingC
 
     CScript findScript;
     findScript << OP_RETURN << ToByteVector(nExpectedHash);
+
+    AssertLockHeld(cs_main);
+    bool fork_active = VersionBitsState(LookupBlockIndex(nBlockHash), Params().GetConsensus(), Consensus::DEPLOYMENT_DIP0024, versionbitscache) == ThresholdState::ACTIVE;
+    CAmount nMinFee = GetMinCollateralFee(fork_active);
 
     LogPrint(BCLog::GOBJECT, "CGovernanceObject::IsCollateralValid -- txCollateral->vout.size() = %s, findScript = %s, nMinFee = %lld\n",
                 txCollateral->vout.size(), ScriptToAsmStr(findScript, false), nMinFee);
@@ -585,8 +594,8 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError, bool& fMissingC
     int nConfirmationsIn = 0;
     if (nBlockHash != uint256()) {
         const CBlockIndex* pindex = LookupBlockIndex(nBlockHash);
-        if (pindex && chainActive.Contains(pindex)) {
-            nConfirmationsIn += chainActive.Height() - pindex->nHeight + 1;
+        if (pindex && ::ChainActive().Contains(pindex)) {
+            nConfirmationsIn += ::ChainActive().Height() - pindex->nHeight + 1;
         }
     }
 
@@ -671,8 +680,25 @@ void CGovernanceObject::Relay(CConnman& connman) const
         return;
     }
 
+    int minProtoVersion = MIN_PEER_PROTO_VERSION;
+    if (nObjectType == GOVERNANCE_OBJECT_PROPOSAL) {
+        // We know this proposal is valid locally, otherwise we would not get to the point we should relay it.
+        // But we don't want to relay it to pre-GOVSCRIPT_PROTO_VERSION peers if payment_address is p2sh
+        // because they won't accept it anyway and will simply ban us eventually.
+        LOCK(cs_main);
+        bool fAllowScript = (VersionBitsTipState(Params().GetConsensus(), Consensus::DEPLOYMENT_DIP0024) == ThresholdState::ACTIVE);
+        if (fAllowScript) {
+            CProposalValidator validator(GetDataAsHexString(), false /* no legacy format */, false /* but also no script */);
+            if (!validator.Validate(false /* ignore expiration */)) {
+                // The only way we could get here is when proposal is valid but payment_address is actually p2sh.
+                LogPrint(BCLog::GOBJECT, "CGovernanceObject::Relay -- won't relay %s to older peers\n", GetHash().ToString());
+                minProtoVersion = GOVSCRIPT_PROTO_VERSION;
+            }
+        }
+    }
+
     CInv inv(MSG_GOVERNANCE_OBJECT, GetHash());
-    connman.RelayInv(inv, MIN_GOVERNANCE_PEER_PROTO_VERSION);
+    connman.RelayInv(inv, minProtoVersion);
 }
 
 void CGovernanceObject::UpdateSentinelVariables()

@@ -1,16 +1,10 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_SCHEDULER_H
 #define BITCOIN_SCHEDULER_H
 
-//
-// NOTE:
-// boost::thread should be ported to std::thread
-// when we support C++11.
-//
 #include <condition_variable>
 #include <functional>
 #include <list>
@@ -27,7 +21,7 @@
 // CScheduler* s = new CScheduler();
 // s->scheduleFromNow(doSomething, 11); // Assuming a: void doSomething() { }
 // s->scheduleFromNow(std::bind(Class::func, this, argument), 3);
-// boost::thread* t = new boost::thread(std::bind(CScheduler::serviceQueue, s));
+// std::thread* t = new std::thread([&] { s->serviceQueue(); });
 //
 // ... then at program shutdown, make sure to call stop() to clean up the thread(s) running serviceQueue:
 // s->stop();
@@ -47,13 +41,13 @@ public:
     // Call func at/after time t
     void schedule(Function f, std::chrono::system_clock::time_point t);
 
-    // Convenience method: call f once deltaSeconds from now
+    // Convenience method: call f once deltaMilliSeconds from now
     void scheduleFromNow(Function f, int64_t deltaMilliSeconds);
 
     // Another convenience method: call f approximately
-    // every deltaSeconds forever, starting deltaSeconds from now.
+    // every deltaMilliSeconds forever, starting deltaMilliSeconds from now.
     // To be more precise: every time f is finished, it
-    // is rescheduled to run deltaSeconds later. If you
+    // is rescheduled to run deltaMilliSeconds later. If you
     // need more accurate scheduling, don't use this method.
     void scheduleEvery(Function f, int64_t deltaMilliSeconds);
 

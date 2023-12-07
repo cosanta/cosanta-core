@@ -1,13 +1,12 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <protocol.h>
 
-#include <util/system.h>
 #include <util/strencodings.h>
+#include <util/system.h>
 
 #ifndef WIN32
 # include <arpa/inet.h>
@@ -15,77 +14,84 @@
 
 static std::atomic<bool> g_initial_block_download_completed(false);
 
+#define MAKE_MSG(var_name, p2p_name_str)   \
+        const char* var_name=p2p_name_str; \
+        static_assert(std::size(p2p_name_str) <= CMessageHeader::COMMAND_SIZE + 1, "p2p_name_str cannot be greater than COMMAND_SIZE"); // Includes +1 for null termination character.
+
 namespace NetMsgType {
-const char *VERSION="version";
-const char *VERACK="verack";
-const char *ADDR="addr";
-const char *ADDRV2="addrv2";
-const char *SENDADDRV2="sendaddrv2";
-const char *INV="inv";
-const char *GETDATA="getdata";
-const char *MERKLEBLOCK="merkleblock";
-const char *GETBLOCKS="getblocks";
-const char *GETHEADERS="getheaders";
-const char *TX="tx";
-const char *HEADERS="headers";
-const char *BLOCK="block";
-const char *GETADDR="getaddr";
-const char *MEMPOOL="mempool";
-const char *PING="ping";
-const char *PONG="pong";
-const char *NOTFOUND="notfound";
-const char *FILTERLOAD="filterload";
-const char *FILTERADD="filteradd";
-const char *FILTERCLEAR="filterclear";
-const char *REJECT="reject";
-const char *SENDHEADERS="sendheaders";
-const char *SENDCMPCT="sendcmpct";
-const char *CMPCTBLOCK="cmpctblock";
-const char *GETBLOCKTXN="getblocktxn";
-const char *BLOCKTXN="blocktxn";
-const char *GETCFILTERS="getcfilters";
-const char *CFILTER="cfilter";
-const char *GETCFHEADERS="getcfheaders";
-const char *CFHEADERS="cfheaders";
-const char *GETCFCHECKPT="getcfcheckpt";
-const char *CFCHECKPT="cfcheckpt";
-const char *LEGACYTXLOCKREQUEST="ix";
-const char *SPORK="spork";
-const char *GETSPORKS="getsporks";
-const char *DSACCEPT="dsa";
-const char *DSVIN="dsi";
-const char *DSFINALTX="dsf";
-const char *DSSIGNFINALTX="dss";
-const char *DSCOMPLETE="dsc";
-const char *DSSTATUSUPDATE="dssu";
-const char *DSTX="dstx";
-const char *DSQUEUE="dsq";
-const char *SENDDSQUEUE="senddsq";
-const char *SYNCSTATUSCOUNT="ssc";
-const char *MNGOVERNANCESYNC="govsync";
-const char *MNGOVERNANCEOBJECT="govobj";
-const char *MNGOVERNANCEOBJECTVOTE="govobjvote";
-const char *GETMNLISTDIFF="getmnlistd";
-const char *MNLISTDIFF="mnlistdiff";
-const char *QSENDRECSIGS="qsendrecsigs";
-const char *QFCOMMITMENT="qfcommit";
-const char *QCONTRIB="qcontrib";
-const char *QCOMPLAINT="qcomplaint";
-const char *QJUSTIFICATION="qjustify";
-const char *QPCOMMITMENT="qpcommit";
-const char *QWATCH="qwatch";
-const char *QSIGSESANN="qsigsesann";
-const char *QSIGSHARESINV="qsigsinv";
-const char *QGETSIGSHARES="qgetsigs";
-const char *QBSIGSHARES="qbsigs";
-const char *QSIGREC="qsigrec";
-const char *QSIGSHARE="qsigshare";
-const char* QGETDATA = "qgetdata";
-const char* QDATA = "qdata";
-const char *CLSIG="clsig";
-const char *ISLOCK="islock";
-const char *ISDLOCK="isdlock";
-const char *MNAUTH="mnauth";
+MAKE_MSG(VERSION, "version");
+MAKE_MSG(VERACK, "verack");
+MAKE_MSG(ADDR, "addr");
+MAKE_MSG(ADDRV2, "addrv2");
+MAKE_MSG(SENDADDRV2, "sendaddrv2");
+MAKE_MSG(INV, "inv");
+MAKE_MSG(GETDATA, "getdata");
+MAKE_MSG(MERKLEBLOCK, "merkleblock");
+MAKE_MSG(GETBLOCKS, "getblocks");
+MAKE_MSG(GETHEADERS, "getheaders");
+MAKE_MSG(TX, "tx");
+MAKE_MSG(HEADERS, "headers");
+MAKE_MSG(BLOCK, "block");
+MAKE_MSG(GETADDR, "getaddr");
+MAKE_MSG(MEMPOOL, "mempool");
+MAKE_MSG(PING, "ping");
+MAKE_MSG(PONG, "pong");
+MAKE_MSG(NOTFOUND, "notfound");
+MAKE_MSG(FILTERLOAD, "filterload");
+MAKE_MSG(FILTERADD, "filteradd");
+MAKE_MSG(FILTERCLEAR, "filterclear");
+MAKE_MSG(REJECT, "reject");
+MAKE_MSG(SENDHEADERS, "sendheaders");
+MAKE_MSG(SENDCMPCT, "sendcmpct");
+MAKE_MSG(CMPCTBLOCK, "cmpctblock");
+MAKE_MSG(GETBLOCKTXN, "getblocktxn");
+MAKE_MSG(BLOCKTXN, "blocktxn");
+MAKE_MSG(GETCFILTERS, "getcfilters");
+MAKE_MSG(CFILTER, "cfilter");
+MAKE_MSG(GETCFHEADERS, "getcfheaders");
+MAKE_MSG(CFHEADERS, "cfheaders");
+MAKE_MSG(GETCFCHECKPT, "getcfcheckpt");
+MAKE_MSG(CFCHECKPT, "cfcheckpt");
+// Dash message types
+MAKE_MSG(LEGACYTXLOCKREQUEST, "ix");
+MAKE_MSG(SPORK, "spork");
+MAKE_MSG(GETSPORKS, "getsporks");
+MAKE_MSG(DSACCEPT, "dsa");
+MAKE_MSG(DSVIN, "dsi");
+MAKE_MSG(DSFINALTX, "dsf");
+MAKE_MSG(DSSIGNFINALTX, "dss");
+MAKE_MSG(DSCOMPLETE, "dsc");
+MAKE_MSG(DSSTATUSUPDATE, "dssu");
+MAKE_MSG(DSTX, "dstx");
+MAKE_MSG(DSQUEUE, "dsq");
+MAKE_MSG(SENDDSQUEUE, "senddsq");
+MAKE_MSG(SYNCSTATUSCOUNT, "ssc");
+MAKE_MSG(MNGOVERNANCESYNC, "govsync");
+MAKE_MSG(MNGOVERNANCEOBJECT, "govobj");
+MAKE_MSG(MNGOVERNANCEOBJECTVOTE, "govobjvote");
+MAKE_MSG(GETMNLISTDIFF, "getmnlistd");
+MAKE_MSG(MNLISTDIFF, "mnlistdiff");
+MAKE_MSG(QSENDRECSIGS, "qsendrecsigs");
+MAKE_MSG(QFCOMMITMENT, "qfcommit");
+MAKE_MSG(QCONTRIB, "qcontrib");
+MAKE_MSG(QCOMPLAINT, "qcomplaint");
+MAKE_MSG(QJUSTIFICATION, "qjustify");
+MAKE_MSG(QPCOMMITMENT, "qpcommit");
+MAKE_MSG(QWATCH, "qwatch");
+MAKE_MSG(QSIGSESANN, "qsigsesann");
+MAKE_MSG(QSIGSHARESINV, "qsigsinv");
+MAKE_MSG(QGETSIGSHARES, "qgetsigs");
+MAKE_MSG(QBSIGSHARES, "qbsigs");
+MAKE_MSG(QSIGREC, "qsigrec");
+MAKE_MSG(QSIGSHARE, "qsigshare");
+MAKE_MSG(QGETDATA, "qgetdata");
+MAKE_MSG(QDATA, "qdata");
+MAKE_MSG(CLSIG, "clsig");
+MAKE_MSG(ISLOCK, "islock");
+MAKE_MSG(ISDLOCK, "isdlock");
+MAKE_MSG(MNAUTH, "mnauth");
+MAKE_MSG(GETQUORUMROTATIONINFO, "getqrinfo");
+MAKE_MSG(QUORUMROTATIONINFO, "qrinfo");
 }; // namespace NetMsgType
 
 /** All known message types. Keep this in the same order as the list of
@@ -178,8 +184,13 @@ CMessageHeader::CMessageHeader(const MessageStartChars& pchMessageStartIn)
 CMessageHeader::CMessageHeader(const MessageStartChars& pchMessageStartIn, const char* pszCommand, unsigned int nMessageSizeIn)
 {
     memcpy(pchMessageStart, pchMessageStartIn, MESSAGE_START_SIZE);
-    memset(pchCommand, 0, sizeof(pchCommand));
-    strncpy(pchCommand, pszCommand, COMMAND_SIZE);
+
+    // Copy the command name, zero-padding to COMMAND_SIZE bytes
+    size_t i = 0;
+    for (; i < COMMAND_SIZE && pszCommand[i] != 0; ++i) pchCommand[i] = pszCommand[i];
+    assert(pszCommand[i] == 0); // Assert that the command name passed in is not longer than COMMAND_SIZE
+    for (; i < COMMAND_SIZE; ++i) pchCommand[i] = 0;
+
     nMessageSize = nMessageSizeIn;
     memset(pchChecksum, 0, CHECKSUM_SIZE);
 }
@@ -325,9 +336,15 @@ const std::vector<std::string> &getAllNetMessageTypes()
     return allNetMessageTypesVec;
 }
 
-std::string serviceFlagToStr(const uint64_t mask, const int bit)
+/**
+ * Convert a service flag (NODE_*) to a human readable string.
+ * It supports unknown service flags which will be returned as "UNKNOWN[...]".
+ * @param[in] bit the service flag is calculated as (1 << bit)
+ */
+static std::string serviceFlagToStr(size_t bit)
 {
-    switch (ServiceFlags(mask)) {
+    const uint64_t service_flag = 1ULL << bit;
+    switch ((ServiceFlags)service_flag) {
     case NODE_NONE: abort();  // impossible
     case NODE_NETWORK:         return "NETWORK";
     case NODE_GETUTXO:         return "GETUTXO";
@@ -341,11 +358,20 @@ std::string serviceFlagToStr(const uint64_t mask, const int bit)
     std::ostringstream stream;
     stream.imbue(std::locale::classic());
     stream << "UNKNOWN[";
-    if (bit < 8) {
-        stream << mask;
-    } else {
-        stream << "2^" << bit;
-    }
+    stream << "2^" << bit;
     stream << "]";
     return stream.str();
+}
+
+std::vector<std::string> serviceFlagsToStr(uint64_t flags)
+{
+    std::vector<std::string> str_flags;
+
+    for (size_t i = 0; i < sizeof(flags) * 8; ++i) {
+        if (flags & (1ULL << i)) {
+            str_flags.emplace_back(serviceFlagToStr(i));
+        }
+    }
+
+    return str_flags;
 }

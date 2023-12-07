@@ -1,15 +1,21 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <bench/bench.h>
 
 #include <chainparams.h>
+#include <test/util/setup_common.h>
 #include <validation.h>
 
+#include <algorithm>
+#include <assert.h>
+#include <iomanip>
+#include <iostream>
+#include <numeric>
 #include <regex>
 
+const std::function<void(const std::string&)> G_TEST_LOG_FUN{};
 namespace {
 
 void GenerateTemplateResults(const std::vector<ankerl::nanobench::Result>& benchmarkResults, const std::string& filename, const char* tpl)
@@ -48,6 +54,11 @@ void benchmark::BenchRunner::RunAll(const Args& args)
 
     std::vector<ankerl::nanobench::Result> benchmarkResults;
     for (const auto& p : benchmarks()) {
+        RegTestingSetup test{};
+        {
+            assert(::ChainActive().Height() == 0);
+        }
+
         if (!std::regex_match(p.first, baseMatch, reFilter)) {
             continue;
         }

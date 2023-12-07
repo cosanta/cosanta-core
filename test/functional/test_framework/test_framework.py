@@ -20,6 +20,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 from .authproxy import JSONRPCException
+from test_framework.blocktools import TIME_GENESIS_BLOCK
 from . import coverage
 from .messages import (
     CTransaction,
@@ -37,7 +38,6 @@ from .util import (
     MAX_NODES,
     assert_equal,
     check_json_precision,
-    connect_nodes_bi,
     connect_nodes,
     copy_datadir,
     disconnect_nodes,
@@ -64,7 +64,7 @@ TEST_EXIT_PASSED = 0
 TEST_EXIT_FAILED = 1
 TEST_EXIT_SKIPPED = 77
 
-GENESISTIME = 1417713337
+TMPDIR_PREFIX = "dash_func_test_"
 
 class SkipTest(Exception):
     """This exception is raised to skip a test"""
@@ -172,8 +172,9 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
 
         config = configparser.ConfigParser()
         config.read_file(open(self.options.configfile))
-        self.options.bitcoind = os.getenv("BITCOIND", default=config["environment"]["BUILDDIR"] + '/src/bitcoind' + config["environment"]["EXEEXT"])
-        self.options.bitcoincli = os.getenv("BITCOINCLI", default=config["environment"]["BUILDDIR"] + '/src/bitcoin-cli' + config["environment"]["EXEEXT"])
+        self.config = config
+        self.options.bitcoind = os.getenv("BITCOIND", default=config["environment"]["BUILDDIR"] + '/src/cosantad' + config["environment"]["EXEEXT"])
+        self.options.bitcoincli = os.getenv("BITCOINCLI", default=config["environment"]["BUILDDIR"] + '/src/cosanta-cli' + config["environment"]["EXEEXT"])
 
         self.extra_args_from_options = self.options.cosantad_extra_args
 
@@ -186,7 +187,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             self.options.tmpdir = os.path.abspath(self.options.tmpdir)
             os.makedirs(self.options.tmpdir, exist_ok=False)
         else:
-            self.options.tmpdir = tempfile.mkdtemp(prefix="test")
+            self.options.tmpdir = tempfile.mkdtemp(prefix=TMPDIR_PREFIX)
         self._start_logging()
 
         self.log.debug('Setting up network thread')
@@ -298,8 +299,18 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         # Connect the nodes as a "chain".  This allows us
         # to split the network between nodes 1 and 2 to get
         # two halves that can work on competing chains.
+        #
+        # Topology looks like this:
+        # node0 <-- node1 <-- node2 <-- node3
+        #
+        # If all nodes are in IBD (clean chain from genesis), node0 is assumed to be the source of blocks (miner). To
+        # ensure block propagation, all nodes will establish outgoing connections toward node0.
+        # See fPreferredDownload in net_processing.
+        #
+        # If further outbound connections are needed, they can be added at the beginning of the test with e.g.
+        # connect_nodes(self.nodes[1], 2)
         for i in range(self.num_nodes - 1):
-            connect_nodes_bi(self.nodes, i, i + 1)
+            connect_nodes(self.nodes[i + 1], i)
         self.sync_all()
 
     def setup_nodes(self):
@@ -321,7 +332,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
                 assert str(e).startswith('Method not found')
                 continue
 
-            n.importprivkey(n.get_deterministic_priv_key()[1])
+            n.importprivkey(n.get_deterministic_priv_key().key)
 
     def run_test(self):
         """Tests must override this method to define test logic"""
@@ -413,7 +424,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         """
         Join the (previously split) network halves together.
         """
-        connect_nodes_bi(self.nodes, 1, 2)
+        connect_nodes(self.nodes[1], 2)
         self.sync_all()
 
     def sync_blocks(self, nodes=None, **kwargs):
@@ -446,12 +457,12 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         # For backwared compatibility of the python scripts
         # with previous versions of the cache, set MOCKTIME
         # to regtest genesis time + (201 * 156)
-        self.mocktime = GENESISTIME + (201 * 156)
+        self.mocktime = TIME_GENESIS_BLOCK + (201 * 156)
         for node in self.nodes:
             node.mocktime = self.mocktime
 
     def set_genesis_mocktime(self):
-        self.mocktime = GENESISTIME
+        self.mocktime = TIME_GENESIS_BLOCK
         for node in self.nodes:
             node.mocktime = self.mocktime
 
@@ -510,7 +521,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             self.set_genesis_mocktime()
             for i in range(MAX_NODES):
                 datadir = initialize_datadir(self.options.cachedir, i, self.chain)
-                args = [self.options.bitcoind, "-datadir=" + datadir, "-mocktime="+str(GENESISTIME), '-disablewallet']
+                args = [self.options.bitcoind, "-datadir=" + datadir, "-mocktime="+str(TIME_GENESIS_BLOCK), '-disablewallet']
                 if i > 0:
                     args.append("-connect=127.0.0.1:" + str(p2p_port(0)))
                 if extra_args is not None:
@@ -536,12 +547,12 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             #
             # blocks are created with timestamps 10 minutes apart
             # starting from 2010 minutes in the past
-            block_time = GENESISTIME
+            block_time = TIME_GENESIS_BLOCK
             for i in range(2):
                 for peer in range(4):
                     for j in range(25):
                         set_node_times(self.nodes, block_time)
-                        self.nodes[peer].generatetoaddress(1, self.nodes[peer].get_deterministic_priv_key()[0])
+                        self.nodes[peer].generatetoaddress(1, self.nodes[peer].get_deterministic_priv_key().address)
                         block_time += 156
                     # Must sync before next peer starts generating blocks
                     self.sync_blocks()
@@ -685,11 +696,33 @@ class CosantaTestFramework(BitcoinTestFramework):
             self.nodes[0].generate(10)
         self.sync_blocks(self.nodes)
 
+    def activate_dip0024(self, slow_mode=False, expected_activation_height=None):
+        self.log.info("Wait for dip0024 activation")
+
+        if expected_activation_height is not None:
+            height = self.nodes[0].getblockcount()
+            batch_size = 100
+            while height - expected_activation_height > batch_size:
+                self.nodes[0].generate(batch_size)
+                height += batch_size
+                self.sync_blocks()
+            assert height - expected_activation_height < batch_size
+            self.nodes[0].generate(height - expected_activation_height - 1)
+            self.sync_blocks()
+            assert self.nodes[0].getblockchaininfo()['bip9_softforks']['dip0024']['status'] != 'active'
+
+        while self.nodes[0].getblockchaininfo()['bip9_softforks']['dip0024']['status'] != 'active':
+            self.nodes[0].generate(10)
+            if slow_mode:
+                self.sync_blocks()
+        self.sync_blocks()
+
     def set_dash_llmq_test_params(self, llmq_size, llmq_threshold):
         self.llmq_size = llmq_size
         self.llmq_threshold = llmq_threshold
         for i in range(0, self.num_nodes):
             self.extra_args[i].append("-llmqtestparams=%d:%d" % (self.llmq_size, self.llmq_threshold))
+            self.extra_args[i].append("-llmqtestinstantsendparams=%d:%d" % (self.llmq_size, self.llmq_threshold))
 
     def create_simple_node(self):
         idx = len(self.nodes)
@@ -700,38 +733,48 @@ class CosantaTestFramework(BitcoinTestFramework):
 
     def prepare_masternodes(self):
         self.log.info("Preparing %d masternodes" % self.mn_count)
-        for idx in range(0, self.mn_count):
-            self.prepare_masternode(idx)
+        rewardsAddr = self.nodes[0].getnewaddress()
 
-    def prepare_masternode(self, idx):
+        for idx in range(0, self.mn_count):
+            self.prepare_masternode(idx, rewardsAddr)
+        self.sync_all()
+
+    def prepare_masternode(self, idx, rewardsAddr=None):
+
+        register_fund = (idx % 2) == 0
+
         bls = self.nodes[0].bls('generate')
         address = self.nodes[0].getnewaddress()
-        txid = self.nodes[0].sendtoaddress(address, MASTERNODE_COLLATERAL)
 
-        txraw = self.nodes[0].getrawtransaction(txid, True)
+        txid = None
+        txid = self.nodes[0].sendtoaddress(address, MASTERNODE_COLLATERAL)
         collateral_vout = 0
-        for vout_idx in range(0, len(txraw["vout"])):
-            vout = txraw["vout"][vout_idx]
-            if vout["value"] == MASTERNODE_COLLATERAL:
-                collateral_vout = vout_idx
-        self.nodes[0].lockunspent(False, [{'txid': txid, 'vout': collateral_vout}])
+        if not register_fund:
+            txraw = self.nodes[0].getrawtransaction(txid, True)
+            for vout_idx in range(0, len(txraw["vout"])):
+                vout = txraw["vout"][vout_idx]
+                if vout["value"] == MASTERNODE_COLLATERAL:
+                    collateral_vout = vout_idx
+            self.nodes[0].lockunspent(False, [{'txid': txid, 'vout': collateral_vout}])
 
         # send to same address to reserve some funds for fees
         self.nodes[0].sendtoaddress(address, 0.001)
 
         ownerAddr = self.nodes[0].getnewaddress()
-        votingAddr = self.nodes[0].getnewaddress()
-        rewardsAddr = self.nodes[0].getnewaddress()
+        # votingAddr = self.nodes[0].getnewaddress()
+        if rewardsAddr is None:
+            rewardsAddr = self.nodes[0].getnewaddress()
+        votingAddr = ownerAddr
+        # rewardsAddr = ownerAddr
 
         port = p2p_port(len(self.nodes) + idx)
         ipAndPort = '127.0.0.1:%d' % port
         operatorReward = idx
-        operatorPayoutAddress = self.nodes[0].getnewaddress()
 
         submit = (idx % 4) < 2
 
-        if (idx % 2) == 0 :
-            self.nodes[0].lockunspent(True, [{'txid': txid, 'vout': collateral_vout}])
+        if register_fund:
+            # self.nodes[0].lockunspent(True, [{'txid': txid, 'vout': collateral_vout}])
             protx_result = self.nodes[0].protx('register_fund', address, ipAndPort, ownerAddr, bls['public'], votingAddr, operatorReward, rewardsAddr, address, submit)
         else:
             self.nodes[0].generate(1)
@@ -742,13 +785,14 @@ class CosantaTestFramework(BitcoinTestFramework):
         else:
             proTxHash = self.nodes[0].sendrawtransaction(protx_result)
 
-        self.nodes[0].generate(1)
 
         if operatorReward > 0:
+            self.nodes[0].generate(1)
+            operatorPayoutAddress = self.nodes[0].getnewaddress()
             self.nodes[0].protx('update_service', proTxHash, ipAndPort, bls['secret'], operatorPayoutAddress, address)
 
         self.mninfo.append(MasternodeInfo(proTxHash, ownerAddr, votingAddr, bls['public'], bls['secret'], address, txid, collateral_vout))
-        self.sync_all()
+        # self.sync_all()
 
         self.log.info("Prepared masternode %d: collateral_txid=%s, collateral_vout=%d, protxHash=%s" % (idx, txid, collateral_vout, proTxHash))
 
@@ -930,13 +974,14 @@ class CosantaTestFramework(BitcoinTestFramework):
         request_id = hash256(request_id_buf)[::-1].hex()
         message_hash = tx.hash
 
+        llmq_type = 103 if deterministic else 104
         quorum_member = None
         for mn in self.mninfo:
-            res = mn.node.quorum('sign', 100, request_id, message_hash)
+            res = mn.node.quorum('sign', llmq_type, request_id, message_hash)
             if (res and quorum_member is None):
                 quorum_member = mn
 
-        rec_sig = self.get_recovered_sig(request_id, message_hash, node=quorum_member.node)
+        rec_sig = self.get_recovered_sig(request_id, message_hash, node=quorum_member.node, llmq_type=llmq_type)
 
         if deterministic:
             block_count = quorum_member.node.getblockcount()
@@ -979,33 +1024,38 @@ class CosantaTestFramework(BitcoinTestFramework):
             return all(node.spork('show') == sporks for node in self.nodes[1:])
         wait_until(check_sporks_same, timeout=timeout, sleep=0.5)
 
-    def wait_for_quorum_connections(self, expected_connections, nodes, timeout = 60, wait_proc=None):
+    def wait_for_quorum_connections(self, quorum_hash, expected_connections, nodes, llmq_type_name="llmq_test", timeout = 60, wait_proc=None):
         def check_quorum_connections():
             all_ok = True
             for node in nodes:
                 s = node.quorum("dkgstatus")
-                if s["session"] == {}:
-                    continue
-                if "quorumConnections" not in s:
-                    all_ok = False
+                mn_ok = True
+                for qs in s:
+                    if "llmqType" not in qs:
+                        continue
+                    if qs["llmqType"] != llmq_type_name:
+                        continue
+                    if "quorumConnections" not in qs:
+                        continue
+                    qconnections = qs["quorumConnections"]
+                    if qconnections["quorumHash"] != quorum_hash:
+                        mn_ok = False
+                        continue
+                    cnt = 0
+                    for c in qconnections["quorumConnections"]:
+                        if c["connected"]:
+                            cnt += 1
+                    if cnt < expected_connections:
+                        mn_ok = False
+                        break
                     break
-                s = s["quorumConnections"]
-                if "llmq_test" not in s:
-                    all_ok = False
-                    break
-                cnt = 0
-                for c in s["llmq_test"]:
-                    if c["connected"]:
-                        cnt += 1
-                if cnt < expected_connections:
-                    all_ok = False
-                    break
+                all_ok = mn_ok
             if not all_ok and wait_proc is not None:
                 wait_proc()
             return all_ok
         wait_until(check_quorum_connections, timeout=timeout, sleep=1)
 
-    def wait_for_masternode_probes(self, mninfos, timeout = 30, wait_proc=None):
+    def wait_for_masternode_probes(self, mninfos, timeout = 30, wait_proc=None, llmq_type_name="llmq_test"):
         def check_probes():
             def ret():
                 if wait_proc is not None:
@@ -1014,15 +1064,15 @@ class CosantaTestFramework(BitcoinTestFramework):
 
             for mn in mninfos:
                 s = mn.node.quorum('dkgstatus')
-                if s["session"] == {}:
+                if llmq_type_name not in s["session"]:
                     continue
                 if "quorumConnections" not in s:
                     return ret()
                 s = s["quorumConnections"]
-                if "llmq_test" not in s:
+                if llmq_type_name not in s:
                     return ret()
 
-                for c in s["llmq_test"]:
+                for c in s[llmq_type_name]:
                     if c["proTxHash"] == mn.proTxHash:
                         continue
                     if not c["outbound"]:
@@ -1041,56 +1091,63 @@ class CosantaTestFramework(BitcoinTestFramework):
             return True
         wait_until(check_probes, timeout=timeout, sleep=1)
 
-    def wait_for_quorum_phase(self, quorum_hash, phase, expected_member_count, check_received_messages, check_received_messages_count, mninfos, timeout=30, sleep=0.1):
+    def wait_for_quorum_phase(self, quorum_hash, phase, expected_member_count, check_received_messages, check_received_messages_count, mninfos, llmq_type_name="llmq_test", timeout=30, sleep=1):
         def check_dkg_session():
             all_ok = True
             member_count = 0
             for mn in mninfos:
                 s = mn.node.quorum("dkgstatus")["session"]
-                if "llmq_test" not in s:
-                    continue
-                member_count += 1
-                s = s["llmq_test"]
-                if s["quorumHash"] != quorum_hash:
-                    all_ok = False
-                    break
-                if "phase" not in s:
-                    all_ok = False
-                    break
-                if s["phase"] != phase:
-                    all_ok = False
-                    break
-                if check_received_messages is not None:
-                    if s[check_received_messages] < check_received_messages_count:
-                        all_ok = False
+                mn_ok = True
+                for qs in s:
+                    if qs["llmqType"] != llmq_type_name:
+                        continue
+                    qstatus = qs["status"]
+                    if qstatus["quorumHash"] != quorum_hash:
+                        continue
+                    member_count += 1
+                    if "phase" not in qstatus:
+                        mn_ok = False
                         break
+                    if qstatus["phase"] != phase:
+                        mn_ok = False
+                        break
+                    if check_received_messages is not None:
+                        if qstatus[check_received_messages] < check_received_messages_count:
+                            mn_ok = False
+                            break
+                    break
+                all_ok = mn_ok
             if all_ok and member_count != expected_member_count:
                 return False
             return all_ok
         wait_until(check_dkg_session, timeout=timeout, sleep=sleep)
 
-    def wait_for_quorum_commitment(self, quorum_hash, nodes, timeout = 15):
+    def wait_for_quorum_commitment(self, quorum_hash, nodes, llmq_type=100, timeout=15):
         def check_dkg_comitments():
+            time.sleep(2)
             all_ok = True
             for node in nodes:
                 s = node.quorum("dkgstatus")
                 if "minableCommitments" not in s:
                     all_ok = False
                     break
-                s = s["minableCommitments"]
-                if "llmq_test" not in s:
-                    all_ok = False
+                commits = s["minableCommitments"]
+                c_ok = False
+                for c in commits:
+                    if c["llmqType"] != llmq_type:
+                        continue
+                    if c["quorumHash"] != quorum_hash:
+                        continue
+                    c_ok = True
                     break
-                s = s["llmq_test"]
-                if s["quorumHash"] != quorum_hash:
-                    all_ok = False
-                    break
+                all_ok = c_ok
             return all_ok
-        wait_until(check_dkg_comitments, timeout=timeout, sleep=0.1)
+        wait_until(check_dkg_comitments, timeout=timeout, sleep=1)
 
-    def wait_for_quorum_list(self, quorum_hash, nodes, timeout=15, sleep=2):
+    def wait_for_quorum_list(self, quorum_hash, nodes, timeout=15, sleep=2, llmq_type_name="llmq_test"):
         def wait_func():
-            if quorum_hash in self.nodes[0].quorum("list")["llmq_test"]:
+            self.log.info("quorums: " + str(self.nodes[0].quorum("list")))
+            if quorum_hash in self.nodes[0].quorum("list")[llmq_type_name]:
                 return True
             self.bump_mocktime(sleep, nodes=nodes)
             self.nodes[0].generate(1)
@@ -1098,7 +1155,113 @@ class CosantaTestFramework(BitcoinTestFramework):
             return False
         wait_until(wait_func, timeout=timeout, sleep=sleep)
 
-    def mine_quorum(self, expected_connections=None, expected_members=None, expected_contributions=None, expected_complaints=0, expected_justifications=0, expected_commitments=None, mninfos_online=None, mninfos_valid=None):
+    def wait_for_quorums_list(self, quorum_hash_0, quorum_hash_1, nodes, llmq_type_name="llmq_test",  timeout=15, sleep=2):
+        def wait_func():
+            self.log.info("h("+str(self.nodes[0].getblockcount())+") quorums: " + str(self.nodes[0].quorum("list")))
+            if quorum_hash_0 in self.nodes[0].quorum("list")[llmq_type_name]:
+                if quorum_hash_1 in self.nodes[0].quorum("list")[llmq_type_name]:
+                    return True
+            self.bump_mocktime(sleep, nodes=nodes)
+            self.nodes[0].generate(1)
+            sync_blocks(nodes)
+            return False
+        wait_until(wait_func, timeout=timeout, sleep=sleep)
+
+    def move_blocks(self, nodes, num_blocks):
+        time.sleep(1)
+        self.bump_mocktime(1, nodes=nodes)
+        self.nodes[0].generate(num_blocks)
+        sync_blocks(nodes)
+
+    def mine_quorum(self, llmq_type_name="llmq_test", llmq_type=100, expected_connections=None, expected_members=None, expected_contributions=None, expected_complaints=0, expected_justifications=0, expected_commitments=None, mninfos_online=None, mninfos_valid=None):
+        spork21_active = self.nodes[0].spork('show')['SPORK_21_QUORUM_ALL_CONNECTED'] <= 1
+        spork23_active = self.nodes[0].spork('show')['SPORK_23_QUORUM_POSE'] <= 1
+
+        if expected_connections is None:
+            expected_connections = (self.llmq_size - 1) if spork21_active else 2
+        if expected_members is None:
+            expected_members = self.llmq_size
+        if expected_contributions is None:
+            expected_contributions = self.llmq_size
+        if expected_commitments is None:
+            expected_commitments = self.llmq_size
+        if mninfos_online is None:
+            mninfos_online = self.mninfo.copy()
+        if mninfos_valid is None:
+            mninfos_valid = self.mninfo.copy()
+
+        self.log.info("Mining quorum: llmq_type_name=%s, llmq_type=%d, expected_members=%d, expected_connections=%d, expected_contributions=%d, expected_complaints=%d, expected_justifications=%d, "
+                      "expected_commitments=%d" % (llmq_type_name, llmq_type, expected_members, expected_connections, expected_contributions, expected_complaints,
+                                                   expected_justifications, expected_commitments))
+
+        nodes = [self.nodes[0]] + [mn.node for mn in mninfos_online]
+
+        # move forward to next DKG
+        skip_count = 24 - (self.nodes[0].getblockcount() % 24)
+        if skip_count != 0:
+            self.bump_mocktime(1, nodes=nodes)
+            self.nodes[0].generate(skip_count)
+        sync_blocks(nodes)
+
+        q = self.nodes[0].getbestblockhash()
+        self.log.info("Expected quorum_hash:"+str(q))
+        self.log.info("Waiting for phase 1 (init)")
+        self.wait_for_quorum_phase(q, 1, expected_members, None, 0, mninfos_online, llmq_type_name=llmq_type_name)
+        self.wait_for_quorum_connections(q, expected_connections, nodes, wait_proc=lambda: self.bump_mocktime(1, nodes=nodes), llmq_type_name=llmq_type_name)
+        if spork23_active:
+            self.wait_for_masternode_probes(mninfos_valid, wait_proc=lambda: self.bump_mocktime(1, nodes=nodes))
+
+        self.move_blocks(nodes, 2)
+
+        self.log.info("Waiting for phase 2 (contribute)")
+        self.wait_for_quorum_phase(q, 2, expected_members, "receivedContributions", expected_contributions, mninfos_online, llmq_type_name=llmq_type_name)
+
+        self.move_blocks(nodes, 2)
+
+        self.log.info("Waiting for phase 3 (complain)")
+        self.wait_for_quorum_phase(q, 3, expected_members, "receivedComplaints", expected_complaints, mninfos_online, llmq_type_name=llmq_type_name)
+
+        self.move_blocks(nodes, 2)
+
+        self.log.info("Waiting for phase 4 (justify)")
+        self.wait_for_quorum_phase(q, 4, expected_members, "receivedJustifications", expected_justifications, mninfos_online, llmq_type_name=llmq_type_name)
+
+        self.move_blocks(nodes, 2)
+
+        self.log.info("Waiting for phase 5 (commit)")
+        self.wait_for_quorum_phase(q, 5, expected_members, "receivedPrematureCommitments", expected_commitments, mninfos_online, llmq_type_name=llmq_type_name)
+
+        self.move_blocks(nodes, 2)
+
+        self.log.info("Waiting for phase 6 (mining)")
+        self.wait_for_quorum_phase(q, 6, expected_members, None, 0, mninfos_online, llmq_type_name=llmq_type_name)
+
+        self.log.info("Waiting final commitment")
+        self.wait_for_quorum_commitment(q, nodes, llmq_type=llmq_type)
+
+        self.log.info("Mining final commitment")
+        self.bump_mocktime(1, nodes=nodes)
+        self.nodes[0].getblocktemplate() # this calls CreateNewBlock
+        self.nodes[0].generate(1)
+        sync_blocks(nodes)
+
+        self.log.info("Waiting for quorum to appear in the list")
+        self.wait_for_quorum_list(q, nodes, llmq_type_name=llmq_type_name)
+
+        new_quorum = self.nodes[0].quorum("list", 1)[llmq_type_name][0]
+        assert_equal(q, new_quorum)
+        quorum_info = self.nodes[0].quorum("info", llmq_type, new_quorum)
+
+        # Mine 8 (SIGN_HEIGHT_OFFSET) more blocks to make sure that the new quorum gets eligible for signing sessions
+        self.nodes[0].generate(8)
+
+        sync_blocks(nodes)
+
+        self.log.info("New quorum: height=%d, quorumHash=%s, quorumIndex=%d, minedBlock=%s" % (quorum_info["height"], new_quorum, quorum_info["quorumIndex"], quorum_info["minedBlock"]))
+
+        return new_quorum
+
+    def mine_cycle_quorum(self, llmq_type_name="llmq_test_dip0024", llmq_type=103,  expected_connections=None, expected_members=None, expected_contributions=None, expected_complaints=0, expected_justifications=0, expected_commitments=None, mninfos_online=None, mninfos_valid=None):
         spork21_active = self.nodes[0].spork('show')['SPORK_21_QUORUM_ALL_CONNECTED'] <= 1
         spork23_active = self.nodes[0].spork('show')['SPORK_23_QUORUM_POSE'] <= 1
 
@@ -1123,73 +1286,132 @@ class CosantaTestFramework(BitcoinTestFramework):
 
         # move forward to next DKG
         skip_count = 24 - (self.nodes[0].getblockcount() % 24)
-        if skip_count != 0:
-            self.bump_mocktime(1, nodes=nodes)
-            self.nodes[0].generate(skip_count)
-        sync_blocks(nodes)
 
-        q = self.nodes[0].getbestblockhash()
+        # if skip_count != 0:
+        #     self.bump_mocktime(1, nodes=nodes)
+        #     self.nodes[0].generate(skip_count)
+        #     time.sleep(4)
+        # sync_blocks(nodes)
 
-        self.log.info("Waiting for phase 1 (init)")
-        self.wait_for_quorum_phase(q, 1, expected_members, None, 0, mninfos_online)
-        self.wait_for_quorum_connections(expected_connections, nodes, wait_proc=lambda: self.bump_mocktime(1, nodes=nodes))
+        self.move_blocks(nodes, skip_count)
+
+        q_0 = self.nodes[0].getbestblockhash()
+        self.log.info("Expected quorum_0 at:" + str(self.nodes[0].getblockcount()))
+        # time.sleep(4)
+        self.log.info("Expected quorum_0 hash:" + str(q_0))
+        # time.sleep(4)
+        self.log.info("quorumIndex 0: Waiting for phase 1 (init)")
+        self.wait_for_quorum_phase(q_0, 1, expected_members, None, 0, mninfos_online, llmq_type_name)
+        self.log.info("quorumIndex 0: Waiting for quorum connections (init)")
+        self.wait_for_quorum_connections(q_0, expected_connections, nodes, llmq_type_name, wait_proc=lambda: self.bump_mocktime(1, nodes=nodes))
         if spork23_active:
             self.wait_for_masternode_probes(mninfos_valid, wait_proc=lambda: self.bump_mocktime(1, nodes=nodes))
-        self.bump_mocktime(1, nodes=nodes)
-        self.nodes[0].generate(2)
-        sync_blocks(nodes)
 
-        self.log.info("Waiting for phase 2 (contribute)")
-        self.wait_for_quorum_phase(q, 2, expected_members, "receivedContributions", expected_contributions, mninfos_online)
-        self.bump_mocktime(1, nodes=nodes)
-        self.nodes[0].generate(2)
-        sync_blocks(nodes)
+        self.move_blocks(nodes, 1)
 
-        self.log.info("Waiting for phase 3 (complain)")
-        self.wait_for_quorum_phase(q, 3, expected_members, "receivedComplaints", expected_complaints, mninfos_online)
-        self.bump_mocktime(1, nodes=nodes)
-        self.nodes[0].generate(2)
-        sync_blocks(nodes)
+        q_1 = self.nodes[0].getbestblockhash()
+        self.log.info("Expected quorum_1 at:" + str(self.nodes[0].getblockcount()))
+        # time.sleep(2)
+        self.log.info("Expected quorum_1 hash:" + str(q_1))
+        # time.sleep(2)
+        self.log.info("quorumIndex 1: Waiting for phase 1 (init)")
+        self.wait_for_quorum_phase(q_1, 1, expected_members, None, 0, mninfos_online, llmq_type_name)
+        self.log.info("quorumIndex 1: Waiting for quorum connections (init)")
+        self.wait_for_quorum_connections(q_1, expected_connections, nodes, llmq_type_name, wait_proc=lambda: self.bump_mocktime(1, nodes=nodes))
 
-        self.log.info("Waiting for phase 4 (justify)")
-        self.wait_for_quorum_phase(q, 4, expected_members, "receivedJustifications", expected_justifications, mninfos_online)
-        self.bump_mocktime(1, nodes=nodes)
-        self.nodes[0].generate(2)
-        sync_blocks(nodes)
+        self.move_blocks(nodes, 1)
 
-        self.log.info("Waiting for phase 5 (commit)")
-        self.wait_for_quorum_phase(q, 5, expected_members, "receivedPrematureCommitments", expected_commitments, mninfos_online)
-        self.bump_mocktime(1, nodes=nodes)
-        self.nodes[0].generate(2)
-        sync_blocks(nodes)
+        self.log.info("quorumIndex 0: Waiting for phase 2 (contribute)")
+        self.wait_for_quorum_phase(q_0, 2, expected_members, "receivedContributions", expected_contributions, mninfos_online, llmq_type_name)
 
-        self.log.info("Waiting for phase 6 (mining)")
-        self.wait_for_quorum_phase(q, 6, expected_members, None, 0, mninfos_online)
+        self.move_blocks(nodes, 1)
 
-        self.log.info("Waiting final commitment")
-        self.wait_for_quorum_commitment(q, nodes)
+        self.log.info("quorumIndex 1: Waiting for phase 2 (contribute)")
+        self.wait_for_quorum_phase(q_1, 2, expected_members, "receivedContributions", expected_contributions, mninfos_online, llmq_type_name)
 
-        self.log.info("Mining final commitment")
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 0: Waiting for phase 3 (complain)")
+        self.wait_for_quorum_phase(q_0, 3, expected_members, "receivedComplaints", expected_complaints, mninfos_online, llmq_type_name)
+
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 1: Waiting for phase 3 (complain)")
+        self.wait_for_quorum_phase(q_1, 3, expected_members, "receivedComplaints", expected_complaints, mninfos_online, llmq_type_name)
+
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 0: Waiting for phase 4 (justify)")
+        self.wait_for_quorum_phase(q_0, 4, expected_members, "receivedJustifications", expected_justifications, mninfos_online, llmq_type_name)
+
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 1: Waiting for phase 4 (justify)")
+        self.wait_for_quorum_phase(q_1, 4, expected_members, "receivedJustifications", expected_justifications, mninfos_online, llmq_type_name)
+
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 0: Waiting for phase 5 (commit)")
+        self.wait_for_quorum_phase(q_0, 5, expected_members, "receivedPrematureCommitments", expected_commitments, mninfos_online, llmq_type_name)
+
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 1: Waiting for phase 5 (commit)")
+        self.wait_for_quorum_phase(q_1, 5, expected_members, "receivedPrematureCommitments", expected_commitments, mninfos_online, llmq_type_name)
+
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 0: Waiting for phase 6 (finalization)")
+        self.wait_for_quorum_phase(q_0, 6, expected_members, None, 0, mninfos_online, llmq_type_name)
+
+        self.move_blocks(nodes, 1)
+
+        self.log.info("quorumIndex 1: Waiting for phase 6 (finalization)")
+        self.wait_for_quorum_phase(q_1, 6, expected_members, None, 0, mninfos_online, llmq_type_name)
+        time.sleep(6)
+        self.log.info("Mining final commitments")
         self.bump_mocktime(1, nodes=nodes)
         self.nodes[0].getblocktemplate() # this calls CreateNewBlock
         self.nodes[0].generate(1)
         sync_blocks(nodes)
 
-        self.log.info("Waiting for quorum to appear in the list")
-        self.wait_for_quorum_list(q, nodes)
+        time.sleep(6)
+        self.log.info("Waiting for quorum(s) to appear in the list")
+        self.wait_for_quorums_list(q_0, q_1, nodes, llmq_type_name)
 
-        new_quorum = self.nodes[0].quorum("list", 1)["llmq_test"][0]
-        assert_equal(q, new_quorum)
-        quorum_info = self.nodes[0].quorum("info", 100, new_quorum)
-
+        quorum_info_0 = self.nodes[0].quorum("info", llmq_type, q_0)
+        quorum_info_1 = self.nodes[0].quorum("info", llmq_type, q_1)
         # Mine 8 (SIGN_HEIGHT_OFFSET) more blocks to make sure that the new quorum gets eligible for signing sessions
         self.nodes[0].generate(8)
 
         sync_blocks(nodes)
+        self.log.info("New quorum: height=%d, quorumHash=%s, quorumIndex=%d, minedBlock=%s" % (quorum_info_0["height"], q_0, quorum_info_0["quorumIndex"], quorum_info_0["minedBlock"]))
+        self.log.info("New quorum: height=%d, quorumHash=%s, quorumIndex=%d, minedBlock=%s" % (quorum_info_1["height"], q_1, quorum_info_1["quorumIndex"], quorum_info_1["minedBlock"]))
 
-        self.log.info("New quorum: height=%d, quorumHash=%s, minedBlock=%s" % (quorum_info["height"], new_quorum, quorum_info["minedBlock"]))
+        self.log.info("quorum_info_0:"+str(quorum_info_0))
+        self.log.info("quorum_info_1:"+str(quorum_info_1))
 
-        return new_quorum
+        best_block_hash = self.nodes[0].getbestblockhash()
+        block_height = self.nodes[0].getblockcount()
+        quorum_rotation_info = self.nodes[0].quorum("rotationinfo", best_block_hash)
+        self.log.info("h("+str(block_height)+"):"+str(quorum_rotation_info))
+
+        return (quorum_info_0, quorum_info_1)
+
+    def move_to_next_cycle(self):
+        cycle_length = 24
+        mninfos_online = self.mninfo.copy()
+        nodes = [self.nodes[0]] + [mn.node for mn in mninfos_online]
+        cur_block = self.nodes[0].getblockcount()
+
+        # move forward to next DKG
+        skip_count = cycle_length - (cur_block % cycle_length)
+        if skip_count != 0:
+            self.bump_mocktime(1, nodes=nodes)
+            self.nodes[0].generate(skip_count)
+        sync_blocks(nodes)
+        time.sleep(1)
+        self.log.info('Moved from block %d to %d' % (cur_block, self.nodes[0].getblockcount()))
 
     def get_recovered_sig(self, rec_sig_id, rec_sig_msg_hash, llmq_type=100, node=None):
         # Note: recsigs aren't relayed to regular nodes by default,
@@ -1203,8 +1425,8 @@ class CosantaTestFramework(BitcoinTestFramework):
                 time.sleep(0.1)
         assert False
 
-    def get_quorum_masternodes(self, q):
-        qi = self.nodes[0].quorum('info', 100, q)
+    def get_quorum_masternodes(self, q, llmq_type=100):
+        qi = self.nodes[0].quorum('info', llmq_type, q)
         result = []
         for m in qi['members']:
             result.append(self.get_mninfo(m['proTxHash']))

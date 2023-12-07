@@ -1,5 +1,4 @@
-// Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,6 +6,7 @@
 #include <hash.h>
 #include <serialize.h>
 
+#include <util/ranges.h>
 #include <util/system.h>
 
 #include <memory>
@@ -76,22 +76,23 @@ void CBLSWorker::Stop()
 
 bool CBLSWorker::GenerateContributions(int quorumThreshold, const BLSIdVector& ids, BLSVerificationVectorPtr& vvecRet, BLSSecretKeyVector& skSharesRet)
 {
-    auto svec = std::make_shared<BLSSecretKeyVector>((size_t)quorumThreshold);
+    auto svec = BLSSecretKeyVector((size_t)quorumThreshold);
     vvecRet = std::make_shared<BLSVerificationVector>((size_t)quorumThreshold);
     skSharesRet.resize(ids.size());
 
     for (int i = 0; i < quorumThreshold; i++) {
-        (*svec)[i].MakeNewKey();
+        svec[i].MakeNewKey();
     }
-    std::list<std::future<bool> > futures;
     size_t batchSize = 8;
+    std::vector<std::future<bool>> futures;
+    futures.reserve((quorumThreshold / batchSize + ids.size() / batchSize) + 2);
 
-    for (size_t i = 0; i < quorumThreshold; i += batchSize) {
+    for (size_t i = 0; i < size_t(quorumThreshold); i += batchSize) {
         size_t start = i;
         size_t count = std::min(batchSize, quorumThreshold - start);
         auto f = [&, start, count](int threadId) {
             for (size_t j = start; j < start + count; j++) {
-                (*vvecRet)[j] = (*svec)[j].GetPublicKey();
+                (*vvecRet)[j] = svec[j].GetPublicKey();
             }
             return true;
         };
@@ -103,7 +104,7 @@ bool CBLSWorker::GenerateContributions(int quorumThreshold, const BLSIdVector& i
         size_t count = std::min(batchSize, ids.size() - start);
         auto f = [&, start, count](int threadId) {
             for (size_t j = start; j < start + count; j++) {
-                if (!skSharesRet[j].SecretKeyShare(*svec, ids[j])) {
+                if (!skSharesRet[j].SecretKeyShare(svec, ids[j])) {
                     return false;
                 }
             }
@@ -111,13 +112,9 @@ bool CBLSWorker::GenerateContributions(int quorumThreshold, const BLSIdVector& i
         };
         futures.emplace_back(workerPool.push(f));
     }
-    bool success = true;
-    for (auto& f : futures) {
-        if (!f.get()) {
-            success = false;
-        }
-    }
-    return success;
+    return ranges::all_of(futures, [](auto& f){
+        return f.get();
+    });
 }
 
 // aggregates a single vector of BLS objects in parallel
@@ -155,11 +152,11 @@ struct Aggregator : public std::enable_shared_from_this<Aggregator<T>> {
                bool _parallel,
                ctpl::thread_pool& _workerPool,
                DoneCallback _doneCallback) :
+            inputVec(std::make_shared<std::vector<const T*>>(count)),
             parallel(_parallel),
             workerPool(_workerPool),
             doneCallback(std::move(_doneCallback))
     {
-        inputVec = std::make_shared<std::vector<const T*> >(count);
         for (size_t i = 0; i < count; i++) {
             (*inputVec)[i] = pointer(_inputVec[start + i]);
         }
@@ -806,13 +803,9 @@ void CBLSWorker::AsyncVerifySig(const CBLSSignature& sig, const CBLSPublicKey& p
 
     std::unique_lock<std::mutex> l(sigVerifyMutex);
 
-    bool foundDuplicate = false;
-    for (const auto& s : sigVerifyQueue) {
-        if (s.msgHash == msgHash) {
-            foundDuplicate = true;
-            break;
-        }
-    }
+    bool foundDuplicate = ranges::any_of(sigVerifyQueue, [&msgHash](const auto& job){
+        return job.msgHash == msgHash;
+    });
 
     if (foundDuplicate) {
         // batched/aggregated verification does not allow duplicate hashes, so we push what we currently have and start

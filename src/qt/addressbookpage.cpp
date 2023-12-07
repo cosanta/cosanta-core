@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -69,6 +68,9 @@ AddressBookPage::AddressBookPage(Mode _mode, Tabs _tab, QWidget* parent) :
     ui->setupUi(this);
 
     ui->showAddressQRCode->setIcon(QIcon());
+#ifndef USE_QRCODE
+    ui->showAddressQRCode->setEnabled(false);
+#endif
 
     switch(mode)
     {
@@ -112,6 +114,9 @@ AddressBookPage::AddressBookPage(Mode _mode, Tabs _tab, QWidget* parent) :
     QAction *editAction = new QAction(tr("&Edit"), this);
     QAction *showAddressQRCodeAction = new QAction(tr("&Show address QR code"), this);
     deleteAction = new QAction(ui->deleteAddress->text(), this);
+#ifndef USE_QRCODE
+    showAddressQRCodeAction->setEnabled(false);
+#endif
 
     // Build context menu
     contextMenu = new QMenu(this);
@@ -271,13 +276,17 @@ void AddressBookPage::selectionChanged()
             break;
         }
         ui->copyAddress->setEnabled(true);
+#ifdef USE_QRCODE
         ui->showAddressQRCode->setEnabled(true);
+#endif
     }
     else
     {
         ui->deleteAddress->setEnabled(false);
         ui->copyAddress->setEnabled(false);
+#ifdef USE_QRCODE
         ui->showAddressQRCode->setEnabled(false);
+#endif
     }
 }
 
@@ -323,7 +332,8 @@ void AddressBookPage::on_exportButton_clicked()
 
     if(!writer.write()) {
         QMessageBox::critical(this, tr("Exporting Failed"),
-            tr("There was an error trying to save the address list to %1. Please try again.").arg(filename));
+            //: %1 is a name of the file (e.g., "addrbook.csv") that the bitcoin addresses were exported to.
+            tr("There was an error trying to save the address list to %1. Please try again.", "An error message.").arg(filename));
     }
 }
 

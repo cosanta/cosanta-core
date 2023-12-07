@@ -12,10 +12,12 @@
 #include <pow.h>
 #include <script/sign.h>
 #include <serialize.h>
+#include <util/memory.h>
 #include <util/system.h>
+#include <util/time.h>
 #include <validation.h>
 
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <stdint.h>
 
@@ -50,7 +52,8 @@ struct COrphanTx {
     NodeId fromPeer;
     int64_t nTimeExpire;
 };
-extern std::map<uint256, COrphanTx> mapOrphanTransactions;
+extern CCriticalSection g_cs_orphans;
+extern std::map<uint256, COrphanTx> mapOrphanTransactions GUARDED_BY(g_cs_orphans);
 
 static CService ip(uint32_t i)
 {
@@ -90,8 +93,8 @@ BOOST_AUTO_TEST_CASE(outbound_slow_chain_eviction)
     // This test requires that we have a chain with non-zero work.
     {
         LOCK(cs_main);
-        BOOST_CHECK(chainActive.Tip() != nullptr);
-        BOOST_CHECK(chainActive.Tip()->nChainWork > 0);
+        BOOST_CHECK(::ChainActive().Tip() != nullptr);
+        BOOST_CHECK(::ChainActive().Tip()->nChainWork > 0);
     }
 
     // Test starts here
@@ -358,7 +361,7 @@ BOOST_AUTO_TEST_CASE(DoS_bantime)
 static CTransactionRef RandomOrphan()
 {
     std::map<uint256, COrphanTx>::iterator it;
-    LOCK(cs_main);
+    LOCK2(cs_main, g_cs_orphans);
     it = mapOrphanTransactions.lower_bound(InsecureRand256());
     if (it == mapOrphanTransactions.end())
         it = mapOrphanTransactions.begin();
@@ -428,7 +431,7 @@ BOOST_AUTO_TEST_CASE(DoS_mapOrphans)
         BOOST_CHECK(!AddOrphanTx(MakeTransactionRef(tx), i));
     }
 
-    LOCK(cs_main);
+    LOCK2(cs_main, g_cs_orphans);
     // Test EraseOrphansFor:
     for (NodeId i = 0; i < 3; i++)
     {

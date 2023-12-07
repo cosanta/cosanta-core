@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,8 +22,6 @@
 #include <rpc/client.h>
 #include <util/strencodings.h>
 #include <util/system.h>
-
-#include <openssl/crypto.h>
 
 #include <univalue.h>
 
@@ -71,8 +68,8 @@ const QStringList historyFilter = QStringList()
     << "importprivkey"
     << "importmulti"
     << "signmessagewithprivkey"
-    << "signrawtransaction"
     << "signrawtransactionwithkey"
+    << "upgradetohd"
     << "walletpassphrase"
     << "walletpassphrasechange"
     << "encryptwallet";
@@ -475,7 +472,7 @@ RPCConsole::RPCConsole(interfaces::Node& node, QWidget* parent, Qt::WindowFlags 
     QChar nonbreaking_hyphen(8209);
     ui->dataDir->setToolTip(ui->dataDir->toolTip().arg(QString(nonbreaking_hyphen) + "datadir"));
     ui->blocksDir->setToolTip(ui->blocksDir->toolTip().arg(QString(nonbreaking_hyphen) + "blocksdir"));
-    ui->openDebugLogfileButton->setToolTip(ui->openDebugLogfileButton->toolTip().arg(tr(PACKAGE_NAME)));
+    ui->openDebugLogfileButton->setToolTip(ui->openDebugLogfileButton->toolTip().arg(PACKAGE_NAME));
 
     setButtonIcons();
 
@@ -840,8 +837,17 @@ void RPCConsole::walletReindex()
 void RPCConsole::buildParameterlist(QString arg)
 {
     // Get command-line arguments and remove the application name
-    QStringList args = QApplication::arguments();
-    args.removeFirst();
+    QStringList args;
+
+    for (const auto& [key, values] : gArgs.GetCommandLineArgs()) {
+        for (const auto& value : values) {
+            if (value.empty()) {
+                args << QString::fromStdString(key);
+            } else {
+                args << QString::fromStdString(key + "=" + value);
+            }
+        }
+    }
 
     // Remove existing repair-options
     args.removeAll(RESCAN1);
@@ -887,7 +893,7 @@ void RPCConsole::clear(bool clearHistory)
     QString clsKey = "Ctrl-L";
 #endif
 
-    message(CMD_REPLY, (tr("Welcome to the %1 RPC console.").arg(tr(PACKAGE_NAME)) + "<br>" +
+    message(CMD_REPLY, (tr("Welcome to the %1 RPC console.").arg(PACKAGE_NAME) + "<br>" +
                         tr("Use up and down arrows to navigate history, and %1 to clear screen.").arg("<b>"+clsKey+"</b>") + "<br>" +
                         tr("Type %1 for an overview of available commands.").arg("<b>help</b>") + "<br>" +
                         tr("For more information on using this console type %1.").arg("<b>help-console</b>") +

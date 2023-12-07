@@ -35,7 +35,7 @@ class MaxUploadTest(BitcoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 1
-        self.extra_args = [["-maxuploadtarget=200", "-blockmaxsize=999000", "-maxtipage="+str(2*60*60*24*7)]]
+        self.extra_args = [["-maxuploadtarget=200", "-blockmaxsize=999000", "-maxtipage="+str(2*60*60*24*7), "-acceptnonstdtxn=1"]]
 
         # Cache for utxos, as the listunspent may take a long time later in the test
         self.utxo_cache = []
@@ -65,11 +65,6 @@ class MaxUploadTest(BitcoinTestFramework):
 
         for _ in range(3):
             p2p_conns.append(self.nodes[0].add_p2p_connection(TestP2PConn()))
-
-        for p2pc in p2p_conns:
-            p2pc.wait_for_verack()
-
-        # Test logic begins here
 
         # Now mine a big block
         mine_large_block(self.nodes[0], self.utxo_cache)
@@ -156,7 +151,6 @@ class MaxUploadTest(BitcoinTestFramework):
 
         # Reconnect to self.nodes[0]
         self.nodes[0].add_p2p_connection(TestP2PConn())
-        self.nodes[0].p2p.wait_for_verack()
 
         #retrieve 20 blocks which should be enough to break the 1MB limit
         getdata_request.inv = [CInv(2, big_new_block)]

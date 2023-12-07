@@ -1,5 +1,4 @@
-// Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -22,12 +21,14 @@ namespace llmq
 class CFinalCommitment
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t CURRENT_VERSION = 1;
+    static constexpr uint16_t INDEXED_QUORUM_VERSION = 2;
 
 public:
     uint16_t nVersion{CURRENT_VERSION};
-    Consensus::LLMQType llmqType{Consensus::LLMQ_NONE};
+    Consensus::LLMQType llmqType{Consensus::LLMQType::LLMQ_NONE};
     uint256 quorumHash;
+    int16_t quorumIndex{0};
     std::vector<bool> signers;
     std::vector<bool> validMembers;
 
@@ -50,7 +51,7 @@ public:
         return (int)std::count(validMembers.begin(), validMembers.end(), true);
     }
 
-    bool Verify(const CBlockIndex* pQuorumIndex, bool checkSigs) const;
+    bool Verify(const CBlockIndex* pQuorumBaseBlockIndex, bool checkSigs) const;
     bool VerifyNull() const;
     bool VerifySizes(const Consensus::LLMQParams& params) const;
 
@@ -60,7 +61,17 @@ public:
         READWRITE(
                 obj.nVersion,
                 obj.llmqType,
-                obj.quorumHash,
+                obj.quorumHash
+                );
+
+        int16_t _quorumIndex = 0;
+        SER_WRITE(obj, _quorumIndex = obj.quorumIndex);
+        if (obj.nVersion == CFinalCommitment::INDEXED_QUORUM_VERSION) {
+            READWRITE(_quorumIndex);
+        }
+        SER_READ(obj, obj.quorumIndex = _quorumIndex);
+
+        READWRITE(
                 DYNBITSET(obj.signers),
                 DYNBITSET(obj.validMembers),
                 obj.quorumPublicKey,
@@ -92,6 +103,7 @@ public:
         obj.pushKV("version", (int)nVersion);
         obj.pushKV("llmqType", (int)llmqType);
         obj.pushKV("quorumHash", quorumHash.ToString());
+        obj.pushKV("quorumIndex", quorumIndex);
         obj.pushKV("signersCount", CountSigners());
         obj.pushKV("signers", CLLMQUtils::ToHexStr(signers));
         obj.pushKV("validMembersCount", CountValidMembers());
@@ -102,16 +114,16 @@ public:
         obj.pushKV("membersSig", membersSig.ToString());
     }
 };
-using CFinalCommitmentPtr = std::shared_ptr<CFinalCommitment>;
+using CFinalCommitmentPtr = std::unique_ptr<CFinalCommitment>;
 
 class CFinalCommitmentTxPayload
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
-
+    static constexpr auto SPECIALTX_TYPE = TRANSACTION_QUORUM_COMMITMENT;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 public:
     uint16_t nVersion{CURRENT_VERSION};
-    uint32_t nHeight{(uint32_t)-1};
+    uint32_t nHeight{std::numeric_limits<uint32_t>::max()};
     CFinalCommitment commitment;
 
 public:

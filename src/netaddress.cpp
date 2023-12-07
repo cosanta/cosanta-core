@@ -18,7 +18,6 @@
 #include <array>
 #include <cstdint>
 #include <ios>
-#include <iterator>
 #include <tuple>
 
 constexpr size_t CNetAddr::V1_SERIALIZATION_SIZE;
@@ -1095,4 +1094,9 @@ bool operator==(const CSubNet& a, const CSubNet& b)
 bool operator<(const CSubNet& a, const CSubNet& b)
 {
     return (a.network < b.network || (a.network == b.network && memcmp(a.netmask, b.netmask, 16) < 0));
+}
+
+bool SanityCheckASMap(const std::vector<bool>& asmap)
+{
+    return SanityCheckASMap(asmap, 128); // For IP address lookups, the input is 128 bits
 }

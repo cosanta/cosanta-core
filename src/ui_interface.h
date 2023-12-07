@@ -1,6 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2012-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,12 +8,13 @@
 
 #include <functional>
 #include <memory>
-#include <stdint.h>
 #include <string>
 
-class CWallet;
 class CBlockIndex;
+struct bilingual_str;
+
 class CDeterministicMNList;
+
 namespace boost {
 namespace signals2 {
 class connection;
@@ -80,14 +80,13 @@ public:
 #define ADD_SIGNALS_DECL_WRAPPER(signal_name, rtype, args...)                              \
     rtype signal_name(args);                                                               \
     using signal_name##Sig = rtype(args);                                                  \
-    boost::signals2::connection signal_name##_connect(std::function<signal_name##Sig> fn); \
-    void signal_name##_disconnect(std::function<signal_name##Sig> fn);
+    boost::signals2::connection signal_name##_connect(std::function<signal_name##Sig> fn);
 
     /** Show message box. */
-    ADD_SIGNALS_DECL_WRAPPER(ThreadSafeMessageBox, bool, const std::string& message, const std::string& caption, unsigned int style);
+    ADD_SIGNALS_DECL_WRAPPER(ThreadSafeMessageBox, bool, const bilingual_str& message, const std::string& caption, unsigned int style);
 
     /** If possible, ask the user a question. If not, falls back to ThreadSafeMessageBox(noninteractive_message, caption, style) and returns false. */
-    ADD_SIGNALS_DECL_WRAPPER(ThreadSafeQuestion, bool, const std::string& message, const std::string& noninteractive_message, const std::string& caption, unsigned int style);
+    ADD_SIGNALS_DECL_WRAPPER(ThreadSafeQuestion, bool, const bilingual_str& message, const std::string& noninteractive_message, const std::string& caption, unsigned int style);
 
     /** Progress message during initialization. */
     ADD_SIGNALS_DECL_WRAPPER(InitMessage, void, const std::string& message);
@@ -102,9 +101,6 @@ public:
      * Status bar alerts changed.
      */
     ADD_SIGNALS_DECL_WRAPPER(NotifyAlertChanged, void, );
-
-    /** A wallet has been loaded. */
-    ADD_SIGNALS_DECL_WRAPPER(LoadWallet, void, std::shared_ptr<CWallet> wallet);
 
     /**
      * Show progress e.g. for verifychain.
@@ -132,10 +128,11 @@ public:
 };
 
 /** Show warning message **/
-void InitWarning(const std::string& str);
+void InitWarning(const bilingual_str& str);
 
 /** Show error message **/
-bool InitError(const std::string& str);
+bool InitError(const bilingual_str& str);
+inline bool AbortError(const bilingual_str& str) { return InitError(str); }
 
 extern CClientUIInterface uiInterface;
 

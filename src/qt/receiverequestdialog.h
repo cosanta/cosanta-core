@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,40 +8,10 @@
 #include <qt/walletmodel.h>
 
 #include <QDialog>
-#include <QImage>
-#include <QLabel>
-#include <QPainter>
 
 namespace Ui {
     class ReceiveRequestDialog;
 }
-
-QT_BEGIN_NAMESPACE
-class QMenu;
-QT_END_NAMESPACE
-
-/* Label widget for QR code. This image can be dragged, dropped, copied and saved
- * to disk.
- */
-class QRImageWidget : public QLabel
-{
-    Q_OBJECT
-
-public:
-    explicit QRImageWidget(QWidget *parent = nullptr);
-    QImage exportImage();
-
-public Q_SLOTS:
-    void saveImage();
-    void copyImage();
-
-protected:
-    virtual void mousePressEvent(QMouseEvent *event) override;
-    virtual void contextMenuEvent(QContextMenuEvent *event) override;
-
-private:
-    QMenu *contextMenu;
-};
 
 class ReceiveRequestDialog : public QDialog
 {

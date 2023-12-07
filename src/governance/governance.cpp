@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,7 +6,9 @@
 
 #include <bloom.h>
 #include <chain.h>
+#include <chainparams.h>
 #include <consensus/validation.h>
+#include <evo/deterministicmns.h>
 #include <governance/classes.h>
 #include <governance/validators.h>
 #include <masternode/meta.h>
@@ -19,13 +20,11 @@
 #include <shutdown.h>
 #include <spork.h>
 
-#include <evo/deterministicmns.h>
-
 CGovernanceManager governance;
 
 int nSubmittedFinalBudget;
 
-const std::string CGovernanceManager::SERIALIZATION_VERSION_STRING = "CGovernanceManager-Version-15";
+const std::string CGovernanceManager::SERIALIZATION_VERSION_STRING = "CGovernanceManager-Version-16";
 const int CGovernanceManager::MAX_TIME_FUTURE_DEVIATION = 60 * 60;
 const int CGovernanceManager::RELIABLE_PROPAGATION_TIME = 60;
 
@@ -94,16 +93,6 @@ void CGovernanceManager::ProcessMessage(CNode* pfrom, const std::string& strComm
 
     // ANOTHER USER IS ASKING US TO HELP THEM SYNC GOVERNANCE OBJECT DATA
     if (strCommand == NetMsgType::MNGOVERNANCESYNC) {
-        if (pfrom->nVersion < MIN_GOVERNANCE_PEER_PROTO_VERSION) {
-            LogPrint(BCLog::GOBJECT, "MNGOVERNANCESYNC -- peer=%d using obsolete version %i\n", pfrom->GetId(), pfrom->nVersion);
-            if (enable_bip61) {
-                connman.PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::REJECT, strCommand,
-                                                                                      REJECT_OBSOLETE, strprintf(
-                                "Version must be %d or greater", MIN_GOVERNANCE_PEER_PROTO_VERSION)));
-            }
-            return;
-        }
-
         // Ignore such requests until we are fully synced.
         // We could start processing this after masternode list is synced
         // but this is a heavy one so it's better to finish sync first.
@@ -139,16 +128,6 @@ void CGovernanceManager::ProcessMessage(CNode* pfrom, const std::string& strComm
             EraseObjectRequest(pfrom->GetId(), CInv(MSG_GOVERNANCE_OBJECT, nHash));
         }
 
-        if (pfrom->nVersion < MIN_GOVERNANCE_PEER_PROTO_VERSION) {
-            LogPrint(BCLog::GOBJECT, "MNGOVERNANCEOBJECT -- peer=%d using obsolete version %i\n", pfrom->GetId(), pfrom->nVersion);
-            if (enable_bip61) {
-                connman.PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::REJECT, strCommand,
-                                                                                      REJECT_OBSOLETE, strprintf(
-                                "Version must be %d or greater", MIN_GOVERNANCE_PEER_PROTO_VERSION)));
-            }
-            return;
-        }
-
         if (!masternodeSync.IsBlockchainSynced()) {
             LogPrint(BCLog::GOBJECT, "MNGOVERNANCEOBJECT -- masternode list not synced\n");
             return;
@@ -163,7 +142,8 @@ void CGovernanceManager::ProcessMessage(CNode* pfrom, const std::string& strComm
             return;
         }
 
-        LOCK2(cs_main, cs);
+        LOCK2(cs_main, ::mempool.cs); // Lock mempool because of GetTransaction deep inside
+        LOCK(cs);
 
         if (mapObjects.count(nHash) || mapPostponedObjects.count(nHash) || mapErasedGovernanceObjects.count(nHash)) {
             // TODO - print error code? what if it's GOVOBJ_ERROR_IMMATURE?
@@ -214,15 +194,6 @@ void CGovernanceManager::ProcessMessage(CNode* pfrom, const std::string& strComm
         {
             LOCK(cs_main);
             EraseObjectRequest(pfrom->GetId(), CInv(MSG_GOVERNANCE_OBJECT_VOTE, nHash));
-        }
-
-        if (pfrom->nVersion < MIN_GOVERNANCE_PEER_PROTO_VERSION) {
-            LogPrint(BCLog::GOBJECT, "MNGOVERNANCEOBJECTVOTE -- peer=%d using obsolete version %i\n", pfrom->GetId(), pfrom->nVersion);
-            if (enable_bip61) {
-                connman.PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::REJECT, strCommand,
-                                                                                      REJECT_OBSOLETE, strprintf(
-                                "Version must be %d or greater", MIN_GOVERNANCE_PEER_PROTO_VERSION)));
-            }
         }
 
         // Ignore such messages until masternode list is synced
@@ -291,7 +262,8 @@ void CGovernanceManager::AddGovernanceObject(CGovernanceObject& govobj, CConnman
 
     govobj.UpdateSentinelVariables(); //this sets local vars in object
 
-    LOCK2(cs_main, cs);
+    LOCK2(cs_main, ::mempool.cs); // Lock mempool because of GetTransaction deep inside
+    LOCK(cs);
     std::string strError;
 
     // MAKE SURE THIS OBJECT IS OK
@@ -350,7 +322,8 @@ void CGovernanceManager::UpdateCachesAndClean()
 
     std::vector<uint256> vecDirtyHashes = mmetaman.GetAndClearDirtyGovernanceObjectHashes();
 
-    LOCK2(cs_main, cs);
+    LOCK2(cs_main, ::mempool.cs); // Lock mempool because of GetTransaction deep inside
+    LOCK(cs);
 
     for (const uint256& nHash : vecDirtyHashes) {
         auto it = mapObjects.find(nHash);
@@ -428,7 +401,9 @@ void CGovernanceManager::UpdateCachesAndClean()
         } else {
             // NOTE: triggers are handled via triggerman
             if (pObj->GetObjectType() == GOVERNANCE_OBJECT_PROPOSAL) {
-                CProposalValidator validator(pObj->GetDataAsHexString(), true);
+                bool fAllowScript = (VersionBitsTipState(Params().GetConsensus(), Consensus::DEPLOYMENT_DIP0024) == ThresholdState::ACTIVE);
+                bool fAllowLegacyFormat = !fAllowScript; // reusing the same bit to stop accepting proposals in legacy format
+                CProposalValidator validator(pObj->GetDataAsHexString(), fAllowLegacyFormat, fAllowScript);
                 if (!validator.Validate()) {
                     LogPrint(BCLog::GOBJECT, "CGovernanceManager::UpdateCachesAndClean -- set for deletion expired obj %s\n", strHash);
                     pObj->PrepareDeletion(nNow);
@@ -473,7 +448,7 @@ std::vector<CGovernanceVote> CGovernanceManager::GetCurrentVotes(const uint256& 
     auto mnList = deterministicMNManager->GetListAtChainTip();
     std::map<COutPoint, CDeterministicMNCPtr> mapMasternodes;
     if (mnCollateralOutpointFilter.IsNull()) {
-        mnList.ForEachMN(false, [&](const CDeterministicMNCPtr& dmn) {
+        mnList.ForEachMNShared(false, [&](const CDeterministicMNCPtr& dmn) {
             mapMasternodes.emplace(dmn->collateralOutpoint, dmn);
         });
     } else {
@@ -504,11 +479,11 @@ std::vector<CGovernanceVote> CGovernanceManager::GetCurrentVotes(const uint256& 
     return vecResult;
 }
 
-std::vector<const CGovernanceObject*> CGovernanceManager::GetAllNewerThan(int64_t nMoreThanTime) const
+std::vector<CGovernanceObject> CGovernanceManager::GetAllNewerThan(int64_t nMoreThanTime) const
 {
     LOCK(cs);
 
-    std::vector<const CGovernanceObject*> vGovObjs;
+    std::vector<CGovernanceObject> vGovObjs;
 
     for (const auto& objPair : mapObjects) {
         // IF THIS OBJECT IS OLDER THAN TIME, CONTINUE
@@ -517,8 +492,7 @@ std::vector<const CGovernanceObject*> CGovernanceManager::GetAllNewerThan(int64_
         }
 
         // ADD GOVERNANCE OBJECT TO LIST
-        const CGovernanceObject* pGovObj = &(objPair.second);
-        vGovObjs.push_back(pGovObj);
+        vGovObjs.push_back(objPair.second);
     }
 
     return vGovObjs;
@@ -593,9 +567,9 @@ bool CGovernanceManager::ConfirmInventoryRequest(const CInv& inv)
         return false;
     }
 
-    auto it = setHash->find(inv.hash);
-    if (it == setHash->end()) {
-        setHash->insert(inv.hash);
+    const auto& [_, inserted] = setHash->insert(inv.hash);
+
+    if (inserted) {
         LogPrint(BCLog::GOBJECT, "CGovernanceManager::ConfirmInventoryRequest added inv to requested set\n");
     }
 
@@ -672,6 +646,8 @@ void CGovernanceManager::SyncObjects(CNode* pnode, CConnman& connman) const
 
     LogPrint(BCLog::GOBJECT, "CGovernanceManager::%s -- syncing all objects to peer=%d\n", __func__, pnode->GetId());
 
+    bool fAllowScript = WITH_LOCK(cs_main, return VersionBitsTipState(Params().GetConsensus(), Consensus::DEPLOYMENT_DIP0024) == ThresholdState::ACTIVE);
+
     LOCK(cs);
 
     // all valid objects, no votes
@@ -686,6 +662,19 @@ void CGovernanceManager::SyncObjects(CNode* pnode, CConnman& connman) const
             LogPrint(BCLog::GOBJECT, "CGovernanceManager::%s -- not syncing deleted/expired govobj: %s, peer=%d\n", __func__,
                 strHash, pnode->GetId());
             continue;
+        }
+
+        if (fAllowScript && pnode->nVersion < GOVSCRIPT_PROTO_VERSION && govobj.GetObjectType() == GOVERNANCE_OBJECT_PROPOSAL) {
+            // We know this proposal is valid locally, otherwise we would not store it.
+            // But we don't want to relay it to pre-GOVSCRIPT_PROTO_VERSION peers if payment_address is p2sh
+            // because they won't accept it anyway and will simply ban us eventually.
+            CProposalValidator validator(govobj.GetDataAsHexString(), false /* no legacy format */, false /* but also no script */);
+            if (!validator.Validate(false /* ignore expiration */)) {
+                // The only way we could get here is when proposal is valid but payment_address is actually p2sh.
+                LogPrintf("CGovernanceManager::%s -- not syncing p2sh govobj to older node: %s, peer=%d\n", __func__,
+                    strHash, pnode->GetId());
+                continue;
+            }
         }
 
         // Push the inventory budget proposal message over to the other client
@@ -849,7 +838,8 @@ void CGovernanceManager::CheckPostponedObjects(CConnman& connman)
 {
     if (!masternodeSync.IsSynced()) return;
 
-    LOCK2(cs_main, cs);
+    LOCK2(cs_main, ::mempool.cs); // Lock mempool because of GetTransaction deep inside
+    LOCK(cs);
 
     // Check postponed proposals
     for (auto it = mapPostponedObjects.begin(); it != mapPostponedObjects.end();) {
@@ -944,7 +934,6 @@ void CGovernanceManager::RequestGovernanceObject(CNode* pfrom, const uint256& nH
 
 int CGovernanceManager::RequestGovernanceObjectVotes(CNode* pnode, CConnman& connman)
 {
-    if (pnode->nVersion < MIN_GOVERNANCE_PEER_PROTO_VERSION) return -3;
     std::vector<CNode*> vNodesCopy;
     vNodesCopy.push_back(pnode);
     return RequestGovernanceObjectVotes(vNodesCopy, connman);
@@ -1023,8 +1012,6 @@ int CGovernanceManager::RequestGovernanceObjectVotes(const std::vector<CNode*>& 
             // Inbound connection this early is most likely a "masternode" connection
             // initiated from another node, so skip it too.
             if (!pnode->CanRelay() || (fMasternodeMode && pnode->fInbound)) continue;
-            // only use up to date peers
-            if (pnode->nVersion < MIN_GOVERNANCE_PEER_PROTO_VERSION) continue;
             // stop early to prevent setAskFor overflow
             {
                 LOCK(cs_main);
@@ -1111,7 +1098,9 @@ void CGovernanceManager::AddCachedTriggers()
 
 void CGovernanceManager::InitOnLoad()
 {
-    LOCK(cs);
+    // TODO: drop cs_main here and script addresses limit in
+    // CSuperblock::ParsePaymentSchedule() once DIP0024 is active
+    LOCK2(cs_main, cs);
     int64_t nStart = GetTimeMillis();
     LogPrintf("Preparing masternode indexes and governance triggers...\n");
     RebuildIndexes();

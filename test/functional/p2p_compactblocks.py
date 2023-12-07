@@ -94,7 +94,10 @@ class CompactBlocksTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         # both nodes has the same version
         self.num_nodes = 2
-        self.extra_args = [["-txindex"]] * 2
+        self.extra_args = [[
+            "-txindex",
+            "-acceptnonstdtxn=1",
+        ]] * 2
         self.utxos = []
 
     def skip_test_if_missing_module(self):
@@ -723,8 +726,6 @@ class CompactBlocksTest(BitcoinTestFramework):
         self.test_node = self.nodes[0].add_p2p_connection(TestP2PConn())
         self.second_node = self.nodes[1].add_p2p_connection(TestP2PConn(), services=NODE_NETWORK)
         self.old_node = self.nodes[1].add_p2p_connection(TestP2PConn(), services=NODE_NETWORK)
-
-        self.test_node.wait_for_verack()
 
         # We will need UTXOs to construct transactions in later tests.
         self.make_utxos()

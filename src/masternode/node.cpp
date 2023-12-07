@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,13 +6,12 @@
 
 #include <evo/deterministicmns.h>
 
+#include <chainparams.h>
 #include <net.h>
 #include <netbase.h>
 #include <protocol.h>
 #include <validation.h>
 #include <warnings.h>
-
-#include <bls/bls.h>
 
 // Keep track of the active Masternode
 CCriticalSection activeMasternodeInfoCs;

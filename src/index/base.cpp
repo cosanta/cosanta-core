@@ -7,6 +7,7 @@
 #include <shutdown.h>
 #include <tinyformat.h>
 #include <ui_interface.h>
+#include <util/translation.h>
 #include <validation.h>
 #include <warnings.h>
 
@@ -15,15 +16,13 @@ constexpr char DB_BEST_BLOCK = 'B';
 constexpr int64_t SYNC_LOG_INTERVAL = 30; // seconds
 constexpr int64_t SYNC_LOCATOR_WRITE_INTERVAL = 30; // seconds
 
-template<typename... Args>
+template <typename... Args>
 static void FatalError(const char* fmt, const Args&... args)
 {
     std::string strMessage = tfm::format(fmt, args...);
     SetMiscWarning(strMessage);
     LogPrintf("*** %s\n", strMessage);
-    uiInterface.ThreadSafeMessageBox(
-        "Error: A fatal internal error occurred, see debug.log for details",
-        "", CClientUIInterface::MSG_ERROR);
+    AbortError(_("A fatal internal error occurred, see debug.log for details"));
     StartShutdown();
 }
 
@@ -62,26 +61,26 @@ bool BaseIndex::Init()
     if (locator.IsNull()) {
         m_best_block_index = nullptr;
     } else {
-        m_best_block_index = FindForkInGlobalIndex(chainActive, locator);
+        m_best_block_index = FindForkInGlobalIndex(::ChainActive(), locator);
     }
-    m_synced = m_best_block_index.load() == chainActive.Tip();
+    m_synced = m_best_block_index.load() == ::ChainActive().Tip();
     return true;
 }
 
-static const CBlockIndex* NextSyncBlock(const CBlockIndex* pindex_prev)
+static const CBlockIndex* NextSyncBlock(const CBlockIndex* pindex_prev) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
 {
     AssertLockHeld(cs_main);
 
     if (!pindex_prev) {
-        return chainActive.Genesis();
+        return ::ChainActive().Genesis();
     }
 
-    const CBlockIndex* pindex = chainActive.Next(pindex_prev);
+    const CBlockIndex* pindex = ::ChainActive().Next(pindex_prev);
     if (pindex) {
         return pindex;
     }
 
-    return chainActive.Next(chainActive.FindFork(pindex_prev));
+    return ::ChainActive().Next(::ChainActive().FindFork(pindex_prev));
 }
 
 void BaseIndex::ThreadSync()
@@ -167,7 +166,7 @@ bool BaseIndex::Commit()
 bool BaseIndex::CommitInternal(CDBBatch& batch)
 {
     LOCK(cs_main);
-    GetDB().WriteBestBlock(batch, chainActive.GetLocator(m_best_block_index));
+    GetDB().WriteBestBlock(batch, ::ChainActive().GetLocator(m_best_block_index));
     return true;
 }
 
@@ -279,9 +278,9 @@ bool BaseIndex::BlockUntilSyncedToCurrentChain()
 
     {
         // Skip the queue-draining stuff if we know we're caught up with
-        // chainActive.Tip().
+        // ::ChainActive().Tip().
         LOCK(cs_main);
-        const CBlockIndex* chain_tip = chainActive.Tip();
+        const CBlockIndex* chain_tip = ::ChainActive().Tip();
         const CBlockIndex* best_block_index = m_best_block_index.load();
         if (best_block_index->GetAncestor(chain_tip->nHeight) == chain_tip) {
             return true;

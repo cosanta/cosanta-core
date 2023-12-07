@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,7 +14,6 @@
 
 #include <chain.h>
 #include <chainparams.h>
-#include <checkpoints.h>
 #include <clientversion.h>
 #include <governance/object.h>
 #include <interfaces/handler.h>
@@ -140,7 +138,7 @@ int64_t ClientModel::getHeaderTipTime() const
     return cachedBestHeaderTime;
 }
 
-std::vector<const CGovernanceObject*> ClientModel::getAllGovernanceObjects()
+std::vector<CGovernanceObject> ClientModel::getAllGovernanceObjects()
 {
     return m_node.gov().getAllNewerThan(0);
 }

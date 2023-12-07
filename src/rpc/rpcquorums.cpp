@@ -1,54 +1,56 @@
-// Copyright (c) 2017-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2017-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <chainparams.h>
 #include <index/txindex.h>
 #include <rpc/server.h>
+#include <rpc/util.h>
 #include <validation.h>
 
 #include <masternode/node.h>
 #include <evo/deterministicmns.h>
 
-#include <llmq/quorums.h>
-#include <llmq/commitment.h>
 #include <llmq/blockprocessor.h>
+#include <llmq/commitment.h>
 #include <llmq/debug.h>
 #include <llmq/dkgsession.h>
+#include <llmq/quorums.h>
 #include <llmq/signing.h>
 #include <llmq/signing_shares.h>
+#include <llmq/snapshot.h>
 
 namespace llmq {
 extern const std::string CLSIG_REQUESTID_PREFIX;
 }
 
-static void quorum_list_help()
+static void quorum_list_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum list ( count )\n"
-            "List of on-chain quorums\n"
-            "\nArguments:\n"
-            "1. count           (number, optional) Number of quorums to list. Will list active quorums\n"
-            "                   if \"count\" is not specified.\n"
-            "\nResult:\n"
-            "{\n"
-            "  \"quorumName\" : [                    (array of strings) List of quorum hashes per some quorum type.\n"
-            "     \"quorumHash\"                     (string) Quorum hash. Note: most recent quorums come first.\n"
-            "     ,...\n"
-            "  ],\n"
-            "}\n"
-            "\nExamples:\n"
-            + HelpExampleCli("quorum", "list")
-            + HelpExampleCli("quorum", "list 10")
-            + HelpExampleRpc("quorum", "list, 10")
-    );
+    RPCHelpMan{"quorum list",
+        "List of on-chain quorums\n",
+        {
+            {"count", RPCArg::Type::NUM, /* default */ "", "Number of quorums to list. Will list active quorums if \"count\" is not specified."},
+        },
+        RPCResult{
+    "{\n"
+    "  \"quorumName\" : [                    (array of strings) List of quorum hashes per some quorum type.\n"
+    "     \"quorumHash\"                     (string) Quorum hash. Note: most recent quorums come first.\n"
+    "     ,...\n"
+    "  ],\n"
+    "}\n"
+        },
+        RPCExamples{
+            HelpExampleCli("quorum", "list")
+    + HelpExampleCli("quorum", "list 10")
+    + HelpExampleRpc("quorum", "list, 10")
+        },
+    }.Check(request);
 }
 
 static UniValue quorum_list(const JSONRPCRequest& request)
 {
     if (request.fHelp || (request.params.size() != 1 && request.params.size() != 2))
-        quorum_list_help();
+        quorum_list_help(request);
 
     int count = -1;
     if (!request.params[1].isNull()) {
@@ -60,7 +62,7 @@ static UniValue quorum_list(const JSONRPCRequest& request)
 
     UniValue ret(UniValue::VOBJ);
 
-    CBlockIndex* pindexTip = WITH_LOCK(cs_main, return chainActive.Tip());
+    CBlockIndex* pindexTip = WITH_LOCK(cs_main, return ::ChainActive().Tip());
 
     for (auto& type : llmq::CLLMQUtils::GetEnabledQuorumTypes(pindexTip)) {
         const auto& llmq_params = llmq::GetLLMQParams(type);
@@ -71,32 +73,35 @@ static UniValue quorum_list(const JSONRPCRequest& request)
             v.push_back(q->qc->quorumHash.ToString());
         }
 
-        ret.pushKV(llmq_params.name, v);
+        ret.pushKV(std::string(llmq_params.name), v);
     }
 
 
     return ret;
 }
 
-static void quorum_info_help()
+static void quorum_info_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum info llmqType \"quorumHash\" ( includeSkShare )\n"
-            "Return information about a quorum\n"
-            "\nArguments:\n"
-            "1. llmqType              (int, required) LLMQ type.\n"
-            "2. \"quorumHash\"          (string, required) Block hash of quorum.\n"
-            "3. includeSkShare        (boolean, optional) Include secret key share in output.\n"
-    );
+    RPCHelpMan{"quorum info",
+        "Return information about a quorum\n",
+        {
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "LLMQ type."},
+            {"quorumHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Block hash of quorum."},
+            {"includeSkShare", RPCArg::Type::BOOL, /* default */ "", "Include secret key share in output."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue BuildQuorumInfo(const llmq::CQuorumCPtr& quorum, bool includeMembers, bool includeSkShare)
 {
     UniValue ret(UniValue::VOBJ);
 
-    ret.pushKV("height", quorum->pindexQuorum->nHeight);
-    ret.pushKV("type", quorum->params.name);
+    ret.pushKV("height", quorum->m_quorum_base_block_index->nHeight);
+    ret.pushKV("type", std::string(quorum->params.name));
     ret.pushKV("quorumHash", quorum->qc->quorumHash.ToString());
+    ret.pushKV("quorumIndex", quorum->qc->quorumIndex);
     ret.pushKV("minedBlock", quorum->minedBlockHash.ToString());
 
     if (includeMembers) {
@@ -129,10 +134,10 @@ static UniValue BuildQuorumInfo(const llmq::CQuorumCPtr& quorum, bool includeMem
 static UniValue quorum_info(const JSONRPCRequest& request)
 {
     if (request.fHelp || (request.params.size() != 3 && request.params.size() != 4))
-        quorum_info_help();
+        quorum_info_help(request);
 
     Consensus::LLMQType llmqType = (Consensus::LLMQType)ParseInt32V(request.params[1], "llmqType");
-    if (!Params().GetConsensus().llmqs.count(llmqType)) {
+    if (!Params().HasLLMQ(llmqType)) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "invalid LLMQ type");
     }
 
@@ -150,22 +155,25 @@ static UniValue quorum_info(const JSONRPCRequest& request)
     return BuildQuorumInfo(quorum, true, includeSkShare);
 }
 
-static void quorum_dkgstatus_help()
+static void quorum_dkgstatus_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum dkgstatus ( detail_level )\n"
-            "Return the status of the current DKG process.\n"
-            "Works only when SPORK_17_QUORUM_DKG_ENABLED spork is ON.\n"
-            "\nArguments:\n"
-            "1. detail_level         (number, optional, default=0) Detail level of output.\n"
-            "                        0=Only show counts. 1=Show member indexes. 2=Show member's ProTxHashes.\n"
-    );
+    RPCHelpMan{"quorum dkgstatus",
+        "Return the status of the current DKG process.\n"
+        "Works only when SPORK_17_QUORUM_DKG_ENABLED spork is ON.\n",
+        {
+            {"detail_level", RPCArg::Type::NUM, /* default */ "0",
+                "Detail level of output.\n"
+                "0=Only show counts. 1=Show member indexes. 2=Show member's ProTxHashes."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue quorum_dkgstatus(const JSONRPCRequest& request)
 {
     if (request.fHelp || (request.params.size() < 1 || request.params.size() > 2)) {
-        quorum_dkgstatus_help();
+        quorum_dkgstatus_help(request);
     }
 
     int detailLevel = 0;
@@ -181,74 +189,96 @@ static UniValue quorum_dkgstatus(const JSONRPCRequest& request)
 
     auto ret = status.ToJson(detailLevel);
 
-    CBlockIndex* pindexTip = WITH_LOCK(cs_main, return chainActive.Tip());
+    CBlockIndex* pindexTip = WITH_LOCK(cs_main, return ::ChainActive().Tip());
     int tipHeight = pindexTip->nHeight;
 
     auto proTxHash = WITH_LOCK(activeMasternodeInfoCs, return activeMasternodeInfo.proTxHash);
-    UniValue minableCommitments(UniValue::VOBJ);
-    UniValue quorumConnections(UniValue::VOBJ);
+
+    UniValue minableCommitments(UniValue::VARR);
+    UniValue quorumArrConnections(UniValue::VARR);
     for (const auto& type : llmq::CLLMQUtils::GetEnabledQuorumTypes(pindexTip)) {
         const auto& llmq_params = llmq::GetLLMQParams(type);
+        bool rotation_enabled = llmq::CLLMQUtils::IsQuorumRotationEnabled(type, pindexTip);
+        size_t quorums_num = rotation_enabled ? llmq_params.signingActiveQuorumCount : 1;
 
-        if (fMasternodeMode) {
-            const CBlockIndex* pindexQuorum = WITH_LOCK(cs_main, return chainActive[tipHeight - (tipHeight % llmq_params.dkgInterval)]);
-            auto allConnections = llmq::CLLMQUtils::GetQuorumConnections(llmq_params.type, pindexQuorum, proTxHash, false);
-            auto outboundConnections = llmq::CLLMQUtils::GetQuorumConnections(llmq_params.type, pindexQuorum, proTxHash, true);
-            std::map<uint256, CAddress> foundConnections;
-            g_connman->ForEachNode([&](const CNode* pnode) {
-                auto verifiedProRegTxHash = pnode->GetVerifiedProRegTxHash();
-                if (!verifiedProRegTxHash.IsNull() && allConnections.count(verifiedProRegTxHash)) {
-                    foundConnections.emplace(verifiedProRegTxHash, pnode->addr);
+        for (int quorumIndex = 0; quorumIndex < quorums_num; ++quorumIndex) {
+            UniValue obj(UniValue::VOBJ);
+            obj.pushKV("llmqType", std::string(llmq_params.name));
+            obj.pushKV("quorumIndex", quorumIndex);
+
+            if (fMasternodeMode) {
+                int quorumHeight = tipHeight - (tipHeight % llmq_params.dkgInterval) + quorumIndex;
+                if (quorumHeight <= tipHeight) {
+                    const CBlockIndex* pQuorumBaseBlockIndex = WITH_LOCK(cs_main, return ::ChainActive()[quorumHeight]);
+                    obj.pushKV("pQuorumBaseBlockIndex", pQuorumBaseBlockIndex->nHeight);
+                    obj.pushKV("quorumHash", pQuorumBaseBlockIndex->GetBlockHash().ToString());
+                    obj.pushKV("pindexTip", pindexTip->nHeight);
+
+                    auto allConnections = llmq::CLLMQUtils::GetQuorumConnections(llmq_params, pQuorumBaseBlockIndex,
+                                                                                 proTxHash, false);
+                    auto outboundConnections = llmq::CLLMQUtils::GetQuorumConnections(llmq_params,
+                                                                                      pQuorumBaseBlockIndex, proTxHash,
+                                                                                      true);
+                    std::map<uint256, CAddress> foundConnections;
+                    g_connman->ForEachNode([&](const CNode* pnode) {
+                        auto verifiedProRegTxHash = pnode->GetVerifiedProRegTxHash();
+                        if (!verifiedProRegTxHash.IsNull() && allConnections.count(verifiedProRegTxHash)) {
+                            foundConnections.emplace(verifiedProRegTxHash, pnode->addr);
+                        }
+                    });
+                    UniValue arr(UniValue::VARR);
+                    for (auto& ec : allConnections) {
+                        UniValue ecj(UniValue::VOBJ);
+                        ecj.pushKV("proTxHash", ec.ToString());
+                        if (foundConnections.count(ec)) {
+                            ecj.pushKV("connected", true);
+                            ecj.pushKV("address", foundConnections[ec].ToString(false));
+                        } else {
+                            ecj.pushKV("connected", false);
+                        }
+                        ecj.pushKV("outbound", outboundConnections.count(ec) != 0);
+                        arr.push_back(ecj);
+                    }
+                    obj.pushKV("quorumConnections", arr);
                 }
-            });
-            UniValue arr(UniValue::VARR);
-            for (auto& ec : allConnections) {
-                UniValue obj(UniValue::VOBJ);
-                obj.pushKV("proTxHash", ec.ToString());
-                if (foundConnections.count(ec)) {
-                    obj.pushKV("connected", true);
-                    obj.pushKV("address", foundConnections[ec].ToString(false));
-                } else {
-                    obj.pushKV("connected", false);
-                }
-                obj.pushKV("outbound", outboundConnections.count(ec) != 0);
-                arr.push_back(obj);
             }
-            quorumConnections.pushKV(llmq_params.name, arr);
+            quorumArrConnections.push_back(obj);
         }
 
         LOCK(cs_main);
-        llmq::CFinalCommitment fqc;
-        if (llmq::quorumBlockProcessor->GetMineableCommitment(llmq_params.type,
-                                                              tipHeight, fqc)) {
-            UniValue obj(UniValue::VOBJ);
-            fqc.ToJson(obj);
-            minableCommitments.pushKV(llmq_params.name, obj);
+        std::optional<std::vector<llmq::CFinalCommitment>> vfqc = llmq::quorumBlockProcessor->GetMineableCommitments(llmq_params, tipHeight);
+        if (vfqc.has_value()) {
+            for (const auto& fqc : vfqc.value()) {
+                UniValue obj(UniValue::VOBJ);
+                fqc.ToJson(obj);
+                minableCommitments.push_back(obj);
+            }
         }
     }
-
+    ret.pushKV("quorumConnections", quorumArrConnections);
     ret.pushKV("minableCommitments", minableCommitments);
-    ret.pushKV("quorumConnections", quorumConnections);
-
     return ret;
 }
 
-static void quorum_memberof_help()
+static void quorum_memberof_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum memberof \"proTxHash\" (quorumCount)\n"
-            "Checks which quorums the given masternode is a member of.\n"
-            "\nArguments:\n"
-            "1. \"proTxHash\"                (string, required) ProTxHash of the masternode.\n"
-            "2. scanQuorumsCount           (number, optional) Number of quorums to scan for. If not specified,\n"
-            "                              the active quorum count for each specific quorum type is used."
-    );
+    RPCHelpMan{"quorum memberof",
+        "Checks which quorums the given masternode is a member of.\n",
+        {
+            {"proTxHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "ProTxHash of the masternode."},
+            {"scanQuorumsCount", RPCArg::Type::NUM, /* default */ "",
+                "Number of quorums to scan for. If not specified,\n"
+                "the active quorum count for each specific quorum type is used."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue quorum_memberof(const JSONRPCRequest& request)
 {
     if (request.fHelp || (request.params.size() < 2 || request.params.size() > 3)) {
-        quorum_memberof_help();
+        quorum_memberof_help(request);
     }
 
     uint256 protxHash = ParseHashV(request.params[1], "proTxHash");
@@ -260,7 +290,7 @@ static UniValue quorum_memberof(const JSONRPCRequest& request)
         }
     }
 
-    const CBlockIndex* pindexTip = WITH_LOCK(cs_main, return chainActive.Tip());
+    const CBlockIndex* pindexTip = WITH_LOCK(cs_main, return ::ChainActive().Tip());
 
     auto mnList = deterministicMNManager->GetListForBlock(pindexTip);
     auto dmn = mnList.GetMN(protxHash);
@@ -290,72 +320,85 @@ static UniValue quorum_memberof(const JSONRPCRequest& request)
     return result;
 }
 
-static void quorum_sign_help()
+static void quorum_sign_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum sign llmqType \"id\" \"msgHash\" ( \"quorumHash\" submit )\n"
-            "Threshold-sign a message\n"
-            "\nArguments:\n"
-            "1. llmqType              (int, required) LLMQ type.\n"
-            "2. \"id\"                  (string, required) Request id.\n"
-            "3. \"msgHash\"             (string, required) Message hash.\n"
-            "4. \"quorumHash\"          (string, optional) The quorum identifier.\n"
-            "5. submit                (bool, optional, default=true) Submits the signature share to the network if this is true."
-        "                             Returns an object containing the signature share if this is false.\n"
-    );
+    RPCHelpMan{"quorum sign",
+        "Threshold-sign a message\n",
+        {
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "LLMQ type."},
+            {"id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Request id."},
+            {"msgHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Message hash."},
+            {"quorumHash", RPCArg::Type::STR_HEX, /* default */ "", "The quorum identifier."},
+            {"submit", RPCArg::Type::BOOL, /* default */ "true", "Submits the signature share to the network if this is true."},
+        },
+        RPCResult{
+    "\nReturns an object containing the signature share if this is false.\n"
+        },
+        RPCExamples{""},
+    }.Check(request);
 }
 
-static void quorum_verify_help()
+static void quorum_verify_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum verify llmqType \"id\" \"msgHash\" \"signature\" ( \"quorumHash\" signHeight )\n"
-            "Test if a quorum signature is valid for a request id and a message hash\n"
-            "\nArguments:\n"
-            "1. llmqType              (int, required) LLMQ type.\n"
-            "2. \"id\"                  (string, required) Request id.\n"
-            "3. \"msgHash\"             (string, required) Message hash.\n"
-            "4. \"signature\"           (string, required) Quorum signature to verify.\n"
-            "5. \"quorumHash\"          (string, optional) The quorum identifier.\n"
-            "                             Set to \"\" if you want to specify signHeight instead.\n"
-            "6. signHeight                (int, optional) The height at which the message was signed.\n"
-            "                             Only works when quorumHash is \"\".\n"
-    );
+    RPCHelpMan{"quorum verify",
+        "Test if a quorum signature is valid for a request id and a message hash\n",
+        {
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "LLMQ type."},
+            {"id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Request id."},
+            {"msgHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Message hash."},
+            {"signature", RPCArg::Type::STR, RPCArg::Optional::NO, "Quorum signature to verify."},
+            {"quorumHash", RPCArg::Type::STR_HEX, /* default */ "",
+                "The quorum identifier.\n"
+                "Set to \"\" if you want to specify signHeight instead."},
+            {"signHeight", RPCArg::Type::NUM, /* default */ "",
+                "The height at which the message was signed.\n"
+                "Only works when quorumHash is \"\"."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
-static void quorum_hasrecsig_help()
+static void quorum_hasrecsig_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum hasrecsig llmqType \"id\" \"msgHash\"\n"
-            "Test if a valid recovered signature is present\n"
-            "\nArguments:\n"
-            "1. llmqType              (int, required) LLMQ type.\n"
-            "2. \"id\"                  (string, required) Request id.\n"
-            "3. \"msgHash\"             (string, required) Message hash.\n"
-    );
+    RPCHelpMan{"quorum hasrecsig",
+        "Test if a valid recovered signature is present\n",
+        {
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "LLMQ type."},
+            {"id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Request id."},
+            {"msgHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Message hash."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
-static void quorum_getrecsig_help()
+static void quorum_getrecsig_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum getrecsig llmqType \"id\" \"msgHash\"\n"
-            "Get a recovered signature\n"
-            "\nArguments:\n"
-            "1. llmqType              (int, required) LLMQ type.\n"
-            "2. \"id\"                  (string, required) Request id.\n"
-            "3. \"msgHash\"             (string, required) Message hash.\n"
-    );
+    RPCHelpMan{"quorum getrecsig",
+        "Get a recovered signature\n",
+        {
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "LLMQ type."},
+            {"id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Request id."},
+            {"msgHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Message hash."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
-static void quorum_isconflicting_help()
+static void quorum_isconflicting_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum isconflicting llmqType \"id\" \"msgHash\"\n"
-            "Test if a conflict exists\n"
-            "\nArguments:\n"
-            "1. llmqType              (int, required) LLMQ type.\n"
-            "2. \"id\"                  (string, required) Request id.\n"
-            "3. \"msgHash\"             (string, required) Message hash.\n"
-    );
+    RPCHelpMan{"quorum isconflicting",
+        "Test if a conflict exists\n",
+        {
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "LLMQ type."},
+            {"id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Request id."},
+            {"msgHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Message hash."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue quorum_sigs_cmd(const JSONRPCRequest& request)
@@ -364,18 +407,18 @@ static UniValue quorum_sigs_cmd(const JSONRPCRequest& request)
     if (request.fHelp || (request.params.size() != 4)) {
         if (cmd == "sign") {
             if ((request.params.size() < 4) || (request.params.size() > 6)) {
-                quorum_sign_help();
+                quorum_sign_help(request);
             }
         } else if (cmd == "verify") {
             if (request.params.size() < 5 || request.params.size() > 7) {
-                quorum_verify_help();
+                quorum_verify_help(request);
             }
         } else if (cmd == "hasrecsig") {
-            quorum_hasrecsig_help();
+            quorum_hasrecsig_help(request);
         } else if (cmd == "getrecsig") {
-            quorum_getrecsig_help();
+            quorum_getrecsig_help(request);
         } else if (cmd == "isconflicting") {
-            quorum_isconflicting_help();
+            quorum_isconflicting_help(request);
         } else {
             // shouldn't happen as it's already handled by the caller
             throw JSONRPCError(RPC_INVALID_PARAMETER, "invalid cmd");
@@ -383,7 +426,7 @@ static UniValue quorum_sigs_cmd(const JSONRPCRequest& request)
     }
 
     Consensus::LLMQType llmqType = (Consensus::LLMQType)ParseInt32V(request.params[1], "llmqType");
-    if (!Params().GetConsensus().llmqs.count(llmqType)) {
+    if (!Params().HasLLMQ(llmqType)) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "invalid LLMQ type");
     }
 
@@ -422,7 +465,7 @@ static UniValue quorum_sigs_cmd(const JSONRPCRequest& request)
             }
 
             UniValue obj(UniValue::VOBJ);
-            obj.pushKV("llmqType", llmqType);
+            obj.pushKV("llmqType", static_cast<uint8_t>(llmqType));
             obj.pushKV("quorumHash", sigShare.quorumHash.ToString());
             obj.pushKV("quorumMember", sigShare.quorumMember);
             obj.pushKV("id", id.ToString());
@@ -477,25 +520,27 @@ static UniValue quorum_sigs_cmd(const JSONRPCRequest& request)
     }
 }
 
-static void quorum_selectquorum_help()
+static void quorum_selectquorum_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum selectquorum llmqType \"id\"\n"
-            "Returns the quorum that would/should sign a request\n"
-            "\nArguments:\n"
-            "1. llmqType              (int, required) LLMQ type.\n"
-            "2. \"id\"                  (string, required) Request id.\n"
-    );
+    RPCHelpMan{"quorum selectquorum",
+        "Returns the quorum that would/should sign a request\n",
+        {
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "LLMQ type."},
+            {"id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Request id."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue quorum_selectquorum(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 3) {
-        quorum_selectquorum_help();
+        quorum_selectquorum_help(request);
     }
 
     Consensus::LLMQType llmqType = (Consensus::LLMQType)ParseInt32V(request.params[1], "llmqType");
-    if (!Params().GetConsensus().llmqs.count(llmqType)) {
+    if (!Params().HasLLMQ(llmqType)) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "invalid LLMQ type");
     }
 
@@ -510,7 +555,7 @@ static UniValue quorum_selectquorum(const JSONRPCRequest& request)
     ret.pushKV("quorumHash", quorum->qc->quorumHash.ToString());
 
     UniValue recoveryMembers(UniValue::VARR);
-    for (int i = 0; i < quorum->params.recoveryMembers; i++) {
+    for (size_t i = 0; i < size_t(quorum->params.recoveryMembers); i++) {
         auto dmn = llmq::quorumSigSharesManager->SelectMemberForRecovery(quorum, id, i);
         recoveryMembers.push_back(dmn->proTxHash.ToString());
     }
@@ -519,22 +564,24 @@ static UniValue quorum_selectquorum(const JSONRPCRequest& request)
     return ret;
 }
 
-static void quorum_dkgsimerror_help()
+static void quorum_dkgsimerror_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "quorum dkgsimerror \"type\" rate\n"
-            "This enables simulation of errors and malicious behaviour in the DKG. Do NOT use this on mainnet\n"
-            "as you will get yourself very likely PoSe banned for this.\n"
-            "\nArguments:\n"
-            "1. \"type\"                (string, required) Error type.\n"
-            "2. rate                  (number, required) Rate at which to simulate this error type.\n"
-    );
+    RPCHelpMan{"quorum dkgsimerror",
+        "This enables simulation of errors and malicious behaviour in the DKG. Do NOT use this on mainnet\n"
+        "as you will get yourself very likely PoSe banned for this.\n",
+        {
+            {"type", RPCArg::Type::STR, RPCArg::Optional::NO, "Error type."},
+            {"rate", RPCArg::Type::NUM, RPCArg::Optional::NO, "Rate at which to simulate this error type."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue quorum_dkgsimerror(const JSONRPCRequest& request)
 {
     if (request.fHelp || (request.params.size() != 3)) {
-        quorum_dkgsimerror_help();
+        quorum_dkgsimerror_help(request);
     }
 
     std::string type = request.params[1].get_str();
@@ -549,27 +596,30 @@ static UniValue quorum_dkgsimerror(const JSONRPCRequest& request)
     return UniValue();
 }
 
-static void quorum_getdata_help()
+static void quorum_getdata_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-        "quorum getdata nodeId llmqType \"quorumHash\" dataMask ( \"proTxHash\" )\n"
-        "Send a QGETDATA message to the specified peer.\n"
-        "\nArguments:\n"
-        "1. nodeId          (integer, required) The internal nodeId of the peer to request quorum data from.\n"
-        "2. llmqType        (integer, required) The quorum type related to the quorum data being requested.\n"
-        "3. \"quorumHash\"    (string, required) The quorum hash related to the quorum data being requested.\n"
-        "4. dataMask        (integer, required) Specify what data to request.\n"
-        "                                       Possible values: 1 - Request quorum verification vector\n"
-        "                                                        2 - Request encrypted contributions for member defined by \"proTxHash\". \"proTxHash\" must be specified if this option is used.\n"
-        "                                                        3 - Request both, 1 and 2\n"
-        "5. \"proTxHash\"     (string, optional) The proTxHash the contributions will be requested for. Must be member of the specified LLMQ.\n"
-        );
+    RPCHelpMan{"quorum getdata",
+        "Send a QGETDATA message to the specified peer.\n",
+        {
+            {"nodeId", RPCArg::Type::NUM, RPCArg::Optional::NO, "The internal nodeId of the peer to request quorum data from."},
+            {"llmqType", RPCArg::Type::NUM, RPCArg::Optional::NO, "The quorum type related to the quorum data being requested."},
+            {"quorumHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The quorum hash related to the quorum data being requested."},
+            {"dataMask", RPCArg::Type::NUM, RPCArg::Optional::NO,
+                "Specify what data to request.\n"
+                "Possible values: 1 - Request quorum verification vector\n"
+                "2 - Request encrypted contributions for member defined by \"proTxHash\". \"proTxHash\" must be specified if this option is used.\n"
+                "3 - Request both, 1 and 2"},
+            {"proTxHash", RPCArg::Type::STR_HEX, /* default */ "", "The proTxHash the contributions will be requested for. Must be member of the specified LLMQ."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue quorum_getdata(const JSONRPCRequest& request)
 {
     if (request.fHelp || (request.params.size() < 5 || request.params.size() > 6)) {
-        quorum_getdata_help();
+        quorum_getdata_help(request);
     }
 
     NodeId nodeId = ParseInt64V(request.params[1], "nodeId");
@@ -590,21 +640,65 @@ static UniValue quorum_getdata(const JSONRPCRequest& request)
         }
     }
 
-    const CBlockIndex* pQuorumIndex = WITH_LOCK(cs_main, return LookupBlockIndex(quorumHash));
+    const CBlockIndex* pQuorumBaseBlockIndex = WITH_LOCK(cs_main, return LookupBlockIndex(quorumHash));
     return g_connman->ForNode(nodeId, [&](CNode* pNode) {
-        return llmq::quorumManager->RequestQuorumData(pNode, llmqType, pQuorumIndex, nDataMask, proTxHash);
+        return llmq::quorumManager->RequestQuorumData(pNode, llmqType, pQuorumBaseBlockIndex, nDataMask, proTxHash);
     });
+}
+
+static void quorum_rotationinfo_help()
+{
+    throw std::runtime_error(
+        RPCHelpMan{
+            "quorum rotationinfo",
+            "Get quorum rotation information\n",
+            {
+                {"blockRequestHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The blockHash of the request"},
+                {"extraShare", RPCArg::Type::BOOL, /* default */ "false", "Extra share"},
+                {"baseBlockHash...", RPCArg::Type::STR_HEX, /* default*/ "", "baseBlockHashes"},
+            },
+            RPCResults{},
+            RPCExamples{""},
+        }
+        .ToString());
+}
+
+static UniValue quorum_rotationinfo(const JSONRPCRequest& request)
+{
+    if (request.fHelp || (request.params.size() < 2)) {
+        quorum_rotationinfo_help();
+    }
+
+    llmq::CGetQuorumRotationInfo cmd;
+    llmq::CQuorumRotationInfo quorumRotationInfoRet;
+    std::string strError;
+
+    cmd.blockRequestHash = ParseHashV(request.params[1], "blockRequestHash");
+    cmd.extraShare = request.params[2].isNull() ? false : ParseBoolV(request.params[2], "extraShare");
+
+    size_t idx = 3;
+    while (!request.params[idx].isNull()) {
+        cmd.baseBlockHashes.emplace_back(ParseHashV(request.params[idx], "baseBlockHash"));
+        ++idx;
+    }
+    LOCK(cs_main);
+    if (!BuildQuorumRotationInfo(cmd, quorumRotationInfoRet, strError)) {
+        throw JSONRPCError(RPC_INVALID_REQUEST, strError);
+    }
+
+    UniValue ret(UniValue::VOBJ);
+    quorumRotationInfoRet.ToJson(ret);
+    return ret;
 }
 
 
 [[ noreturn ]] static void quorum_help()
 {
     throw std::runtime_error(
-            "quorum \"command\" ...\n"
+        RPCHelpMan{
+            "quorum",
             "Set of commands for quorums/LLMQs.\n"
             "To get help on individual commands, use \"help quorum command\".\n"
-            "\nArguments:\n"
-            "1. \"command\"        (string, required) The command to execute\n"
             "\nAvailable commands:\n"
             "  list              - List of on-chain quorums\n"
             "  info              - Return information about a quorum\n"
@@ -618,7 +712,14 @@ static UniValue quorum_getdata(const JSONRPCRequest& request)
             "  isconflicting     - Test if a conflict exists\n"
             "  selectquorum      - Return the quorum that would/should sign a request\n"
             "  getdata           - Request quorum data from other masternodes in the quorum\n"
-    );
+            "  rotationinfo      - Request quorum rotation information\n",
+            {
+                {"command", RPCArg::Type::STR, RPCArg::Optional::NO, "The command to execute"},
+            },
+            RPCResults{},
+            RPCExamples{""},
+        }
+            .ToString());
 }
 
 static UniValue _quorum(const JSONRPCRequest& request)
@@ -648,27 +749,31 @@ static UniValue _quorum(const JSONRPCRequest& request)
         return quorum_dkgsimerror(request);
     } else if (command == "getdata") {
         return quorum_getdata(request);
+    } else if (command == "rotationinfo") {
+        return quorum_rotationinfo(request);
     } else {
         quorum_help();
     }
 }
 
-static void verifychainlock_help()
+static void verifychainlock_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "verifychainlock \"blockHash\" \"signature\" ( blockHeight )\n"
-            "Test if a quorum signature is valid for a ChainLock.\n"
-            "\nArguments:\n"
-            "1. \"blockHash\"           (string, required) The block hash of the ChainLock.\n"
-            "2. \"signature\"           (string, required) The signature of the ChainLock.\n"
-            "3. blockHeight           (integer, optional) The height of the ChainLock. There will be an internal lookup of \"blockHash\" if this is not provided.\n"
-    );
+    RPCHelpMan{"verifychainlock",
+        "Test if a quorum signature is valid for a ChainLock.\n",
+        {
+            {"blockHash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The block hash of the ChainLock."},
+            {"signature", RPCArg::Type::STR, RPCArg::Optional::NO, "The signature of the ChainLock."},
+            {"blockHeight", RPCArg::Type::NUM, /* default */ "", "The height of the ChainLock. There will be an internal lookup of \"blockHash\" if this is not provided."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue verifychainlock(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 3) {
-        verifychainlock_help();
+        verifychainlock_help(request);
     }
 
     const uint256 nBlockHash = ParseHashV(request.params[0], "blockHash");
@@ -694,23 +799,25 @@ static UniValue verifychainlock(const JSONRPCRequest& request)
     return llmq::CSigningManager::VerifyRecoveredSig(llmqType, nBlockHeight, nRequestId, nBlockHash, chainLockSig);
 }
 
-static void verifyislock_help()
+static void verifyislock_help(const JSONRPCRequest& request)
 {
-    throw std::runtime_error(
-            "verifyislock \"id\" \"txid\" \"signature\" ( maxHeight )\n"
-            "Test if a quorum signature is valid for an InstantSend Lock\n"
-            "\nArguments:\n"
-            "1. \"id\"                  (string, required) Request id.\n"
-            "2. \"txid\"                (string, required) The transaction id.\n"
-            "3. \"signature\"           (string, required) The InstantSend Lock signature to verify.\n"
-            "4. maxHeight                 (int, optional) The maximum height to search quorums from.\n"
-    );
+    RPCHelpMan{"verifyislock",
+        "Test if a quorum signature is valid for an InstantSend Lock\n",
+        {
+            {"id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Request id."},
+            {"txid", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The transaction id."},
+            {"signature", RPCArg::Type::STR, RPCArg::Optional::NO, "The InstantSend Lock signature to verify."},
+            {"maxHeight", RPCArg::Type::NUM, /* default */ "", "The maximum height to search quorums from."},
+        },
+        RPCResults{},
+        RPCExamples{""},
+    }.Check(request);
 }
 
 static UniValue verifyislock(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 3 || request.params.size() > 4) {
-        verifyislock_help();
+        verifyislock_help(request);
     }
 
     uint256 id = ParseHashV(request.params[0], "id");
@@ -730,7 +837,7 @@ static UniValue verifyislock(const JSONRPCRequest& request)
         LOCK(cs_main);
         CTransactionRef tx;
         uint256 hash_block;
-        if (GetTransaction(txid, tx, Params().GetConsensus(), hash_block, true) && !hash_block.IsNull()) {
+        if (GetTransaction(txid, tx, Params().GetConsensus(), hash_block) && !hash_block.IsNull()) {
             pindexMined = LookupBlockIndex(hash_block);
         }
     }
@@ -747,14 +854,22 @@ static UniValue verifyislock(const JSONRPCRequest& request)
         signHeight = pindexMined->nHeight;
     }
 
-    auto llmqType = Params().GetConsensus().llmqTypeInstantSend;
-
+    CBlockIndex* pBlockIndex;
+    {
+        LOCK(cs_main);
+        if (signHeight == -1) {
+            pBlockIndex = ::ChainActive().Tip();
+        } else {
+            pBlockIndex = ::ChainActive()[signHeight];
+        }
+    }
+    auto llmqType = llmq::CLLMQUtils::GetInstantSendLLMQType(pBlockIndex);
     // First check against the current active set, if it fails check against the last active set
     int signOffset{llmq::GetLLMQParams(llmqType).dkgInterval};
     return llmq::quorumSigningManager->VerifyRecoveredSig(llmqType, signHeight, id, txid, sig, 0) ||
            llmq::quorumSigningManager->VerifyRecoveredSig(llmqType, signHeight, id, txid, sig, signOffset);
 }
-
+// clang-format off
 static const CRPCCommand commands[] =
 { //  category              name                      actor (function)
   //  --------------------- ------------------------  -----------------------
@@ -762,7 +877,7 @@ static const CRPCCommand commands[] =
     { "evo",                "verifychainlock",        &verifychainlock,        {"blockHash", "signature", "blockHeight"} },
     { "evo",                "verifyislock",           &verifyislock,           {"id", "txid", "signature", "maxHeight"}  },
 };
-
+// clang-format on
 void RegisterQuorumsRPCCommands(CRPCTable &tableRPC)
 {
     for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)

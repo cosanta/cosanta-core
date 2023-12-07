@@ -1,10 +1,10 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2021 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <governance/classes.h>
 
+#include <chainparams.h>
 #include <core_io.h>
 #include <governance/governance.h>
 #include <key_io.h>
@@ -354,7 +354,7 @@ bool CSuperblockManager::GetSuperblockPayments(int nBlockHeight, std::vector<CTx
             CTxDestination dest;
             ExtractDestination(payment.script, dest);
 
-            // TODO: PRINT NICE N.N COSANTA OUTPUT
+            // TODO: PRINT NICE N.N DASH OUTPUT
 
             LogPrint(BCLog::GOBJECT, "CSuperblockManager::GetSuperblockPayments -- NEW Superblock: output %d (addr %s, amount %lld)\n",
                         i, EncodeDestination(dest), payment.nAmount);
@@ -527,6 +527,9 @@ void CSuperblock::ParsePaymentSchedule(const std::string& strPaymentAddresses, c
       AMOUNTS = [AMOUNT1|2|3|4|5|6]
     */
 
+    // TODO: script addresses limit here and cs_main lock in
+    // CGovernanceManager::InitOnLoad()once DIP0024 is active
+    bool fAllowScript = (VersionBitsTipState(Params().GetConsensus(), Consensus::DEPLOYMENT_DIP0024) == ThresholdState::ACTIVE);
     for (int i = 0; i < (int)vecParsed1.size(); i++) {
         CTxDestination dest = DecodeDestination(vecParsed1[i]);
         if (!IsValidDestination(dest)) {
@@ -535,18 +538,15 @@ void CSuperblock::ParsePaymentSchedule(const std::string& strPaymentAddresses, c
             LogPrintf("%s\n", ostr.str());
             throw std::runtime_error(ostr.str());
         }
-        /*
-            TODO
 
-            - There might be an issue with multisig in the coinbase on mainnet, we will add support for it in a future release.
-            - Post 12.3+ (test multisig coinbase transaction)
-        */
-        const CScriptID *scriptID = boost::get<CScriptID>(&dest);
-        if (scriptID) {
-            std::ostringstream ostr;
-            ostr << "CSuperblock::ParsePaymentSchedule -- Script addresses are not supported yet : " << vecParsed1[i];
-            LogPrintf("%s\n", ostr.str());
-            throw std::runtime_error(ostr.str());
+        if (!fAllowScript) {
+            const CScriptID *scriptID = boost::get<CScriptID>(&dest);
+            if (scriptID) {
+                std::ostringstream ostr;
+                ostr << "CSuperblock::ParsePaymentSchedule -- Script addresses are not supported yet : " << vecParsed1[i];
+                LogPrintf("%s\n", ostr.str());
+                throw std::runtime_error(ostr.str());
+            }
         }
 
         CAmount nAmount = ParsePaymentAmount(vecParsed2[i]);

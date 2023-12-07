@@ -2,12 +2,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <amount.h>
 #include <coinjoin/util.h>
 #include <coinjoin/coinjoin.h>
-#include <consensus/validation.h>
+#include <coinjoin/options.h>
+#include <util/translation.h>
 #include <validation.h>
 #include <wallet/wallet.h>
 
@@ -18,16 +19,16 @@ BOOST_FIXTURE_TEST_SUITE(coinjoin_tests, BasicTestingSetup)
 BOOST_AUTO_TEST_CASE(coinjoin_collateral_tests)
 {
     // Good collateral values
-    BOOST_CHECK(CCoinJoin::IsCollateralAmount(0.00010000 * COIN));
-    BOOST_CHECK(CCoinJoin::IsCollateralAmount(0.00012345 * COIN));
-    BOOST_CHECK(CCoinJoin::IsCollateralAmount(0.00032123 * COIN));
-    BOOST_CHECK(CCoinJoin::IsCollateralAmount(0.00019000 * COIN));
+    static_assert(CCoinJoin::IsCollateralAmount(0.00010000 * COIN));
+    static_assert(CCoinJoin::IsCollateralAmount(0.00012345 * COIN));
+    static_assert(CCoinJoin::IsCollateralAmount(0.00032123 * COIN));
+    static_assert(CCoinJoin::IsCollateralAmount(0.00019000 * COIN));
 
     // Bad collateral values
-    BOOST_CHECK(!CCoinJoin::IsCollateralAmount(0.00009999 * COIN));
-    BOOST_CHECK(!CCoinJoin::IsCollateralAmount(0.00040001 * COIN));
-    BOOST_CHECK(!CCoinJoin::IsCollateralAmount(0.00100000 * COIN));
-    BOOST_CHECK(!CCoinJoin::IsCollateralAmount(0.00100001 * COIN));
+    static_assert(!CCoinJoin::IsCollateralAmount(0.00009999 * COIN));
+    static_assert(!CCoinJoin::IsCollateralAmount(0.00040001 * COIN));
+    static_assert(!CCoinJoin::IsCollateralAmount(0.00100000 * COIN));
+    static_assert(!CCoinJoin::IsCollateralAmount(0.00100001 * COIN));
 }
 
 class CTransactionBuilderTestSetup : public TestChain100Setup
@@ -37,7 +38,7 @@ public:
     {
         CreateAndProcessBlock({}, GetScriptForRawPubKey(coinbaseKey.GetPubKey()));
         chain = interfaces::MakeChain();
-        wallet = MakeUnique<CWallet>(*chain, WalletLocation(), WalletDatabase::CreateMock());
+        wallet = MakeUnique<CWallet>(*chain, WalletLocation(), CreateMockWalletDatabase());
         bool firstRun;
         wallet->LoadWallet(firstRun);
         AddWallet(wallet);
@@ -47,8 +48,9 @@ public:
         }
         WalletRescanReserver reserver(wallet.get());
         reserver.reserve();
-        const CBlockIndex *stop_block, *failed_block;
-        wallet->ScanForWalletTransactions(chainActive.Genesis(), nullptr, reserver, failed_block, stop_block);
+
+        CWallet::ScanResult result = wallet->ScanForWalletTransactions(::ChainActive().Genesis()->GetBlockHash(), {} /* stop_block */, reserver, true /* fUpdate */);
+        BOOST_CHECK_EQUAL(result.status, CWallet::ScanResult::SUCCESS);
     }
 
     ~CTransactionBuilderTestSetup()
@@ -70,8 +72,9 @@ public:
             blocktx = CMutableTransaction(*it->second.tx);
         }
         CreateAndProcessBlock({blocktx}, GetScriptForRawPubKey(coinbaseKey.GetPubKey()));
-        LOCK2(cs_main, wallet->cs_wallet);
-        it->second.SetMerkleBranch(chainActive.Tip(), 1);
+        auto locked_chain = wallet->chain().lock();
+        LOCK(wallet->cs_wallet);
+        it->second.SetMerkleBranch(::ChainActive().Tip()->GetBlockHash(), 1);
         return it->second;
     }
     CompactTallyItem GetTallyItem(const std::vector<CAmount>& vecAmounts)
@@ -79,10 +82,9 @@ public:
         CompactTallyItem tallyItem;
         CTransactionRef tx;
         CReserveKey destKey(wallet.get());
-        CReserveKey reserveKey(wallet.get());
         CAmount nFeeRet;
         int nChangePosRet = -1;
-        std::string strError;
+        bilingual_str strError;
         CCoinControl coinControl;
         CPubKey pubKey;
         BOOST_CHECK(destKey.GetReservedKey(pubKey, false));
@@ -90,13 +92,12 @@ public:
         for (CAmount nAmount : vecAmounts) {
             {
                 auto locked_chain = chain->lock();
-                BOOST_CHECK(wallet->CreateTransaction(*locked_chain, {{GetScriptForDestination(tallyItem.txdest), nAmount, false}}, tx, reserveKey, nFeeRet, nChangePosRet, strError, coinControl));
+                BOOST_CHECK(wallet->CreateTransaction(*locked_chain, {{GetScriptForDestination(tallyItem.txdest), nAmount, false}}, tx, nFeeRet, nChangePosRet, strError, coinControl));
             }
-            CValidationState state;
-            BOOST_CHECK(wallet->CommitTransaction(tx, {}, {}, reserveKey, nullptr, state));
+            wallet->CommitTransaction(tx, {}, {});
             AddTxToChain(tx->GetHash());
             for (size_t n = 0; n < tx->vout.size(); ++n) {
-                if (nChangePosRet != -1 && n == nChangePosRet) {
+                if (nChangePosRet != -1 && int(n) == nChangePosRet) {
                     // Skip the change output to only return the requested coins
                     continue;
                 }
@@ -149,9 +150,9 @@ BOOST_FIXTURE_TEST_CASE(CTransactionBuilderTest, CTransactionBuilderTestSetup)
         BOOST_CHECK(!output->UpdateAmount(-1));
         BOOST_CHECK_EQUAL(txBuilder.CountOutputs(), 1);
 
-        std::string strResult;
+        bilingual_str strResult;
         BOOST_CHECK(txBuilder.Commit(strResult));
-        CWalletTx& wtx = AddTxToChain(uint256S(strResult));
+        CWalletTx& wtx = AddTxToChain(uint256S(strResult.original));
         BOOST_CHECK_EQUAL(wtx.tx->vout.size(), txBuilder.CountOutputs()); // should have no change output
         BOOST_CHECK_EQUAL(wtx.tx->vout[0].nValue, output->GetAmount());
         BOOST_CHECK(wtx.tx->vout[0].scriptPubKey == output->GetScript());
@@ -161,7 +162,7 @@ BOOST_FIXTURE_TEST_CASE(CTransactionBuilderTest, CTransactionBuilderTestSetup)
         CompactTallyItem tallyItem = GetTallyItem({10000, 20000, 30000, 40000, 50000});
         CTransactionBuilder txBuilder(wallet, tallyItem);
         std::vector<CTransactionBuilderOutput*> vecOutputs;
-        std::string strResult;
+        bilingual_str strResult;
 
         auto output = txBuilder.AddOutput(100);
         BOOST_CHECK(output != nullptr);
@@ -181,7 +182,7 @@ BOOST_FIXTURE_TEST_CASE(CTransactionBuilderTest, CTransactionBuilderTestSetup)
         BOOST_CHECK_EQUAL(vecOutputs.size(), 100);
         BOOST_CHECK_EQUAL(txBuilder.CountOutputs(), vecOutputs.size());
         BOOST_CHECK(txBuilder.Commit(strResult));
-        CWalletTx& wtx = AddTxToChain(uint256S(strResult));
+        CWalletTx& wtx = AddTxToChain(uint256S(strResult.original));
         BOOST_CHECK_EQUAL(wtx.tx->vout.size(), txBuilder.CountOutputs() + 1); // should have change output
         for (const auto& out : wtx.tx->vout) {
             auto it = std::find_if(vecOutputs.begin(), vecOutputs.end(), [&](CTransactionBuilderOutput* output) -> bool {

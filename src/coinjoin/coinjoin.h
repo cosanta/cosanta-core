@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,10 +6,15 @@
 #define BITCOIN_COINJOIN_COINJOIN_H
 
 #include <chainparams.h>
+#include <core_io.h>
+#include <netaddress.h>
+#include <primitives/block.h>
 #include <primitives/transaction.h>
 #include <sync.h>
 #include <timedata.h>
 #include <tinyformat.h>
+#include <univalue.h>
+#include <util/ranges.h>
 
 #include <utility>
 
@@ -19,13 +23,15 @@ class CConnman;
 class CBLSPublicKey;
 class CBlockIndex;
 
-// timeouts
-static const int COINJOIN_AUTO_TIMEOUT_MIN = 5;
-static const int COINJOIN_AUTO_TIMEOUT_MAX = 15;
-static const int COINJOIN_QUEUE_TIMEOUT = 30;
-static const int COINJOIN_SIGNING_TIMEOUT = 15;
+extern CCriticalSection cs_main;
 
-static const size_t COINJOIN_ENTRY_MAX_SIZE = 9;
+// timeouts
+static constexpr int COINJOIN_AUTO_TIMEOUT_MIN = 5;
+static constexpr int COINJOIN_AUTO_TIMEOUT_MAX = 15;
+static constexpr int COINJOIN_QUEUE_TIMEOUT = 30;
+static constexpr int COINJOIN_SIGNING_TIMEOUT = 15;
+
+static constexpr size_t COINJOIN_ENTRY_MAX_SIZE = 9;
 
 // pool responses
 enum PoolMessage : int32_t {
@@ -79,20 +85,15 @@ template<> struct is_serializable_enum<PoolStatusUpdate> : std::true_type {};
 class CCoinJoinStatusUpdate
 {
 public:
-    int nSessionID;
-    PoolState nState;
-    int nEntriesCount; // deprecated, kept for backwards compatibility
-    PoolStatusUpdate nStatusUpdate;
-    PoolMessage nMessageID;
+    int nSessionID{0};
+    PoolState nState{POOL_STATE_IDLE};
+    int nEntriesCount{0}; // deprecated, kept for backwards compatibility
+    PoolStatusUpdate nStatusUpdate{STATUS_ACCEPTED};
+    PoolMessage nMessageID{MSG_NOERR};
 
-    CCoinJoinStatusUpdate() :
-        nSessionID(0),
-        nState(POOL_STATE_IDLE),
-        nEntriesCount(0),
-        nStatusUpdate(STATUS_ACCEPTED),
-        nMessageID(MSG_NOERR) {};
+    constexpr CCoinJoinStatusUpdate() = default;
 
-    CCoinJoinStatusUpdate(int nSessionID, PoolState nState, int nEntriesCount, PoolStatusUpdate nStatusUpdate, PoolMessage nMessageID) :
+    constexpr CCoinJoinStatusUpdate(int nSessionID, PoolState nState, int nEntriesCount, PoolStatusUpdate nStatusUpdate, PoolMessage nMessageID) :
         nSessionID(nSessionID),
         nState(nState),
         nEntriesCount(nEntriesCount),
@@ -116,35 +117,26 @@ class CTxDSIn : public CTxIn
 public:
     // memory only
     CScript prevPubKey;
-    bool fHasSig; // flag to indicate if signed
-    int nRounds;
+    bool fHasSig{false}; // flag to indicate if signed
+    int nRounds{-10};
 
     CTxDSIn(const CTxIn& txin, CScript script, int nRounds) :
         CTxIn(txin),
         prevPubKey(std::move(script)),
-        fHasSig(false),
         nRounds(nRounds)
     {
     }
 
-    CTxDSIn() :
-        CTxIn(),
-        prevPubKey(),
-        fHasSig(false),
-        nRounds(-10)
-    {
-    }
+    CTxDSIn() = default;
 };
 
 class CCoinJoinAccept
 {
 public:
-    int nDenom;
+    int nDenom{0};
     CMutableTransaction txCollateral;
 
-    CCoinJoinAccept() :
-        nDenom(0),
-        txCollateral(CMutableTransaction()){};
+    CCoinJoinAccept() = default;
 
     CCoinJoinAccept(int nDenom, CMutableTransaction txCollateral) :
         nDenom(nDenom),
@@ -157,7 +149,7 @@ public:
 
     friend bool operator==(const CCoinJoinAccept& a, const CCoinJoinAccept& b)
     {
-        return a.nDenom == b.nDenom && a.txCollateral == b.txCollateral;
+        return a.nDenom == b.nDenom && CTransaction(a.txCollateral) == CTransaction(b.txCollateral);
     }
 };
 
@@ -172,18 +164,14 @@ public:
     CService addr;
 
     CCoinJoinEntry() :
-        vecTxDSIn(std::vector<CTxDSIn>()),
-        vecTxOut(std::vector<CTxOut>()),
-        txCollateral(MakeTransactionRef()),
-        addr(CService())
+        txCollateral(MakeTransactionRef())
     {
     }
 
     CCoinJoinEntry(std::vector<CTxDSIn> vecTxDSIn, std::vector<CTxOut> vecTxOut, const CTransaction& txCollateral) :
             vecTxDSIn(std::move(vecTxDSIn)),
             vecTxOut(std::move(vecTxOut)),
-            txCollateral(MakeTransactionRef(txCollateral)),
-            addr(CService())
+            txCollateral(MakeTransactionRef(txCollateral))
     {
     }
 
@@ -202,31 +190,21 @@ public:
 class CCoinJoinQueue
 {
 public:
-    int nDenom;
+    int nDenom{0};
     COutPoint masternodeOutpoint;
-    int64_t nTime;
-    bool fReady; //ready for submit
+    int64_t nTime{0};
+    bool fReady{false}; //ready for submit
     std::vector<unsigned char> vchSig;
     // memory only
-    bool fTried;
+    bool fTried{false};
 
-    CCoinJoinQueue() :
-        nDenom(0),
-        masternodeOutpoint(COutPoint()),
-        nTime(0),
-        fReady(false),
-        vchSig(std::vector<unsigned char>()),
-        fTried(false)
-    {
-    }
+    CCoinJoinQueue() = default;
 
     CCoinJoinQueue(int nDenom, const COutPoint& outpoint, int64_t nTime, bool fReady) :
         nDenom(nDenom),
         masternodeOutpoint(outpoint),
         nTime(nTime),
-        fReady(fReady),
-        vchSig(std::vector<unsigned char>()),
-        fTried(false)
+        fReady(fReady)
     {
     }
 
@@ -253,7 +231,7 @@ public:
     bool Relay(CConnman& connman);
 
     /// Check if a queue is too old or too far into the future
-    bool IsTimeOutOfBounds() const;
+    bool IsTimeOutOfBounds(int64_t current_time = GetAdjustedTime()) const;
 
     std::string ToString() const
     {
@@ -274,28 +252,22 @@ class CCoinJoinBroadcastTx
 private:
     // memory only
     // when corresponding tx is 0-confirmed or conflicted, nConfirmedHeight is -1
-    int nConfirmedHeight;
+    int nConfirmedHeight{-1};
 
 public:
     CTransactionRef tx;
     COutPoint masternodeOutpoint;
     std::vector<unsigned char> vchSig;
-    int64_t sigTime;
+    int64_t sigTime{0};
 
     CCoinJoinBroadcastTx() :
-        nConfirmedHeight(-1),
-        tx(MakeTransactionRef()),
-        masternodeOutpoint(),
-        vchSig(),
-        sigTime(0)
+        tx(MakeTransactionRef())
     {
     }
 
     CCoinJoinBroadcastTx(CTransactionRef _tx, const COutPoint& _outpoint, int64_t _sigTime) :
-        nConfirmedHeight(-1),
         tx(std::move(_tx)),
         masternodeOutpoint(_outpoint),
-        vchSig(),
         sigTime(_sigTime)
     {
     }
@@ -340,29 +312,21 @@ protected:
 
     std::vector<CCoinJoinEntry> vecEntries GUARDED_BY(cs_coinjoin); // Masternode/clients entries
 
-    std::atomic<PoolState> nState; // should be one of the POOL_STATE_XXX values
-    std::atomic<int64_t> nTimeLastSuccessfulStep; // the time when last successful mixing step was performed
+    std::atomic<PoolState> nState{POOL_STATE_IDLE}; // should be one of the POOL_STATE_XXX values
+    std::atomic<int64_t> nTimeLastSuccessfulStep{0}; // the time when last successful mixing step was performed
 
-    std::atomic<int> nSessionID; // 0 if no mixing session is active
+    std::atomic<int> nSessionID{0}; // 0 if no mixing session is active
 
     CMutableTransaction finalMutableTransaction GUARDED_BY(cs_coinjoin); // the finalized transaction ready for signing
 
     void SetNull();
 
-    bool IsValidInOuts(const std::vector<CTxIn>& vin, const std::vector<CTxOut>& vout, PoolMessage& nMessageIDRet, bool* fConsumeCollateralRet) const;
+    bool IsValidInOuts(const std::vector<CTxIn>& vin, const std::vector<CTxOut>& vout, PoolMessage& nMessageIDRet, bool* fConsumeCollateralRet) const EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 
 public:
-    int nSessionDenom; // Users must submit a denom matching this
+    int nSessionDenom{0}; // Users must submit a denom matching this
 
-    CCoinJoinBaseSession() :
-        vecEntries(),
-        nState(POOL_STATE_IDLE),
-        nTimeLastSuccessfulStep(0),
-        nSessionID(0),
-        finalMutableTransaction(),
-        nSessionDenom(0)
-    {
-    }
+    CCoinJoinBaseSession() = default;
 
     int GetState() const { return nState; }
     std::string GetStateString() const;
@@ -383,8 +347,7 @@ protected:
     void CheckQueue();
 
 public:
-    CCoinJoinBaseManager() :
-        vecCoinJoinQueue() {}
+    CCoinJoinBaseManager() = default;
 
     int GetQueueSize() const { LOCK(cs_vecqueue); return vecCoinJoinQueue.size(); }
     bool GetQueueItemAndTry(CCoinJoinQueue& dsqRet);
@@ -401,7 +364,14 @@ private:
     CCoinJoin& operator=(CCoinJoin const&) = delete;
 
     // static members
-    static std::vector<CAmount> vecStandardDenominations;
+    static constexpr std::array<CAmount, 5> vecStandardDenominations{
+            (10 * COIN) + 10000,
+            (1 * COIN) + 1000,
+            (COIN / 10) + 100,
+            (COIN / 100) + 10,
+            (COIN / 1000) + 1,
+    };
+
     static std::map<uint256, CCoinJoinBroadcastTx> mapDSTX;
 
     static CCriticalSection cs_mapdstx;
@@ -409,32 +379,102 @@ private:
     static void CheckDSTXes(const CBlockIndex* pindex);
 
 public:
-    static void InitStandardDenominations();
-    static std::vector<CAmount> GetStandardDenominations() { return vecStandardDenominations; }
-    static CAmount GetSmallestDenomination() { return vecStandardDenominations.back(); }
+    static constexpr std::array<CAmount, 5> GetStandardDenominations() { return vecStandardDenominations; }
+    static constexpr CAmount GetSmallestDenomination() { return vecStandardDenominations.back(); }
 
-    static bool IsDenominatedAmount(CAmount nInputAmount);
-    static bool IsValidDenomination(int nDenom);
+    static constexpr bool IsDenominatedAmount(CAmount nInputAmount) { return AmountToDenomination(nInputAmount) > 0; }
+    static constexpr bool IsValidDenomination(int nDenom) { return DenominationToAmount(nDenom) > 0; }
 
-    static int AmountToDenomination(CAmount nInputAmount);
-    static CAmount DenominationToAmount(int nDenom);
+    /*
+        Return a bitshifted integer representing a denomination in vecStandardDenominations
+        or 0 if none was found
+    */
+    static constexpr int AmountToDenomination(CAmount nInputAmount)
+    {
+        for (size_t i = 0; i < vecStandardDenominations.size(); ++i) {
+            if (nInputAmount == vecStandardDenominations[i]) {
+                return 1 << i;
+            }
+        }
+        return 0;
+    }
+
+    /*
+        Returns:
+        - one of standard denominations from vecStandardDenominations based on the provided bitshifted integer
+        - 0 for non-initialized sessions (nDenom = 0)
+        - a value below 0 if an error occurred while converting from one to another
+    */
+    static constexpr CAmount DenominationToAmount(int nDenom)
+    {
+        if (nDenom == 0) {
+            // not initialized
+            return 0;
+        }
+
+        size_t nMaxDenoms = vecStandardDenominations.size();
+
+        if (nDenom >= (1 << nMaxDenoms) || nDenom < 0) {
+            // out of bounds
+            return -1;
+        }
+
+        if ((nDenom & (nDenom - 1)) != 0) {
+            // non-denom
+            return -2;
+        }
+
+        CAmount nDenomAmount{-3};
+
+        for (size_t i = 0; i < nMaxDenoms; ++i) {
+            if (nDenom & (1 << i)) {
+                nDenomAmount = vecStandardDenominations[i];
+                break;
+            }
+        }
+
+        return nDenomAmount;
+    }
+
+    /*
+    Same as DenominationToAmount but returns a string representation
+    */
     static std::string DenominationToString(int nDenom);
 
     static std::string GetMessageByID(PoolMessage nMessageID);
 
     /// Get the minimum/maximum number of participants for the pool
-    static int GetMinPoolParticipants() { return Params().PoolMinParticipants(); }
-    static int GetMaxPoolParticipants() { return Params().PoolMaxParticipants(); }
+    static int GetMinPoolParticipants();
+    static int GetMaxPoolParticipants();
 
-    static CAmount GetMaxPoolAmount() { return vecStandardDenominations.empty() ? 0 : COINJOIN_ENTRY_MAX_SIZE * vecStandardDenominations.front(); }
+    static constexpr CAmount GetMaxPoolAmount() { return COINJOIN_ENTRY_MAX_SIZE * vecStandardDenominations.front(); }
 
     /// If the collateral is valid given by a client
     static bool IsCollateralValid(const CTransaction& txCollateral);
-    static CAmount GetCollateralAmount() { return GetSmallestDenomination() / 10; }
-    static CAmount GetMaxCollateralAmount() { return GetCollateralAmount() * 4; }
+    static constexpr CAmount GetCollateralAmount() { return GetSmallestDenomination() / 10; }
+    static constexpr CAmount GetMaxCollateralAmount() { return GetCollateralAmount() * 4; }
 
-    static bool IsCollateralAmount(CAmount nInputAmount);
-    static int CalculateAmountPriority(CAmount nInputAmount);
+    static constexpr bool IsCollateralAmount(CAmount nInputAmount)
+    {
+        // collateral input can be anything between 1x and "max" (including both)
+        return (nInputAmount >= GetCollateralAmount() && nInputAmount <= GetMaxCollateralAmount());
+    }
+
+    static constexpr int CalculateAmountPriority(CAmount nInputAmount)
+    {
+        if (auto optDenom = ranges::find_if_opt(GetStandardDenominations(), [&nInputAmount](const auto& denom) {
+            return nInputAmount == denom;
+        })) {
+            return (float)COIN / *optDenom * 10000;
+        }
+        if (nInputAmount < COIN) {
+            return 20000;
+        }
+
+        //nondenom return largest first
+        return -1 * (nInputAmount / COIN);
+    }
+
 
     static void AddDSTX(const CCoinJoinBroadcastTx& dstx);
     static CCoinJoinBroadcastTx GetDSTX(const uint256& hash);

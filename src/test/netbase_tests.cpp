@@ -1,6 +1,5 @@
 // Copyright (c) 2012-2015 The Bitcoin Core developers
 // Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,8 +8,9 @@
 #include <protocol.h>
 #include <serialize.h>
 #include <streams.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 #include <util/strencodings.h>
+#include <util/translation.h>
 #include <version.h>
 
 #include <string>
@@ -60,6 +60,8 @@ BOOST_AUTO_TEST_CASE(netbase_properties)
     BOOST_CHECK(ResolveIP("10.0.0.1").IsRFC1918());
     BOOST_CHECK(ResolveIP("192.168.1.1").IsRFC1918());
     BOOST_CHECK(ResolveIP("172.31.255.255").IsRFC1918());
+    BOOST_CHECK(ResolveIP("198.18.0.0").IsRFC2544());
+    BOOST_CHECK(ResolveIP("198.19.255.255").IsRFC2544());
     BOOST_CHECK(ResolveIP("2001:0DB8::").IsRFC3849());
     BOOST_CHECK(ResolveIP("169.254.1.1").IsRFC3927());
     BOOST_CHECK(ResolveIP("2002::1").IsRFC3964());
@@ -332,15 +334,15 @@ BOOST_AUTO_TEST_CASE(netbase_getgroup)
 
 BOOST_AUTO_TEST_CASE(netpermissions_test)
 {
-    std::string error;
+    bilingual_str error;
     NetWhitebindPermissions whitebindPermissions;
     NetWhitelistPermissions whitelistPermissions;
 
     // Detect invalid white bind
     BOOST_CHECK(!NetWhitebindPermissions::TryParse("", whitebindPermissions, error));
-    BOOST_CHECK(error.find("Cannot resolve -whitebind address") != std::string::npos);
+    BOOST_CHECK(error.original.find("Cannot resolve -whitebind address") != std::string::npos);
     BOOST_CHECK(!NetWhitebindPermissions::TryParse("127.0.0.1", whitebindPermissions, error));
-    BOOST_CHECK(error.find("Need to specify a port with -whitebind") != std::string::npos);
+    BOOST_CHECK(error.original.find("Need to specify a port with -whitebind") != std::string::npos);
     BOOST_CHECK(!NetWhitebindPermissions::TryParse("", whitebindPermissions, error));
 
     // If no permission flags, assume backward compatibility
@@ -384,11 +386,11 @@ BOOST_AUTO_TEST_CASE(netpermissions_test)
 
     // Detect invalid flag
     BOOST_CHECK(!NetWhitebindPermissions::TryParse("bloom,forcerelay,oopsie@1.2.3.4:32", whitebindPermissions, error));
-    BOOST_CHECK(error.find("Invalid P2P permission") != std::string::npos);
+    BOOST_CHECK(error.original.find("Invalid P2P permission") != std::string::npos);
 
     // Check whitelist error
     BOOST_CHECK(!NetWhitelistPermissions::TryParse("bloom,forcerelay,noban@1.2.3.4:32", whitelistPermissions, error));
-    BOOST_CHECK(error.find("Invalid netmask specified in -whitelist") != std::string::npos);
+    BOOST_CHECK(error.original.find("Invalid netmask specified in -whitelist") != std::string::npos);
 
     // Happy path for whitelist parsing
     BOOST_CHECK(NetWhitelistPermissions::TryParse("noban@1.2.3.4", whitelistPermissions, error));

@@ -9,6 +9,7 @@
 #include <crypto/hkdf_sha256_32.h>
 #include <crypto/hmac_sha256.h>
 #include <crypto/hmac_sha512.h>
+#include <crypto/pkcs5_pbkdf2_hmac_sha512.h>
 #include <crypto/ripemd160.h>
 #include <crypto/sha1.h>
 #include <crypto/sha256.h>
@@ -16,13 +17,11 @@
 #include <crypto/sha512.h>
 #include <random.h>
 #include <util/strencodings.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <vector>
 
 #include <boost/test/unit_test.hpp>
-#include <openssl/aes.h>
-#include <openssl/evp.h>
 
 BOOST_FIXTURE_TEST_SUITE(crypto_tests, BasicTestingSetup)
 
@@ -70,26 +69,6 @@ static void TestHMACSHA512(const std::string &hexkey, const std::string &hexin, 
     TestVector(CHMAC_SHA512(key.data(), key.size()), ParseHex(hexin), ParseHex(hexout));
 }
 
-static void TestAES128(const std::string &hexkey, const std::string &hexin, const std::string &hexout)
-{
-    std::vector<unsigned char> key = ParseHex(hexkey);
-    std::vector<unsigned char> in = ParseHex(hexin);
-    std::vector<unsigned char> correctout = ParseHex(hexout);
-    std::vector<unsigned char> buf, buf2;
-
-    assert(key.size() == 16);
-    assert(in.size() == 16);
-    assert(correctout.size() == 16);
-    AES128Encrypt enc(key.data());
-    buf.resize(correctout.size());
-    buf2.resize(correctout.size());
-    enc.Encrypt(buf.data(), in.data());
-    BOOST_CHECK_EQUAL(HexStr(buf), HexStr(correctout));
-    AES128Decrypt dec(key.data());
-    dec.Decrypt(buf2.data(), buf.data());
-    BOOST_CHECK_EQUAL(HexStr(buf2), HexStr(in));
-}
-
 static void TestAES256(const std::string &hexkey, const std::string &hexin, const std::string &hexout)
 {
     std::vector<unsigned char> key = ParseHex(hexkey);
@@ -107,47 +86,6 @@ static void TestAES256(const std::string &hexkey, const std::string &hexin, cons
     AES256Decrypt dec(key.data());
     dec.Decrypt(buf.data(), buf.data());
     BOOST_CHECK(buf == in);
-}
-
-static void TestAES128CBC(const std::string &hexkey, const std::string &hexiv, bool pad, const std::string &hexin, const std::string &hexout)
-{
-    std::vector<unsigned char> key = ParseHex(hexkey);
-    std::vector<unsigned char> iv = ParseHex(hexiv);
-    std::vector<unsigned char> in = ParseHex(hexin);
-    std::vector<unsigned char> correctout = ParseHex(hexout);
-    std::vector<unsigned char> realout(in.size() + AES_BLOCKSIZE);
-
-    // Encrypt the plaintext and verify that it equals the cipher
-    AES128CBCEncrypt enc(key.data(), iv.data(), pad);
-    int size = enc.Encrypt(in.data(), in.size(), realout.data());
-    realout.resize(size);
-    BOOST_CHECK(realout.size() == correctout.size());
-    BOOST_CHECK_MESSAGE(realout == correctout, HexStr(realout) + std::string(" != ") + hexout);
-
-    // Decrypt the cipher and verify that it equals the plaintext
-    std::vector<unsigned char> decrypted(correctout.size());
-    AES128CBCDecrypt dec(key.data(), iv.data(), pad);
-    size = dec.Decrypt(correctout.data(), correctout.size(), decrypted.data());
-    decrypted.resize(size);
-    BOOST_CHECK(decrypted.size() == in.size());
-    BOOST_CHECK_MESSAGE(decrypted == in, HexStr(decrypted) + std::string(" != ") + hexin);
-
-    // Encrypt and re-decrypt substrings of the plaintext and verify that they equal each-other
-    for(std::vector<unsigned char>::iterator i(in.begin()); i != in.end(); ++i)
-    {
-        std::vector<unsigned char> sub(i, in.end());
-        std::vector<unsigned char> subout(sub.size() + AES_BLOCKSIZE);
-        int _size = enc.Encrypt(sub.data(), sub.size(), subout.data());
-        if (_size != 0)
-        {
-            subout.resize(_size);
-            std::vector<unsigned char> subdecrypted(subout.size());
-            _size = dec.Decrypt(subout.data(), subout.size(), subdecrypted.data());
-            subdecrypted.resize(_size);
-            BOOST_CHECK(decrypted.size() == in.size());
-            BOOST_CHECK_MESSAGE(subdecrypted == sub, HexStr(subdecrypted) + std::string(" != ") + HexStr(sub));
-        }
-    }
 }
 
 static void TestAES256CBC(const std::string &hexkey, const std::string &hexiv, bool pad, const std::string &hexin, const std::string &hexout)
@@ -437,14 +375,9 @@ BOOST_AUTO_TEST_CASE(hmac_sha512_testvectors) {
 
 BOOST_AUTO_TEST_CASE(aes_testvectors) {
     // AES test vectors from FIPS 197.
-    TestAES128("000102030405060708090a0b0c0d0e0f", "00112233445566778899aabbccddeeff", "69c4e0d86a7b0430d8cdb78070b4c55a");
     TestAES256("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f", "00112233445566778899aabbccddeeff", "8ea2b7ca516745bfeafc49904b496089");
 
     // AES-ECB test vectors from NIST sp800-38a.
-    TestAES128("2b7e151628aed2a6abf7158809cf4f3c", "6bc1bee22e409f96e93d7e117393172a", "3ad77bb40d7a3660a89ecaf32466ef97");
-    TestAES128("2b7e151628aed2a6abf7158809cf4f3c", "ae2d8a571e03ac9c9eb76fac45af8e51", "f5d3d58503b9699de785895a96fdbaaf");
-    TestAES128("2b7e151628aed2a6abf7158809cf4f3c", "30c81c46a35ce411e5fbc1191a0a52ef", "43b1cd7f598ece23881b00e3ed030688");
-    TestAES128("2b7e151628aed2a6abf7158809cf4f3c", "f69f2445df4f9b17ad2b417be66c3710", "7b0c785e27e8ad3f8223207104725dd4");
     TestAES256("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4", "6bc1bee22e409f96e93d7e117393172a", "f3eed1bdb5d2a03c064b5a7e3db181f8");
     TestAES256("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4", "ae2d8a571e03ac9c9eb76fac45af8e51", "591ccb10d410ed26dc5ba74a31362870");
     TestAES256("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4", "30c81c46a35ce411e5fbc1191a0a52ef", "b6ed21b99ca6f4f9f153e7b1beafed1d");
@@ -452,27 +385,6 @@ BOOST_AUTO_TEST_CASE(aes_testvectors) {
 }
 
 BOOST_AUTO_TEST_CASE(aes_cbc_testvectors) {
-
-    // NIST AES CBC 128-bit encryption test-vectors
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "000102030405060708090A0B0C0D0E0F", false, \
-                  "6bc1bee22e409f96e93d7e117393172a", "7649abac8119b246cee98e9b12e9197d");
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "7649ABAC8119B246CEE98E9B12E9197D", false, \
-                  "ae2d8a571e03ac9c9eb76fac45af8e51", "5086cb9b507219ee95db113a917678b2");
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "5086cb9b507219ee95db113a917678b2", false, \
-                  "30c81c46a35ce411e5fbc1191a0a52ef", "73bed6b8e3c1743b7116e69e22229516");
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "73bed6b8e3c1743b7116e69e22229516", false, \
-                  "f69f2445df4f9b17ad2b417be66c3710", "3ff1caa1681fac09120eca307586e1a7");
-
-    // The same vectors with padding enabled
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "000102030405060708090A0B0C0D0E0F", true, \
-                  "6bc1bee22e409f96e93d7e117393172a", "7649abac8119b246cee98e9b12e9197d8964e0b149c10b7b682e6e39aaeb731c");
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "7649ABAC8119B246CEE98E9B12E9197D", true, \
-                  "ae2d8a571e03ac9c9eb76fac45af8e51", "5086cb9b507219ee95db113a917678b255e21d7100b988ffec32feeafaf23538");
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "5086cb9b507219ee95db113a917678b2", true, \
-                  "30c81c46a35ce411e5fbc1191a0a52ef", "73bed6b8e3c1743b7116e69e22229516f6eccda327bf8e5ec43718b0039adceb");
-    TestAES128CBC("2b7e151628aed2a6abf7158809cf4f3c", "73bed6b8e3c1743b7116e69e22229516", true, \
-                  "f69f2445df4f9b17ad2b417be66c3710", "3ff1caa1681fac09120eca307586e1a78cb82807230e1321d3fae00d18cc2012");
-
     // NIST AES CBC 256-bit encryption test-vectors
     TestAES256CBC("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4", \
                   "000102030405060708090A0B0C0D0E0F", false, "6bc1bee22e409f96e93d7e117393172a", \
@@ -509,19 +421,19 @@ BOOST_AUTO_TEST_CASE(pbkdf2_hmac_sha512_test) {
     uint8_t k[64], s[40];
 
     strcpy((char *)s, "salt");
-    PKCS5_PBKDF2_HMAC("password", 8, s, 4, 1, EVP_sha512(), 64, k);
+    PKCS5_PBKDF2_HMAC_SHA512("password", 8, s, 4, 1, 64, k);
     BOOST_CHECK(HexStr(k) == "867f70cf1ade02cff3752599a3a53dc4af34c7a669815ae5d513554e1c8cf252c02d470a285a0501bad999bfe943c08f050235d7d68b1da55e63f73b60a57fce");
 
     strcpy((char *)s, "salt");
-    PKCS5_PBKDF2_HMAC("password", 8, s, 4, 2, EVP_sha512(), 64, k);
+    PKCS5_PBKDF2_HMAC_SHA512("password", 8, s, 4, 2, 64, k);
     BOOST_CHECK(HexStr(k) == "e1d9c16aa681708a45f5c7c4e215ceb66e011a2e9f0040713f18aefdb866d53cf76cab2868a39b9f7840edce4fef5a82be67335c77a6068e04112754f27ccf4e");
 
     strcpy((char *)s, "salt");
-    PKCS5_PBKDF2_HMAC("password", 8, s, 4, 4096, EVP_sha512(), 64, k);
+    PKCS5_PBKDF2_HMAC_SHA512("password", 8, s, 4, 4096, 64, k);
     BOOST_CHECK(HexStr(k) == "d197b1b33db0143e018b12f3d1d1479e6cdebdcc97c5c0f87f6902e072f457b5143f30602641b3d55cd335988cb36b84376060ecd532e039b742a239434af2d5");
 
     strcpy((char *)s, "saltSALTsaltSALTsaltSALTsaltSALTsalt");
-    PKCS5_PBKDF2_HMAC("passwordPASSWORDpassword", 3*8, s, 9*4, 4096, EVP_sha512(), 64, k);
+    PKCS5_PBKDF2_HMAC_SHA512("passwordPASSWORDpassword", 3*8, s, 9*4, 4096, 64, k);
     BOOST_CHECK(HexStr(k) == "8c0511f4c6e597c6ac6315d8f0362e225f3c501495ba23b868c005174dc4ee71115b59f9e60cd9532fa33e0f75aefe30225c583a186cd82bd4daea9724a3d3b8");
 }
 
@@ -640,7 +552,7 @@ BOOST_AUTO_TEST_CASE(poly1305_testvector)
 
 BOOST_AUTO_TEST_CASE(hkdf_hmac_sha256_l32_tests)
 {
-    // Use rfc5869 test vectors but trucated to 32 bytes (our implementation only support length 32)
+    // Use rfc5869 test vectors but truncated to 32 bytes (our implementation only support length 32)
     TestHKDF_SHA256_32(
                 /* IKM */ "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
                 /* salt */ "000102030405060708090a0b0c",
@@ -685,7 +597,7 @@ static void TestChaCha20Poly1305AEAD(bool must_succeed, unsigned int expected_aa
     ChaCha20Poly1305AEAD aead(aead_K_1.data(), aead_K_1.size(), aead_K_2.data(), aead_K_2.size());
 
     // create a chacha20 instance to compare against
-    ChaCha20 cmp_ctx(aead_K_2.data(), 32);
+    ChaCha20 cmp_ctx(aead_K_1.data(), 32);
 
     // encipher
     bool res = aead.Crypt(seqnr_payload, seqnr_aad, aad_pos, ciphertext_buf.data(), ciphertext_buf.size(), plaintext_buf.data(), plaintext_buf.size(), true);
@@ -762,8 +674,8 @@ BOOST_AUTO_TEST_CASE(chacha20_poly1305_aead_testvector)
 
     TestChaCha20Poly1305AEAD(true, 0,
         /* m  */ "0000000000000000000000000000000000000000000000000000000000000000",
-        /* k1 (payload) */ "0000000000000000000000000000000000000000000000000000000000000000",
-        /* k2 (AAD) */ "0000000000000000000000000000000000000000000000000000000000000000",
+        /* k1 (AAD) */ "0000000000000000000000000000000000000000000000000000000000000000",
+        /* k2 (payload) */ "0000000000000000000000000000000000000000000000000000000000000000",
         /* AAD keystream */ "76b8e0ada0f13d90405d6ae55386bd28bdd219b8a08ded1aa836efcc8b770dc7da41597c5157488d7724e03fb8d84a376a43b8f41518a11cc387b669b2ee6586",
         /* encrypted message & MAC */ "76b8e09f07e7be5551387a98ba977c732d080dcb0f29a048e3656912c6533e32d2fc11829c1b6c1df1f551cd6131ff08",
         /* encrypted message & MAC at sequence 999 */ "b0a03d5bd2855d60699e7d3a3133fa47be740fe4e4c1f967555e2d9271f31c3aaa7aa16ec62c5e24f040c08bb20c3598");
@@ -776,8 +688,8 @@ BOOST_AUTO_TEST_CASE(chacha20_poly1305_aead_testvector)
         "b1a03d5bd2855d60699e7d3a3133fa47be740fe4e4c1f967555e2d9271f31c3a8bd94d54b5ecabbc41ffbb0c90924080");
     TestChaCha20Poly1305AEAD(true, 255,
         "ff0000f195e66982105ffb640bb7757f579da31602fc93ec01ac56f85ac3c134a4547b733b46413042c9440049176905d3be59ea1c53f15916155c2be8241a38008b9a26bc35941e2444177c8ade6689de95264986d95889fb60e84629c9bd9a5acb1cc118be563eb9b3a4a472f82e09a7e778492b562ef7130e88dfe031c79db9d4f7c7a899151b9a475032b63fc385245fe054e3dd5a97a5f576fe064025d3ce042c566ab2c507b138db853e3d6959660996546cc9c4a6eafdc777c040d70eaf46f76dad3979e5c5360c3317166a1c894c94a371876a94df7628fe4eaaf2ccb27d5aaae0ad7ad0f9d4b6ad3b54098746d4524d38407a6deb3ab78fab78c9",
-        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
         "ff0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
         "c640c1711e3ee904ac35c57ab9791c8a1c408603a90b77a83b54f6c844cb4b06d94e7fc6c800e165acd66147e80ec45a567f6ce66d05ec0cae679dceeb890017",
         "3940c1e92da4582ff6f92a776aeb14d014d384eeb30f660dacf70a14a23fd31e91212701334e2ce1acf5199dc84f4d61ddbe6571bca5af874b4c9226c26e650995d157644e1848b96ed6c2102d5489a050e71d29a5a66ece11de5fb5c9558d54da28fe45b0bc4db4e5b88030bfc4a352b4b7068eccf656bae7ad6a35615315fc7c49d4200388d5eca67c2e822e069336c69b40db67e0f3c81209c50f3216a4b89fb3ae1b984b7851a2ec6f68ab12b101ab120e1ea7313bb93b5a0f71185c7fea017ddb92769861c29dba4fbc432280d5dff21b36d1c4c790128b22699950bb18bf74c448cdfe547d8ed4f657d8005fdc0cd7a050c2d46050a44c4376355858981fbe8b184288276e7a93eabc899c4a",
         "f039c6689eaeef0456685200feaab9d54bbd9acde4410a3b6f4321296f4a8ca2604b49727d8892c57e005d799b2a38e85e809f20146e08eec75169691c8d4f54a0d51a1e1c7b381e0474eb02f994be9415ef3ffcbd2343f0601e1f3b172a1d494f838824e4df570f8e3b0c04e27966e36c82abd352d07054ef7bd36b84c63f9369afe7ed79b94f953873006b920c3fa251a771de1b63da927058ade119aa898b8c97e42a606b2f6df1e2d957c22f7593c1e2002f4252f4c9ae4bf773499e5cfcfe14dfc1ede26508953f88553bf4a76a802f6a0068d59295b01503fd9a600067624203e880fdf53933b96e1f4d9eb3f4e363dd8165a278ff667a41ee42b9892b077cefff92b93441f7be74cf10e6cd");

@@ -13,7 +13,6 @@
 #include <compat.h>
 #include <prevector.h>
 #include <serialize.h>
-#include <span.h>
 #include <tinyformat.h>
 #include <util/strencodings.h>
 #include <util/string.h>
@@ -147,7 +146,6 @@ class CNetAddr
          */
         void SetLegacyIPv6(Span<const uint8_t> ipv6);
 
-    private:
         /**
          * Set raw IPv4 or IPv6 address (in network byte order)
          * @note Only NET_IPV4 and NET_IPV6 are allowed for network.
@@ -166,7 +164,7 @@ class CNetAddr
         bool IsIPv4() const;    // IPv4 mapped address (::FFFF:0:0/96, 0.0.0.0/0)
         bool IsIPv6() const;    // IPv6 address (not mapped IPv4, not Tor)
         bool IsRFC1918() const; // IPv4 private networks (10.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12)
-        bool IsRFC2544() const; // IPv4 inter-network communications (192.18.0.0/15)
+        bool IsRFC2544() const; // IPv4 inter-network communications (198.18.0.0/15)
         bool IsRFC6598() const; // IPv4 ISP-level NAT (100.64.0.0/10)
         bool IsRFC5737() const; // IPv4 documentation addresses (192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24)
         bool IsRFC3849() const; // IPv6 documentation address (2001:0DB8::/32)
@@ -485,7 +483,7 @@ class CSubNet
             READWRITE(obj.network);
             if (obj.network.IsIPv4()) {
                 // Before commit 102867c587f5f7954232fb8ed8e85cda78bb4d32, CSubNet used the last 4 bytes of netmask
-                // to store the relevant bytes for an IPv4 mask. For compatiblity reasons, keep doing so in
+                // to store the relevant bytes for an IPv4 mask. For compatibility reasons, keep doing so in
                 // serialized form.
                 unsigned char dummy[12] = {0};
                 READWRITE(dummy);
@@ -531,5 +529,7 @@ class CService : public CNetAddr
             READWRITE(Using<BigEndianFormatter<2>>(obj.port));
         }
 };
+
+bool SanityCheckASMap(const std::vector<bool>& asmap);
 
 #endif // BITCOIN_NETADDRESS_H

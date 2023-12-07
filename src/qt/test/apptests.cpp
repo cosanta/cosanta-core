@@ -7,11 +7,13 @@
 #include <chainparams.h>
 #include <init.h>
 #include <key.h>
-#include <qt/cosanta.h>
+#include <qt/bitcoin.h>
 #include <qt/bitcoingui.h>
 #include <qt/networkstyle.h>
 #include <qt/rpcconsole.h>
 #include <shutdown.h>
+#include <test/util/setup_common.h>
+#include <univalue.h>
 #include <validation.h>
 
 #if defined(HAVE_CONFIG_H)
@@ -31,9 +33,6 @@
 #include <QtGlobal>
 #include <QtTest/QtTestWidgets>
 #include <QtTest/QtTestGui>
-#include <new>
-#include <string>
-#include <univalue.h>
 
 namespace {
 //! Call getblockchaininfo RPC and check first field of JSON output.
@@ -63,11 +62,12 @@ void AppTests::appTests()
         // and fails to handle returned nulls
         // (https://bugreports.qt.io/browse/QTBUG-49686).
         QWARN("Skipping AppTests on mac build with 'minimal' platform set due to Qt bugs. To run AppTests, invoke "
-              "with 'test_dash-qt -platform cocoa' on mac, or else use a linux or windows build.");
+              "with 'QT_QPA_PLATFORM=cocoa test_dash-qt' on mac, or else use a linux or windows build.");
         return;
     }
 #endif
 
+    BasicTestingSetup test{CBaseChainParams::REGTEST}; // Create a temp data directory to backup the gui settings to
     ECC_Stop(); // Already started by the common test setup, so stop it to avoid interference
     LogInstance().DisconnectTestLogger();
 

@@ -1,12 +1,13 @@
 // Copyright (c) 2016 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_WALLET_RPCWALLET_H
 #define BITCOIN_WALLET_RPCWALLET_H
 
+#include <memory>
 #include <string>
+#include <vector>
 
 class CRPCTable;
 class CWallet;
@@ -15,7 +16,12 @@ class UniValue;
 struct PartiallySignedTransaction;
 class CTransaction;
 
-void RegisterWalletRPCCommands(CRPCTable &t);
+namespace interfaces {
+class Chain;
+class Handler;
+}
+
+void RegisterWalletRPCCommands(interfaces::Chain& chain, std::vector<std::unique_ptr<interfaces::Handler>>& handlers);
 
 /**
  * Figures out what wallet, if any, to use for a JSONRPCRequest.
@@ -25,9 +31,8 @@ void RegisterWalletRPCCommands(CRPCTable &t);
  */
 std::shared_ptr<CWallet> GetWalletForJSONRPCRequest(const JSONRPCRequest& request);
 
-std::string HelpRequiringPassphrase(CWallet *);
+std::string HelpRequiringPassphrase();
 void EnsureWalletIsUnlocked(CWallet *);
-bool EnsureWalletIsAvailable(CWallet *, bool avoidException);
 
 UniValue getaddressinfo(const JSONRPCRequest& request);
 UniValue signrawtransactionwithwallet(const JSONRPCRequest& request);

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # Copyright (c) 2015-2020 The Dash Core developers
-# Copyright (c) 2020-2022 The Cosanta Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,13 +13,12 @@ Checks conflict handling between ChainLocks and InstantSend
 from codecs import encode
 from decimal import Decimal
 import struct
-import time
 
 from test_framework.blocktools import get_masternode_payment, create_coinbase, create_block
 from test_framework.messages import CCbTx, CInv, COIN, CTransaction, FromHex, hash256, msg_clsig, msg_inv, ser_string, ToHex, uint256_from_str, uint256_to_string
 from test_framework.mininode import P2PInterface
 from test_framework.test_framework import DashTestFramework
-from test_framework.util import assert_equal, assert_raises_rpc_error, hex_str_to_bytes, get_bip9_status
+from test_framework.util import assert_equal, assert_raises_rpc_error, hex_str_to_bytes, get_bip9_status, wait_until
 
 
 class TestP2PConn(P2PInterface):
@@ -53,14 +51,13 @@ class TestP2PConn(P2PInterface):
 
 class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
     def set_test_params(self):
-        self.set_cosanta_test_params(4, 3, fast_dip3_enforcement=True)
-        #disable_mocktime()
+        self.set_dash_test_params(5, 4, fast_dip3_enforcement=True)
+        self.set_dash_llmq_test_params(4, 4)
 
     def run_test(self):
         self.activate_dip8()
 
         self.test_node = self.nodes[0].add_p2p_connection(TestP2PConn())
-        self.nodes[0].p2p.wait_for_verack()
 
         self.nodes[0].spork("SPORK_17_QUORUM_DKG_ENABLED", 0)
         self.wait_for_sporks_same()
@@ -75,6 +72,14 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
         self.test_chainlock_overrides_islock(True, False)
         self.test_chainlock_overrides_islock(True, True)
         self.test_chainlock_overrides_islock_overrides_nonchainlock(False)
+        self.activate_dip0024()
+        self.log.info("Activated DIP0024 at height:" + str(self.nodes[0].getblockcount()))
+        self.test_chainlock_overrides_islock_overrides_nonchainlock(False)
+        # At this point, we need to move forward 3 cycles (3 x 24 blocks) so the first 3 quarters can be created (without DKG sessions)
+        self.move_to_next_cycle()
+        self.move_to_next_cycle()
+        self.move_to_next_cycle()
+        self.mine_cycle_quorum()
         self.test_chainlock_overrides_islock_overrides_nonchainlock(True)
 
     def test_chainlock_overrides_islock(self, test_block_conflict, mine_confllicting=False):
@@ -117,6 +122,8 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
 
         if mine_confllicting:
             islock_tip = self.nodes[0].generate(1)[-1]
+            # Make sure we won't sent clsig too early
+            self.sync_blocks()
 
         self.test_node.send_clsig(cl)
 
@@ -205,8 +212,11 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
         # Create an ISLOCK but don't broadcast it yet
         islock = self.create_islock(rawtx2, deterministic)
 
+        # Ensure spork uniqueness in multiple function runs
+        self.bump_mocktime(1)
         # Disable ChainLocks to avoid accidental locking
         self.nodes[0].spork("SPORK_19_CHAINLOCKS_ENABLED", 4070908800)
+        self.wait_for_sporks_same()
 
         # Send tx1, which will later conflict with the ISLOCK
         self.nodes[0].sendrawtransaction(rawtx1)
@@ -230,25 +240,31 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
         self.sync_all()
         assert self.nodes[0].getbestblockhash() == cl_block.hash
 
-        # Send the ISLOCK, which should result in the last 2 blocks to be invalidated, even though the nodes don't know
-        # the locked transaction yet
+        # Send the ISLOCK, which should result in the last 2 blocks to be disconnected,
+        # even though the nodes don't know the locked transaction yet
         self.test_node.send_islock(islock, deterministic)
-        time.sleep(5)
+        for node in self.nodes:
+            wait_until(lambda: node.getbestblockhash() == good_tip, timeout=10, sleep=0.5)
+            # islock for tx2 is incomplete, tx1 should return in mempool now that blocks are disconnected
+            assert rawtx1_txid in set(node.getrawmempool())
 
-        assert self.nodes[0].getbestblockhash() == good_tip
-        assert self.nodes[1].getbestblockhash() == good_tip
-
-        # Send the actual transaction and mine it
+        # Should drop tx1 and accept tx2 because there is an islock waiting for it
         self.nodes[0].sendrawtransaction(rawtx2)
-        self.nodes[0].generate(1)
+        # bump mocktime to force tx relay
+        self.bump_mocktime(60)
+        for node in self.nodes:
+            self.wait_for_instantlock(rawtx2_txid, node)
+
+        # Should not allow competing txes now
+        assert_raises_rpc_error(-26, "tx-txlock-conflict", self.nodes[0].sendrawtransaction, rawtx1)
+
+        islock_tip = self.nodes[0].generate(1)[0]
         self.sync_all()
 
-        assert self.nodes[0].getrawtransaction(rawtx2_txid, True)['confirmations'] > 0
-        assert self.nodes[1].getrawtransaction(rawtx2_txid, True)['confirmations'] > 0
-        assert self.nodes[0].getrawtransaction(rawtx2_txid, True)['instantlock']
-        assert self.nodes[1].getrawtransaction(rawtx2_txid, True)['instantlock']
-        assert self.nodes[0].getbestblockhash() != good_tip
-        assert self.nodes[1].getbestblockhash() != good_tip
+        for node in self.nodes:
+            self.wait_for_instantlock(rawtx2_txid, node)
+            assert_equal(node.getrawtransaction(rawtx2_txid, True)['confirmations'], 1)
+            assert_equal(node.getbestblockhash(), islock_tip)
 
         # Check that the CL-ed block overrides the one with islocks
         self.nodes[0].spork("SPORK_19_CHAINLOCKS_ENABLED", 0)  # Re-enable ChainLocks to accept clsig
@@ -256,6 +272,8 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
         self.wait_for_sporks_same()
         for node in self.nodes:
             self.wait_for_chainlocked_block(node, cl_block.hash)
+            # Previous tip should be marked as conflicting now
+            assert_equal(node.getchaintips(2)[1]["status"], "conflicting")
 
     def create_block(self, node, vtx=[]):
         bt = node.getblocktemplate()
@@ -310,7 +328,7 @@ class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
 
         coinbase.calc_sha256()
 
-        block = create_block(int(tip_hash, 16), coinbase, ntime=bt['curtime'])
+        block = create_block(int(tip_hash, 16), coinbase, ntime=bt['curtime'], version=bt['version'])
         block.vtx += vtx
 
         # Add quorum commitments from template

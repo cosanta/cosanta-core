@@ -3,17 +3,18 @@ utilities in their entirety. It does not contain unit tests, which
 can be found in [/src/test](/src/test), [/src/wallet/test](/src/wallet/test),
 etc.
 
-There are currently two sets of tests in this directory:
+This directory contains the following sets of tests:
 
 - [functional](/test/functional) which test the functionality of
 cosantad and cosanta-qt by interacting with them through the RPC and P2P
 interfaces.
-- [util](test/util) which tests the dash utilities, currently only
+- [util](/test/util) which tests the dash utilities, currently only
 cosanta-tx.
+- [lint](/test/lint/) which perform various static analysis checks.
 
 The util tests are run as part of `make check` target. The functional
-tests are run by the travis continuous build process whenever a pull
-request is opened. Both sets of tests can also be run locally.
+tests and lint scripts are run by the travis continuous build process whenever a pull
+request is opened. All sets of tests can also be run locally.
 
 # Running tests locally
 
@@ -30,7 +31,7 @@ The ZMQ functional test requires a python ZMQ library. To install it:
 
 #### Running the tests
 
-Individual tests can be run by directly calling the test script, eg:
+Individual tests can be run by directly calling the test script, e.g.:
 
 ```
 test/functional/wallet-hd.py
@@ -199,6 +200,32 @@ For ways to generate more granular profiles, see the README in
 
 Util tests can be run locally by running `test/util/bitcoin-util-test.py`.
 Use the `-v` option for verbose output.
+
+### Lint tests
+
+#### Dependencies
+
+| Lint test | Dependency | Version [used by CI](../ci/lint/04_install.sh) | Installation
+|-----------|:----------:|:-------------------------------------------:|--------------
+| [`lint-python.sh`](lint/lint-python.sh) | [flake8](https://gitlab.com/pycqa/flake8) | [3.8.3](https://github.com/bitcoin/bitcoin/pull/19348) | `pip3 install flake8==3.8.3`
+| [`lint-shell.sh`](lint/lint-shell.sh) | [ShellCheck](https://github.com/koalaman/shellcheck) | [0.7.1](https://github.com/bitcoin/bitcoin/pull/19348) | [details...](https://github.com/koalaman/shellcheck#installing)
+| [`lint-spelling.sh`](lint/lint-spelling.sh) | [codespell](https://github.com/codespell-project/codespell) | [1.17.1](https://github.com/bitcoin/bitcoin/pull/19348) | `pip3 install codespell==1.17.1`
+
+Please be aware that on Linux distributions all dependencies are usually available as packages, but could be outdated.
+
+#### Running the tests
+
+Individual tests can be run by directly calling the test script, e.g.:
+
+```
+test/lint/lint-filenames.sh
+```
+
+You can run all the shell-based lint tests by running:
+
+```
+test/lint/lint-all.sh
+```
 
 # Writing functional tests
 

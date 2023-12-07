@@ -1,16 +1,19 @@
-// Copyright (c) 2018-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_EVO_DETERMINISTICMNS_H
 #define BITCOIN_EVO_DETERMINISTICMNS_H
 
+#include <evo/dmnstate.h>
+
 #include <arith_uint256.h>
 #include <crypto/common.h>
+#include <consensus/params.h>
 #include <evo/evodb.h>
 #include <evo/providertx.h>
 #include <saltedhasher.h>
+#include <scheduler.h>
 #include <sync.h>
 
 #include <immer/map.hpp>
@@ -29,178 +32,6 @@ namespace llmq
 {
     class CFinalCommitment;
 } // namespace llmq
-
-class CDeterministicMNState
-{
-private:
-    int nPoSeBanHeight{-1};
-
-    friend class CDeterministicMNStateDiff;
-
-public:
-    int nRegisteredHeight{-1};
-    int nLastPaidHeight{0};
-    int nPoSePenalty{0};
-    int nPoSeRevivedHeight{-1};
-    uint16_t nRevocationReason{CProUpRevTx::REASON_NOT_SPECIFIED};
-
-    // the block hash X blocks after registration, used in quorum calculations
-    uint256 confirmedHash;
-    // sha256(proTxHash, confirmedHash) to speed up quorum calculations
-    // please note that this is NOT a double-sha256 hash
-    uint256 confirmedHashWithProRegTxHash;
-
-    CKeyID keyIDOwner;
-    CBLSLazyPublicKey pubKeyOperator;
-    CKeyID keyIDVoting;
-    CService addr;
-    CScript scriptPayout;
-    CScript scriptOperatorPayout;
-
-public:
-    CDeterministicMNState() = default;
-    explicit CDeterministicMNState(const CProRegTx& proTx)
-    {
-        keyIDOwner = proTx.keyIDOwner;
-        pubKeyOperator.Set(proTx.pubKeyOperator);
-        keyIDVoting = proTx.keyIDVoting;
-        addr = proTx.addr;
-        scriptPayout = proTx.scriptPayout;
-    }
-    template <typename Stream>
-    CDeterministicMNState(deserialize_type, Stream& s)
-    {
-        s >> *this;
-    }
-
-    SERIALIZE_METHODS(CDeterministicMNState, obj)
-    {
-        READWRITE(
-                obj.nRegisteredHeight,
-                obj.nLastPaidHeight,
-                obj.nPoSePenalty,
-                obj.nPoSeRevivedHeight,
-                obj.nPoSeBanHeight,
-                obj.nRevocationReason,
-                obj.confirmedHash,
-                obj.confirmedHashWithProRegTxHash,
-                obj.keyIDOwner,
-                obj.pubKeyOperator,
-                obj.keyIDVoting,
-                obj.addr,
-                obj.scriptPayout,
-                obj.scriptOperatorPayout
-                );
-    }
-
-    void ResetOperatorFields()
-    {
-        pubKeyOperator.Set(CBLSPublicKey());
-        addr = CService();
-        scriptOperatorPayout = CScript();
-        nRevocationReason = CProUpRevTx::REASON_NOT_SPECIFIED;
-    }
-    void BanIfNotBanned(int height)
-    {
-        if (!IsBanned()) {
-            nPoSeBanHeight = height;
-        }
-    }
-    int GetBannedHeight() const
-    {
-        return nPoSeBanHeight;
-    }
-    bool IsBanned() const
-    {
-        return nPoSeBanHeight != -1;
-    }
-    void Revive(int nRevivedHeight)
-    {
-        nPoSePenalty = 0;
-        nPoSeBanHeight = -1;
-        nPoSeRevivedHeight = nRevivedHeight;
-    }
-    void UpdateConfirmedHash(const uint256& _proTxHash, const uint256& _confirmedHash)
-    {
-        confirmedHash = _confirmedHash;
-        CSHA256 h;
-        h.Write(_proTxHash.begin(), _proTxHash.size());
-        h.Write(_confirmedHash.begin(), _confirmedHash.size());
-        h.Finalize(confirmedHashWithProRegTxHash.begin());
-    }
-
-public:
-    std::string ToString() const;
-    void ToJson(UniValue& obj) const;
-};
-using CDeterministicMNStatePtr = std::shared_ptr<CDeterministicMNState>;
-using CDeterministicMNStateCPtr = std::shared_ptr<const CDeterministicMNState>;
-
-class CDeterministicMNStateDiff
-{
-public:
-    enum Field : uint32_t {
-        Field_nRegisteredHeight                 = 0x0001,
-        Field_nLastPaidHeight                   = 0x0002,
-        Field_nPoSePenalty                      = 0x0004,
-        Field_nPoSeRevivedHeight                = 0x0008,
-        Field_nPoSeBanHeight                    = 0x0010,
-        Field_nRevocationReason                 = 0x0020,
-        Field_confirmedHash                     = 0x0040,
-        Field_confirmedHashWithProRegTxHash     = 0x0080,
-        Field_keyIDOwner                        = 0x0100,
-        Field_pubKeyOperator                    = 0x0200,
-        Field_keyIDVoting                       = 0x0400,
-        Field_addr                              = 0x0800,
-        Field_scriptPayout                      = 0x1000,
-        Field_scriptOperatorPayout              = 0x2000,
-    };
-
-#define DMN_STATE_DIFF_ALL_FIELDS \
-    DMN_STATE_DIFF_LINE(nRegisteredHeight) \
-    DMN_STATE_DIFF_LINE(nLastPaidHeight) \
-    DMN_STATE_DIFF_LINE(nPoSePenalty) \
-    DMN_STATE_DIFF_LINE(nPoSeRevivedHeight) \
-    DMN_STATE_DIFF_LINE(nPoSeBanHeight) \
-    DMN_STATE_DIFF_LINE(nRevocationReason) \
-    DMN_STATE_DIFF_LINE(confirmedHash) \
-    DMN_STATE_DIFF_LINE(confirmedHashWithProRegTxHash) \
-    DMN_STATE_DIFF_LINE(keyIDOwner) \
-    DMN_STATE_DIFF_LINE(pubKeyOperator) \
-    DMN_STATE_DIFF_LINE(keyIDVoting) \
-    DMN_STATE_DIFF_LINE(addr) \
-    DMN_STATE_DIFF_LINE(scriptPayout) \
-    DMN_STATE_DIFF_LINE(scriptOperatorPayout)
-
-public:
-    uint32_t fields{0};
-    // we reuse the state class, but only the members as noted by fields are valid
-    CDeterministicMNState state;
-
-public:
-    CDeterministicMNStateDiff() = default;
-    CDeterministicMNStateDiff(const CDeterministicMNState& a, const CDeterministicMNState& b)
-    {
-#define DMN_STATE_DIFF_LINE(f) if (a.f != b.f) { state.f = b.f; fields |= Field_##f; }
-        DMN_STATE_DIFF_ALL_FIELDS
-#undef DMN_STATE_DIFF_LINE
-    }
-
-    SERIALIZE_METHODS(CDeterministicMNStateDiff, obj)
-    {
-        READWRITE(VARINT(obj.fields));
-#define DMN_STATE_DIFF_LINE(f) if (obj.fields & Field_##f) READWRITE(obj.state.f);
-        DMN_STATE_DIFF_ALL_FIELDS
-#undef DMN_STATE_DIFF_LINE
-    }
-
-    void ApplyToState(CDeterministicMNState& target) const
-    {
-#define DMN_STATE_DIFF_LINE(f) if (fields & Field_##f) target.f = state.f;
-        DMN_STATE_DIFF_ALL_FIELDS
-#undef DMN_STATE_DIFF_LINE
-    }
-};
 
 class CDeterministicMN
 {
@@ -229,8 +60,8 @@ public:
 
     uint256 proTxHash;
     COutPoint collateralOutpoint;
-    uint16_t nOperatorReward;
-    CDeterministicMNStateCPtr pdmnState;
+    uint16_t nOperatorReward{0};
+    std::shared_ptr<const CDeterministicMNState> pdmnState;
 
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, bool oldFormat)
@@ -373,20 +204,37 @@ public:
 
     size_t GetValidMNsCount() const
     {
-        size_t count = 0;
-        for (const auto& p : mnMap) {
-            if (IsMNValid(p.second)) {
-                count++;
-            }
-        }
-        return count;
+        return ranges::count_if(mnMap, [](const auto& p){ return IsMNValid(*p.second); });
     }
 
+    /**
+     * Execute a callback on all masternodes in the mnList. This will pass a reference
+     * of each masternode to the callback function. This should be prefered over ForEachMNShared.
+     * @param onlyValid Run on all masternodes, or only "valid" (not banned) masternodes
+     * @param cb callback to execute
+     */
     template <typename Callback>
     void ForEachMN(bool onlyValid, Callback&& cb) const
     {
         for (const auto& p : mnMap) {
-            if (!onlyValid || IsMNValid(p.second)) {
+            if (!onlyValid || IsMNValid(*p.second)) {
+                cb(*p.second);
+            }
+        }
+    }
+
+    /**
+     * Prefer ForEachMN. Execute a callback on all masternodes in the mnList.
+     * This will pass a non-null shared_ptr of each masternode to the callback function.
+     * Use this function only when a shared_ptr is needed in order to take shared ownership.
+     * @param onlyValid Run on all masternodes, or only "valid" (not banned) masternodes
+     * @param cb callback to execute
+     */
+    template <typename Callback>
+    void ForEachMNShared(bool onlyValid, Callback&& cb) const
+    {
+        for (const auto& p : mnMap) {
+            if (!onlyValid || IsMNValid(*p.second)) {
                 cb(p.second);
             }
         }
@@ -415,8 +263,8 @@ public:
 
     bool IsMNValid(const uint256& proTxHash) const;
     bool IsMNPoSeBanned(const uint256& proTxHash) const;
-    static bool IsMNValid(const CDeterministicMNCPtr& dmn);
-    static bool IsMNPoSeBanned(const CDeterministicMNCPtr& dmn);
+    static bool IsMNValid(const CDeterministicMN& dmn);
+    static bool IsMNPoSeBanned(const CDeterministicMN& dmn);
 
     bool HasMN(const uint256& proTxHash) const
     {
@@ -494,9 +342,9 @@ public:
     CDeterministicMNList ApplyDiff(const CBlockIndex* pindex, const CDeterministicMNListDiff& diff) const;
 
     void AddMN(const CDeterministicMNCPtr& dmn, bool fBumpTotalCount = true);
-    void UpdateMN(const CDeterministicMNCPtr& oldDmn, const CDeterministicMNStateCPtr& pdmnState);
-    void UpdateMN(const uint256& proTxHash, const CDeterministicMNStateCPtr& pdmnState);
-    void UpdateMN(const CDeterministicMNCPtr& oldDmn, const CDeterministicMNStateDiff& stateDiff);
+    void UpdateMN(const CDeterministicMN& oldDmn, const std::shared_ptr<const CDeterministicMNState>& pdmnState);
+    void UpdateMN(const uint256& proTxHash, const std::shared_ptr<const CDeterministicMNState>& pdmnState);
+    void UpdateMN(const CDeterministicMN& oldDmn, const CDeterministicMNStateDiff& stateDiff);
     void RemoveMN(const uint256& proTxHash);
 
     template <typename T>
@@ -516,7 +364,7 @@ public:
 
 private:
     template <typename T>
-    [[nodiscard]] bool AddUniqueProperty(const CDeterministicMNCPtr& dmn, const T& v)
+    [[nodiscard]] bool AddUniqueProperty(const CDeterministicMN& dmn, const T& v)
     {
         static const T nullValue;
         if (v == nullValue) {
@@ -525,10 +373,10 @@ private:
 
         auto hash = ::SerializeHash(v);
         auto oldEntry = mnUniquePropertyMap.find(hash);
-        if (oldEntry != nullptr && oldEntry->first != dmn->proTxHash) {
+        if (oldEntry != nullptr && oldEntry->first != dmn.proTxHash) {
             return false;
         }
-        std::pair<uint256, uint32_t> newEntry(dmn->proTxHash, 1);
+        std::pair<uint256, uint32_t> newEntry(dmn.proTxHash, 1);
         if (oldEntry != nullptr) {
             newEntry.second = oldEntry->second + 1;
         }
@@ -536,7 +384,7 @@ private:
         return true;
     }
     template <typename T>
-    [[nodiscard]] bool DeleteUniqueProperty(const CDeterministicMNCPtr& dmn, const T& oldValue)
+    [[nodiscard]] bool DeleteUniqueProperty(const CDeterministicMN& dmn, const T& oldValue)
     {
         static const T nullValue;
         if (oldValue == nullValue) {
@@ -545,18 +393,18 @@ private:
 
         auto oldHash = ::SerializeHash(oldValue);
         auto p = mnUniquePropertyMap.find(oldHash);
-        if (p == nullptr || p->first != dmn->proTxHash) {
+        if (p == nullptr || p->first != dmn.proTxHash) {
             return false;
         }
         if (p->second == 1) {
             mnUniquePropertyMap = mnUniquePropertyMap.erase(oldHash);
         } else {
-            mnUniquePropertyMap = mnUniquePropertyMap.set(oldHash, std::make_pair(dmn->proTxHash, p->second - 1));
+            mnUniquePropertyMap = mnUniquePropertyMap.set(oldHash, std::make_pair(dmn.proTxHash, p->second - 1));
         }
         return true;
     }
     template <typename T>
-    [[nodiscard]] bool UpdateUniqueProperty(const CDeterministicMNCPtr& dmn, const T& oldValue, const T& newValue)
+    [[nodiscard]] bool UpdateUniqueProperty(const CDeterministicMN& dmn, const T& oldValue, const T& newValue)
     {
         if (oldValue == newValue) {
             return true;
@@ -636,7 +484,7 @@ public:
     uint256 blockHash;
     int nHeight{-1};
     std::map<uint256, CDeterministicMNCPtr> addedMNs;
-    std::map<uint256, CDeterministicMNStateCPtr> updatedMNs;
+    std::map<uint256, std::shared_ptr<const CDeterministicMNState>> updatedMNs;
     std::set<uint256> removedMns;
 
     template<typename Stream>
@@ -663,14 +511,21 @@ public:
 
 class CDeterministicMNManager
 {
-    static const int DISK_SNAPSHOT_PERIOD = 576; // once per day
-    static const int DISK_SNAPSHOTS = 3; // keep cache for 3 disk snapshots to have 2 full days covered
-    static const int LIST_DIFFS_CACHE_SIZE = DISK_SNAPSHOT_PERIOD * DISK_SNAPSHOTS;
+    static constexpr int DISK_SNAPSHOT_PERIOD = 576; // once per day
+    static constexpr int DISK_SNAPSHOTS = 3; // keep cache for 3 disk snapshots to have 2 full days covered
+    static constexpr int LIST_DIFFS_CACHE_SIZE = DISK_SNAPSHOT_PERIOD * DISK_SNAPSHOTS;
 
 public:
     CCriticalSection cs;
 
 private:
+    Mutex cs_cleanup;
+    // We have performed CleanupCache() on this height.
+    int did_cleanup GUARDED_BY(cs_cleanup) {0};
+
+    // Main thread has indicated we should perform cleanup up to this height
+    std::atomic<int> to_cleanup {0};
+
     CEvoDB& evoDb;
 
     std::unordered_map<uint256, CDeterministicMNList, StaticSaltedHasher> mnListsCache GUARDED_BY(cs);
@@ -678,7 +533,8 @@ private:
     const CBlockIndex* tipIndex GUARDED_BY(cs) {nullptr};
 
 public:
-    explicit CDeterministicMNManager(CEvoDB& _evoDb);
+    explicit CDeterministicMNManager(CEvoDB& _evoDb) : evoDb(_evoDb) {}
+    ~CDeterministicMNManager() = default;
 
     bool ProcessBlock(const CBlock& block, const CBlockIndex* pindex, CValidationState& state,
                       const CCoinsViewCache& view, bool fJustCheck) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
@@ -689,7 +545,7 @@ public:
     // the returned list will not contain the correct block hash (we can't know it yet as the coinbase TX is not updated yet)
     bool BuildNewListFromBlock(const CBlock& block, const CBlockIndex* pindexPrev, CValidationState& state, const CCoinsViewCache& view,
                                CDeterministicMNList& mnListRet, bool debugLogs) EXCLUSIVE_LOCKS_REQUIRED(cs);
-    static void HandleQuorumCommitment(const llmq::CFinalCommitment& qc, const CBlockIndex* pindexQuorum, CDeterministicMNList& mnList, bool debugLogs);
+    static void HandleQuorumCommitment(const llmq::CFinalCommitment& qc, const CBlockIndex* pQuorumBaseBlockIndex, CDeterministicMNList& mnList, bool debugLogs);
     static void DecreasePoSePenalties(CDeterministicMNList& mnList);
 
     CDeterministicMNList GetListForBlock(const CBlockIndex* pindex);
@@ -704,9 +560,16 @@ public:
     void UpgradeDiff(CDBBatch& batch, const CBlockIndex* pindexNext, const CDeterministicMNList& curMNList, CDeterministicMNList& newMNList);
     bool UpgradeDBIfNeeded();
 
+    void DoMaintenance();
+
 private:
     void CleanupCache(int nHeight) EXCLUSIVE_LOCKS_REQUIRED(cs);
 };
+
+bool CheckProRegTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state, const CCoinsViewCache& view, bool check_sigs);
+bool CheckProUpServTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state, bool check_sigs);
+bool CheckProUpRegTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state, const CCoinsViewCache& view, bool check_sigs);
+bool CheckProUpRevTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state, bool check_sigs);
 
 extern std::unique_ptr<CDeterministicMNManager> deterministicMNManager;
 

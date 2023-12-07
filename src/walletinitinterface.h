@@ -5,10 +5,6 @@
 #ifndef BITCOIN_WALLETINITINTERFACE_H
 #define BITCOIN_WALLETINITINTERFACE_H
 
-#include <string>
-
-class CScheduler;
-class CRPCTable;
 struct InitInterfaces;
 
 class WalletInitInterface {
@@ -25,7 +21,6 @@ public:
     // Dash Specific WalletInitInterface
     virtual void AutoLockMasternodeCollaterals() const = 0;
     virtual void InitCoinJoinSettings() const = 0;
-    virtual void InitKeePass() const = 0;
     virtual bool InitAutoBackup() const = 0;
 
     virtual ~WalletInitInterface() {}

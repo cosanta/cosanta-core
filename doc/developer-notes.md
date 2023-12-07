@@ -26,7 +26,7 @@ Developer Notes
     - [General C++](#general-c)
     - [C++ data structures](#c-data-structures)
     - [Strings and formatting](#strings-and-formatting)
-    - [Variable names](#variable-names)
+    - [Shadowing](#shadowing)
     - [Threads and synchronization](#threads-and-synchronization)
     - [Source code organization](#source-code-organization)
     - [GUI](#gui)
@@ -293,7 +293,7 @@ thread](https://askubuntu.com/questions/50145/how-to-install-perf-monitoring-too
 for specific instructions.
 
 Certain kernel parameters may need to be set for perf to be able to inspect the
-running process' stack.
+running process's stack.
 
 ```sh
 $ sudo sysctl -w kernel.perf_event_paranoid=-1
@@ -416,8 +416,6 @@ Threads
 - ThreadMessageHandler : Higher-level message handling (sending and receiving).
 
 - DumpAddresses : Dumps IP addresses of nodes to peers.dat.
-
-- ThreadFlushWalletDB : Close the wallet.dat file if it hasn't been used in 500ms.
 
 - ThreadRPCServer : Remote procedure call handler, listens on port 9998 for connections and services them.
 
@@ -621,6 +619,18 @@ int GetInt(Tabs tab)
 
 *Rationale*: The comment documents skipping `default:` label, and it complies with `clang-format` rules. The assertion prevents firing of `-Wreturn-type` warning on some compilers.
 
+- Initialize all non-static class members where they are defined
+
+  - *Rationale*: Initializing the members in the declaration makes it easy to spot uninitialized ones,
+  and avoids accidentally reading uninitialized memory
+
+```cpp
+class A
+{
+    uint32_t m_count{0};
+}
+```
+
 Strings and formatting
 ------------------------
 
@@ -671,26 +681,34 @@ Strings and formatting
 
   - *Rationale*: Cosanta Core uses tinyformat, which is type safe. Leave them out to avoid confusion
 
-Variable names
+- Use `.c_str()` sparingly. Its only valid use is to pass C++ strings to C functions that take NULL-terminated
+  strings.
+
+  - Do not use it when passing a sized array (so along with `.size()`). Use `.data()` instead to get a pointer
+    to the raw data.
+
+    - *Rationale*: Although this is guaranteed to be safe starting with C++11, `.data()` communicates the intent better.
+
+  - Do not use it when passing strings to `tfm::format`, `strprintf`, `LogPrint[f]`.
+
+    - *Rationale*: This is redundant. Tinyformat handles strings.
+
+  - Do not use it to convert to `QString`. Use `QString::fromStdString()`.
+
+    - *Rationale*: Qt has built-in functionality for converting their string
+      type from/to C++. No need to roll your own.
+
+  - In cases where do you call `.c_str()`, you might want to additionally check that the string does not contain embedded '\0' characters, because
+    it will (necessarily) truncate the string. This might be used to hide parts of the string from logging or to circumvent
+    checks. If a use of strings is sensitive to this, take care to check the string for embedded NULL characters first
+    and reject it if there are any (see `ParsePrechecks` in `strencodings.cpp` for an example).
+
+Shadowing
 --------------
 
 Although the shadowing warning (`-Wshadow`) is not enabled by default (it prevents issues rising
 from using a different variable with the same name),
 please name variables so that their names do not shadow variables defined in the source code.
-
-E.g. in member initializers, prepend `_` to the argument name shadowing the
-member name:
-
-```c++
-class AddressBookPage
-{
-    Mode mode;
-}
-
-AddressBookPage::AddressBookPage(Mode _mode) :
-      mode(_mode)
-...
-```
 
 When using nested cycles, do not name the inner cycle variable the same as in
 upper cycle etc.
@@ -1065,8 +1083,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
     from there.
 
 - A RPC method must either be a wallet method or a non-wallet method. Do not
-  introduce new methods such as `signrawtransaction` that differ in behavior
-  based on presence of a wallet.
+  introduce new methods that differ in behavior based on presence of a wallet.
 
   - *Rationale*: as well as complicating the implementation and interfering
     with the introduction of multi-wallet, wallet and non-wallet code should be

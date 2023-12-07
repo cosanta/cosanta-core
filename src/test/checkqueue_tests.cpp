@@ -3,10 +3,11 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <sync.h>
+#include <util/memory.h>
 #include <util/system.h>
 #include <util/time.h>
 
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 #include <checkqueue.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/thread.hpp>
@@ -17,8 +18,6 @@
 #include <condition_variable>
 
 #include <unordered_set>
-#include <memory>
-#include <random.h>
 
 BOOST_FIXTURE_TEST_SUITE(checkqueue_tests, TestingSetup)
 
@@ -333,7 +332,8 @@ BOOST_AUTO_TEST_CASE(test_CheckQueue_FrozenCleanup)
         // would get called twice).
         vChecks[0].should_freeze = true;
         control.Add(vChecks);
-        BOOST_CHECK(control.Wait()); // Hangs here
+        bool waitResult = control.Wait(); // Hangs here
+        assert(waitResult);
     });
     {
         std::unique_lock<std::mutex> l(FrozenCleanupCheck::m);

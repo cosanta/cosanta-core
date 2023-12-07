@@ -1,17 +1,22 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <evo/deterministicmns.h>
-#include <governance/governance.h>
+#include <masternode/payments.h>
+
+#include <amount.h>
+#include <chain.h>
+#include <chainparams.h>
 #include <evo/deterministicmns.h>
 #include <governance/classes.h>
-#include <masternode/node.h>
-#include <masternode/payments.h>
+#include <governance/governance.h>
+#include <key_io.h>
+#include <logging.h>
 #include <masternode/sync.h>
-#include <netfulfilledman.h>
-#include <netmessagemaker.h>
+#include <primitives/block.h>
+#include <script/standard.h>
+#include <tinyformat.h>
+#include <util/system.h>
 #include <validation.h>
 
 #include <string>
@@ -267,27 +272,15 @@ bool CMasternodePayments::GetBlockTxOuts(int nBlockHeight, CAmount blockReward, 
 {
     voutMasternodePaymentsRet.clear();
 
-    const CBlockIndex* pindex;
-    int nReallocActivationHeight{std::numeric_limits<int>::max()};
-
-    {
-        LOCK(cs_main);
-        pindex = chainActive[nBlockHeight - 1];
-
-        const Consensus::Params& consensusParams = Params().GetConsensus();
-        if (VersionBitsState(pindex, consensusParams, Consensus::DEPLOYMENT_REALLOC, versionbitscache) == ThresholdState::ACTIVE) {
-            nReallocActivationHeight = VersionBitsStateSinceHeight(pindex, consensusParams, Consensus::DEPLOYMENT_REALLOC, versionbitscache);
-        }
-    }
-
-    CAmount masternodeReward = GetMasternodePayment(nBlockHeight, blockReward, nReallocActivationHeight);
-
+    const CBlockIndex* pindex = WITH_LOCK(cs_main, return ::ChainActive()[nBlockHeight - 1]);
     auto dmnPayee = deterministicMNManager->GetListForBlock(pindex).GetMNPayee();
     if (!dmnPayee) {
         return false;
     }
 
     CAmount operatorReward = 0;
+    CAmount masternodeReward = GetMasternodePayment(nBlockHeight, blockReward, Params().GetConsensus().BRRHeight);
+
     if (dmnPayee->nOperatorReward != 0 && dmnPayee->pdmnState->scriptOperatorPayout != CScript()) {
         // This calculation might eventually turn out to result in 0 even if an operator reward percentage is given.
         // This will however only happen in a few years when the block rewards drops very low.
@@ -319,13 +312,7 @@ bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, int nBlo
     }
 
     for (const auto& txout : voutMasternodePayments) {
-        bool found = false;
-        for (const auto& txout2 : txNew.vout) {
-            if (txout == txout2) {
-                found = true;
-                break;
-            }
-        }
+        bool found = ranges::any_of(txNew.vout, [&txout](const auto& txout2) {return txout == txout2;});
         if (!found) {
             CTxDestination dest;
             if (!ExtractDestination(txout.scriptPubKey, dest))

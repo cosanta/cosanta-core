@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -158,6 +157,9 @@ transactionView(nullptr), abandonAction(nullptr), columnResizingFixer(nullptr)
     QAction *editLabelAction = new QAction(tr("Edit label"), this);
     QAction *showDetailsAction = new QAction(tr("Show transaction details"), this);
     QAction *showAddressQRCodeAction = new QAction(tr("Show address QR code"), this);
+#ifndef USE_QRCODE
+    showAddressQRCodeAction->setEnabled(false);
+#endif
 
     contextMenu = new QMenu(this);
     contextMenu->setObjectName("contextMenu");
@@ -739,7 +741,9 @@ void TransactionView::updateCoinJoinVisibility()
     }
     bool fEnabled = model->node().coinJoinOptions().isEnabled();
     // If CoinJoin gets enabled use "All" else "Most common"
-    typeWidget->setCurrentIndex(fEnabled ? 0 : 1);
+    int idx = fEnabled ? 0 : 1;
+    chooseType(idx);
+    typeWidget->setCurrentIndex(idx);
     // Hide all CoinJoin related filters
     QListView* typeList = qobject_cast<QListView*>(typeWidget->view());
     std::vector<int> vecRows{4, 5, 6, 7, 8};

@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,6 +8,7 @@
 #include <wallet/wallet.h>
 
 class CTransactionBuilder;
+struct bilingual_str;
 
 class CKeyHolder
 {
@@ -117,7 +117,7 @@ public:
     /// Get the total number of added outputs
     int CountOutputs() const { LOCK(cs_outputs); return vecOutputs.size(); }
     /// Create and Commit the transaction to the wallet
-    bool Commit(std::string& strResult);
+    bool Commit(bilingual_str& strResult);
     /// Convert to a string
     std::string ToString() const;
 

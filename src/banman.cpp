@@ -9,12 +9,13 @@
 #include <ui_interface.h>
 #include <util/system.h>
 #include <util/time.h>
+#include <util/translation.h>
 
 
 BanMan::BanMan(fs::path ban_file, CClientUIInterface* client_interface, int64_t default_ban_time)
     : m_client_interface(client_interface), m_ban_db(std::move(ban_file)), m_default_ban_time(default_ban_time)
 {
-    if (m_client_interface) m_client_interface->InitMessage(_("Loading banlist..."));
+    if (m_client_interface) m_client_interface->InitMessage(_("Loading banlist...").translated);
 
     int64_t n_start = GetTimeMillis();
     m_is_dirty = false;
@@ -25,7 +26,7 @@ BanMan::BanMan(fs::path ban_file, CClientUIInterface* client_interface, int64_t 
         SweepBanned();            // sweep out unused entries
 
         LogPrint(BCLog::NET, "Loaded %d banned node ips/subnets from banlist.dat  %dms\n",
-            banmap.size(), GetTimeMillis() - n_start);
+            m_banned.size(), GetTimeMillis() - n_start);
     } else {
         LogPrintf("Recreating banlist.dat\n");
         SetBannedSetDirty(true); // force write

@@ -1,16 +1,13 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <rpc/client.h>
-#include <rpc/protocol.h>
 #include <util/system.h>
 
 #include <set>
-#include <stdint.h>
 
 class CRPCConvertParam
 {
@@ -20,6 +17,7 @@ public:
     std::string paramName;  //!< parameter name
 };
 
+// clang-format off
 /**
  * Specify a (method, idx, name) here if the argument is a non-string RPC
  * argument and needs to be converted from JSON.
@@ -83,6 +81,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "sendmany", 6, "use_is" },
     { "sendmany", 7, "use_cj" },
     { "sendmany", 8, "conf_target" },
+    { "deriveaddresses", 1, "begin" },
+    { "deriveaddresses", 2, "end" },
     { "scantxoutset", 1, "scanobjects" },
     { "addmultisigaddress", 0, "nrequired" },
     { "addmultisigaddress", 1, "keys" },
@@ -109,10 +109,12 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "signrawtransactionwithkey", 2, "prevtxs" },
     { "signrawtransactionwithwallet", 1, "prevtxs" },
     { "sendrawtransaction", 1, "allowhighfees" },
+    { "sendrawtransaction", 1, "maxfeerate" },
     { "sendrawtransaction", 2, "instantsend" },
     { "sendrawtransaction", 3, "bypasslimits" },
     { "testmempoolaccept", 0, "rawtxs" },
     { "testmempoolaccept", 1, "allowhighfees" },
+    { "testmempoolaccept", 1, "maxfeerate" },
     { "combinerawtransaction", 0, "txs" },
     { "fundrawtransaction", 1, "options" },
     { "walletcreatefundedpsbt", 0, "inputs" },
@@ -126,6 +128,7 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "createpsbt", 1, "outputs" },
     { "createpsbt", 2, "locktime" },
     { "combinepsbt", 0, "txs"},
+    { "joinpsbts", 0, "txs"},
     { "finalizepsbt", 1, "extract"},
     { "converttopsbt", 1, "permitsigdata"},
     { "gettxout", 1, "n" },
@@ -192,8 +195,11 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "rescanblockchain", 0, "start_height"},
     { "rescanblockchain", 1, "stop_height"},
     { "createwallet", 1, "disable_private_keys"},
+    { "createwallet", 2, "blank"},
+    { "getnodeaddresses", 0, "count"},
     { "stop", 0, "wait" },
 };
+// clang-format on
 
 class CRPCConvertTable
 {

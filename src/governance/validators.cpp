@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,10 +15,11 @@
 const size_t MAX_DATA_SIZE = 512;
 const size_t MAX_NAME_SIZE = 40;
 
-CProposalValidator::CProposalValidator(const std::string& strHexData, bool fAllowLegacyFormat) :
+CProposalValidator::CProposalValidator(const std::string& strHexData, bool fAllowLegacyFormat, bool fAllowScript) :
     objJSON(UniValue::VOBJ),
     fJSONValid(false),
     fAllowLegacyFormat(fAllowLegacyFormat),
+    fAllowScript(fAllowScript),
     strErrorMessages()
 {
     if (!strHexData.empty()) {
@@ -99,9 +99,14 @@ bool CProposalValidator::ValidateName()
         return false;
     }
 
-    static const std::string strAllowedChars = "-_abcdefghijklmnopqrstuvwxyz0123456789";
+    if (strName.empty()) {
+        strErrorMessages += "name cannot be empty;";
+        return false;
+    }
 
-    std::transform(strName.begin(), strName.end(), strName.begin(), ::tolower);
+    static constexpr std::string_view strAllowedChars{"-_abcdefghijklmnopqrstuvwxyz0123456789"};
+
+    strName = ToLower(strName);
 
     if (strName.find_first_not_of(strAllowedChars) != std::string::npos) {
         strErrorMessages += "name contains invalid characters;";
@@ -169,7 +174,7 @@ bool CProposalValidator::ValidatePaymentAddress()
         return false;
     }
 
-    if (std::find_if(strPaymentAddress.begin(), strPaymentAddress.end(), ::isspace) != strPaymentAddress.end()) {
+    if (std::find_if(strPaymentAddress.begin(), strPaymentAddress.end(), IsSpace) != strPaymentAddress.end()) {
         strErrorMessages += "payment_address can't have whitespaces;";
         return false;
     }
@@ -181,7 +186,7 @@ bool CProposalValidator::ValidatePaymentAddress()
     }
 
     const CScriptID *scriptID = boost::get<CScriptID>(&dest);
-    if (scriptID) {
+    if (!fAllowScript && scriptID) {
         strErrorMessages += "script addresses are not supported;";
         return false;
     }
@@ -197,7 +202,7 @@ bool CProposalValidator::ValidateURL()
         return false;
     }
 
-    if (std::find_if(strURL.begin(), strURL.end(), ::isspace) != strURL.end()) {
+    if (std::find_if(strURL.begin(), strURL.end(), IsSpace) != strURL.end()) {
         strErrorMessages += "url can't have whitespaces;";
         return false;
     }
@@ -325,7 +330,7 @@ bool CProposalValidator::CheckURL(const std::string& strURLIn)
 
     // Process netloc
     if ((strRest.size() > 2) && (strRest.substr(0, 2) == "//")) {
-        static const std::string strNetlocDelimiters = "/?#";
+        static constexpr std::string_view strNetlocDelimiters{"/?#"};
 
         strRest = strRest.substr(2);
 

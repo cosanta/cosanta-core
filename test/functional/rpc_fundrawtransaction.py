@@ -5,8 +5,18 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test the fundrawtransaction RPC."""
 
+from decimal import Decimal
 from test_framework.test_framework import BitcoinTestFramework
-from test_framework.util import *
+from test_framework.util import (
+    assert_equal,
+    assert_fee_amount,
+    assert_greater_than,
+    assert_greater_than_or_equal,
+    assert_raises_rpc_error,
+    connect_nodes,
+    count_bytes,
+    find_vout_for_address,
+)
 
 
 def get_unspent(listunspent, amount):
@@ -27,10 +37,10 @@ class RawTransactionsTest(BitcoinTestFramework):
     def setup_network(self):
         self.setup_nodes()
 
-        connect_nodes_bi(self.nodes, 0, 1)
-        connect_nodes_bi(self.nodes, 1, 2)
-        connect_nodes_bi(self.nodes, 0, 2)
-        connect_nodes_bi(self.nodes, 0, 3)
+        connect_nodes(self.nodes[0], 1)
+        connect_nodes(self.nodes[1], 2)
+        connect_nodes(self.nodes[0], 2)
+        connect_nodes(self.nodes[0], 3)
 
     def run_test(self):
         min_relay_tx_fee = self.nodes[0].getnetworkinfo()['relayfee']
@@ -62,6 +72,11 @@ class RawTransactionsTest(BitcoinTestFramework):
         watchonly_amount = Decimal(2000)
         self.nodes[3].importpubkey(watchonly_pubkey, "", True)
         watchonly_txid = self.nodes[0].sendtoaddress(watchonly_address, watchonly_amount)
+
+        # Lock UTXO so nodes[0] doesn't accidentally spend it
+        watchonly_vout = find_vout_for_address(self.nodes[0], watchonly_txid, watchonly_address)
+        self.nodes[0].lockunspent(False, [{"txid": watchonly_txid, "vout": watchonly_vout}])
+
         self.nodes[0].sendtoaddress(self.nodes[3].getnewaddress(), watchonly_amount / 10)
 
         self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 15)
@@ -458,10 +473,13 @@ class RawTransactionsTest(BitcoinTestFramework):
         for node in self.nodes:
             node.settxfee(min_relay_tx_fee)
 
-        connect_nodes_bi(self.nodes,0,1)
-        connect_nodes_bi(self.nodes,1,2)
-        connect_nodes_bi(self.nodes,0,2)
-        connect_nodes_bi(self.nodes,0,3)
+        connect_nodes(self.nodes[0], 1)
+        connect_nodes(self.nodes[1], 2)
+        connect_nodes(self.nodes[0], 2)
+        connect_nodes(self.nodes[0], 3)
+        # Again lock the watchonly UTXO or nodes[0] may spend it, because
+        # lockunspent is memory-only and thus lost on restart
+        self.nodes[0].lockunspent(False, [{"txid": watchonly_txid, "vout": watchonly_vout}])
         self.sync_all()
 
         # drain the keypool
@@ -627,6 +645,7 @@ class RawTransactionsTest(BitcoinTestFramework):
         result = self.nodes[3].fundrawtransaction(rawtx) # uses min_relay_tx_fee (set by settxfee)
         result2 = self.nodes[3].fundrawtransaction(rawtx, {"feeRate": 2*min_relay_tx_fee})
         result3 = self.nodes[3].fundrawtransaction(rawtx, {"feeRate": 10*min_relay_tx_fee})
+        assert_raises_rpc_error(-4, "Fee exceeds maximum configured by -maxtxfee", self.nodes[3].fundrawtransaction, rawtx, {"feeRate": 1})
         result_fee_rate = result['fee'] * 1000 / count_bytes(result['hex'])
         assert_fee_amount(result2['fee'], count_bytes(result2['hex']), 2 * result_fee_rate)
         assert_fee_amount(result3['fee'], count_bytes(result3['hex']), 10 * result_fee_rate)

@@ -1,17 +1,17 @@
-// Copyright (c) 2019-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2019-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_LLMQ_CHAINLOCKS_H
 #define BITCOIN_LLMQ_CHAINLOCKS_H
 
-#include <bls/bls.h>
-#include <llmq/signing.h>
+#include <llmq/clsig.h>
 
-#include <chainparams.h>
 #include <crypto/common.h>
+#include <llmq/signing.h>
 #include <net.h>
+#include <primitives/block.h>
+#include <primitives/transaction.h>
 #include <saltedhasher.h>
 #include <streams.h>
 #include <sync.h>
@@ -19,48 +19,27 @@
 #include <atomic>
 #include <unordered_set>
 
-#include <boost/thread.hpp>
-
 class CBlockIndex;
 class CScheduler;
 
 namespace llmq
 {
 
-extern const std::string CLSIG_REQUESTID_PREFIX;
-
-class CChainLockSig
-{
-public:
-    int32_t nHeight{-1};
-    uint256 blockHash;
-    CBLSSignature sig;
-
-public:
-    SERIALIZE_METHODS(CChainLockSig, obj)
-    {
-        READWRITE(obj.nHeight, obj.blockHash, obj.sig);
-    }
-
-    bool IsNull() const;
-    std::string ToString() const;
-};
-
 class CChainLocksHandler : public CRecoveredSigsListener
 {
-    static const int64_t CLEANUP_INTERVAL = 1000 * 30;
-    static const int64_t CLEANUP_SEEN_TIMEOUT = 24 * 60 * 60 * 1000;
+    static constexpr int64_t CLEANUP_INTERVAL = 1000 * 30;
+    static constexpr int64_t CLEANUP_SEEN_TIMEOUT = 24 * 60 * 60 * 1000;
 
     // how long to wait for islocks until we consider a block with non-islocked TXs to be safe to sign
-    static const int64_t WAIT_FOR_ISLOCK_TIMEOUT = 10 * 60;
+    static constexpr int64_t WAIT_FOR_ISLOCK_TIMEOUT = 10 * 60;
 
 private:
-    CScheduler* scheduler;
-    boost::thread* scheduler_thread;
-    CCriticalSection cs;
-    bool tryLockChainTipScheduled GUARDED_BY(cs) {false};
-    bool isEnabled GUARDED_BY(cs) {false};
-    bool isEnforced GUARDED_BY(cs) {false};
+    std::unique_ptr<CScheduler> scheduler;
+    std::unique_ptr<std::thread> scheduler_thread;
+    mutable CCriticalSection cs;
+    std::atomic<bool> tryLockChainTipScheduled{false};
+    std::atomic<bool> isEnabled{false};
+    std::atomic<bool> isEnforced{false};
 
     uint256 bestChainLockHash GUARDED_BY(cs);
     CChainLockSig bestChainLock GUARDED_BY(cs);
@@ -93,14 +72,14 @@ public:
     void Start();
     void Stop();
 
-    bool AlreadyHave(const CInv& inv);
-    bool GetChainLockByHash(const uint256& hash, CChainLockSig& ret);
-    CChainLockSig GetBestChainLock();
+    bool AlreadyHave(const CInv& inv) const;
+    bool GetChainLockByHash(const uint256& hash, CChainLockSig& ret) const;
+    CChainLockSig GetBestChainLock() const;
 
     void ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv);
     void ProcessNewChainLock(NodeId from, const CChainLockSig& clsig, const uint256& hash);
     void AcceptedBlockHeader(const CBlockIndex* pindexNew);
-    void UpdatedBlockTip(const CBlockIndex* pindexNew);
+    void UpdatedBlockTip();
     void TransactionAddedToMempool(const CTransactionRef& tx, int64_t nAcceptTime);
     void BlockConnected(const std::shared_ptr<const CBlock>& pblock, const CBlockIndex* pindex, const std::vector<CTransactionRef>& vtxConflicted);
     void BlockDisconnected(const std::shared_ptr<const CBlock>& pblock, const CBlockIndex* pindexDisconnected);
@@ -109,15 +88,15 @@ public:
     void EnforceBestChainLock();
     void HandleNewRecoveredSig(const CRecoveredSig& recoveredSig) override;
 
-    bool HasChainLock(int nHeight, const uint256& blockHash);
-    bool HasConflictingChainLock(int nHeight, const uint256& blockHash);
+    bool HasChainLock(int nHeight, const uint256& blockHash) const;
+    bool HasConflictingChainLock(int nHeight, const uint256& blockHash) const;
 
-    bool IsTxSafeForMining(const uint256& txid);
+    bool IsTxSafeForMining(const uint256& txid) const;
 
 private:
     // these require locks to be held already
-    bool InternalHasChainLock(int nHeight, const uint256& blockHash);
-    bool InternalHasConflictingChainLock(int nHeight, const uint256& blockHash);
+    bool InternalHasChainLock(int nHeight, const uint256& blockHash) const EXCLUSIVE_LOCKS_REQUIRED(cs);
+    bool InternalHasConflictingChainLock(int nHeight, const uint256& blockHash) const EXCLUSIVE_LOCKS_REQUIRED(cs);
 
     BlockTxs::mapped_type GetBlockTxs(const uint256& blockHash);
 

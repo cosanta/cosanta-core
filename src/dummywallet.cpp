@@ -5,10 +5,19 @@
 #include <logging.h>
 #include <util/system.h>
 #include <walletinitinterface.h>
+#include <support/allocators/secure.h>
 
 #include <stdio.h>
 
 class CWallet;
+enum class WalletCreationStatus;
+struct bilingual_str;
+
+namespace interfaces {
+class Chain;
+class Handler;
+class Wallet;
+}
 
 class DummyWalletInit : public WalletInitInterface {
 public:
@@ -21,23 +30,50 @@ public:
     // Dash Specific WalletInitInterface InitCoinJoinSettings
     void AutoLockMasternodeCollaterals() const override {}
     void InitCoinJoinSettings() const override {}
-    void InitKeePass() const override {}
     bool InitAutoBackup() const override {return true;}
 };
 
 void DummyWalletInit::AddWalletOptions() const
 {
-    std::vector<std::string> opts = {"-createwalletbackups=<n>", "-disablewallet", "-instantsendnotify=<cmd>",
-        "-keypool=<n>", "-rescan=<mode>", "-salvagewallet", "-spendzeroconfchange", "-upgradewallet",
-        "-wallet=<path>", "-walletbackupsdir=<dir>", "-walletbroadcast", "-walletdir=<dir>",
-        "-walletnotify=<cmd>", "-zapwallettxes=<mode>", "-discardfee=<amt>", "-fallbackfee=<amt>",
-        "-mintxfee=<amt>", "-paytxfee=<amt>", "-txconfirmtarget=<n>", "-hdseed=<hex>", "-mnemonic=<text>",
-        "-mnemonicpassphrase=<text>", "-usehd", "-keepass", "-keepassid=<id>", "-keepasskey=<key>",
-        "-keepassname=<name>", "-keepassport=<port>", "-enablecoinjoin", "-coinjoinamount=<n>",
-        "-coinjoinautostart", "-coinjoindenomsgoal=<n>", "-coinjoindenomshardcap=<n>", "-coinjoinmultisession",
-        "-coinjoinrounds=<n>", "-coinjoinsessions=<n>", "-dblogsize=<n>", "-flushwallet", "-privdb",
-        "-walletrejectlongchains"};
-    gArgs.AddHiddenArgs(opts);
+    gArgs.AddHiddenArgs({
+        "-avoidpartialspends",
+        "-createwalletbackups=<n>",
+        "-disablewallet",
+        "-instantsendnotify=<cmd>",
+        "-keypool=<n>",
+        "-maxtxfee=<amt>",
+        "-rescan=<mode>",
+        "-salvagewallet",
+        "-spendzeroconfchange",
+        "-upgradewallet",
+        "-wallet=<path>",
+        "-walletbackupsdir=<dir>",
+        "-walletbroadcast",
+        "-walletdir=<dir>",
+        "-walletnotify=<cmd>",
+        "-zapwallettxes=<mode>",
+        "-discardfee=<amt>",
+        "-fallbackfee=<amt>",
+        "-mintxfee=<amt>",
+        "-paytxfee=<amt>",
+        "-txconfirmtarget=<n>",
+        "-hdseed=<hex>",
+        "-mnemonic=<text>",
+        "-mnemonicpassphrase=<text>",
+        "-usehd",
+        "-enablecoinjoin",
+        "-coinjoinamount=<n>",
+        "-coinjoinautostart",
+        "-coinjoindenomsgoal=<n>",
+        "-coinjoindenomshardcap=<n>",
+        "-coinjoinmultisession",
+        "-coinjoinrounds=<n>",
+        "-coinjoinsessions=<n>",
+        "-dblogsize=<n>",
+        "-flushwallet",
+        "-privdb",
+        "-walletrejectlongchains"
+    });
 }
 
 const WalletInitInterface& g_wallet_init_interface = DummyWalletInit();
@@ -57,9 +93,23 @@ std::vector<std::shared_ptr<CWallet>> GetWallets()
     throw std::logic_error("Wallet function called in non-wallet build.");
 }
 
-namespace interfaces {
+std::shared_ptr<CWallet> LoadWallet(interfaces::Chain& chain, const std::string& name, bilingual_str& error, std::vector<bilingual_str>& warnings)
+{
+    throw std::logic_error("Wallet function called in non-wallet build.");
+}
 
-class Wallet;
+WalletCreationStatus CreateWallet(interfaces::Chain& chain, const SecureString& passphrase, uint64_t wallet_creation_flags, const std::string& name, bilingual_str& error, std::vector<bilingual_str>& warnings, std::shared_ptr<CWallet>& result)
+{
+    throw std::logic_error("Wallet function called in non-wallet build.");
+}
+
+using LoadWalletFn = std::function<void(std::unique_ptr<interfaces::Wallet> wallet)>;
+std::unique_ptr<interfaces::Handler> HandleLoadWallet(LoadWalletFn load_wallet)
+{
+    throw std::logic_error("Wallet function called in non-wallet build.");
+}
+
+namespace interfaces {
 
 std::unique_ptr<Wallet> MakeWallet(const std::shared_ptr<CWallet>& wallet)
 {

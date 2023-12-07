@@ -1,13 +1,11 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_SCRIPT_SIGN_H
 #define BITCOIN_SCRIPT_SIGN_H
 
-#include <boost/optional.hpp>
 #include <hash.h>
 #include <pubkey.h>
 #include <script/interpreter.h>
@@ -23,8 +21,24 @@ struct CMutableTransaction;
 
 struct KeyOriginInfo
 {
-    unsigned char fingerprint[4];
+    unsigned char fingerprint[4]; //!< First 32 bits of the Hash160 of the public key at the root of the path
     std::vector<uint32_t> path;
+
+    friend bool operator==(const KeyOriginInfo& a, const KeyOriginInfo& b)
+    {
+        return std::equal(std::begin(a.fingerprint), std::end(a.fingerprint), std::begin(b.fingerprint)) && a.path == b.path;
+    }
+
+    SERIALIZE_METHODS(KeyOriginInfo, obj)
+    {
+        READWRITE(obj.fingerprint, obj.path);
+    }
+
+    void clear()
+    {
+        memset(fingerprint, 0, 4);
+        path.clear();
+    }
 };
 
 /** An interface to be implemented by keystores that support signing. */
@@ -59,7 +73,7 @@ struct FlatSigningProvider final : public SigningProvider
 {
     std::map<CScriptID, CScript> scripts;
     std::map<CKeyID, CPubKey> pubkeys;
-    std::map<CKeyID, KeyOriginInfo> origins;
+    std::map<CKeyID, std::pair<CPubKey, KeyOriginInfo>> origins;
     std::map<CKeyID, CKey> keys;
 
     bool GetCScript(const CScriptID& scriptid, CScript& script) const override;

@@ -1,5 +1,4 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,7 +12,6 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <iterator>
 #include <type_traits>
 
 /** Implements a drop-in replacement for std::vector<T> which stores up to N
@@ -557,7 +555,7 @@ public:
         // This avoids internal use of std::copy and operator++ on the iterators and instead allows efficient memcpy/memmove
         if (std::is_trivially_constructible<T>::value) {
             auto s = e - b;
-            if (v.size() != s) {
+            if (v.size() != size_t(s)) {
                 v.resize(s);
             }
             if (!v.empty()) {

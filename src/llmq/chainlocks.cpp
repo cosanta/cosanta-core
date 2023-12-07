@@ -1,5 +1,4 @@
-// Copyright (c) 2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2019-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,6 +8,7 @@
 #include <llmq/utils.h>
 
 #include <chain.h>
+#include <chainparams.h>
 #include <consensus/validation.h>
 #include <masternode/sync.h>
 #include <net_processing.h>
@@ -20,34 +20,19 @@
 
 namespace llmq
 {
-
-const std::string CLSIG_REQUESTID_PREFIX = "clsig";
-
 CChainLocksHandler* chainLocksHandler;
 
-bool CChainLockSig::IsNull() const
+CChainLocksHandler::CChainLocksHandler() :
+    scheduler(std::make_unique<CScheduler>())
 {
-    return nHeight == -1 && blockHash == uint256();
-}
-
-std::string CChainLockSig::ToString() const
-{
-    return strprintf("CChainLockSig(nHeight=%d, blockHash=%s)", nHeight, blockHash.ToString());
-}
-
-CChainLocksHandler::CChainLocksHandler()
-{
-    scheduler = new CScheduler();
-    CScheduler::Function serviceLoop = std::bind(&CScheduler::serviceQueue, scheduler);
-    scheduler_thread = new boost::thread(std::bind(&TraceThread<CScheduler::Function>, "cl-schdlr", serviceLoop));
+    CScheduler::Function serviceLoop = std::bind(&CScheduler::serviceQueue, scheduler.get());
+    scheduler_thread = std::make_unique<std::thread>(std::bind(&TraceThread<CScheduler::Function>, "cl-schdlr", serviceLoop));
 }
 
 CChainLocksHandler::~CChainLocksHandler()
 {
     scheduler->stop();
     scheduler_thread->join();
-    delete scheduler_thread;
-    delete scheduler;
 }
 
 void CChainLocksHandler::Start()
@@ -67,13 +52,13 @@ void CChainLocksHandler::Stop()
     quorumSigningManager->UnregisterRecoveredSigsListener(this);
 }
 
-bool CChainLocksHandler::AlreadyHave(const CInv& inv)
+bool CChainLocksHandler::AlreadyHave(const CInv& inv) const
 {
     LOCK(cs);
     return seenChainLocks.count(inv.hash) != 0;
 }
 
-bool CChainLocksHandler::GetChainLockByHash(const uint256& hash, llmq::CChainLockSig& ret)
+bool CChainLocksHandler::GetChainLockByHash(const uint256& hash, llmq::CChainLockSig& ret) const
 {
     LOCK(cs);
 
@@ -86,7 +71,7 @@ bool CChainLocksHandler::GetChainLockByHash(const uint256& hash, llmq::CChainLoc
     return true;
 }
 
-CChainLockSig CChainLocksHandler::GetBestChainLock()
+CChainLockSig CChainLocksHandler::GetBestChainLock() const
 {
     LOCK(cs);
     return bestChainLock;
@@ -165,7 +150,7 @@ void CChainLocksHandler::ProcessNewChainLock(const NodeId from, const llmq::CCha
 
     // Note: do not hold cs while calling RelayInv
     AssertLockNotHeld(cs);
-    g_connman->RelayInv(clsigInv, LLMQS_PROTO_VERSION);
+    g_connman->RelayInv(clsigInv);
 
     if (pindex == nullptr) {
         // we don't know the block/header for this CLSIG yet, so bail out for now
@@ -204,23 +189,20 @@ void CChainLocksHandler::AcceptedBlockHeader(const CBlockIndex* pindexNew)
     }
 }
 
-void CChainLocksHandler::UpdatedBlockTip(const CBlockIndex* pindexNew)
+void CChainLocksHandler::UpdatedBlockTip()
 {
     // don't call TrySignChainTip directly but instead let the scheduler call it. This way we ensure that cs_main is
     // never locked and TrySignChainTip is not called twice in parallel. Also avoids recursive calls due to
     // EnforceBestChainLock switching chains.
-    LOCK(cs);
-    if (tryLockChainTipScheduled) {
-        return;
+    // atomic[If tryLockChainTipScheduled is false, do (set it to true] and schedule signing).
+    if (bool expected = false; tryLockChainTipScheduled.compare_exchange_strong(expected, true)) {
+        scheduler->scheduleFromNow([&]() {
+            CheckActiveState();
+            EnforceBestChainLock();
+            TrySignChainTip();
+            tryLockChainTipScheduled = false;
+        }, 0);
     }
-    tryLockChainTipScheduled = true;
-    scheduler->scheduleFromNow([&]() {
-        CheckActiveState();
-        EnforceBestChainLock();
-        TrySignChainTip();
-        LOCK(cs);
-        tryLockChainTipScheduled = false;
-    }, 0);
 }
 
 void CChainLocksHandler::CheckActiveState()
@@ -228,10 +210,9 @@ void CChainLocksHandler::CheckActiveState()
     bool fDIP0008Active;
     {
         LOCK(cs_main);
-        fDIP0008Active = chainActive.Tip() && chainActive.Tip()->pprev && chainActive.Tip()->pprev->nHeight >= Params().GetConsensus().DIP0008Height;
+        fDIP0008Active = ::ChainActive().Tip() && ::ChainActive().Tip()->pprev && ::ChainActive().Tip()->pprev->nHeight >= Params().GetConsensus().DIP0008Height;
     }
 
-    LOCK(cs);
     bool oldIsEnforced = isEnforced;
     isEnabled = AreChainLocksEnabled();
     isEnforced = (fDIP0008Active && isEnabled);
@@ -240,6 +221,7 @@ void CChainLocksHandler::CheckActiveState()
         // ChainLocks got activated just recently, but it's possible that it was already running before, leaving
         // us with some stale values which we should not try to enforce anymore (there probably was a good reason
         // to disable spork19)
+        LOCK(cs);
         bestChainLockHash = uint256();
         bestChainLock = bestChainLockWithKnownBlock = CChainLockSig();
         bestChainLockBlockIndex = lastNotifyChainLockBlockIndex = nullptr;
@@ -258,10 +240,14 @@ void CChainLocksHandler::TrySignChainTip()
         return;
     }
 
+    if (!isEnabled) {
+        return;
+    }
+
     const CBlockIndex* pindex;
     {
         LOCK(cs_main);
-        pindex = chainActive.Tip();
+        pindex = ::ChainActive().Tip();
     }
 
     if (!pindex->pprev) {
@@ -275,10 +261,6 @@ void CChainLocksHandler::TrySignChainTip()
 
     {
         LOCK(cs);
-
-        if (!isEnabled) {
-            return;
-        }
 
         if (pindex->nHeight == lastSignedHeight) {
             // already signed this one
@@ -460,31 +442,32 @@ CChainLocksHandler::BlockTxs::mapped_type CChainLocksHandler::GetBlockTxs(const 
     return ret;
 }
 
-bool CChainLocksHandler::IsTxSafeForMining(const uint256& txid)
+bool CChainLocksHandler::IsTxSafeForMining(const uint256& txid) const
 {
     if (!RejectConflictingBlocks()) {
         return true;
     }
+    if (!isEnabled || !isEnforced) {
+        return true;
+    }
+
     if (!IsInstantSendEnabled()) {
+        return true;
+    }
+    if (quorumInstantSendManager->IsLocked(txid)) {
         return true;
     }
 
     int64_t txAge = 0;
     {
         LOCK(cs);
-        if (!isEnabled || !isEnforced) {
-            return true;
-        }
         auto it = txFirstSeenTime.find(txid);
         if (it != txFirstSeenTime.end()) {
             txAge = GetAdjustedTime() - it->second;
         }
     }
 
-    if (txAge < WAIT_FOR_ISLOCK_TIMEOUT && !quorumInstantSendManager->IsLocked(txid)) {
-        return false;
-    }
-    return true;
+    return txAge >= WAIT_FOR_ISLOCK_TIMEOUT;
 }
 
 // WARNING: cs_main and cs should not be held!
@@ -513,43 +496,16 @@ void CChainLocksHandler::EnforceBestChainLock()
         }
     }
 
-    bool activateNeeded;
     CValidationState state;
     const auto &params = Params();
-    {
-        LOCK(cs_main);
 
-        // Go backwards through the chain referenced by clsig until we find a block that is part of the main chain.
-        // For each of these blocks, check if there are children that are NOT part of the chain referenced by clsig
-        // and mark all of them as conflicting.
-        while (pindex && !chainActive.Contains(pindex)) {
-            // Mark all blocks that have the same prevBlockHash but are not equal to blockHash as conflicting
-            auto itp = mapPrevBlockIndex.equal_range(pindex->pprev->GetBlockHash());
-            for (auto jt = itp.first; jt != itp.second; ++jt) {
-                if (jt->second == pindex) {
-                    continue;
-                }
-                if (!MarkConflictingBlock(state, params, jt->second)) {
-                    LogPrintf("CChainLocksHandler::%s -- MarkConflictingBlock failed: %s\n", __func__, FormatStateMessage(state));
-                    // This should not have happened and we are in a state were it's not safe to continue anymore
-                    assert(false);
-                }
-                LogPrintf("CChainLocksHandler::%s -- CLSIG (%s) marked block %s as conflicting\n",
-                          __func__, clsig->ToString(), jt->second->GetBlockHash().ToString());
-            }
+    // Go backwards through the chain referenced by clsig until we find a block that is part of the main chain.
+    // For each of these blocks, check if there are children that are NOT part of the chain referenced by clsig
+    // and mark all of them as conflicting.
+    LogPrint(BCLog::CHAINLOCKS, "CChainLocksHandler::%s -- enforcing block %s via CLSIG (%s)\n", __func__, pindex->GetBlockHash().ToString(), clsig->ToString());
+    EnforceBlock(state, params, pindex);
 
-            pindex = pindex->pprev;
-        }
-        // In case blocks from the correct chain are invalid at the moment, reconsider them. The only case where this
-        // can happen right now is when missing superblock triggers caused the main chain to be dismissed first. When
-        // the trigger later appears, this should bring us to the correct chain eventually. Please note that this does
-        // NOT enforce invalid blocks in any way, it just causes re-validation.
-        if (!currentBestChainLockBlockIndex->IsValid()) {
-            ResetBlockFailureFlags(LookupBlockIndex(currentBestChainLockBlockIndex->GetBlockHash()));
-        }
-
-        activateNeeded = chainActive.Tip()->GetAncestor(currentBestChainLockBlockIndex->nHeight) != currentBestChainLockBlockIndex;
-    }
+    bool activateNeeded = WITH_LOCK(::cs_main, return ::ChainActive().Tip()->GetAncestor(currentBestChainLockBlockIndex->nHeight)) != currentBestChainLockBlockIndex;
 
     if (activateNeeded) {
         if(!ActivateBestChain(state, params)) {
@@ -557,7 +513,7 @@ void CChainLocksHandler::EnforceBestChainLock()
             return;
         }
         LOCK(cs_main);
-        if (chainActive.Tip()->GetAncestor(currentBestChainLockBlockIndex->nHeight) != currentBestChainLockBlockIndex) {
+        if (::ChainActive().Tip()->GetAncestor(currentBestChainLockBlockIndex->nHeight) != currentBestChainLockBlockIndex) {
             return;
         }
     }
@@ -574,13 +530,13 @@ void CChainLocksHandler::EnforceBestChainLock()
 
 void CChainLocksHandler::HandleNewRecoveredSig(const llmq::CRecoveredSig& recoveredSig)
 {
+    if (!isEnabled) {
+        return;
+    }
+
     CChainLockSig clsig;
     {
         LOCK(cs);
-
-        if (!isEnabled) {
-            return;
-        }
 
         if (recoveredSig.id != lastSignedRequestId || recoveredSig.msgHash != lastSignedMsgHash) {
             // this is not what we signed, so lets not create a CLSIG for it
@@ -598,13 +554,13 @@ void CChainLocksHandler::HandleNewRecoveredSig(const llmq::CRecoveredSig& recove
     ProcessNewChainLock(-1, clsig, ::SerializeHash(clsig));
 }
 
-bool CChainLocksHandler::HasChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::HasChainLock(int nHeight, const uint256& blockHash) const
 {
     LOCK(cs);
     return InternalHasChainLock(nHeight, blockHash);
 }
 
-bool CChainLocksHandler::InternalHasChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::InternalHasChainLock(int nHeight, const uint256& blockHash) const
 {
     AssertLockHeld(cs);
 
@@ -628,13 +584,13 @@ bool CChainLocksHandler::InternalHasChainLock(int nHeight, const uint256& blockH
     return pAncestor && pAncestor->GetBlockHash() == blockHash;
 }
 
-bool CChainLocksHandler::HasConflictingChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::HasConflictingChainLock(int nHeight, const uint256& blockHash) const
 {
     LOCK(cs);
     return InternalHasConflictingChainLock(nHeight, blockHash);
 }
 
-bool CChainLocksHandler::InternalHasConflictingChainLock(int nHeight, const uint256& blockHash)
+bool CChainLocksHandler::InternalHasConflictingChainLock(int nHeight, const uint256& blockHash) const
 {
     AssertLockHeld(cs);
 
@@ -705,7 +661,7 @@ void CChainLocksHandler::Cleanup()
             it = txFirstSeenTime.erase(it);
         } else if (!hashBlock.IsNull()) {
             auto pindex = LookupBlockIndex(hashBlock);
-            if (chainActive.Tip()->GetAncestor(pindex->nHeight) == pindex && chainActive.Height() - pindex->nHeight >= 6) {
+            if (::ChainActive().Tip()->GetAncestor(pindex->nHeight) == pindex && ::ChainActive().Height() - pindex->nHeight >= 6) {
                 // tx got confirmed >= 6 times, so we can stop keeping track of it
                 it = txFirstSeenTime.erase(it);
             } else {

@@ -1,7 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,13 +9,12 @@
 #include <support/allocators/secure.h>
 #include <chainparamsbase.h>
 #include <ctpl_stl.h>
-#include <random.h>
-#include <serialize.h>
 #include <stacktraces.h>
 #include <util/getuniquepath.h>
 #include <util/strencodings.h>
+#include <util/string.h>
+#include <util/translation.h>
 
-#include <stdarg.h>
 
 #if (defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__))
 #include <pthread.h>
@@ -50,11 +48,6 @@
 #pragma warning(disable:4717)
 #endif
 
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#endif
-#define _WIN32_WINNT 0x0501
-
 #ifdef _WIN32_IE
 #undef _WIN32_IE
 #endif
@@ -75,7 +68,6 @@
 #include <malloc.h>
 #endif
 
-#include <boost/thread.hpp>
 #include <thread>
 
 // Application startup time (used for uptime calculation)
@@ -135,7 +127,7 @@ bool LockDirectory(const fs::path& directory, const std::string lockfile_name, b
 
 void UnlockDirectory(const fs::path& directory, const std::string& lockfile_name)
 {
-    std::lock_guard<std::mutex> lock(cs_dir_locks);
+    LOCK(cs_dir_locks);
     dir_locks.erase((directory / lockfile_name).string());
 }
 
@@ -296,22 +288,24 @@ public:
  * This method also tracks when the -no form was supplied, and if so,
  * checks whether there was a double-negative (-nofoo=0 -> -foo=1).
  *
- * If there was not a double negative, it removes the "no" from the key,
- * and returns true, indicating the caller should clear the args vector
- * to indicate a negated option.
+ * If there was not a double negative, it removes the "no" from the key
+ * and clears the args vector to indicate a negated option.
  *
  * If there was a double negative, it removes "no" from the key, sets the
- * value to "1" and returns false.
+ * value to "1" and pushes the key and the updated value to the args vector.
  *
- * If there was no "no", it leaves key and value untouched and returns
- * false.
+ * If there was no "no", it leaves key and value untouched and pushes them
+ * to the args vector.
  *
  * Where an option was negated can be later checked using the
  * IsArgNegated() method. One use case for this is to have a way to disable
  * options that are not normally boolean (e.g. using -nodebuglogfile to request
  * that debug log output is not sent to any file at all).
  */
-static bool InterpretNegatedOption(std::string& key, std::string& val)
+
+[[nodiscard]] static bool InterpretOption(std::string key, std::string val, unsigned int flags,
+                                      std::map<std::string, std::vector<std::string>>& args,
+                                      std::string& error)
 {
     assert(key[0] == '-');
 
@@ -322,31 +316,25 @@ static bool InterpretNegatedOption(std::string& key, std::string& val)
         ++option_index;
     }
     if (key.substr(option_index, 2) == "no") {
-        bool bool_val = InterpretBool(val);
         key.erase(option_index, 2);
-        if (!bool_val ) {
+        if (flags & ArgsManager::ALLOW_BOOL) {
+            if (InterpretBool(val)) {
+                args[key].clear();
+                return true;
+            }
             // Double negatives like -nofoo=0 are supported (but discouraged)
             LogPrintf("Warning: parsed potentially confusing double-negative %s=%s\n", key, val);
             val = "1";
         } else {
-            return true;
+            error = strprintf("Negating of %s is meaningless and therefore forbidden", key);
+            return false;
         }
     }
-    return false;
+    args[key].push_back(val);
+    return true;
 }
 
-ArgsManager::ArgsManager() :
-    /* These options would cause cross-contamination if values for
-     * mainnet were used while running on regtest/testnet (or vice-versa).
-     * Setting them as section_only_args ensures that sharing a config file
-     * between mainnet and regtest/testnet won't cause problems due to these
-     * parameters by accident. */
-    m_network_only_args{
-      "-addnode", "-connect",
-      "-port", "-bind",
-      "-rpcport", "-rpcbind",
-      "-wallet",
-    }
+ArgsManager::ArgsManager()
 {
     // nothing to do
 }
@@ -410,9 +398,11 @@ bool ArgsManager::ParseParameters(int argc, const char* const argv[], std::strin
 {
     LOCK(cs_args);
     m_override_args.clear();
+    m_command_line_args.clear();
 
     for (int i = 1; i < argc; i++) {
         std::string key(argv[i]);
+        if (key == "-") break; //dash-tx using stdin
 
 #ifdef MAC_OSX
         // At the first time when a user gets the "App downloaded from the
@@ -429,7 +419,7 @@ bool ArgsManager::ParseParameters(int argc, const char* const argv[], std::strin
             key.erase(is_index);
         }
 #ifdef WIN32
-        std::transform(key.begin(), key.end(), key.begin(), ToLower);
+        key = ToLower(key);
         if (key[0] == '/')
             key[0] = '-';
 #endif
@@ -441,19 +431,15 @@ bool ArgsManager::ParseParameters(int argc, const char* const argv[], std::strin
         if (key.length() > 1 && key[1] == '-')
             key.erase(0, 1);
 
-        // Check for -nofoo
-        if (InterpretNegatedOption(key, val)) {
-            m_override_args[key].clear();
-        } else {
-            m_override_args[key].push_back(val);
-        }
-
-        // Check that the arg is known
-        if (!(IsSwitchChar(key[0]) && key.size() == 1)) {
-            if (!IsArgKnown(key)) {
-                error = strprintf("Invalid parameter %s", key.c_str());
+        const unsigned int flags = FlagsOfKnownArg(key);
+        if (flags) {
+            if (!InterpretOption(key, val, flags, m_override_args, error)) {
                 return false;
             }
+            m_command_line_args[key].push_back(val);
+        } else {
+            error = strprintf("Invalid parameter %s", key);
+            return false;
         }
     }
 
@@ -470,21 +456,36 @@ bool ArgsManager::ParseParameters(int argc, const char* const argv[], std::strin
     return true;
 }
 
-bool ArgsManager::IsArgKnown(const std::string& key) const
+const std::map<std::string, std::vector<std::string>> ArgsManager::GetCommandLineArgs() const
 {
+    LOCK(cs_args);
+    return m_command_line_args;
+}
+
+unsigned int ArgsManager::FlagsOfKnownArg(const std::string& key) const
+{
+    assert(key[0] == '-');
+
     size_t option_index = key.find('.');
-    std::string arg_no_net;
     if (option_index == std::string::npos) {
-        arg_no_net = key;
+        option_index = 1;
     } else {
-        arg_no_net = std::string("-") + key.substr(option_index + 1, std::string::npos);
+        ++option_index;
     }
+    if (key.substr(option_index, 2) == "no") {
+        option_index += 2;
+    }
+
+    const std::string base_arg_name = '-' + key.substr(option_index);
 
     LOCK(cs_args);
     for (const auto& arg_map : m_available_args) {
-        if (arg_map.second.count(arg_no_net)) return true;
+        const auto search = arg_map.second.find(base_arg_name);
+        if (search != arg_map.second.end()) {
+            return search->second.m_flags;
+        }
     }
-    return false;
+    return ArgsManager::NONE;
 }
 
 std::vector<std::string> ArgsManager::GetArgs(const std::string& strArg) const
@@ -576,24 +577,29 @@ void ArgsManager::ForceSetArg(const std::string& strArg, const std::string& strV
     m_override_args[strArg] = {strValue};
 }
 
-void ArgsManager::AddArg(const std::string& name, const std::string& help, const bool debug_only, const OptionsCategory& cat)
+void ArgsManager::AddArg(const std::string& name, const std::string& help, unsigned int flags, const OptionsCategory& cat)
 {
     // Split arg name from its help param
     size_t eq_index = name.find('=');
     if (eq_index == std::string::npos) {
         eq_index = name.size();
     }
+    std::string arg_name = name.substr(0, eq_index);
 
     LOCK(cs_args);
     std::map<std::string, Arg>& arg_map = m_available_args[cat];
-    auto ret = arg_map.emplace(name.substr(0, eq_index), Arg(name.substr(eq_index, name.size() - eq_index), help, debug_only));
+    auto ret = arg_map.emplace(arg_name, Arg{name.substr(eq_index, name.size() - eq_index), help, flags});
     assert(ret.second); // Make sure an insertion actually happened
+
+    if (flags & ArgsManager::NETWORK_ONLY) {
+        m_network_only_args.emplace(arg_name);
+    }
 }
 
 void ArgsManager::AddHiddenArgs(const std::vector<std::string>& names)
 {
     for (const std::string& name : names) {
-        AddArg(name, "", false, OptionsCategory::HIDDEN);
+        AddArg(name, "", ArgsManager::ALLOW_ANY, OptionsCategory::HIDDEN);
     }
 }
 
@@ -644,9 +650,6 @@ std::string ArgsManager::GetHelpMessage() const
             case OptionsCategory::WALLET_HD:
                 usage += HelpMessageGroup("HD wallet options:");
                 break;
-            case OptionsCategory::WALLET_KEEPASS:
-                usage += HelpMessageGroup("KeePass options:");
-                break;
             case OptionsCategory::WALLET_COINJOIN:
                 usage += HelpMessageGroup("CoinJoin options:");
                 break;
@@ -676,7 +679,7 @@ std::string ArgsManager::GetHelpMessage() const
         if (arg_map.first == OptionsCategory::HIDDEN) break;
 
         for (const auto& arg : arg_map.second) {
-            if (show_debug || !arg.second.m_debug_only) {
+            if (show_debug || !(arg.second.m_flags & ArgsManager::DEBUG_ONLY)) {
                 std::string name;
                 if (arg.second.m_help_param.empty()) {
                     name = arg.first;
@@ -735,7 +738,7 @@ void PrintExceptionContinue(const std::exception_ptr pex, const char* pszExcepti
 {
     std::string message = strprintf("\"%s\" raised an exception\n%s", pszExceptionOrigin, GetPrettyExceptionStr(pex));
     LogPrintf("\n\n************************\n%s\n", message);
-    tfm::format(std::cerr, "\n\n************************\n%s\n", message.c_str());
+    tfm::format(std::cerr, "\n\n************************\n%s\n", message);
 }
 
 fs::path GetDefaultDataDir()
@@ -845,16 +848,6 @@ fs::path GetConfigFile(const std::string& confPath)
     return AbsPathForConfigVal(fs::path(confPath), false);
 }
 
-static std::string TrimString(const std::string& str, const std::string& pattern)
-{
-    std::string::size_type front = str.find_first_not_of(pattern);
-    if (front == std::string::npos) {
-        return std::string();
-    }
-    std::string::size_type end = str.find_last_not_of(pattern);
-    return str.substr(front, end - front + 1);
-}
-
 static bool GetConfigOptions(std::istream& stream, const std::string& filepath, std::string& error, std::vector<std::pair<std::string, std::string>>& options, std::list<SectionInfo>& sections)
 {
     std::string str, prefix;
@@ -908,22 +901,18 @@ bool ArgsManager::ReadConfigStream(std::istream& stream, const std::string& file
         return false;
     }
     for (const std::pair<std::string, std::string>& option : options) {
-        std::string strKey = std::string("-") + option.first;
-        std::string strValue = option.second;
-
-        if (InterpretNegatedOption(strKey, strValue)) {
-            m_config_args[strKey].clear();
-        } else {
-            m_config_args[strKey].push_back(strValue);
-        }
-
-        // Check that the arg is known
-        if (!IsArgKnown(strKey)) {
-            if (!ignore_invalid_keys) {
-                error = strprintf("Invalid configuration value %s", option.first.c_str());
+        const std::string strKey = std::string("-") + option.first;
+        const unsigned int flags = FlagsOfKnownArg(strKey);
+        if (flags) {
+            if (!InterpretOption(strKey, option.second, flags, m_config_args, error)) {
                 return false;
-            } else {
+            }
+        } else {
+            if (ignore_invalid_keys) {
                 LogPrintf("Ignoring unknown configuration value %s\n", option.first);
+            } else {
+                error = strprintf("Invalid configuration value %s", option.first);
+                return false;
             }
         }
     }
@@ -976,7 +965,7 @@ bool ArgsManager::ReadConfigFiles(std::string& error, bool ignore_invalid_keys)
                     if (!ReadConfigStream(include_config, to_include, error, ignore_invalid_keys)) {
                         return false;
                     }
-                    LogPrintf("Included configuration file %s\n", to_include.c_str());
+                    LogPrintf("Included configuration file %s\n", to_include);
                 } else {
                     error = "Failed to include configuration file " + to_include;
                     return false;
@@ -996,7 +985,7 @@ bool ArgsManager::ReadConfigFiles(std::string& error, bool ignore_invalid_keys)
                 }
             }
             for (const std::string& to_include : includeconf) {
-                tfm::format(std::cerr, "warning: -includeconf cannot be used from included files; ignoring -includeconf=%s\n", to_include.c_str());
+                tfm::format(std::cerr, "warning: -includeconf cannot be used from included files; ignoring -includeconf=%s\n", to_include);
             }
         }
     } else {
@@ -1010,7 +999,7 @@ bool ArgsManager::ReadConfigFiles(std::string& error, bool ignore_invalid_keys)
     // If datadir is changed in .conf file:
     ClearDatadirCache();
     if (!fs::is_directory(GetDataDir(false))) {
-        error = strprintf("specified data directory \"%s\" does not exist.", gArgs.GetArg("-datadir", "").c_str());
+        error = strprintf("specified data directory \"%s\" does not exist.", gArgs.GetArg("-datadir", ""));
         return false;
     }
     return true;
@@ -1047,7 +1036,7 @@ std::string ArgsManager::GetDevNetName() const
 bool RenameOver(fs::path src, fs::path dest)
 {
 #ifdef WIN32
-    return MoveFileExA(src.string().c_str(), dest.string().c_str(),
+    return MoveFileExW(src.wstring().c_str(), dest.wstring().c_str(),
                        MOVEFILE_REPLACE_EXISTING) != 0;
 #else
     int rc = std::rename(src.string().c_str(), dest.string().c_str());
@@ -1087,7 +1076,7 @@ bool FileCommit(FILE *file)
         return false;
     }
 #else
-    #if defined(__linux__) || defined(__NetBSD__)
+    #if defined(HAVE_FDATASYNC)
     if (fdatasync(fileno(file)) != 0 && errno != EINVAL) { // Ignore EINVAL for filesystems that don't support sync
         LogPrintf("%s: fdatasync failed: %d\n", __func__, errno);
         return false;
@@ -1154,22 +1143,25 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {
     SetEndOfFile(hFile);
 #elif defined(MAC_OSX)
     // OSX specific version
+    // NOTE: Contrary to other OS versions, the OSX version assumes that
+    // NOTE: offset is the size of the file.
     fstore_t fst;
     fst.fst_flags = F_ALLOCATECONTIG;
     fst.fst_posmode = F_PEOFPOSMODE;
     fst.fst_offset = 0;
-    fst.fst_length = (off_t)offset + length;
+    fst.fst_length = length; // mac os fst_length takes the # of free bytes to allocate, not desired file size
     fst.fst_bytesalloc = 0;
     if (fcntl(fileno(file), F_PREALLOCATE, &fst) == -1) {
         fst.fst_flags = F_ALLOCATEALL;
         fcntl(fileno(file), F_PREALLOCATE, &fst);
     }
-    ftruncate(fileno(file), fst.fst_length);
-#elif defined(__linux__)
+    ftruncate(fileno(file), static_cast<off_t>(offset) + length);
+#else
+    #if defined(__linux__)
     // Version using posix_fallocate
     off_t nEndPos = (off_t)offset + length;
-    posix_fallocate(fileno(file), 0, nEndPos);
-#else
+    if (0 == posix_fallocate(fileno(file), 0, nEndPos)) return;
+    #endif
     // Fallback version
     // TODO: just write one byte per block
     static const char buf[65536] = {};
@@ -1189,14 +1181,14 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {
 #ifdef WIN32
 fs::path GetSpecialFolderPath(int nFolder, bool fCreate)
 {
-    char pszPath[MAX_PATH] = "";
+    WCHAR pszPath[MAX_PATH] = L"";
 
-    if(SHGetSpecialFolderPathA(nullptr, pszPath, nFolder, fCreate))
+    if(SHGetSpecialFolderPathW(nullptr, pszPath, nFolder, fCreate))
     {
         return fs::path(pszPath);
     }
 
-    LogPrintf("SHGetSpecialFolderPathA() failed, could not obtain requested path.\n");
+    LogPrintf("SHGetSpecialFolderPathW() failed, could not obtain requested path.\n");
     return fs::path("");
 }
 #endif
@@ -1222,7 +1214,7 @@ void RenameThreadPool(ctpl::thread_pool& tp, const char* baseName)
 
     for (int i = 0; i < tp.size(); i++) {
         futures[i] = tp.push([baseName, i, cond, mutex, &doneCnt](int threadId) {
-            util::ThreadRename(strprintf("%s-%d", baseName, i).c_str());
+            util::ThreadRename(strprintf("%s-%d", baseName, i));
             std::unique_lock<std::mutex> l(*mutex);
             doneCnt++;
             cond->wait(l);
@@ -1235,7 +1227,7 @@ void RenameThreadPool(ctpl::thread_pool& tp, const char* baseName)
         // `doneCnt` should be at least `futures.size()` if tp size was increased (for whatever reason),
         // or at least `tp.size()` if tp size was decreased and queue was cleared
         // (which can happen on `stop()` if we were not fast enough to get all jobs to their threads).
-    } while (doneCnt < futures.size() && doneCnt < tp.size());
+    } while (uint64_t(doneCnt) < futures.size() && doneCnt < tp.size());
 
     cond->notify_all();
 
@@ -1264,12 +1256,12 @@ void SetupEnvironment()
     }
 #endif
     // On most POSIX systems (e.g. Linux, but not BSD) the environment's locale
-    // may be invalid, in which case the "C" locale is used as fallback.
-#if !defined(WIN32) && !defined(MAC_OSX) && !defined(__FreeBSD__) && !defined(__OpenBSD__)
+    // may be invalid, in which case the "C.UTF-8" locale is used as fallback.
+#if !defined(WIN32) && !defined(MAC_OSX) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
     try {
         std::locale(""); // Raises a runtime error if current locale is invalid
     } catch (const std::runtime_error&) {
-        setenv("LC_ALL", "C", 1);
+        setenv("LC_ALL", "C.UTF-8", 1);
     }
 #elif defined(WIN32)
     // Set the default input/output charset is utf-8
@@ -1281,7 +1273,11 @@ void SetupEnvironment()
     // A dummy locale is used to extract the internal default locale, used by
     // fs::path, which is then used to explicitly imbue the path.
     std::locale loc = fs::path::imbue(std::locale::classic());
+#ifndef WIN32
     fs::path::imbue(loc);
+#else
+    fs::path::imbue(std::locale(loc, new std::codecvt_utf8_utf16<wchar_t>()));
+#endif
 }
 
 bool SetupNetworking()
@@ -1303,14 +1299,16 @@ int GetNumCores()
 
 std::string CopyrightHolders(const std::string& strPrefix, unsigned int nStartYear, unsigned int nEndYear)
 {
-    std::string strCopyrightHolders = strPrefix + strprintf(" %u-%u ", nStartYear, nEndYear) + strprintf(_(COPYRIGHT_HOLDERS), _(COPYRIGHT_HOLDERS_SUBSTITUTION));
+//    std::string strCopyrightHolders = strPrefix + strprintf(" %u-%u ", nStartYear, nEndYear) + strprintf(_(COPYRIGHT_HOLDERS).translated, _(COPYRIGHT_HOLDERS_SUBSTITUTION));
+    const auto copyright_devs = strprintf(_(COPYRIGHT_HOLDERS).translated, COPYRIGHT_HOLDERS_SUBSTITUTION);
+    std::string strCopyrightHolders = strPrefix + strprintf(" %u-%u ", nStartYear, nEndYear) + copyright_devs;
 
     // Check for untranslated substitution to make sure Dash Core copyright is not removed by accident
-    if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION).find("Dash Core") == std::string::npos) {
+    if (copyright_devs.find("Dash Core") == std::string::npos) {
         strCopyrightHolders += "\n" + strPrefix + strprintf(" %u-%u ", 2014, nEndYear) + "The Dash Core developers";
     }
     // Check for untranslated substitution to make sure Bitcoin Core copyright is not removed by accident
-    if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION).find("Bitcoin Core") == std::string::npos) {
+    if (copyright_devs.find("Bitcoin Core") == std::string::npos) {
         strCopyrightHolders += "\n" + strPrefix + strprintf(" %u-%u ", 2009, nEndYear) + "The Bitcoin Core developers";
         strCopyrightHolders += "\n" + strPrefix + strprintf(" %u-%u ", 2016, nEndYear) + "The PIVX Core developers";
     }

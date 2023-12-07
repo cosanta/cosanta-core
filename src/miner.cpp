@@ -1,7 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,8 +17,8 @@
 #include <chainparams.h>
 #include <coins.h>
 #include <consensus/consensus.h>
-#include <consensus/tx_verify.h>
 #include <consensus/merkle.h>
+#include <consensus/tx_verify.h>
 #include <consensus/validation.h>
 #include <hash.h>
 #include <net.h>
@@ -29,15 +28,14 @@
 #include <primitives/transaction.h>
 #include <script/standard.h>
 #include <timedata.h>
-#include <util/system.h>
 #include <util/moneystr.h>
+#include <util/system.h>
 #include <util/validation.h>
 #include <validationinterface.h>
 
 #include <evo/specialtx.h>
 #include <evo/cbtx.h>
 #include <evo/simplifiedmns.h>
-#include <evo/deterministicmns.h>
 #include <llmq/blockprocessor.h>
 #include <llmq/chainlocks.h>
 #include <llmq/utils.h>
@@ -49,33 +47,12 @@
 #include <utility>
 #include <boost/thread.hpp>
 
-#include <boost/thread.hpp>
-//////////////////////////////////////////////////////////////////////////////
-//
-// CosantaMiner
-//
-
-//
-// Unconfirmed transactions in the memory pool often depend on other
-// transactions in the memory pool. When we select transactions from the
-// pool, we select by highest fee rate of a transaction combined with all
-// its ancestors.
-
-uint64_t nLastBlockTx = 0;
-uint64_t nLastBlockSize = 0;
 int64_t nLastCoinStakeSearchTime = 0;
 
 int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
 {
     int64_t nOldTime = pblock->nTime;
-    auto nNewTime = pindexPrev->GetMedianTimePast()+1;
-    auto now = GetAdjustedTime();
-
-    // NOTE: This requires consensus change for proper average block time enforcement.
-    // Compensate, if block times go in the future
-    //if (pindexPrev->GetBlockTime() < now) {
-        nNewTime = std::max(nNewTime, now);
-    //}
+    int64_t nNewTime = std::max(pindexPrev->GetMedianTimePast()+1, GetAdjustedTime());
 
     if (nOldTime < nNewTime)
         pblock->nTime = nNewTime;
@@ -99,7 +76,7 @@ BlockAssembler::BlockAssembler(const CChainParams& params, const Options& option
     nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MaxBlockSize(fDIP0001ActiveAtTip) - 1000), (unsigned int)options.nBlockMaxSize));
 }
 
-static BlockAssembler::Options DefaultOptions(const CChainParams& params)
+static BlockAssembler::Options DefaultOptions()
 {
     // Block resource limits
     BlockAssembler::Options options;
@@ -116,7 +93,7 @@ static BlockAssembler::Options DefaultOptions(const CChainParams& params)
     return options;
 }
 
-BlockAssembler::BlockAssembler(const CChainParams& params) : BlockAssembler(params, DefaultOptions(params)) {}
+BlockAssembler::BlockAssembler(const CChainParams& params) : BlockAssembler(params, DefaultOptions()) {}
 
 void BlockAssembler::resetBlock()
 {
@@ -130,6 +107,9 @@ void BlockAssembler::resetBlock()
     nBlockTx = 0;
     nFees = 0;
 }
+
+Optional<int64_t> BlockAssembler::m_last_block_num_txs{nullopt};
+Optional<int64_t> BlockAssembler::m_last_block_size{nullopt};
 
 std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         const CScript& scriptPubKeyIn, std::shared_ptr<CWallet> pwallet, int64_t block_time, bool isPos)
@@ -157,7 +137,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         LOCK2(cs_main, mempool.cs);
 
         nTime1 = GetTimeMicros();
-        pindexPrev = chainActive.Tip();
+        pindexPrev = ::ChainActive().Tip();
 
         // Common header
         //--------------
@@ -199,17 +179,18 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
                         ? nMedianTimePast
                         : pblock->GetBlockTime();
         if (fDIP0003Active_context) {
-            for (const Consensus::LLMQType& type : llmq::CLLMQUtils::GetEnabledQuorumTypes(pindexPrev)) {
-                CTransactionRef qcTx;
-                if (llmq::quorumBlockProcessor->GetMineableCommitmentTx(type,
-                                                                        nHeight,
-                                                                        qcTx)) {
-                
-                    pblock->vtx.emplace_back(qcTx);
-                    pblocktemplate->vTxFees.emplace_back(0);
-                    pblocktemplate->vTxSigOps.emplace_back(0);
-                    nBlockSize += qcTx->GetTotalSize();
-                    ++nBlockTx;
+            for (const Consensus::LLMQParams& params : llmq::CLLMQUtils::GetEnabledQuorumParams(pindexPrev)) {
+        	std::vector<CTransactionRef> vqcTx;
+        	if (llmq::quorumBlockProcessor->GetMineableCommitmentsTx(params,
+        								nHeight,
+        								vqcTx)) {
+        	    for (const auto& qcTx : vqcTx) {
+        		pblock->vtx.emplace_back(qcTx);
+        		pblocktemplate->vTxFees.emplace_back(0);
+        		pblocktemplate->vTxSigOps.emplace_back(0);
+        		nBlockSize += qcTx->GetTotalSize();
+        		++nBlockTx;
+        	    }
                 }
             }
         }
@@ -218,8 +199,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         int nDescendantsUpdated = 0;
         addPackageTxs(nPackagesSelected, nDescendantsUpdated);
 
-        nLastBlockTx = nBlockTx;
-        nLastBlockSize = nBlockSize;
+        m_last_block_num_txs = nBlockTx;
+        m_last_block_size = nBlockSize;
         LogPrint(BCLog::STAKING, "CreateNewBlock(): ver %x total size %u txs: %u fees: %ld sigops %d\n", pblock->nVersion, nBlockSize, nBlockTx, nFees, nBlockSigOps);
 
         // Create coinbase transaction.
@@ -254,7 +235,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
             cbTx.nHeight = nHeight;
 
             CValidationState state;
-            if (!CalcCbTxMerkleRootMNList(*pblock, pindexPrev, cbTx.merkleRootMNList, state, *pcoinsTip.get())) {
+            if (!CalcCbTxMerkleRootMNList(*pblock, pindexPrev, cbTx.merkleRootMNList, state, ::ChainstateActive().CoinsTip())) {
                 throw std::runtime_error(strprintf("%s: CalcCbTxMerkleRootMNList failed: %s", __func__, FormatStateMessage(state)));
             }
             if (fDIP0008Active_context) {
@@ -318,8 +299,9 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         LOCK(cs_main);
         CValidationState state;
 
-        if (pindexPrev != chainActive.Tip()) {
+        if (pindexPrev != ::ChainActive().Tip()) {
             LogPrint(BCLog::STAKING, "%s: the network has already found another block", __func__);
+            return nullptr;
         }
 
         if (!TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)) {
@@ -628,7 +610,7 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
         }
 
         {
-            CBlockIndex* pindexPrev = chainActive.Tip();
+            CBlockIndex* pindexPrev = ::ChainActive().Tip();
             
             if (!pindexPrev) {
                 interrupt.sleep_for(std::chrono::seconds(1));
@@ -662,14 +644,14 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
             continue;
         }
 
-        if (last_height == chainActive.Height())
+        if (last_height == ::ChainActive().Height())
         {
             if ((GetTime() - hash_interval) < nLastCoinStakeSearchTime)
             {
                 continue;
             }
         } else {
-            last_height = chainActive.Height();
+            last_height = ::ChainActive().Height();
             start_block_time = 0;
         }
 

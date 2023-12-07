@@ -1,5 +1,4 @@
 // Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +8,7 @@
 #include <key_io.h>
 #include <util/system.h>
 #include <util/strencodings.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 #include <bip39.h>
 
 #include <boost/test/unit_test.hpp>

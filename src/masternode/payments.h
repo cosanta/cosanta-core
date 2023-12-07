@@ -1,12 +1,20 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_MASTERNODE_PAYMENTS_H
 #define BITCOIN_MASTERNODE_PAYMENTS_H
 
+#include <amount.h>
+
+#include <string>
+#include <vector>
+
 class CMasternodePayments;
+class CBlock;
+class CTransaction;
+struct CMutableTransaction;
+class CTxOut;
 
 /// TODO: all 4 functions do not belong here really, they should be refactored/moved somewhere (main.cpp ?)
 bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockReward, std::string& strErrorRet);

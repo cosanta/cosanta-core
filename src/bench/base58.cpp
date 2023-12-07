@@ -1,5 +1,4 @@
 // Copyright (c) 2016 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -50,7 +49,7 @@ static void Base58Decode(benchmark::Bench& bench)
     const char* addr = "17VZNX1SN5NtKa8UQFxwQbFeFc3iqRYhem";
     std::vector<unsigned char> vch;
     bench.batch(strlen(addr)).unit("byte").run([&] {
-        (void) DecodeBase58(addr, vch);
+        (void) DecodeBase58(addr, vch, 64);
     });
 }
 

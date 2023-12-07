@@ -1,6 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,8 +13,6 @@
 #include <assert.h>
 #include <ios>
 #include <limits>
-#include <map>
-#include <set>
 #include <stdint.h>
 #include <stdio.h>
 #include <string>
@@ -27,10 +24,11 @@ template<typename Stream>
 class OverrideStream
 {
     Stream* stream;
-public:
+
     const int nType;
     const int nVersion;
 
+public:
     OverrideStream(Stream* stream_, int nType_, int nVersion_) : stream(stream_), nType(nType_), nVersion(nVersion_) {}
 
     template<typename T>
@@ -171,7 +169,7 @@ public:
     }
 
     template<typename T>
-    VectorReader& operator>>(T& obj)
+    VectorReader& operator>>(T&& obj)
     {
         // Unserialize from this stream
         ::Unserialize(*this, obj);
@@ -740,16 +738,17 @@ protected:
         size_t nBytes = fread((void*)&vchBuf[pos], 1, readNow, src);
         if (nBytes == 0) {
             throw std::ios_base::failure(feof(src) ? "CBufferedFile::Fill: end of file" : "CBufferedFile::Fill: fread failed");
-        } else {
-            nSrcPos += nBytes;
-            return true;
         }
+        nSrcPos += nBytes;
+        return true;
     }
 
 public:
     CBufferedFile(FILE *fileIn, uint64_t nBufSize, uint64_t nRewindIn, int nTypeIn, int nVersionIn) :
         nType(nTypeIn), nVersion(nVersionIn), nSrcPos(0), nReadPos(0), nReadLimit(std::numeric_limits<uint64_t>::max()), nRewind(nRewindIn), vchBuf(nBufSize, 0)
     {
+        if (nRewindIn >= nBufSize)
+            throw std::ios_base::failure("Rewind limit must be less than buffer size");
         src = fileIn;
     }
 
@@ -782,8 +781,6 @@ public:
     void read(char *pch, size_t nSize) {
         if (nSize + nReadPos > nReadLimit)
             throw std::ios_base::failure("Read attempted past buffer limit");
-        if (nSize + nRewind > vchBuf.size())
-            throw std::ios_base::failure("Read larger than buffer size");
         while (nSize > 0) {
             if (nReadPos == nSrcPos)
                 Fill();
@@ -807,16 +804,19 @@ public:
 
     //! rewind to a given reading position
     bool SetPos(uint64_t nPos) {
-        nReadPos = nPos;
-        if (nReadPos + nRewind < nSrcPos) {
-            nReadPos = nSrcPos - nRewind;
+        size_t bufsize = vchBuf.size();
+        if (nPos + bufsize < nSrcPos) {
+            // rewinding too far, rewind as far as possible
+            nReadPos = nSrcPos - bufsize;
             return false;
-        } else if (nReadPos > nSrcPos) {
+        }
+        if (nPos > nSrcPos) {
+            // can't go this far forward, go as far as possible
             nReadPos = nSrcPos;
             return false;
-        } else {
-            return true;
         }
+        nReadPos = nPos;
+        return true;
     }
 
     bool Seek(uint64_t nPos) {

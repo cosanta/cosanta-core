@@ -1,11 +1,9 @@
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <core_io.h>
 
-#include <consensus/consensus.h>
 #include <consensus/validation.h>
 #include <key_io.h>
 #include <primitives/transaction.h>
@@ -14,13 +12,12 @@
 #include <serialize.h>
 #include <streams.h>
 #include <univalue.h>
-#include <util/system.h>
-#include <util/moneystr.h>
 #include <util/strencodings.h>
 
 #include <spentindex.h>
 
 #include <evo/cbtx.h>
+#include <evo/mnhftx.h>
 #include <evo/providertx.h>
 #include <evo/specialtx.h>
 #include <llmq/commitment.h>
@@ -121,8 +118,9 @@ std::string ScriptToAsmStr(const CScript& script, const bool fAttemptSighashDeco
                     // checks in CheckSignatureEncoding.
                     if (CheckSignatureEncoding(vch, SCRIPT_VERIFY_STRICTENC, nullptr)) {
                         const unsigned char chSigHashType = vch.back();
-                        if (mapSigHashTypes.count(chSigHashType)) {
-                            strSigHashDecode = "[" + mapSigHashTypes.find(chSigHashType)->second + "]";
+                        const auto it = mapSigHashTypes.find(chSigHashType);
+                        if (it != mapSigHashTypes.end()) {
+                            strSigHashDecode = "[" + it->second + "]";
                             vch.pop_back(); // remove the sighash type byte. it will be replaced by the decode.
                         }
                     }
@@ -151,12 +149,11 @@ void ScriptToUniv(const CScript& script, UniValue& out, bool include_address)
     out.pushKV("hex", HexStr(script));
 
     std::vector<std::vector<unsigned char>> solns;
-    txnouttype type;
-    Solver(script, type, solns);
+    txnouttype type = Solver(script, solns);
     out.pushKV("type", GetTxnOutputType(type));
 
     CTxDestination address;
-    if (include_address && ExtractDestination(script, address)) {
+    if (include_address && ExtractDestination(script, address) && type != TX_PUBKEY) {
         out.pushKV("address", EncodeDestination(address));
     }
 }
@@ -172,7 +169,7 @@ void ScriptPubKeyToUniv(const CScript& scriptPubKey,
     if (fIncludeHex)
         out.pushKV("hex", HexStr(scriptPubKey));
 
-    if (!ExtractDestinations(scriptPubKey, type, addresses, nRequired)) {
+    if (!ExtractDestinations(scriptPubKey, type, addresses, nRequired) || type == TX_PUBKEY) {
         out.pushKV("type", GetTxnOutputType(type));
         return;
     }
@@ -305,6 +302,13 @@ void TxToUniv(const CTransaction& tx, const uint256& hashBlock, UniValue& entry,
             UniValue obj;
             qcTx.ToJson(obj);
             entry.pushKV("qcTx", obj);
+        }
+    } else if (tx.nType == TRANSACTION_MNHF_SIGNAL) {
+        MNHFTxPayload mnhfTx;
+        if (GetTxPayload(tx, mnhfTx)) {
+            UniValue obj;
+            mnhfTx.ToJson(obj);
+            entry.pushKV("mnhfTx", obj);
         }
     }
 

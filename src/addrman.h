@@ -1,6 +1,5 @@
 // Copyright (c) 2012 Pieter Wuille
 // Copyright (c) 2012-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,8 +12,8 @@
 #include <random.h>
 #include <sync.h>
 #include <timedata.h>
-#include <util/system.h>
 #include <tinyformat.h>
+#include <util/system.h>
 
 #include <fs.h>
 #include <hash.h>
@@ -180,7 +179,6 @@ class CAddrMan
 protected:
     friend class CAddrManTest;
 
-protected:
     //! critical section to protect the inner data structures
     mutable CCriticalSection cs;
 

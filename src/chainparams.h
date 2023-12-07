@@ -1,6 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,6 +8,7 @@
 
 #include <chainparamsbase.h>
 #include <consensus/params.h>
+#include <llmq/params.h>
 #include <primitives/block.h>
 #include <protocol.h>
 
@@ -70,13 +70,15 @@ public:
     bool RequireStandard() const { return fRequireStandard; }
     /** Require addresses specified with "-externalip" parameter to be routable */
     bool RequireRoutableExternalIP() const { return fRequireRoutableExternalIP; }
+    /** If this chain is exclusively used for testing */
+    bool IsTestChain() const { return m_is_test_chain; }
     uint64_t PruneAfterHeight() const { return nPruneAfterHeight; }
     /** Minimum free space (in GB) needed for data directory */
     uint64_t AssumedBlockchainSize() const { return m_assumed_blockchain_size; }
     /** Minimum free space (in GB) needed for data directory when pruned; Does not include prune target*/
     uint64_t AssumedChainStateSize() const { return m_assumed_chain_state_size; }
-    /** Make miner stop after a block is found. In RPC, don't return until nGenProcLimit blocks are generated */
-    bool MineBlocksOnDemand() const { return fMineBlocksOnDemand; }
+    /** Whether it is possible to mine blocks on demand (no retargeting) */
+    bool MineBlocksOnDemand() const { return consensus.fPowNoRetargeting; }
     /** Allow multiple addresses to be selected from the same network group (e.g. 192.168.x.x) */
     bool AllowMultipleAddressesFromGroup() const { return fAllowMultipleAddressesFromGroup; }
     /** Allow nodes with the same address and multiple ports */
@@ -108,6 +110,9 @@ public:
     bool BIP9CheckMasternodesUpgraded() const { return fBIP9CheckMasternodesUpgraded; }
     int64_t MinStakeAge() const { return nStakeMinAge; }
     uint32_t FirstPoSv2Block() const { return nFirstPoSv2Block; }
+    const Consensus::LLMQParams& GetLLMQ(Consensus::LLMQType llmqType) const;
+    bool HasLLMQ(Consensus::LLMQType llmqType) const;
+
 protected:
     CChainParams() {}
 
@@ -127,7 +132,7 @@ protected:
     bool fDefaultConsistencyChecks;
     bool fRequireStandard;
     bool fRequireRoutableExternalIP;
-    bool fMineBlocksOnDemand;
+    bool m_is_test_chain;
     bool fAllowMultipleAddressesFromGroup;
     bool fAllowMultiplePorts;
     int nLLMQConnectionRetryTimeout;
@@ -142,6 +147,8 @@ protected:
     int64_t nStakeMinAge;
     // POS V2
     uint32_t nFirstPoSv2Block;
+
+    void AddLLMQ(Consensus::LLMQType llmqType);
 };
 
 /**

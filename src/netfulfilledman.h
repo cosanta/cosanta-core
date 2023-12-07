@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2021 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -24,8 +23,6 @@ private:
     //keep track of what node has/was asked for and when
     fulfilledreqmap_t mapFulfilledRequests;
     mutable CCriticalSection cs_mapFulfilledRequests;
-
-    void RemoveFulfilledRequest(const CService& addr, const std::string& strRequest);
 
 public:
     CNetFulfilledRequestManager() {}

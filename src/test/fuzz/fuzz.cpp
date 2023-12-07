@@ -4,11 +4,16 @@
 
 #include <test/fuzz/fuzz.h>
 
+#include <test/util/setup_common.h>
+
+#include <cstdint>
 #include <unistd.h>
 
 #include <pubkey.h>
 #include <util/memory.h>
 
+
+const std::function<void(const std::string&)> G_TEST_LOG_FUN{};
 
 static bool read_stdin(std::vector<uint8_t>& data)
 {
@@ -22,7 +27,9 @@ static bool read_stdin(std::vector<uint8_t>& data)
     return length == 0;
 }
 
-static void initialize()
+// Default initialization: Override using a non-weak initialize().
+__attribute__((weak))
+void initialize()
 {
     const static auto verify_handle = MakeUnique<ECCVerifyHandle>();
 }
@@ -30,7 +37,8 @@ static void initialize()
 // This function is used by libFuzzer
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
-    test_one_input(std::vector<uint8_t>(data, data + size));
+    const std::vector<uint8_t> input(data, data + size);
+    test_one_input(input);
     return 0;
 }
 

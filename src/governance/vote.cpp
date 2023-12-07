@@ -1,11 +1,11 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <governance/vote.h>
 
 #include <bls/bls.h>
+#include <chainparams.h>
 #include <key.h>
 #include <masternode/sync.h>
 #include <messagesigner.h>
@@ -129,15 +129,8 @@ void CGovernanceVote::Relay(CConnman& connman) const
         return;
     }
 
-    // When this vote is from non-valid (PoSe banned) MN, we should only announce it to v0.14.0.1 nodes as older nodes
-    // will ban us otherwise.
-    int minVersion = MIN_GOVERNANCE_PEER_PROTO_VERSION;
-    if (!CDeterministicMNList::IsMNValid(dmn)) {
-        minVersion = GOVERNANCE_POSE_BANNED_VOTES_VERSION;
-    }
-
     CInv inv(MSG_GOVERNANCE_OBJECT_VOTE, GetHash());
-    connman.RelayInv(inv, minVersion);
+    connman.RelayInv(inv);
 }
 
 void CGovernanceVote::UpdateHash() const

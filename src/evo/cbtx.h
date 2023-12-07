@@ -1,5 +1,4 @@
-// Copyright (c) 2017-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2017-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,7 +17,8 @@ class CValidationState;
 class CCbTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 2;
+    static constexpr auto SPECIALTX_TYPE = TRANSACTION_COINBASE;
+    static constexpr uint16_t CURRENT_VERSION = 2;
 
     uint16_t nVersion{CURRENT_VERSION};
     int32_t nHeight{0};

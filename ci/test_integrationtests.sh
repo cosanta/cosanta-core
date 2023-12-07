@@ -15,6 +15,9 @@ if [ "$RUN_INTEGRATIONTESTS" != "true" ]; then
   exit 0
 fi
 
+# override LC_ALL to allow special characters and emojis in filenames
+export LC_ALL=C.UTF-8
+
 export LD_LIBRARY_PATH=$BUILD_DIR/depends/$HOST/lib
 
 cd build-ci/cosantacore-$BUILD_TARGET
@@ -34,7 +37,7 @@ echo "Using socketevents mode: $SOCKETEVENTS"
 EXTRA_ARGS="--dashd-arg=-socketevents=$SOCKETEVENTS"
 
 set +e
-./test/functional/test_runner.py --ci --combinedlogslen=4000 --coverage --failfast --nocleanup --tmpdir=$(pwd)/testdatadirs $PASS_ARGS $EXTRA_ARGS
+./test/functional/test_runner.py --ci --combinedlogslen=4000 ${TEST_RUNNER_EXTRA} --failfast --nocleanup --tmpdir=$(pwd)/testdatadirs $PASS_ARGS $EXTRA_ARGS
 RESULT=$?
 set -e
 

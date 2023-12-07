@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef COSANTA_CRYPTO_BLS_H
-#define COSANTA_CRYPTO_BLS_H
+#ifndef DASH_CRYPTO_BLS_H
+#define DASH_CRYPTO_BLS_H
 
 #include <hash.h>
 #include <serialize.h>
 #include <uint256.h>
 #include <util/strencodings.h>
+#include <util/ranges.h>
 
 // bls-dash uses relic, which may define DEBUG and ERROR, which leads to many warnings in some build setups
 #undef ERROR
@@ -20,12 +20,13 @@
 #include <bls-dash/schemes.hpp>
 #include <bls-dash/threshold.hpp>
 #undef DOUBLE
+#undef SEED
 
 #include <array>
 #include <mutex>
 #include <unistd.h>
 
-static const bool fLegacyDefault{true};
+static constexpr bool fLegacyDefault{true};
 
 // reversed BLS12-381
 constexpr int BLS_CURVE_ID_SIZE{32};
@@ -53,7 +54,7 @@ protected:
     inline constexpr size_t GetSerSize() const { return SerSize; }
 
 public:
-    static const size_t SerSize = _SerSize;
+    static constexpr size_t SerSize = _SerSize;
 
     explicit CBLSWrapper(const bool fLegacyIn = fLegacyDefault) : fLegacy(fLegacyIn)
     {
@@ -109,7 +110,7 @@ public:
             return;
         }
 
-        if (std::all_of(vecBytes.begin(), vecBytes.end(), [](uint8_t c) { return c == 0; })) {
+        if (ranges::all_of(vecBytes, [](uint8_t c) { return c == 0; })) {
             Reset();
         } else {
             try {
@@ -320,7 +321,7 @@ public:
         bufValid = true;
     }
 
-    CBLSLazyWrapper(const CBLSLazyWrapper& r)
+    explicit CBLSLazyWrapper(const CBLSLazyWrapper& r)
     {
         *this = r;
     }
@@ -454,4 +455,4 @@ using BLSSignatureVectorPtr = std::shared_ptr<BLSSignatureVector>;
 
 bool BLSInit();
 
-#endif // COSANTA_CRYPTO_BLS_H
+#endif // DASH_CRYPTO_BLS_H

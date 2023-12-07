@@ -1,12 +1,10 @@
 // Copyright (c) 2013-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <hash.h>
 #include <crypto/common.h>
 #include <crypto/hmac_sha512.h>
-#include <pubkey.h>
 
 
 inline uint32_t ROTL32(uint32_t x, int8_t r)
@@ -73,9 +71,13 @@ unsigned int MurmurHash3(unsigned int nHashSeed, Span<const unsigned char> vData
 void BIP32Hash(const ChainCode &chainCode, unsigned int nChild, unsigned char header, const unsigned char data[32], unsigned char output[64])
 {
     unsigned char num[4];
-    num[0] = (nChild >> 24) & 0xFF;
-    num[1] = (nChild >> 16) & 0xFF;
-    num[2] = (nChild >>  8) & 0xFF;
-    num[3] = (nChild >>  0) & 0xFF;
+    WriteBE32(num, nChild);
     CHMAC_SHA512(chainCode.begin(), chainCode.size()).Write(&header, 1).Write(data, 32).Write(num, 4).Finalize(output);
+}
+
+uint256 SHA256Uint256(const uint256& input)
+{
+    uint256 result;
+    CSHA256().Write(input.begin(), 32).Finalize(result.begin());
+    return result;
 }

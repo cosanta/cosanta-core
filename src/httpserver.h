@@ -1,5 +1,4 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,7 +6,6 @@
 #define BITCOIN_HTTPSERVER_H
 
 #include <string>
-#include <stdint.h>
 #include <functional>
 
 static const int DEFAULT_HTTP_THREADS=4;
@@ -75,21 +73,21 @@ public:
 
     /** Get requested URI.
      */
-    std::string GetURI();
+    std::string GetURI() const;
 
     /** Get CService (address:ip) for the origin of the http request.
      */
-    CService GetPeer();
+    CService GetPeer() const;
 
     /** Get request method.
      */
-    RequestMethod GetRequestMethod();
+    RequestMethod GetRequestMethod() const;
 
     /**
      * Get the request header specified by hdr, or an empty string.
      * Return a pair (isPresent,string).
      */
-    std::pair<bool, std::string> GetHeader(const std::string& hdr);
+    std::pair<bool, std::string> GetHeader(const std::string& hdr) const;
 
     /**
      * Read request body.

@@ -1,6 +1,5 @@
 // Copyright (c) 2012 Pieter Wuille
 // Copyright (c) 2012-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,7 +7,6 @@
 
 #include <hash.h>
 #include <logging.h>
-#include <streams.h>
 #include <serialize.h>
 
 int CAddrInfo::GetTriedBucket(const uint256& nKey, const std::vector<bool> &asmap) const
@@ -681,6 +679,10 @@ std::vector<bool> CAddrMan::DecodeAsmap(fs::path path)
         for (int bit = 0; bit < 8; ++bit) {
             bits.push_back((cur_byte >> bit) & 1);
         }
+    }
+    if (!SanityCheckASMap(bits)) {
+        LogPrintf("Sanity check of asmap file %s failed\n", path);
+        return {};
     }
     return bits;
 }

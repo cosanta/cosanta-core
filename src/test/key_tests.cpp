@@ -5,11 +5,10 @@
 #include <key.h>
 
 #include <key_io.h>
-#include <script/script.h>
 #include <uint256.h>
 #include <util/system.h>
 #include <util/strencodings.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <string>
 #include <vector>

@@ -1,18 +1,20 @@
 // Copyright (c) 2012-2016 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include <addrdb.h>
 #include <addrman.h>
-#include <test/test_cosanta.h>
+#include <clientversion.h>
+#include <test/util/setup_common.h>
 #include <string>
 #include <boost/test/unit_test.hpp>
-#include <hash.h>
 #include <serialize.h>
 #include <span.h>
 #include <streams.h>
 #include <net.h>
 #include <netbase.h>
 #include <chainparams.h>
+#include <util/memory.h>
 #include <util/system.h>
 #include <util/strencodings.h>
 #include <version.h>
@@ -119,7 +121,7 @@ BOOST_AUTO_TEST_CASE(caddrdb_read)
         unsigned char pchMsgTmp[4];
         ssPeers1 >> pchMsgTmp;
         ssPeers1 >> addrman1;
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         exceptionThrown = true;
     }
 
@@ -151,7 +153,7 @@ BOOST_AUTO_TEST_CASE(caddrdb_read_corrupted)
         unsigned char pchMsgTmp[4];
         ssPeers1 >> pchMsgTmp;
         ssPeers1 >> addrman1;
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         exceptionThrown = true;
     }
     // Even through de-serialization failed addrman is not left in a clean state.

@@ -1,11 +1,12 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2021 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 #ifndef BITCOIN_HDCHAIN_H
 #define BITCOIN_HDCHAIN_H
 
 #include <key.h>
 #include <sync.h>
+
+class CKeyMetadata;
 
 /* hd account data model */
 class CHDAccount
@@ -75,6 +76,7 @@ public:
 
         // by swapping the members of two classes,
         // the two classes are effectively swapped
+        LOCK2(first.cs, second.cs);
         swap(first.nVersion, second.nVersion);
         swap(first.id, second.id);
         swap(first.fCrypted, second.fCrypted);
@@ -108,7 +110,7 @@ public:
     uint256 GetID() const { LOCK(cs); return id; }
 
     uint256 GetSeedHash();
-    void DeriveChildExtKey(uint32_t nAccountIndex, bool fInternal, uint32_t nChildIndex, CExtKey& extKeyRet);
+    void DeriveChildExtKey(uint32_t nAccountIndex, bool fInternal, uint32_t nChildIndex, CExtKey& extKeyRet, CKeyMetadata& metadata);
 
     void AddAccount();
     bool GetAccount(uint32_t nAccountIndex, CHDAccount& hdAccountRet);
@@ -121,15 +123,15 @@ class CHDPubKey
 {
 private:
     static const int CURRENT_VERSION = 1;
-    int nVersion;
+    int nVersion{CHDPubKey::CURRENT_VERSION};
 
 public:
     CExtPubKey extPubKey;
     uint256 hdchainID;
-    uint32_t nAccountIndex;
-    uint32_t nChangeIndex;
+    uint32_t nAccountIndex{0};
+    uint32_t nChangeIndex{0};
 
-    CHDPubKey() : nVersion(CHDPubKey::CURRENT_VERSION), nAccountIndex(0), nChangeIndex(0) {}
+    CHDPubKey() = default;
 
     SERIALIZE_METHODS(CHDPubKey, obj)
     {

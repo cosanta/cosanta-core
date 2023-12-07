@@ -1,5 +1,4 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,9 +6,11 @@
 #define BITCOIN_MEMUSAGE_H
 
 #include <indirectmap.h>
+#include <prevector.h>
 
 #include <stdlib.h>
 
+#include <cassert>
 #include <map>
 #include <memory>
 #include <set>

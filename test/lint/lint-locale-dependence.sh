@@ -1,15 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export LC_ALL=C
 
 KNOWN_VIOLATIONS=(
     "src/bench/string_cast.cpp.*atoi"
-    "src/dash-tx.cpp.*stoul"
-    "src/dash-tx.cpp.*trim_right"
+    "src/bench/string_cast.cpp.*std::to_string"
+    "src/bitcoin-tx.cpp.*stoul"
+    "src/bitcoin-tx.cpp.*std::to_string"
+    "src/bitcoin-tx.cpp.*trim_right"
     "src/dbwrapper.cpp.*stoul"
     "src/dbwrapper.cpp:.*vsnprintf"
-    "src/governance/governance-validators.cpp.*isspace"
-    "src/governance/governance-validators.cpp.*tolower"
     "src/httprpc.cpp.*trim"
     "src/init.cpp:.*atoi"
     "src/qt/rpcconsole.cpp:.*atoi"
@@ -17,10 +17,19 @@ KNOWN_VIOLATIONS=(
     "src/rpc/blockchain.cpp.*atoi"
     "src/rpc/governance.cpp.*atoi"
     "src/rpc/masternode.cpp.*atoi"
-    "src/rpc/masternode.cpp.*tolower"
-    "src/rpc/server.cpp.*tolower"
     "src/statsd_client.cpp:.*snprintf"
     "src/test/dbwrapper_tests.cpp:.*snprintf"
+    "src/test/denialofservice_tests.cpp.*std::to_string"
+    "src/test/fuzz/locale.cpp"
+    "src/test/fuzz/parse_numbers.cpp:.*atoi"
+    "src/test/key_tests.cpp.*std::to_string"
+    "src/test/net_tests.cpp.*std::to_string"
+    "src/test/settings_tests.cpp.*std::to_string"
+    "src/test/timedata_tests.cpp.*std::to_string"
+    "src/test/util/setup_common.cpp.*std::to_string"
+    "src/test/util_tests.cpp.*std::to_string"
+    "src/test/util_threadnames_tests.cpp.*std::to_string"
+    "src/test/fuzz/parse_numbers.cpp:.*atoi"
     "src/torcontrol.cpp:.*atoi"
     "src/torcontrol.cpp:.*strtol"
     "src/util/strencodings.cpp:.*atoi"

@@ -10,10 +10,6 @@
 #endif
 
 #ifdef WIN32
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#endif
-#define _WIN32_WINNT 0x0501
 #define WIN32_LEAN_AND_MEAN 1
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -408,9 +404,9 @@ void LockedPoolManager::CreateInstance()
     // have a static deinitialization order/problem, but the check in
     // LockedPoolManagerBase's destructor helps us detect if that ever happens.
 #ifdef WIN32
-    std::unique_ptr<LockedPageAllocator> allocator(new Win32LockedPageAllocator());
+    std::unique_ptr<LockedPageAllocator> allocator{std::make_unique<Win32LockedPageAllocator>()};
 #else
-    std::unique_ptr<LockedPageAllocator> allocator(new PosixLockedPageAllocator());
+    std::unique_ptr<LockedPageAllocator> allocator{std::make_unique<PosixLockedPageAllocator>()};
 #endif
     static LockedPoolManager instance(std::move(allocator));
     LockedPoolManager::_instance = &instance;

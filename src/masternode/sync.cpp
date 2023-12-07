@@ -1,19 +1,26 @@
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <governance/governance.h>
-#include <validation.h>
 #include <masternode/sync.h>
+
+#include <chainparams.h>
+#include <governance/governance.h>
 #include <netfulfilledman.h>
 #include <netmessagemaker.h>
 #include <shutdown.h>
 #include <ui_interface.h>
-#include <evo/deterministicmns.h>
+#include <validation.h>
+#include <util/translation.h>
 
 class CMasternodeSync;
 CMasternodeSync masternodeSync;
+
+CMasternodeSync::CMasternodeSync() :
+    nTimeAssetSyncStarted(GetTime()),
+    nTimeLastBumped(GetTime())
+{
+}
 
 void CMasternodeSync::Reset(bool fForce, bool fNotifyReset)
 {
@@ -81,9 +88,9 @@ void CMasternodeSync::SwitchToNextAsset(CConnman& connman)
 std::string CMasternodeSync::GetSyncStatus() const
 {
     switch (nCurrentAsset) {
-        case MASTERNODE_SYNC_BLOCKCHAIN:    return _("Synchronizing blockchain...");
-        case MASTERNODE_SYNC_GOVERNANCE:    return _("Synchronizing governance objects...");
-        case MASTERNODE_SYNC_FINISHED:      return _("Synchronization finished");
+        case MASTERNODE_SYNC_BLOCKCHAIN:    return _("Synchronizing blockchain...").translated;
+        case MASTERNODE_SYNC_GOVERNANCE:    return _("Synchronizing governance objects...").translated;
+        case MASTERNODE_SYNC_FINISHED:      return _("Synchronization finished").translated;
         default:                            return "";
     }
 }
@@ -149,21 +156,6 @@ void CMasternodeSync::ProcessTick(CConnman& connman)
         // initiated from another node, so skip it too.
         if (!pnode->CanRelay() || (fMasternodeMode && pnode->fInbound)) continue;
 
-        // QUICK MODE (REGTEST ONLY!)
-        if(Params().NetworkIDString() == CBaseChainParams::REGTEST)
-        {
-            if (nCurrentAsset == MASTERNODE_SYNC_BLOCKCHAIN) {
-                connman.PushMessage(pnode, msgMaker.Make(NetMsgType::GETSPORKS)); //get current network sporks
-                SwitchToNextAsset(connman);
-            } else if (nCurrentAsset == MASTERNODE_SYNC_GOVERNANCE) {
-                SendGovernanceSyncRequest(pnode, connman);
-                SwitchToNextAsset(connman);
-            }
-            connman.ReleaseNodeVector(vNodesCopy);
-            return;
-        }
-
-        // NORMAL NETWORK MODE - TESTNET/MAINNET
         {
             if ((pnode->HasPermission(PF_NOBAN) || pnode->m_manual_connection) && !netfulfilledman.HasFulfilledRequest(pnode->addr, strAllow)) {
                 netfulfilledman.RemoveAllFulfilledRequests(pnode->addr);
@@ -248,7 +240,6 @@ void CMasternodeSync::ProcessTick(CConnman& connman)
                 }
                 netfulfilledman.AddFulfilledRequest(pnode->addr, "governance-sync");
 
-                if (pnode->nVersion < MIN_GOVERNANCE_PEER_PROTO_VERSION) continue;
                 nTriedPeerCount++;
 
                 SendGovernanceSyncRequest(pnode, connman);

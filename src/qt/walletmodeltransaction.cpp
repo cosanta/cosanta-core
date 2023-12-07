@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +8,6 @@
 
 #include <qt/walletmodeltransaction.h>
 
-#include <interfaces/node.h>
 #include <key_io.h>
 
 WalletModelTransaction::WalletModelTransaction(const QList<SendCoinsRecipient> &_recipients) :
@@ -23,14 +21,14 @@ QList<SendCoinsRecipient> WalletModelTransaction::getRecipients() const
     return recipients;
 }
 
-std::unique_ptr<interfaces::PendingWalletTx>& WalletModelTransaction::getWtx()
+CTransactionRef& WalletModelTransaction::getWtx()
 {
     return wtx;
 }
 
 unsigned int WalletModelTransaction::getTransactionSize()
 {
-    return wtx != nullptr ? ::GetSerializeSize(wtx->get(), SER_NETWORK, PROTOCOL_VERSION) : 0;
+    return wtx != nullptr ? ::GetSerializeSize(*wtx, SER_NETWORK, PROTOCOL_VERSION) : 0;
 }
 
 CAmount WalletModelTransaction::getTransactionFee() const
@@ -49,31 +47,8 @@ void WalletModelTransaction::reassignAmounts()
     for (QList<SendCoinsRecipient>::iterator it = recipients.begin(); it != recipients.end(); ++it)
     {
         SendCoinsRecipient& rcp = (*it);
-
-#ifdef ENABLE_BIP70
-        if (rcp.paymentRequest.IsInitialized())
         {
-            CAmount subtotal = 0;
-            const payments::PaymentDetails& details = rcp.paymentRequest.getDetails();
-            for (int j = 0; j < details.outputs_size(); j++)
-            {
-                const payments::Output& out = details.outputs(j);
-                if (out.amount() <= 0) continue;
-                const unsigned char* scriptStr = (const unsigned char*)out.script().data();
-                CScript scriptPubKey(scriptStr, scriptStr+out.script().size());
-                for (const auto& txout : wtx->get().vout) {
-                    if (txout.scriptPubKey == scriptPubKey) {
-                        subtotal += txout.nValue;
-                        break;
-                    }
-                }
-            }
-            rcp.amount = subtotal;
-        }
-        else // normal recipient (no payment request)
-#endif
-        {
-            for (const auto& txout : wtx->get().vout) {
+            for (const auto& txout : wtx.get()->vout) {
                 CScript scriptPubKey = GetScriptForDestination(DecodeDestination(rcp.address.toStdString()));
                 if (txout.scriptPubKey == scriptPubKey) {
                     rcp.amount = txout.nValue;

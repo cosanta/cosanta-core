@@ -1,12 +1,11 @@
-// Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2022 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_MASTERNODE_NODE_H
 #define BITCOIN_MASTERNODE_NODE_H
 
-#include <chainparams.h>
+#include <netaddress.h>
 #include <primitives/transaction.h>
 #include <validationinterface.h>
 

@@ -1,5 +1,4 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,9 +6,7 @@
 
 #include <chain.h>
 #include <chainparams.h>
-#include <rpc/server.h>
 #include <streams.h>
-#include <util/system.h>
 #include <validation.h>
 #include <zmq/zmqutil.h>
 
@@ -118,6 +115,14 @@ bool CZMQAbstractPublishNotifier::Initialize(void *pcontext)
             return false;
         }
 
+        const int so_keepalive_option {1};
+        rc = zmq_setsockopt(psocket, ZMQ_TCP_KEEPALIVE, &so_keepalive_option, sizeof(so_keepalive_option));
+        if (rc != 0) {
+            zmqError("Failed to set SO_KEEPALIVE");
+            zmq_close(psocket);
+            return false;
+        }
+
         rc = zmq_bind(psocket, address.c_str());
         if (rc != 0)
         {
@@ -133,6 +138,7 @@ bool CZMQAbstractPublishNotifier::Initialize(void *pcontext)
     else
     {
         LogPrint(BCLog::ZMQ, "zmq: Reusing socket for address %s\n", address);
+        LogPrint(BCLog::ZMQ, "zmq: Outbound message high water mark for %s at %s is %d\n", type, address, outbound_message_high_water_mark);
 
         psocket = i->second->psocket;
         mapPublishNotifiers.insert(std::make_pair(address, this));

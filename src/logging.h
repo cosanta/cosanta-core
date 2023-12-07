@@ -1,6 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -66,7 +65,6 @@ namespace BCLog {
         CHAINLOCKS  = ((uint64_t)1 << 32),
         GOBJECT     = ((uint64_t)1 << 33),
         INSTANTSEND = ((uint64_t)1 << 34),
-        KEEPASS     = ((uint64_t)1 << 35),
         LLMQ        = ((uint64_t)1 << 36),
         LLMQ_DKG    = ((uint64_t)1 << 37),
         LLMQ_SIGS   = ((uint64_t)1 << 38),
@@ -76,7 +74,7 @@ namespace BCLog {
         SPORK       = ((uint64_t)1 << 42),
         NETCONN     = ((uint64_t)1 << 43),
 
-        DASH        = CHAINLOCKS | GOBJECT | INSTANTSEND | KEEPASS | LLMQ | LLMQ_DKG
+        DASH        = CHAINLOCKS | GOBJECT | INSTANTSEND | LLMQ | LLMQ_DKG
                     | LLMQ_SIGS | MNPAYMENTS | MNSYNC | COINJOIN | SPORK | NETCONN,
 
         NET_NETCONN = NET | NETCONN, // use this to have something logged in NET and NETCONN as well
@@ -107,6 +105,9 @@ namespace BCLog {
         std::string LogTimestampStr(const std::string& str);
         std::string LogThreadNameStr(const std::string &str);
 
+        /** Slots that connect to the print signal */
+        std::list<std::function<void(const std::string&)>> m_print_callbacks /* GUARDED_BY(m_cs) */ {};
+
     public:
         bool m_print_to_console = false;
         bool m_print_to_file = false;
@@ -125,7 +126,22 @@ namespace BCLog {
         bool Enabled() const
         {
             StdLockGuard scoped_lock(m_cs);
-            return m_buffering || m_print_to_console || m_print_to_file;
+            return m_buffering || m_print_to_console || m_print_to_file || !m_print_callbacks.empty();
+        }
+
+        /** Connect a slot to the print signal and return the connection */
+        std::list<std::function<void(const std::string&)>>::iterator PushBackCallback(std::function<void(const std::string&)> fun)
+        {
+            StdLockGuard scoped_lock(m_cs);
+            m_print_callbacks.push_back(std::move(fun));
+            return --m_print_callbacks.end();
+        }
+
+        /** Delete a connection */
+        void DeleteCallback(std::list<std::function<void(const std::string&)>>::iterator it)
+        {
+            StdLockGuard scoped_lock(m_cs);
+            m_print_callbacks.erase(it);
         }
 
         /** Start logging (and flush all buffered messages) */
@@ -177,7 +193,7 @@ std::string SafeStringFormat(const std::string& fmt, const Args&... args)
         return tinyformat::format(fmt, args...);
     } catch (std::runtime_error& fmterr) {
         std::string message = tinyformat::format("\n****TINYFORMAT ERROR****\n    err=\"%s\"\n    fmt=\"%s\"\n", fmterr.what(), fmt);
-        tfm::format(std::cerr, "%s", message.c_str());
+        tfm::format(std::cerr, "%s", message);
         return message;
     }
 }
@@ -201,12 +217,13 @@ static inline void LogPrintf(const char* fmt, const Args&... args)
     }
 }
 
-template <typename... Args>
-static inline void LogPrint(const BCLog::LogFlags& category, const Args&... args)
-{
-    if (LogAcceptCategory((category))) {
-        LogPrintf(args...);
-    }
-}
+// Use a macro instead of a function for conditional logging to prevent
+// evaluating arguments when logging for the category is not enabled.
+#define LogPrint(category, ...)              \
+    do {                                     \
+        if (LogAcceptCategory((category))) { \
+            LogPrintf(__VA_ARGS__);          \
+        }                                    \
+    } while (0)
 
 #endif // BITCOIN_LOGGING_H

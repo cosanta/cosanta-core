@@ -1,5 +1,4 @@
 // Copyright (c) 2018-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,18 +8,6 @@
 #include <util/time.h>
 
 #include <iostream>
-
-CBLSWorker blsWorker;
-
-void InitBLSTests()
-{
-    blsWorker.Start();
-}
-
-void CleanupBLSTests()
-{
-    blsWorker.Stop();
-}
 
 static void BuildTestVectors(size_t count, size_t invalidCount,
                              BLSPublicKeyVector& pubKeys, BLSSecretKeyVector& secKeys, BLSSignatureVector& sigs,
@@ -328,11 +315,14 @@ static void BLS_Verify_BatchedParallel(benchmark::Bench& bench)
         return cancel;
     };
 
+    CBLSWorker blsWorker;
+    blsWorker.Start();
+
     // Benchmark.
-    size_t i = 0;
     bench.minEpochIterations(1000).run([&] {
         if (futures.size() < 100) {
             while (futures.size() < 10000) {
+                size_t i = 0;
                 auto f = blsWorker.AsyncVerifySig(sigs[i], pubKeys[i], msgHashes[i], cancelCond);
                 futures.emplace_back(std::make_pair(i, std::move(f)));
                 i = (i + 1) % pubKeys.size();
@@ -359,6 +349,8 @@ static void BLS_Verify_BatchedParallel(benchmark::Bench& bench)
     {
         UninterruptibleSleep(std::chrono::milliseconds{100});
     }
+
+    blsWorker.Stop();
 }
 
 BENCHMARK(BLS_PubKeyAggregate_Normal)

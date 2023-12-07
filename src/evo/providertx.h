@@ -1,5 +1,4 @@
-// Copyright (c) 2018-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2018-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,6 +6,7 @@
 #define BITCOIN_EVO_PROVIDERTX_H
 
 #include <bls/bls.h>
+#include <evo/specialtx.h>
 #include <primitives/transaction.h>
 
 #include <key_io.h>
@@ -18,10 +18,20 @@ class CBlockIndex;
 class CCoinsViewCache;
 class CValidationState;
 
+struct maybe_error{
+    bool did_err{false};
+    int ban_amount{0};
+    std::string_view error_str;
+
+    constexpr maybe_error() = default;
+    constexpr maybe_error(int amount, std::string_view err): did_err(true), ban_amount(amount), error_str(err) {};
+};
+
 class CProRegTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr auto SPECIALTX_TYPE = TRANSACTION_PROVIDER_REGISTER;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     uint16_t nVersion{CURRENT_VERSION};                    // message version
     uint16_t nType{0};                                     // only 0 supported for now
@@ -82,12 +92,15 @@ public:
 
         obj.pushKV("inputsHash", inputsHash.ToString());
     }
+
+    maybe_error IsTriviallyValid() const;
 };
 
 class CProUpServTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr auto SPECIALTX_TYPE = TRANSACTION_PROVIDER_UPDATE_SERVICE;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     uint16_t nVersion{CURRENT_VERSION}; // message version
     uint256 proTxHash;
@@ -119,12 +132,15 @@ public:
         }
         obj.pushKV("inputsHash", inputsHash.ToString());
     }
+
+    maybe_error IsTriviallyValid() const;
 };
 
 class CProUpRegTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr auto SPECIALTX_TYPE = TRANSACTION_PROVIDER_UPDATE_REGISTRAR;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     uint16_t nVersion{CURRENT_VERSION}; // message version
     uint256 proTxHash;
@@ -167,12 +183,15 @@ public:
         obj.pushKV("pubKeyOperator", pubKeyOperator.ToString());
         obj.pushKV("inputsHash", inputsHash.ToString());
     }
+
+    maybe_error IsTriviallyValid() const;
 };
 
 class CProUpRevTx
 {
 public:
-    static const uint16_t CURRENT_VERSION = 1;
+    static constexpr auto SPECIALTX_TYPE = TRANSACTION_PROVIDER_UPDATE_REVOKE;
+    static constexpr uint16_t CURRENT_VERSION = 1;
 
     // these are just informational and do not have any effect on the revocation
     enum {
@@ -208,12 +227,19 @@ public:
         obj.pushKV("reason", (int)nReason);
         obj.pushKV("inputsHash", inputsHash.ToString());
     }
+
+    maybe_error IsTriviallyValid() const;
 };
 
+template <typename ProTx>
+static maybe_error CheckInputsHash(const CTransaction& tx, const ProTx& proTx)
+{
+    if (uint256 inputsHash = CalcTxInputsHash(tx); inputsHash != proTx.inputsHash) {
+        return {100, "bad-protx-inputs-hash"};
+    }
 
-bool CheckProRegTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state, const CCoinsViewCache& view);
-bool CheckProUpServTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state);
-bool CheckProUpRegTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state, const CCoinsViewCache& view);
-bool CheckProUpRevTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValidationState& state);
+    return {};
+}
+
 
 #endif // BITCOIN_EVO_PROVIDERTX_H

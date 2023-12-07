@@ -1,9 +1,8 @@
 // Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 
 #include <cachemultimap.h>
 
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <algorithm>
 #include <iostream>

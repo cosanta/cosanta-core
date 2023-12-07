@@ -5,6 +5,24 @@ The REST API can be enabled with the `-rest` option.
 
 The interface runs on the same port as the JSON-RPC interface, by default port 9998 for mainnet and port 19998 for testnet.
 
+REST Interface consistency guarantees
+-------------------------------------
+
+The [same guarantees as for the RPC Interface](/doc/JSON-RPC-interface.md#rpc-consistency-guarantees)
+apply.
+
+Limitations
+-----------
+
+There is a known issue in the REST interface that can cause a node to crash if
+too many http connections are being opened at the same time because the system runs
+out of available file descriptors. To prevent this from happening you might
+want to increase the number of maximum allowed file descriptors in your system
+and try to prevent opening too many connections to your rest interface at the
+same time if this is under your control. It is hard to give general advice
+since this depends on your system but if you make several hundred requests at
+once you are definitely at risk of encountering this issue.
+
 Supported API
 -------------
 
@@ -13,15 +31,17 @@ Supported API
 
 Given a transaction hash: returns a transaction in binary, hex-encoded binary, or JSON formats.
 
-For full TX query capability, one must enable the transaction index via "txindex=1" command line / configuration option.
+By default, this endpoint will only search the mempool.
+To query for a confirmed transaction, enable the transaction index via "txindex=1" command line / configuration option.
 
 #### Blocks
 `GET /rest/block/<BLOCK-HASH>.<bin|hex|json>`
 `GET /rest/block/notxdetails/<BLOCK-HASH>.<bin|hex|json>`
 
 Given a block hash: returns a block, in binary, hex-encoded binary or JSON formats.
+Responds with 404 if the block doesn't exist.
 
-The HTTP request and response are both handled entirely in-memory, thus making maximum memory usage at least 2.66MB (1 MB max block, plus hex encoding) per request.
+The HTTP request and response are both handled entirely in-memory.
 
 With the /notxdetails/ option JSON response will only contain the transaction hash instead of the complete transaction details. The option only affects the JSON response.
 
@@ -29,6 +49,7 @@ With the /notxdetails/ option JSON response will only contain the transaction ha
 `GET /rest/headers/<COUNT>/<BLOCK-HASH>.<bin|hex|json>`
 
 Given a block hash: returns <COUNT> amount of blockheaders in upward direction.
+Returns empty if the block doesn't exist or it isn't in the active chain.
 
 #### Blockhash by height
 `GET /rest/blockhashbyheight/<HEIGHT>.<bin|hex|json>`
@@ -71,7 +92,7 @@ $ curl localhost:19998/rest/getutxos/checkmempool/b2cdfd7b89def827ff8af7cd9bff76
       {
          "txvers" : 1
          "height" : 2147483647,
-         "value" : 8.8687,		 
+         "value" : 8.8687,
          "scriptPubKey" : {
             "asm" : "OP_DUP OP_HASH160 1c7cebb529b86a04c683dfa87be49de35bcf589e OP_EQUALVERIFY OP_CHECKSIG",
             "hex" : "76a9141c7cebb529b86a04c683dfa87be49de35bcf589e88ac",

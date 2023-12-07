@@ -1,14 +1,14 @@
-// Copyright (c) 2017-2019 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2017-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include <evo/simplifiedmns.h>
 
 #include <evo/cbtx.h>
 #include <core_io.h>
 #include <evo/deterministicmns.h>
 #include <llmq/blockprocessor.h>
 #include <llmq/commitment.h>
-#include <evo/simplifiedmns.h>
 #include <evo/specialtx.h>
 
 #include <pubkey.h>
@@ -20,6 +20,7 @@
 #include <consensus/merkle.h>
 #include <univalue.h>
 #include <validation.h>
+#include <key_io.h>
 
 CSimplifiedMNListEntry::CSimplifiedMNListEntry(const CDeterministicMN& dmn) :
     proRegTxHash(dmn.proTxHash),
@@ -73,8 +74,8 @@ CSimplifiedMNList::CSimplifiedMNList(const CDeterministicMNList& dmnList)
     mnList.resize(dmnList.GetAllMNsCount());
 
     size_t i = 0;
-    dmnList.ForEachMN(false, [this, &i](const CDeterministicMNCPtr& dmn) {
-        mnList[i++] = std::make_unique<CSimplifiedMNListEntry>(*dmn);
+    dmnList.ForEachMN(false, [this, &i](auto& dmn) {
+        mnList[i++] = std::make_unique<CSimplifiedMNListEntry>(dmn);
     });
 
     std::sort(mnList.begin(), mnList.end(), [&](const std::unique_ptr<CSimplifiedMNListEntry>& a, const std::unique_ptr<CSimplifiedMNListEntry>& b) {
@@ -190,7 +191,7 @@ bool BuildSimplifiedMNListDiff(const uint256& baseBlockHash, const uint256& bloc
     AssertLockHeld(cs_main);
     mnListDiffRet = CSimplifiedMNListDiff();
 
-    const CBlockIndex* baseBlockIndex = chainActive.Genesis();
+    const CBlockIndex* baseBlockIndex = ::ChainActive().Genesis();
     if (!baseBlockHash.IsNull()) {
         baseBlockIndex = LookupBlockIndex(baseBlockHash);
         if (!baseBlockIndex) {
@@ -205,7 +206,7 @@ bool BuildSimplifiedMNListDiff(const uint256& baseBlockHash, const uint256& bloc
         return false;
     }
 
-    if (!chainActive.Contains(baseBlockIndex) || !chainActive.Contains(blockIndex)) {
+    if (!::ChainActive().Contains(baseBlockIndex) || !::ChainActive().Contains(blockIndex)) {
         errorRet = strprintf("block %s and %s are not in the same chain", baseBlockHash.ToString(), blockHash.ToString());
         return false;
     }

@@ -1,5 +1,4 @@
-// Copyright (c) 2017-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2017-2022 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,11 +6,12 @@
 #define BITCOIN_EVO_SIMPLIFIEDMNS_H
 
 #include <bls/bls.h>
-
 #include <merkleblock.h>
+#include <netaddress.h>
 #include <pubkey.h>
 
 class UniValue;
+class CBlockIndex;
 class CDeterministicMNList;
 class CDeterministicMN;
 
@@ -102,17 +102,13 @@ public:
     std::vector<uint256> deletedMNs;
     std::vector<CSimplifiedMNListEntry> mnList;
 
-    // starting with proto version LLMQS_PROTO_VERSION, we also transfer changes in active quorums
     std::vector<std::pair<uint8_t, uint256>> deletedQuorums; // p<LLMQType, quorumHash>
     std::vector<llmq::CFinalCommitment> newQuorums;
 
     SERIALIZE_METHODS(CSimplifiedMNListDiff, obj)
     {
         READWRITE(obj.baseBlockHash, obj.blockHash, obj.cbTxMerkleTree, obj.cbTx, obj.deletedMNs, obj.mnList);
-
-        if (s.GetVersion() >= LLMQS_PROTO_VERSION) {
-            READWRITE(obj.deletedQuorums, obj.newQuorums);
-        }
+        READWRITE(obj.deletedQuorums, obj.newQuorums);
     }
 
     CSimplifiedMNListDiff();

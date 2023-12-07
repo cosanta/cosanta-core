@@ -95,6 +95,9 @@ public:
     */
     bool hasTrayIcon() const { return trayIcon; }
 
+    /** Disconnect core signals from GUI client */
+    void unsubscribeFromCoreSignals();
+
 protected:
     void changeEvent(QEvent *e) override;
     void closeEvent(QCloseEvent *event) override;
@@ -159,6 +162,10 @@ private:
     QAction* showBackupsAction = nullptr;
     QAction* openAction = nullptr;
     QAction* showHelpMessageAction = nullptr;
+    QAction* m_create_wallet_action{nullptr};
+    QAction* m_open_wallet_action{nullptr};
+    QMenu* m_open_wallet_menu{nullptr};
+    QAction* m_close_wallet_action{nullptr};
     QAction* showCoinJoinHelpAction = nullptr;
     QAction* m_wallet_selector_action = nullptr;
 
@@ -223,8 +230,6 @@ private:
 
     /** Connect core signals to GUI client */
     void subscribeToCoreSignals();
-    /** Disconnect core signals from GUI client */
-    void unsubscribeFromCoreSignals();
 
     /** Update UI with latest network info from model. */
     void updateNetworkState();
@@ -254,13 +259,14 @@ public Q_SLOTS:
     void setAdditionalDataSyncProgress(double nSyncProgress);
 
     /** Notify the user of an event from the core network or transaction handling code.
-       @param[in] title     the message box / notification title
-       @param[in] message   the displayed text
-       @param[in] style     modality and style definitions (icon and used buttons - buttons only for message boxes)
-                            @see CClientUIInterface::MessageBoxFlags
-       @param[in] ret       pointer to a bool that will be modified to whether Ok was clicked (modal only)
+       @param[in] title             the message box / notification title
+       @param[in] message           the displayed text
+       @param[in] style             modality and style definitions (icon and used buttons - buttons only for message boxes)
+                                    @see CClientUIInterface::MessageBoxFlags
+       @param[in] ret               pointer to a bool that will be modified to whether Ok was clicked (modal only)
+       @param[in] detailed_message  the text to be displayed in the details area
     */
-    void message(const QString &title, const QString &message, unsigned int style, bool *ret = nullptr);
+    void message(const QString& title, QString message, unsigned int style, bool* ret = nullptr, const QString& detailed_message = QString());
 
     void setStakingStatus();
 

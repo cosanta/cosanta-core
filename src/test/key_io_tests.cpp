@@ -5,11 +5,12 @@
 #include <test/data/key_io_invalid.json.h>
 #include <test/data/key_io_valid.json.h>
 
+#include <chainparams.h>
 #include <key.h>
 #include <key_io.h>
 #include <script/script.h>
 #include <util/strencodings.h>
-#include <test/test_cosanta.h>
+#include <test/util/setup_common.h>
 
 #include <boost/test/unit_test.hpp>
 

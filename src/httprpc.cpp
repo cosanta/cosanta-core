@@ -1,23 +1,19 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <httprpc.h>
 
 #include <chainparams.h>
+#include <crypto/hmac_sha256.h>
 #include <httpserver.h>
-#include <key_io.h>
 #include <rpc/protocol.h>
 #include <rpc/server.h>
-#include <random.h>
-#include <sync.h>
-#include <util/system.h>
-#include <util/strencodings.h>
 #include <ui_interface.h>
+#include <util/strencodings.h>
+#include <util/system.h>
+#include <util/translation.h>
 #include <walletinitinterface.h>
-#include <crypto/hmac_sha256.h>
-#include <stdio.h>
 
 #include <memory>
 
@@ -220,7 +216,7 @@ static bool InitRPCAuthentication()
 {
     if (gArgs.GetArg("-rpcpassword", "") == "")
     {
-        LogPrintf("No rpcpassword set - using random cookie authentication.\n");
+        LogPrintf("Using random cookie authentication.\n");
         if (!GenerateAuthCookie(&strRPCUserColonPass)) {
             uiInterface.ThreadSafeMessageBox(
                 _("Error: A fatal internal error occurred, see debug.log for details"), // Same message as AbortNode

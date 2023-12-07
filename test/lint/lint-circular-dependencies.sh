@@ -12,6 +12,7 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "chainparamsbase -> util/system -> chainparamsbase"
     "index/txindex -> validation -> index/txindex"
     "policy/fees -> txmempool -> policy/fees"
+    "policy/policy -> policy/settings -> policy/policy"
     "qt/addresstablemodel -> qt/walletmodel -> qt/addresstablemodel"
     "qt/bantablemodel -> qt/clientmodel -> qt/bantablemodel"
     "qt/bitcoingui -> qt/utilitydialog -> qt/bitcoingui"
@@ -26,6 +27,9 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "wallet/fees -> wallet/wallet -> wallet/fees"
     "wallet/wallet -> wallet/walletdb -> wallet/wallet"
     "wallet/coincontrol -> wallet/wallet -> wallet/coincontrol"
+    "policy/fees -> policy/policy -> validation -> policy/fees"
+    "policy/policy -> validation -> policy/policy"
+    "qt/addressbookpage -> qt/bitcoingui -> qt/walletview -> qt/addressbookpage"
     "txmempool -> validation -> validationinterface -> txmempool"
     "wallet/ismine -> wallet/wallet -> wallet/ismine"
     # Dash
@@ -53,6 +57,7 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "llmq/signing -> net_processing -> llmq/signing"
     "llmq/signing_shares -> net_processing -> llmq/signing_shares"
     "logging -> util/system -> logging"
+    "logging -> util/system -> random -> logging"
     "masternode/payments -> validation -> masternode/payments"
     "net -> netmessagemaker -> net"
     "net_processing -> spork -> net_processing"
@@ -79,7 +84,7 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "llmq/commitment -> llmq/utils -> llmq/commitment"
     "llmq/dkgsession -> llmq/dkgsessionmgr -> llmq/dkgsession"
     "evo/deterministicmns -> validationinterface -> txmempool -> evo/deterministicmns"
-    "llmq/chainlocks -> validation -> llmq/chainlocks"
+    "llmq/chainlocks -> llmq/instantsend -> validation -> llmq/chainlocks"
     "coinjoin/coinjoin -> llmq/chainlocks -> net -> coinjoin/coinjoin"
     "evo/deterministicmns -> llmq/utils -> net -> evo/deterministicmns"
     "policy/fees -> txmempool -> validation -> policy/fees"
@@ -100,7 +105,7 @@ CIRCULAR_DEPENDENCIES=()
 
 IFS=$'\n'
 for CIRC in $(cd src && ../contrib/devtools/circular-dependencies.py {*,*/*,*/*/*}.{h,cpp} | sed -e 's/^Circular dependency: //'); do
-    CIRCULAR_DEPENDENCIES+=($CIRC)
+    CIRCULAR_DEPENDENCIES+=( "$CIRC" )
     IS_EXPECTED_CIRC=0
     for EXPECTED_CIRC in "${EXPECTED_CIRCULAR_DEPENDENCIES[@]}"; do
         if [[ "${CIRC}" == "${EXPECTED_CIRC}" ]]; then

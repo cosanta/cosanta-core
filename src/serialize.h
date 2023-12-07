@@ -1,6 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,7 +9,7 @@
 #include <compat/endian.h>
 
 #include <algorithm>
-#include <assert.h>
+#include <atomic>
 #include <ios>
 #include <limits>
 #include <list>
@@ -514,7 +513,7 @@ void ReadFixedVarIntsBitSet(Stream& s, std::vector<bool>& vec, size_t size)
             break;
         }
         int32_t idx = last + offset;
-        if (idx >= size) {
+        if (idx >= int32_t(size)) {
             throw std::ios_base::failure("out of bounds index");
         }
         if (last != -1 && idx <= last) {
@@ -833,6 +832,7 @@ template<typename Stream, unsigned int N, typename T> inline void Unserialize(St
  * vectors of unsigned char are a special case and are intended to be serialized as a single opaque blob.
  */
 template<typename Stream, typename T, typename A> void Serialize_impl(Stream& os, const std::vector<T, A>& v, const unsigned char&);
+template<typename Stream, typename T, typename A> void Serialize_impl(Stream& os, const std::vector<T, A>& v, const bool&);
 template<typename Stream, typename T, typename A, typename V> void Serialize_impl(Stream& os, const std::vector<T, A>& v, const V&);
 template<typename Stream, typename T, typename A> inline void Serialize(Stream& os, const std::vector<T, A>& v);
 template<typename Stream, typename T, typename A> void Unserialize_impl(Stream& is, std::vector<T, A>& v, const unsigned char&);
@@ -878,6 +878,12 @@ template<typename Stream, typename T> void Unserialize(Stream& os, std::shared_p
  */
 template<typename Stream, typename T> void Serialize(Stream& os, const std::unique_ptr<const T>& p);
 template<typename Stream, typename T> void Unserialize(Stream& os, std::unique_ptr<const T>& p);
+
+/**
+ * atomic
+ */
+template<typename Stream, typename T> void Serialize(Stream& os, const std::atomic<T>& a);
+template<typename Stream, typename T> void Unserialize(Stream& is, std::atomic<T>& a);
 
 
 
@@ -964,6 +970,25 @@ void Unserialize(Stream& is, std::basic_string<C>& str)
         is.read((char*)str.data(), nSize * sizeof(C));
 }
 
+/**
+ * string_view
+ */
+template<typename Stream, typename C>
+void Serialize(Stream& os, const std::basic_string_view<C>& str)
+{
+    WriteCompactSize(os, str.size());
+    if (!str.empty())
+        os.write((char*)str.data(), str.size() * sizeof(C));
+}
+
+template<typename Stream, typename C>
+void Unserialize(Stream& is, std::basic_string_view<C>& str)
+{
+    unsigned int nSize = ReadCompactSize(is);
+    str.resize(nSize);
+    if (nSize != 0)
+        is.read((char*)str.data(), nSize * sizeof(C));
+}
 
 
 /**
@@ -1029,6 +1054,18 @@ void Serialize_impl(Stream& os, const std::vector<T, A>& v, const unsigned char&
     WriteCompactSize(os, v.size());
     if (!v.empty())
         os.write((char*)v.data(), v.size() * sizeof(T));
+}
+
+template<typename Stream, typename T, typename A>
+void Serialize_impl(Stream& os, const std::vector<T, A>& v, const bool&)
+{
+    // A special case for std::vector<bool>, as dereferencing
+    // std::vector<bool>::const_iterator does not result in a const bool&
+    // due to std::vector's special casing for bool arguments.
+    WriteCompactSize(os, v.size());
+    for (bool elem : v) {
+        ::Serialize(os, elem);
+    }
 }
 
 template<typename Stream, typename T, typename A, typename V>
@@ -1295,6 +1332,25 @@ template<typename Stream, typename T>
 void Unserialize(Stream& is, std::shared_ptr<T>& p)
 {
     p = std::make_shared<T>(deserialize, is);
+}
+
+
+
+/**
+ * atomic
+ */
+template<typename Stream, typename T>
+void Serialize(Stream& os, const std::atomic<T>& a)
+{
+    Serialize(os, a.load());
+}
+
+template<typename Stream, typename T>
+void Unserialize(Stream& is, std::atomic<T>& a)
+{
+    T val;
+    Unserialize(is, val);
+    a.store(val);
 }
 
 

@@ -65,9 +65,6 @@ class AcceptBlockTest(BitcoinTestFramework):
         self.num_nodes = 2
         self.extra_args = [[], ["-minimumchainwork=0x10"]]
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_wallet()
-
     def setup_network(self):
         # Node0 will be used to test behavior of processing unrequested blocks
         # from peers which are not whitelisted, while Node1 will be used for
@@ -82,12 +79,10 @@ class AcceptBlockTest(BitcoinTestFramework):
         test_node = self.nodes[0].add_p2p_connection(P2PInterface())
         # min_work_node connects to node1 (whitelisted)
         min_work_node = self.nodes[1].add_p2p_connection(P2PInterface())
-        test_node.wait_for_verack()
-        min_work_node.wait_for_verack()
 
         # 1. Have nodes mine a block (leave IBD)
-        [ n.generate(1) for n in self.nodes ]
-        tips = [ int("0x" + n.getbestblockhash(), 0) for n in self.nodes ]
+        [n.generatetoaddress(1, n.get_deterministic_priv_key().address) for n in self.nodes]
+        tips = [int("0x" + n.getbestblockhash(), 0) for n in self.nodes]
 
         # 2. Send one block that builds on each tip.
         # This should be accepted by node0
@@ -206,7 +201,6 @@ class AcceptBlockTest(BitcoinTestFramework):
         self.nodes[1].disconnect_p2ps()
 
         test_node = self.nodes[0].add_p2p_connection(P2PInterface())
-        test_node.wait_for_verack()
 
         test_node.send_message(msg_block(block_h1f))
 
@@ -291,7 +285,6 @@ class AcceptBlockTest(BitcoinTestFramework):
 
             self.nodes[0].disconnect_p2ps()
             test_node = self.nodes[0].add_p2p_connection(P2PInterface())
-            test_node.wait_for_verack()
 
         # We should have failed reorg and switched back to 290 (but have block 291)
         assert_equal(self.nodes[0].getblockcount(), 290)

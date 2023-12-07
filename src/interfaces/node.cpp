@@ -17,6 +17,7 @@
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
 #include <llmq/instantsend.h>
+#include <mapport.h>
 #include <masternode/sync.h>
 #include <net.h>
 #include <net_processing.h>
@@ -25,14 +26,17 @@
 #include <policy/feerate.h>
 #include <policy/fees.h>
 #include <policy/policy.h>
+#include <policy/settings.h>
 #include <primitives/block.h>
 #include <rpc/server.h>
 #include <scheduler.h>
 #include <shutdown.h>
+#include <support/allocators/secure.h>
 #include <sync.h>
 #include <txmempool.h>
 #include <ui_interface.h>
 #include <util/system.h>
+#include <util/translation.h>
 #include <validation.h>
 #include <warnings.h>
 
@@ -51,10 +55,11 @@ class CWallet;
 fs::path GetWalletDir();
 std::vector<fs::path> ListWalletDir();
 std::vector<std::shared_ptr<CWallet>> GetWallets();
+std::shared_ptr<CWallet> LoadWallet(interfaces::Chain& chain, const std::string& name, bilingual_str& error, std::vector<bilingual_str>& warnings);
+WalletCreationStatus CreateWallet(interfaces::Chain& chain, const SecureString& passphrase, uint64_t wallet_creation_flags, const std::string& name, bilingual_str& error, std::vector<bilingual_str>& warnings, std::shared_ptr<CWallet>& result);
+std::unique_ptr<interfaces::Handler> HandleLoadWallet(interfaces::Node::LoadWalletFn load_wallet);
 
 namespace interfaces {
-
-class Wallet;
 
 namespace {
 
@@ -70,7 +75,7 @@ public:
 class GOVImpl : public GOV
 {
 public:
-    std::vector<const CGovernanceObject*> getAllNewerThan(int64_t nMoreThanTime) override
+    std::vector<CGovernanceObject> getAllNewerThan(int64_t nMoreThanTime) override
     {
         return governance.GetAllNewerThan(nMoreThanTime);
     }
@@ -160,7 +165,7 @@ public:
     {
         return CCoinJoin::IsDenominatedAmount(nAmount);
     }
-    std::vector<CAmount> getStandardDenominations() override
+    std::array<CAmount, 5> getStandardDenominations() override
     {
         return CCoinJoin::GetStandardDenominations();
     }
@@ -177,6 +182,7 @@ public:
     MasternodeSyncImpl m_masternodeSync;
     CoinJoinOptionsImpl m_coinjoin;
 
+    void initError(const bilingual_str& message) override { InitError(message); }
     bool parseParameters(int argc, const char* const argv[], std::string& error) override
     {
         return gArgs.ParseParameters(argc, argv, error);
@@ -211,15 +217,7 @@ public:
     }
     void startShutdown() override { StartShutdown(); }
     bool shutdownRequested() override { return ShutdownRequested(); }
-    void mapPort(bool use_upnp) override
-    {
-        if (use_upnp) {
-            StartMapPort();
-        } else {
-            InterruptMapPort();
-            StopMapPort();
-        }
-    }
+    void mapPort(bool use_upnp, bool use_natpmp) override { StartMapPort(use_upnp, use_natpmp); }
     void setupServerArgs() override { return SetupServerArgs(); }
     bool getProxy(Network net, proxyType& proxy_info) override { return GetProxy(net, proxy_info); }
     size_t getNodeCount(CConnman::NumConnections flags) override
@@ -306,21 +304,21 @@ public:
     int getNumBlocks() override
     {
         LOCK(::cs_main);
-        return ::chainActive.Height();
+        return ::ChainActive().Height();
     }
     int64_t getLastBlockTime() override
     {
         LOCK(::cs_main);
-        if (::chainActive.Tip()) {
-            return ::chainActive.Tip()->GetBlockTime();
+        if (::ChainActive().Tip()) {
+            return ::ChainActive().Tip()->GetBlockTime();
         }
         return Params().GenesisBlock().GetBlockTime(); // Genesis block's time of current network
     }
     std::string getLastBlockHash() override
     {
         LOCK(::cs_main);
-        if (::chainActive.Tip()) {
-            return ::chainActive.Tip()->GetBlockHash().ToString();
+        if (::ChainActive().Tip()) {
+            return ::ChainActive().Tip()->GetBlockHash().ToString();
         }
         return Params().GenesisBlock().GetHash().ToString(); // Genesis block's hash of current network
     }
@@ -329,11 +327,11 @@ public:
         const CBlockIndex* tip;
         {
             LOCK(::cs_main);
-            tip = ::chainActive.Tip();
+            tip = ::ChainActive().Tip();
         }
         return GuessVerificationProgress(Params().TxData(), tip);
     }
-    bool isInitialBlockDownload() override { return IsInitialBlockDownload(); }
+    bool isInitialBlockDownload() override { return ::ChainstateActive().IsInitialBlockDownload(); }
     bool getReindex() override { return ::fReindex; }
     bool getImporting() override { return ::fImporting; }
     void setNetworkActive(bool active) override
@@ -343,7 +341,6 @@ public:
         }
     }
     bool getNetworkActive() override { return g_connman && g_connman->GetNetworkActive(); }
-    CAmount getMaxTxFee() override { return ::maxTxFee; }
     CFeeRate estimateSmartFee(int num_blocks, bool conservative, int* returned_target = nullptr) override
     {
         FeeCalculation fee_calc;
@@ -368,7 +365,7 @@ public:
     bool getUnspentOutput(const COutPoint& output, Coin& coin) override
     {
         LOCK(::cs_main);
-        return ::pcoinsTip->GetCoin(output, coin);
+        return ::ChainstateActive().CoinsTip().GetCoin(output, coin);
     }
     std::string getWalletDir() override
     {
@@ -390,12 +387,24 @@ public:
         }
         return wallets;
     }
+    std::unique_ptr<Wallet> loadWallet(const std::string& name, bilingual_str& error, std::vector<bilingual_str>& warnings) override
+    {
+        return MakeWallet(LoadWallet(*m_interfaces.chain, name, error, warnings));
+    }
+
     EVO& evo() override { return m_evo; }
     GOV& gov() override { return m_gov; }
     LLMQ& llmq() override { return m_llmq; }
     Masternode::Sync& masternodeSync() override { return m_masternodeSync; }
     CoinJoin::Options& coinJoinOptions() override { return m_coinjoin; }
 
+    WalletCreationStatus createWallet(const SecureString& passphrase, uint64_t wallet_creation_flags, const std::string& name, bilingual_str& error, std::vector<bilingual_str>& warnings, std::unique_ptr<Wallet>& result) override
+    {
+        std::shared_ptr<CWallet> wallet;
+        WalletCreationStatus status = CreateWallet(*m_interfaces.chain, passphrase, wallet_creation_flags, name, error, warnings, wallet);
+        result = MakeWallet(wallet);
+        return status;
+    }
     std::unique_ptr<Handler> handleInitMessage(InitMessageFn fn) override
     {
         return MakeHandler(::uiInterface.InitMessage_connect(fn));
@@ -414,7 +423,7 @@ public:
     }
     std::unique_ptr<Handler> handleLoadWallet(LoadWalletFn fn) override
     {
-        return MakeHandler(::uiInterface.LoadWallet_connect([fn](std::shared_ptr<CWallet> wallet) { fn(MakeWallet(wallet)); }));
+        return HandleLoadWallet(std::move(fn));
     }
     std::unique_ptr<Handler> handleNotifyNumConnectionsChanged(NotifyNumConnectionsChangedFn fn) override
     {

@@ -1,12 +1,10 @@
-// Copyright (c) 2014-2020 The Dash Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
+// Copyright (c) 2014-2021 The Dash Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_FLAT_DATABASE_H
 #define BITCOIN_FLAT_DATABASE_H
 
-#include <chainparams.h>
 #include <clientversion.h>
 #include <fs.h>
 #include <hash.h>

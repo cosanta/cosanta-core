@@ -3,7 +3,6 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <script/interpreter.h>
-#include <script/script.h>
 #include <streams.h>
 #include <version.h>
 
@@ -12,7 +11,7 @@
 /** Flags that are not forbidden by an assert */
 static bool IsValidFlagCombination(unsigned flags);
 
-void test_one_input(std::vector<uint8_t> buffer)
+void test_one_input(const std::vector<uint8_t>& buffer)
 {
     CDataStream ds(buffer, SER_NETWORK, INIT_PROTO_VERSION);
     try {
