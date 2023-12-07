@@ -746,13 +746,13 @@ void SetupServerArgs()
     gArgs.AddArg("-statsns=<ns>", strprintf("Specify additional namespace prefix (default: %s)", DEFAULT_STATSD_NAMESPACE), ArgsManager::ALLOW_ANY, OptionsCategory::STATSD);
     gArgs.AddArg("-statsperiod=<seconds>", strprintf("Specify the number of seconds between periodic measurements (default: %d)", DEFAULT_STATSD_PERIOD), ArgsManager::ALLOW_ANY, OptionsCategory::STATSD);
 #ifdef ENABLE_WALLET
-    gArgs.AddArg("-staking=<n>", strprintf("Enable staking functionality (0-1, default: %u)", 1), false, OptionsCategory::POS);
-    gArgs.AddArg("-reservebalance=<amt>", "Keep the specified amount available for spending at all times (default: 0)", false, OptionsCategory::POS);
-    gArgs.AddArg("-stakesplitthreshold=<n>", strprintf("Splits stake reward by threshold (default: %d)", DEFAULT_STAKE_SPLIT_THRESHOLD), false, OptionsCategory::POS);
-    gArgs.AddArg("-stakemaxsplit=<n>", strprintf("Sets the number of max inputs & outputs of a stake (default: %d)", DEFAULT_STAKE_MAX_SPLIT), false, OptionsCategory::POS);
-    gArgs.AddArg("-stakeautocombine=<n>", strprintf("Autocombine feature: 0 - disable, 1 - same account, 2 - any account (default: %d)", DEFAULT_STAKE_AUTOCOMBINE), false, OptionsCategory::POS);
-    gArgs.AddArg("-printcoinstake", "", false, OptionsCategory::HIDDEN);
-    gArgs.AddArg("-poshashinterval", "", false, OptionsCategory::HIDDEN);
+    gArgs.AddArg("-staking=<n>", strprintf("Enable staking functionality (0-1, default: %u)", 1), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    gArgs.AddArg("-reservebalance=<amt>", "Keep the specified amount available for spending at all times (default: 0)", ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    gArgs.AddArg("-stakesplitthreshold=<n>", strprintf("Splits stake reward by threshold (default: %d)", DEFAULT_STAKE_SPLIT_THRESHOLD), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    gArgs.AddArg("-stakemaxsplit=<n>", strprintf("Sets the number of max inputs & outputs of a stake (default: %d)", DEFAULT_STAKE_MAX_SPLIT), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    gArgs.AddArg("-stakeautocombine=<n>", strprintf("Autocombine feature: 0 - disable, 1 - same account, 2 - any account (default: %d)", DEFAULT_STAKE_AUTOCOMBINE), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    gArgs.AddArg("-printcoinstake", "", ArgsManager::ALLOW_ANY, OptionsCategory::HIDDEN);
+    gArgs.AddArg("-poshashinterval", "", ArgsManager::ALLOW_ANY, OptionsCategory::HIDDEN);
 #endif
 #if HAVE_DECL_DAEMON
     gArgs.AddArg("-daemon", "Run in the background as a daemon and accept commands", ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
