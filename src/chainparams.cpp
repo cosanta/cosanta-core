@@ -310,7 +310,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0024].nFalloffCoeff = 5;      // this corresponds to 10 periods
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000006120b78e779e");
+        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000056a5a9b6a581acb3");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -413,6 +413,7 @@ public:
                 {227510, uint256S("0x0000a1c4fa380e46b9f52ef1793ed8992e4c735a1b0a6fdf8180284ef94676ba")},
                 {329066, uint256S("0x0000d4f1c5d27c25201f01d9f335c2a5e4345258941cb785ff302ee935cd995c")},
                 {341606, uint256S("0x000084bcb3ca5c12fee6183b068ed37775ca81ef4cc502bab41df2059de857ed")},
+                {478500, uint256S("0x00001bca3db981f1dca7ff21371260b84ef3a2e2b5259e60c4bd5a538860f673")},
             }
         };
 
@@ -622,6 +623,7 @@ public:
                 {78200, uint256S("0x000008c7d80b614ac6d3770a80c1482dc8047b56afb899a380f5635a45bf93ea")},
                 {94000, uint256S("0x0068a733805059fba4ea3b1b60bbade9401305840a9df89987520e478e6e2465")},
                 {147800,uint256S("0x012ca46fb71629895e065c1900eb5c485e8832dfae8b673373ac49b6a6f505d2")},
+                {444444,uint256S("0x4ca2d67c258b8bfb767947970f8a5945ca93e982c31cac36c7615c9b4ed6755c")},
             }
         };
 
