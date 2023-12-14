@@ -169,7 +169,7 @@ void ScriptPubKeyToUniv(const CScript& scriptPubKey,
     if (fIncludeHex)
         out.pushKV("hex", HexStr(scriptPubKey));
 
-    if (!ExtractDestinations(scriptPubKey, type, addresses, nRequired) || type == TX_PUBKEY) {
+    if (!ExtractDestinations(scriptPubKey, type, addresses, nRequired)) {
         out.pushKV("type", GetTxnOutputType(type));
         return;
     }
