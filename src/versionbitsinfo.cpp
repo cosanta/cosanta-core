@@ -38,7 +38,7 @@ const struct VBDeploymentInfo VersionBitsDeploymentInfo[Consensus::MAX_VERSION_B
         /*.check_mn_protocol =*/ false,
     },
     {
-        /*.name =*/ "realloc",
+        /*.name =*/ "pos_v2_5",
         /*.gbt_force =*/ true,
         /*.check_mn_protocol =*/ false,
     },
