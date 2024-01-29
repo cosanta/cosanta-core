@@ -39,7 +39,7 @@
 #include <QUrlQuery>
 
 const int BITCOIN_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
-const QString BITCOIN_IPC_PREFIX("cosa:");
+const QString BITCOIN_IPC_PREFIX("cosanta:");
 
 //
 // Create a name that is unique for:
@@ -186,7 +186,7 @@ PaymentServer::~PaymentServer()
 }
 
 //
-// OSX-specific way of handling cosa: URIs
+// OSX-specific way of handling cosanta: URIs
 //
 bool PaymentServer::eventFilter(QObject *object, QEvent *event)
 {
