@@ -310,7 +310,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0024].nFalloffCoeff = 5;      // this corresponds to 10 periods
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000720cea28cb4f9de7");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000007345b26f25c1e6af");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -351,6 +351,8 @@ public:
         // release ASAP to avoid it where possible.
         vSeeds.emplace_back("m1.cosanta.net");
         vSeeds.emplace_back("m2.cosanta.net");
+        vSeeds.emplace_back("dns.cosanta.io");
+        vSeeds.emplace_back("dns.cosa.is");
 
         // Cosanta addresses start with 'C'
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,28);
