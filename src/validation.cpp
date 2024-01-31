@@ -1147,11 +1147,61 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, int nReallocActiva
     CAmount ret = 0;
     const Consensus::Params& consensusParams = Params().GetConsensus();
     if (nHeight >= consensusParams.nMasternodePaymentsStartBlock) {
-        // We'll increase percent for Masternode owners each time when new service on masternode will be available.
         ret = blockValue / 1000;
     }
 
-    return ret;
+    if (nHeight < nReallocActivationHeight) {
+        // Block Reward Realocation is not activated yet, nothing to do
+        return ret;
+    }
+
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+    // Actual realocation starts in the cycle next to one activation happens in
+    int nReallocStart = nReallocActivationHeight - nReallocActivationHeight % nSuperblockCycle + nSuperblockCycle;
+
+    if (nHeight < nReallocStart) {
+        // Activated but we have to wait for the next cycle to start realocation, nothing to do
+        return ret;
+    }
+
+    // Periods used to reallocate the masternode reward from 0.1% to 60%
+        static std::vector<int> vecPeriods{
+                2,   // Period 1:   0.2%
+                5,   // Period 2:   0.5%
+                7,   // Period 3:   0.7%
+                10,  // Period 4:   1.0%
+                50,  // Period 5:   5.0%
+                70,  // Period 6:   7.0%
+                100, // Period 7:  10.0%
+                150, // Period 8:  15.0%
+                200, // Period 9:  20.0%
+                250, // Period 10: 25.0%
+                300, // Period 11: 30.0%
+                350, // Period 12: 35.0%
+                370, // Period 13: 37.0%
+                390, // Period 14: 39.0%
+                400, // Period 15: 40.0%
+                410, // Period 16: 41.0%
+                425, // Period 17: 42.5%
+                440, // Period 18: 44.0%
+                455, // Period 19: 45.5%
+                470, // Period 20: 47.0%
+                485, // Period 21: 48.5%
+                500, // Period 22: 50.0%
+                515, // Period 23: 51.5%
+                530, // Period 24: 53.0%
+                545, // Period 25: 54.5%
+                560, // Period 26: 56.0%
+                575, // Period 27: 57.5%
+                590, // Period 28: 59.0%
+                595, // Period 29: 59.5%
+                600  // Period 30: 60.0%
+            };
+
+    int nReallocCycle = nSuperblockCycle * 6;
+    int nCurrentPeriod = std::min<int>((nHeight - nReallocStart) / nReallocCycle, vecPeriods.size() - 1);
+
+    return static_cast<CAmount>(blockValue * vecPeriods[nCurrentPeriod] / 1000);
 }
 
 CoinsViews::CoinsViews(
