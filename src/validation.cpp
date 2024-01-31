@@ -1198,7 +1198,7 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, int nReallocActiva
                 600  // Period 30: 60.0%
             };
 
-    int nReallocCycle = nSuperblockCycle * 6;
+    int nReallocCycle = nSuperblockCycle * 4;
     int nCurrentPeriod = std::min<int>((nHeight - nReallocStart) / nReallocCycle, vecPeriods.size() - 1);
 
     return static_cast<CAmount>(blockValue * vecPeriods[nCurrentPeriod] / 1000);
