@@ -414,7 +414,7 @@ bool CSporkMessage::GetSignerKeyID(CKeyID& retKeyidSporkSigner) const
 {
     CPubKey pubkeyFromSig;
     // Harden Spork6 so that it is active on testnet and no other networks
-    if (Params().NetworkIDString() == CBaseChainParams::DEVNET) { // Cosanta replaced testnet to devnet
+    if (Params().NetworkIDString() == CBaseChainParams::TESTNET) {
         if (!pubkeyFromSig.RecoverCompact(GetSignatureHash(), vchSig)) {
             return false;
         }
