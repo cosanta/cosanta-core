@@ -283,13 +283,13 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nThresholdStart = 50; // 50% of 100
 
         // Deployment of Block Reward Reallocation
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].bit = 5;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nStartTime = 32503593600; // Will be specified after 18.1.0 release
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nTimeout = 32535129600;   // Will be specified after 18.1.0 release
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nWindowSize = 4032;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdStart = 3226; // 80% of 4032
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdMin = 2420; // 60% of 4032
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nFalloffCoeff = 5; // this corresponds to 10 periods
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].bit = 5;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nStartTime = 1664582400; // Oct 1st, 2022
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nTimeout = 1696118400; // Oct 1st, 2023
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nWindowSize = 4032;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdStart = 3226; // 80% of 4032
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdMin = 2420; // 60% of 4032
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nFalloffCoeff = 5; // this corresponds to 10 periods
 
         // Deployment of DIP0020, DIP0021 and LLMQ_100_67 quorums
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].bit = 6;
@@ -310,7 +310,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0024].nFalloffCoeff = 5;      // this corresponds to 10 periods
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000007345b26f25c1e6af");
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000829853f9ea0e9e11");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -416,7 +416,7 @@ public:
                 {329066, uint256S("0x0000d4f1c5d27c25201f01d9f335c2a5e4345258941cb785ff302ee935cd995c")},
                 {341606, uint256S("0x000084bcb3ca5c12fee6183b068ed37775ca81ef4cc502bab41df2059de857ed")},
                 {478500, uint256S("0x00001bca3db981f1dca7ff21371260b84ef3a2e2b5259e60c4bd5a538860f673")},
-                {504444, uint256S("0x0000090d9c5bd2723f99e558562889a794ead0de3b197ecaad0f7639dc29f271")},
+                {606060, uint256S("0x00007da0a68306dc32e1c096eccbbf818574ff6445f5966d11506ee87a7d82ce")},
             }
         };
 
@@ -508,13 +508,13 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nThresholdStart = 50; // 50% of 100
 
         // Deployment of Block Reward Reallocation
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].bit = 5;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nStartTime = 32503593600; // Will be specified after 18.1.0 release
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nTimeout = 32535129600;   // Will be specified after 18.1.0 release
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nWindowSize = 100;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdStart = 80; // 80% of 100
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdMin = 60; // 60% of 100
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nFalloffCoeff = 5; // this corresponds to 10 periods
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].bit = 5;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nStartTime = 1664582400; // Oct 1st, 2022
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nTimeout = 1696118400; // Oct 1st, 2023
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nWindowSize = 100;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdStart = 80; // 80% of 100
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdMin = 60; // 60% of 100
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nFalloffCoeff = 5; // this corresponds to 10 periods
 
         // Deployment of DIP0020, DIP0021 and LLMQ_100_67 quorums
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].bit = 6;
@@ -717,13 +717,13 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nThresholdStart = 50; // 50% of 100
 
         // Deployment of Block Reward Reallocation
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].bit = 5;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nStartTime = 32503593600; // Will be specified after 18.1.0 release
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nTimeout = 32535129600;   // Will be specified after 18.1.0 release
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nWindowSize = 100;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdStart = 80; // 80% of 100
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdMin = 60; // 60% of 100
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nFalloffCoeff = 5; // this corresponds to 10 periods
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].bit = 5;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nStartTime = 1661990400; // Sep 1st, 2022
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nTimeout = 1679529600; // Mar 21st, 2023
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nWindowSize = 100;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdStart = 80; // 80% of 100
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdMin = 60; // 60% of 100
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nFalloffCoeff = 5; // this corresponds to 10 periods
 
         // Deployment of DIP0020, DIP0021 and LLMQ_100_67 quorums
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].bit = 6;
@@ -969,13 +969,13 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].bit = 4;
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nStartTime = 0;
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nTimeout = 999999999999ULL;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].bit = 5;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nStartTime = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nTimeout = 999999999999ULL;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nWindowSize = 500;
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdStart = 400; // 80%
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nThresholdMin = 300; // 60%
-        consensus.vDeployments[Consensus::DEPLOYMENT_POS_V2_5].nFalloffCoeff = 5;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].bit = 5;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nStartTime = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nTimeout = 999999999999ULL;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nWindowSize = 500;
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdStart = 400; // 80%
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nThresholdMin = 300; // 60%
+        consensus.vDeployments[Consensus::DEPLOYMENT_REALLOC].nFalloffCoeff = 5;
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].bit = 6;
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nStartTime = 0;
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0020].nTimeout = 999999999999ULL;
