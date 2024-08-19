@@ -4203,7 +4203,7 @@ bool PeerLogicValidation::ProcessMessages(CNode* pfrom, std::atomic<bool>& inter
                 LogPrint(BCLog::NET, "Retrying postponed headers for peer %d", pfrom->GetId());
                 CDataStream vHeadersMsg(SER_NETWORK, PROTOCOL_VERSION);
                 vHeadersMsg << std::vector<CBlock>();
-                ProcessMessage(pfrom, NetMsgType::HEADERS, vHeadersMsg, GetAdjustedTime(), chainparams, connman, interruptMsgProc, m_enable_bip61);
+                ProcessMessage(pfrom, NetMsgType::HEADERS, vHeadersMsg, GetAdjustedTime(), chainparams, connman, m_banman, interruptMsgProc, m_enable_bip61);
             }
             fMoreWork = true;
         }
