@@ -2541,5 +2541,10 @@ bool AppInitMain(NodeContext& node)
         banman->DumpBanlist();
     }, DUMP_BANS_INTERVAL * 1000);
 
+#ifdef ENABLE_WALLET
+    if (HasWallets() && GetWallets()[0] && gArgs.GetBoolArg("-staking", true))
+        MintStake(threadGroup, GetWallets()[0], node.connman.get(), node.mempool);
+#endif
+
     return true;
 }

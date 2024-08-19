@@ -2563,14 +2563,18 @@ static UniValue getstakingstatus(const JSONRPCRequest& request)
     auto locked_chain = pwallet->chain().lock();
     LOCK(pwallet->cs_wallet);
 
+    const NodeContext& node = EnsureAnyNodeContext(request.context);
+    if(!node.connman)
+        throw JSONRPCError(RPC_CLIENT_P2P_DISABLED, "Error: Peer-to-peer functionality missing or disabled");
+
     bool fMintableCoins = pwallet->MintableCoins();
     bool fLessReserveBalance = nReserveBalance >= pwallet->GetBalance().m_mine_trusted;
-    bool fStatus = !(pwallet->IsLocked(true) || !fMintableCoins || fLessReserveBalance || !masternodeSync.IsSynced() || g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0);
+    bool fStatus = !(pwallet->IsLocked(true) || !fMintableCoins || fLessReserveBalance || !masternodeSync.IsSynced() || node.connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0);
 
     UniValue obj(UniValue::VOBJ);
     obj.pushKV("staking_status", fStatus);
     obj.pushKV("staking_enabled", gArgs.GetBoolArg("-staking", true));
-    obj.pushKV("haveconnections", (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) > 0));
+    obj.pushKV("haveconnections", (node.connman->GetNodeCount(CConnman::CONNECTIONS_ALL) > 0));
     obj.pushKV("mnsync", masternodeSync.IsSynced());
     obj.pushKV("walletunlocked", !pwallet->IsLocked(true));
     obj.pushKV("mintable_coins", fMintableCoins);

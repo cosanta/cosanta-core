@@ -477,6 +477,8 @@ public:
 
     void SetAsmap(std::vector<bool> asmap) { addrman.m_asmap = std::move(asmap); }
 
+    CThreadInterrupt interruptNet;
+
 private:
     struct ListenSocket {
     public:
@@ -516,7 +518,6 @@ private:
     void ThreadSocketHandler();
     void ThreadDNSAddressSeed();
     void ThreadOpenMasternodeConnections();
-    void ThreadStakeMinter();
 
     uint64_t CalculateKeyedNetGroup(const CAddress& ad) const;
 
@@ -625,7 +626,7 @@ private:
     Mutex mutexMsgProc;
     std::atomic<bool> flagInterruptMsgProc{false};
 
-    CThreadInterrupt interruptNet;
+    // CThreadInterrupt interruptNet; // PirateCash move to public
 
 #ifdef USE_WAKEUP_PIPE
     /** a pipe which is added to select() calls to wakeup before the timeout */

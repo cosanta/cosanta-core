@@ -2623,14 +2623,6 @@ void CConnman::ThreadMessageHandler()
     }
 }
 
-
-// ppcoin: stake minter thread
-void CConnman::ThreadStakeMinter()
-{
-    PoSMiner(GetWallets()[0], interruptNet);
-}
-
-
 bool CConnman::BindListenPort(const CService& addrBind, bilingual_str& strError, NetPermissionFlags permissions)
 {
     int nOne = 1;
@@ -3003,11 +2995,6 @@ bool CConnman::Start(CScheduler& scheduler, const Options& connOptions)
 
     // Dump network addresses
     scheduler.scheduleEvery(std::bind(&CConnman::DumpAddresses, this), DUMP_PEERS_INTERVAL * 1000);
-
-    // ppcoin:mint proof-of-stake blocks in the background
-    if (gArgs.GetBoolArg("-staking", true)) {
-        threadStakeMint = std::thread(&TraceThread<std::function<void()>>, "stakemint", std::function<void()>(std::bind(&CConnman::ThreadStakeMinter, this)));
-    }
 
     return true;
 }

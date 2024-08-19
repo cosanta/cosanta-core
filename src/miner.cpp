@@ -585,7 +585,7 @@ void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned
 }
 
 
-void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
+void PoSMiner(std::shared_ptr<CWallet> pwallet, CConnman* connman, CTxMemPool* mempool)
 {
     LogPrintf("PoSMiner started\n");
     util::ThreadRename("cosanta-miner");
@@ -600,9 +600,9 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
     int last_height = -1;
     int64_t start_block_time = 0;
 
-    while (!interrupt) {
+    while (true) {
         auto hash_interval = std::max(pwallet->nHashInterval, (unsigned int)1);
-        interrupt.sleep_for(std::chrono::seconds(hash_interval));
+        !connman->interruptNet.sleep_for(std::chrono::seconds(hash_interval));
 
         if ((GetTime() - nMintableLastCheck > 60))
         {
@@ -612,16 +612,16 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
 
         {
             CBlockIndex* pindexPrev = ::ChainActive().Tip();
-            
+
             if (!pindexPrev) {
-                interrupt.sleep_for(std::chrono::seconds(1));
+                !connman->interruptNet.sleep_for(std::chrono::seconds(1));
                 miningStatus = ":<br>- no active blocks";
                 LogPrint(BCLog::STAKING, "%s : %s \n", __func__, miningStatus);
                 continue;
             }
 
             if (!IsPoSEnforcedHeight(pindexPrev->nHeight + 1) && !IsPoSV2EnforcedHeight(pindexPrev->nHeight + 1) && !pindexPrev->IsProofOfStake()) {
-                interrupt.sleep_for(std::chrono::seconds(hash_interval));
+                !connman->interruptNet.sleep_for(std::chrono::seconds(hash_interval));
                 miningStatus = ":<br>- PoS is not enabled at height " + std::to_string(pindexPrev->nHeight + 1);
                 LogPrint(BCLog::STAKING, "%s :  \n", __func__, miningStatus);
                 continue;
@@ -634,7 +634,7 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
             !fMintableCoins ||
             (nReserveBalance >= pwallet->GetBalance().m_mine_trusted) ||
             !masternodeSync.IsSynced() ||
-            (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)
+            (connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)
         ) {
             miningStatus += ":";
             if (pwallet->IsLocked(true)){
@@ -646,21 +646,21 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CThreadInterrupt &interrupt)
             if (!masternodeSync.IsSynced()){
                 miningStatus += "<br>- masternode list isn't synced";
             }
-            if ((g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)){
+            if ((connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)){
                 miningStatus += "<br>- no connections with network";
             }
             if (!fMintableCoins){
                 miningStatus += "<br>- no mature or available coins for staking";
             }
             nLastCoinStakeSearchTime = 0;
-            interrupt.sleep_for(std::chrono::seconds(hash_interval));
+            !connman->interruptNet.sleep_for(std::chrono::seconds(hash_interval));
             LogPrint(BCLog::STAKING, "%s : not ready to mine locked=%d coins=%d reserve=%d mnsync=%d peers=%d\n",
                                   __func__,
                                   int(pwallet->IsLocked(true)),
                                   int(!fMintableCoins),
                                   int(nReserveBalance >= pwallet->GetBalance().m_mine_trusted),
                                   int(!masternodeSync.IsSynced()),
-                                  int(g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL)));
+                                  int(connman->GetNodeCount(CConnman::CONNECTIONS_ALL)));
             continue;
         }
 
@@ -738,3 +738,25 @@ void SetThreadPriority(int nPriority)
 #endif // WIN32
 }
 
+// peercoin: stake minter thread
+void static ThreadStakeMinter(std::shared_ptr<CWallet> pwallet, CConnman* connman, CTxMemPool* mempool)
+{
+    LogPrintf("ThreadStakeMinter started\n");
+    try
+    {
+        PoSMiner(pwallet, connman, mempool);
+    }
+    catch (std::exception& e) {
+        PrintExceptionContinue(std::current_exception(), "ThreadStakeMinter()");
+    } catch (...) {
+        PrintExceptionContinue(std::current_exception(), "ThreadStakeMinter()");
+    }
+    LogPrintf("ThreadStakeMinter exiting\n");
+}
+
+// peercoin: stake minter
+void MintStake(boost::thread_group& threadGroup, std::shared_ptr<CWallet> pwallet, CConnman* connman, CTxMemPool* mempool)
+{
+    // peercoin: mint proof-of-stake blocks in the background
+    threadGroup.create_thread(boost::bind(&ThreadStakeMinter, pwallet, connman, mempool));
+}
