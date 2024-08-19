@@ -213,8 +213,10 @@ struct CompressibleBlockHeader : CBlockHeader {
 
     explicit CompressibleBlockHeader(CBlockHeader&& block_header)
     {
-        static_assert(std::is_trivially_copyable_v<CBlockHeader>, "If CBlockHeader is not trivially copyable, please consider using std::move on the next line");
-        *static_cast<CBlockHeader*>(this) = block_header;
+        // TODO: PirateCash: Make CBlockHeader is trivially copyable
+        //static_assert(std::is_trivially_copyable_v<CBlockHeader>, "If CBlockHeader is not trivially copyable, please consider using std::move on the next line");
+        //*static_cast<CBlockHeader*>(this) = block_header;
+        *static_cast<CBlockHeader*>(this) = std::move(block_header);
 
         // When we create this from a block header, mark everything as uncompressed
         bit_field.SetVersionOffset(0);

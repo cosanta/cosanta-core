@@ -4158,7 +4158,7 @@ bool BlockManager::AcceptBlockHeader(const CBlockHeader& block, CValidationState
 }
 
 // Exposed wrapper for AcceptBlockHeader
-bool ProcessNewBlockHeaders(std::deque<CBlockHeader>& headers, CValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex, CBlockHeader *first_invalid, int burst_limit)
+bool ProcessNewBlockHeaders(std::vector<CBlockHeader>& headers, CValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex, CBlockHeader *first_invalid, int burst_limit)
 {
     if (first_invalid != nullptr) first_invalid->SetNull();
     {
@@ -4172,7 +4172,7 @@ bool ProcessNewBlockHeaders(std::deque<CBlockHeader>& headers, CValidationState&
                 return false;
             }
 
-            headers.pop_front();
+            headers.erase(headers.begin());
 
             if (ppindex) {
                 *ppindex = pindex;

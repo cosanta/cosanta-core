@@ -320,7 +320,7 @@ struct CNodeState {
     bool fSupportsDesiredCmpctVersion;
 
     //! Headers from the last message
-    std::deque<CBlockHeader> vPostponedHeaders;
+    std::vector<CBlockHeader> vPostponedHeaders;
 
     /** State used to enforce CHAIN_SYNC_TIMEOUT
       * Only in effect for outbound, non-manual connections, with
@@ -1912,7 +1912,7 @@ inline void static SendBlockTransactions(const CBlock& block, const BlockTransac
     connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));
 }
 
-bool static ProcessHeadersMessage(CNode *pfrom, CConnman *connman, std::deque<CBlockHeader>& headers, const CChainParams& chainparams, bool punish_duplicate_invalid)
+bool static ProcessHeadersMessage(CNode *pfrom, CConnman *connman, std::vector<CBlockHeader>& headers, const CChainParams& chainparams, bool punish_duplicate_invalid)
 {
     const CNetMsgMaker msgMaker(pfrom->GetSendVersion());
     size_t nCount = headers.size();
@@ -3469,7 +3469,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
 
         const CBlockIndex *pindex = nullptr;
         CValidationState state;
-        std::deque<CBlockHeader> headers{cmpctblock.header};
+        std::vector<CBlockHeader> headers{cmpctblock.header};
 
         if (!ProcessNewBlockHeaders(headers, state, chainparams, &pindex)) {
             int nDoS;
@@ -3627,7 +3627,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
             // the peer if the header turns out to be for an invalid block.
             // Note that if a peer tries to build on an invalid chain, that
             // will be detected and the peer will be banned.
-            std::deque<CBlockHeader> headers;
+            std::vector<CBlockHeader> headers;
             headers = {cmpctblock.header};
             return ProcessHeadersMessage(pfrom, connman, headers, chainparams, /*punish_duplicate_invalid=*/false);
         }
@@ -3756,7 +3756,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
             return true;
         }
 
-        std::deque<CBlockHeader> headers;
+        std::vector<CBlockHeader> headers;
 
         {
         // Bypass the normal CBlock deserialization, as we don't want to risk deserializing 2000 full blocks.
