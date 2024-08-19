@@ -46,6 +46,7 @@
 #include <queue>
 #include <utility>
 #include <boost/thread.hpp>
+#include <shutdown.h>
 
 int64_t nLastCoinStakeSearchTime = 0;
 std::string miningStatus;
@@ -600,7 +601,7 @@ void PoSMiner(std::shared_ptr<CWallet> pwallet, CConnman* connman, CTxMemPool* m
     int last_height = -1;
     int64_t start_block_time = 0;
 
-    while (true) {
+    while (!ShutdownRequested()) {
         auto hash_interval = std::max(pwallet->nHashInterval, (unsigned int)1);
         !connman->interruptNet.sleep_for(std::chrono::seconds(hash_interval));
 
