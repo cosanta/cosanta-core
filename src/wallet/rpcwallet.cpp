@@ -2538,7 +2538,7 @@ static UniValue getstakingstatus(const JSONRPCRequest& request)
     auto locked_chain = pwallet->chain().lock();
     LOCK(pwallet->cs_wallet);
 
-    const NodeContext& node = EnsureAnyNodeContext(request.context);
+    const NodeContext& node = EnsureNodeContext(request.context);
     if(!node.connman)
         throw JSONRPCError(RPC_CLIENT_P2P_DISABLED, "Error: Peer-to-peer functionality missing or disabled");
 
