@@ -4343,6 +4343,8 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
             continue;
         }
 
+        uint256 hashProofOfStake = uint256();
+
         //iterates each utxo inside of CheckStakeKernelHash()
         bool fKernelFound = CheckStakeKernelHash(
                 curr_block,
@@ -4352,6 +4354,7 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
                 prevoutStake,
                 nHashDrift,
                 false,
+                hashProofOfStake,
                 true);
 
         if (fKernelFound) {

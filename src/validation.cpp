@@ -5571,7 +5571,8 @@ bool CheckProof(CValidationState &state, const CBlockIndex &index, const Consens
         return true;
     }
 
-    return CheckProofOfStake(state, index.GetBlockHeader(), params);
+    uint256 hashProofOfStake = uint256();
+    return CheckProofOfStake(state, index.GetBlockHeader(), hashProofOfStake, params);
 }
 
 /** Check PoW or PoS based on actual block **/
@@ -5584,7 +5585,8 @@ bool CheckProof(CValidationState &state, const CBlockHeader &block, const Consen
         return true;
     }
 
-    return CheckProofOfStake(state, block, params);
+    uint256 hashProofOfStake = uint256();
+    return CheckProofOfStake(state, block, hashProofOfStake, params);
 }
 
 //! Guess how far we are in the verification process at the given block index
