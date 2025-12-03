@@ -103,11 +103,6 @@ public:
 
     bool IsProofOfStake() const
     {
-        return (nVersion & (CBlockHeader::POS_BIT | CBlockHeader::POSV2_BITS)) != 0;
-    }
-
-    bool IsProofOfStakeVX() const
-    {
         return (nVersion & CBlockHeader::POS_BIT) == CBlockHeader::POS_BIT;
     }
 

@@ -452,7 +452,7 @@ bool CheckStakeKernelHash(
     //create data stream once instead of repeating it in the loop
     CDataStream ss(SER_GETHASH, 0);
     ss << nStakeModifier;
-    if (!current.IsProofOfStakeVX()) {
+    if (!current.IsProofOfStakeV2()) {
         hashProofOfStake = stakeHash(nTimeTx, ss, prevout.n, prevout.hash, nTimeBlockFrom);
     }
 
@@ -481,7 +481,7 @@ bool CheckStakeKernelHash(
         }
         ss = CDataStream(SER_GETHASH, 0);
         ss << nStakeModifier;
-        if (current.IsProofOfStakeVX()){
+        if (current.IsProofOfStakeV2()){
             return true;
         }
 
