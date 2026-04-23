@@ -2,6 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include <pubkey.h>
 #include <script/interpreter.h>
 #include <streams.h>
 #include <version.h>
@@ -11,7 +12,12 @@
 /** Flags that are not forbidden by an assert */
 static bool IsValidFlagCombination(unsigned flags);
 
-void test_one_input(const std::vector<uint8_t>& buffer)
+void initialize_script_flags()
+{
+    static const ECCVerifyHandle verify_handle;
+}
+
+FUZZ_TARGET_INIT(script_flags, initialize_script_flags)
 {
     CDataStream ds(buffer, SER_NETWORK, INIT_PROTO_VERSION);
     try {
@@ -37,6 +43,10 @@ void test_one_input(const std::vector<uint8_t>& buffer)
         for (unsigned i = 0; i < tx.vin.size(); ++i) {
             CTxOut prevout;
             ds >> prevout;
+            if (!MoneyRange(prevout.nValue)) {
+                // prevouts should be consensus-valid
+                prevout.nValue = 1;
+            }
 
             const TransactionSignatureChecker checker{&tx, i, prevout.nValue, txdata};
 

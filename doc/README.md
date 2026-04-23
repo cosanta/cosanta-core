@@ -1,7 +1,7 @@
 Cosanta Core
 ==========
 
-This is the official reference wallet for Cosanta digital currency and comprises the backbone of the Cosanta peer-to-peer network. You can [download Cosanta Core](https://www.dash.org/downloads/) or [build it yourself](#building) using the guides below.
+This is the official reference wallet for Cosanta digital currency and comprises the backbone of the Cosanta peer-to-peer network. You can [download Cosanta Core](https://cosa.is/downloads/) or [build it yourself](#building) using the guides below.
 
 Running
 ---------------------
@@ -24,12 +24,12 @@ Drag Cosanta-Qt to your applications folder, and then run Cosanta-Qt.
 
 ### Need Help?
 
-* See the [Dash documentation](https://docs.dash.org)
+* See the [Cosanta documentation](https://cosa.is/docs)
 for help and more information.
 * See the [Dash Developer Documentation](https://dash-docs.github.io/) 
 for technical specifications and implementation details.
 * Ask for help on [Dash Nation Discord](http://dashchat.org)
-* Ask for help on the [Dash Forum](https://dash.org/forum)
+* Ask for help on the [Cosanta Forum](https://cosa.is/forum)
 
 Building
 ---------------------
@@ -60,7 +60,7 @@ The Cosanta Core repo's [root README](/README.md) contains relevant information 
 - [Benchmarking](benchmarking.md)
 
 ### Resources
-* Discuss on the [Dash Forum](https://dash.org/forum), in the Development & Technical Discussion board.
+* Discuss on the [Cosanta Forum](https://cosa.is/forum), in the Development & Technical Discussion board.
 * Discuss on [Dash Nation Discord](http://dashchat.org)
 
 ### Miscellaneous

@@ -13,6 +13,7 @@
 #include <key.h>
 #include <merkleblock.h>
 #include <net.h>
+#include <netbase.h>
 #include <primitives/block.h>
 #include <protocol.h>
 #include <psbt.h>
@@ -21,6 +22,7 @@
 #include <undo.h>
 #include <version.h>
 
+#include <exception>
 #include <stdexcept>
 #include <stdint.h>
 #include <unistd.h>
@@ -29,246 +31,252 @@
 
 #include <test/fuzz/fuzz.h>
 
-void test_one_input(const std::vector<uint8_t>& buffer)
+void initialize_deserialize()
+{
+    // Fuzzers using pubkey must hold an ECCVerifyHandle.
+    static const ECCVerifyHandle verify_handle;
+}
+
+#define FUZZ_TARGET_DESERIALIZE(name, code)                \
+    FUZZ_TARGET_INIT(name, initialize_deserialize)         \
+    {                                                      \
+        try {                                              \
+            code                                           \
+        } catch (const invalid_fuzzing_input_exception&) { \
+        }                                                  \
+    }
+
+namespace {
+
+struct invalid_fuzzing_input_exception : public std::exception {
+};
+
+template <typename T>
+CDataStream Serialize(const T& obj, const int version = INIT_PROTO_VERSION)
+{
+    CDataStream ds(SER_NETWORK, version);
+    ds << obj;
+    return ds;
+}
+
+template <typename T>
+T Deserialize(CDataStream ds)
+{
+    T obj;
+    ds >> obj;
+    return obj;
+}
+
+template <typename T>
+void DeserializeFromFuzzingInput(const std::vector<uint8_t>& buffer, T& obj)
 {
     CDataStream ds(buffer, SER_NETWORK, INIT_PROTO_VERSION);
     try {
-        int nVersion;
-        ds >> nVersion;
-        ds.SetVersion(nVersion);
+        int version;
+        ds >> version;
+        ds.SetVersion(version);
     } catch (const std::ios_base::failure&) {
-        return;
+        throw invalid_fuzzing_input_exception();
     }
+    try {
+        ds >> obj;
+    } catch (const std::ios_base::failure&) {
+        throw invalid_fuzzing_input_exception();
+    }
+    assert(buffer.empty() || !Serialize(obj).empty());
+}
 
-#if BLOCK_FILTER_DESERIALIZE
-    try {
+template <typename T>
+void AssertEqualAfterSerializeDeserialize(const T& obj, const int version = INIT_PROTO_VERSION)
+{
+    assert(Deserialize<T>(Serialize(obj, version)) == obj);
+}
+
+} // namespace
+
+/*
+FUZZ_TARGET_DESERIALIZE(block_filter_deserialize, {
         BlockFilter block_filter;
-        ds >> block_filter;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif ADDR_INFO_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, block_filter);
+})
+*/
+FUZZ_TARGET_DESERIALIZE(addr_info_deserialize, {
         CAddrInfo addr_info;
-        ds >> addr_info;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCK_FILE_INFO_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, addr_info);
+})
+FUZZ_TARGET_DESERIALIZE(block_file_info_deserialize, {
         CBlockFileInfo block_file_info;
-        ds >> block_file_info;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCK_HEADER_AND_SHORT_TXIDS_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, block_file_info);
+})
+FUZZ_TARGET_DESERIALIZE(block_header_and_short_txids_deserialize, {
         CBlockHeaderAndShortTxIDs block_header_and_short_txids;
-        ds >> block_header_and_short_txids;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif FEE_RATE_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, block_header_and_short_txids);
+})
+FUZZ_TARGET_DESERIALIZE(fee_rate_deserialize, {
         CFeeRate fee_rate;
-        ds >> fee_rate;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif MERKLE_BLOCK_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, fee_rate);
+        AssertEqualAfterSerializeDeserialize(fee_rate);
+})
+FUZZ_TARGET_DESERIALIZE(merkle_block_deserialize, {
         CMerkleBlock merkle_block;
-        ds >> merkle_block;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif OUT_POINT_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, merkle_block);
+})
+FUZZ_TARGET_DESERIALIZE(out_point_deserialize, {
         COutPoint out_point;
-        ds >> out_point;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif PARTIAL_MERKLE_TREE_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, out_point);
+        AssertEqualAfterSerializeDeserialize(out_point);
+})
+FUZZ_TARGET_DESERIALIZE(partial_merkle_tree_deserialize, {
         CPartialMerkleTree partial_merkle_tree;
-        ds >> partial_merkle_tree;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif PUB_KEY_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, partial_merkle_tree);
+})
+FUZZ_TARGET_DESERIALIZE(pub_key_deserialize, {
         CPubKey pub_key;
-        ds >> pub_key;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif SCRIPT_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, pub_key);
+        // TODO: The following equivalence should hold for CPubKey? Fix.
+        // AssertEqualAfterSerializeDeserialize(pub_key);
+})
+FUZZ_TARGET_DESERIALIZE(script_deserialize, {
         CScript script;
-        ds >> script;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif SUB_NET_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, script);
+})
+FUZZ_TARGET_DESERIALIZE(sub_net_deserialize, {
         CSubNet sub_net;
-        ds >> sub_net;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif TX_IN_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, sub_net);
+        AssertEqualAfterSerializeDeserialize(sub_net);
+})
+FUZZ_TARGET_DESERIALIZE(tx_in_deserialize, {
         CTxIn tx_in;
-        ds >> tx_in;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif FLAT_FILE_POS_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, tx_in);
+        AssertEqualAfterSerializeDeserialize(tx_in);
+})
+/*
+FUZZ_TARGET_DESERIALIZE(flat_file_pos_deserialize, {
         FlatFilePos flat_file_pos;
-        ds >> flat_file_pos;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif KEY_ORIGIN_INFO_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, flat_file_pos);
+        AssertEqualAfterSerializeDeserialize(flat_file_pos);
+})
+FUZZ_TARGET_DESERIALIZE(key_origin_info_deserialize, {
         KeyOriginInfo key_origin_info;
-        ds >> key_origin_info;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif PARTIALLY_SIGNED_TRANSACTION_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, key_origin_info);
+        AssertEqualAfterSerializeDeserialize(key_origin_info);
+})
+*/
+FUZZ_TARGET_DESERIALIZE(partially_signed_transaction_deserialize, {
         PartiallySignedTransaction partially_signed_transaction;
-        ds >> partially_signed_transaction;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif PREFILLED_TRANSACTION_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, partially_signed_transaction);
+})
+FUZZ_TARGET_DESERIALIZE(prefilled_transaction_deserialize, {
         PrefilledTransaction prefilled_transaction;
-        ds >> prefilled_transaction;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif PSBT_INPUT_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, prefilled_transaction);
+})
+FUZZ_TARGET_DESERIALIZE(psbt_input_deserialize, {
         PSBTInput psbt_input;
-        ds >> psbt_input;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif PSBT_OUTPUT_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, psbt_input);
+})
+FUZZ_TARGET_DESERIALIZE(psbt_output_deserialize, {
         PSBTOutput psbt_output;
-        ds >> psbt_output;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCK_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, psbt_output);
+})
+FUZZ_TARGET_DESERIALIZE(block_deserialize, {
         CBlock block;
-        ds >> block;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCKLOCATOR_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, block);
+})
+FUZZ_TARGET_DESERIALIZE(blocklocator_deserialize, {
         CBlockLocator bl;
-        ds >> bl;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCKMERKLEROOT
-    try {
+        DeserializeFromFuzzingInput(buffer, bl);
+})
+FUZZ_TARGET_DESERIALIZE(blockmerkleroot, {
         CBlock block;
-        ds >> block;
+        DeserializeFromFuzzingInput(buffer, block);
         bool mutated;
         BlockMerkleRoot(block, &mutated);
-    } catch (const std::ios_base::failure&) {
-    }
-#elif ADDRMAN_DESERIALIZE
-    try {
+})
+FUZZ_TARGET_DESERIALIZE(addrman_deserialize, {
         CAddrMan am;
-        ds >> am;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCKHEADER_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, am);
+})
+FUZZ_TARGET_DESERIALIZE(blockheader_deserialize, {
         CBlockHeader bh;
-        ds >> bh;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BANENTRY_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, bh);
+})
+FUZZ_TARGET_DESERIALIZE(banentry_deserialize, {
         CBanEntry be;
-        ds >> be;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif TXUNDO_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, be);
+})
+FUZZ_TARGET_DESERIALIZE(txundo_deserialize, {
         CTxUndo tu;
-        ds >> tu;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCKUNDO_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, tu);
+})
+FUZZ_TARGET_DESERIALIZE(blockundo_deserialize, {
         CBlockUndo bu;
-        ds >> bu;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif COINS_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, bu);
+})
+FUZZ_TARGET_DESERIALIZE(coins_deserialize, {
         Coin coin;
-        ds >> coin;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif NETADDR_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, coin);
+})
+FUZZ_TARGET_DESERIALIZE(netaddr_deserialize, {
         CNetAddr na;
-        ds >> na;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif SERVICE_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, na);
+        if (na.IsAddrV1Compatible()) {
+            AssertEqualAfterSerializeDeserialize(na);
+        }
+        AssertEqualAfterSerializeDeserialize(na, INIT_PROTO_VERSION | ADDRV2_FORMAT);
+})
+FUZZ_TARGET_DESERIALIZE(service_deserialize, {
         CService s;
-        ds >> s;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif MESSAGEHEADER_DESERIALIZE
-    CMessageHeader::MessageStartChars pchMessageStart = {0x00, 0x00, 0x00, 0x00};
-    try {
-        CMessageHeader mh(pchMessageStart);
-        ds >> mh;
-        (void)mh.IsValid(pchMessageStart);
-    } catch (const std::ios_base::failure&) {
-    }
-#elif ADDRESS_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, s);
+        if (s.IsAddrV1Compatible()) {
+            AssertEqualAfterSerializeDeserialize(s);
+        }
+        AssertEqualAfterSerializeDeserialize(s, INIT_PROTO_VERSION | ADDRV2_FORMAT);
+})
+FUZZ_TARGET_DESERIALIZE(messageheader_deserialize, {
+        CMessageHeader mh;
+        DeserializeFromFuzzingInput(buffer, mh);
+        (void)mh.IsCommandValid();
+})
+FUZZ_TARGET_DESERIALIZE(address_deserialize, {
         CAddress a;
-        ds >> a;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif INV_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, a);
+})
+FUZZ_TARGET_DESERIALIZE(inv_deserialize, {
         CInv i;
-        ds >> i;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOOMFILTER_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, i);
+})
+FUZZ_TARGET_DESERIALIZE(bloomfilter_deserialize, {
         CBloomFilter bf;
-        ds >> bf;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif DISKBLOCKINDEX_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, bf);
+})
+FUZZ_TARGET_DESERIALIZE(diskblockindex_deserialize, {
         CDiskBlockIndex dbi;
-        ds >> dbi;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif TXOUTCOMPRESSOR_DESERIALIZE
-    try
-    {
+        DeserializeFromFuzzingInput(buffer, dbi);
+})
+FUZZ_TARGET_DESERIALIZE(txoutcompressor_deserialize, {
         CTxOut to;
         auto toc = Using<TxOutCompression>(to);
-        ds >> toc;
-    } catch (const std::ios_base::failure& e) {
-    }
-#elif BLOCKTRANSACTIONS_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, toc);
+})
+FUZZ_TARGET_DESERIALIZE(blocktransactions_deserialize, {
         BlockTransactions bt;
-        ds >> bt;
-    } catch (const std::ios_base::failure&) {
-    }
-#elif BLOCKTRANSACTIONSREQUEST_DESERIALIZE
-    try {
+        DeserializeFromFuzzingInput(buffer, bt);
+})
+FUZZ_TARGET_DESERIALIZE(blocktransactionsrequest_deserialize, {
         BlockTransactionsRequest btr;
-        ds >> btr;
-    } catch (const std::ios_base::failure&) {
-    }
-#else
-#error Need at least one fuzz target to compile
-#endif
-}
+        DeserializeFromFuzzingInput(buffer, btr);
+})
+FUZZ_TARGET_DESERIALIZE(uint160_deserialize, {
+        uint160 u160;
+        DeserializeFromFuzzingInput(buffer, u160);
+        AssertEqualAfterSerializeDeserialize(u160);
+})
+FUZZ_TARGET_DESERIALIZE(uint256_deserialize, {
+        uint256 u256;
+        DeserializeFromFuzzingInput(buffer, u256);
+        AssertEqualAfterSerializeDeserialize(u256);
+})
+        // Classes intentionally not covered in this file since their deserialization code is
+        // fuzzed elsewhere:
+        // * Deserialization of CTxOut is fuzzed in test/fuzz/tx_out.cpp
+        // * Deserialization of CMutableTransaction is fuzzed in src/test/fuzz/transaction.cpp

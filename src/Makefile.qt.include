@@ -6,29 +6,8 @@
 bin_PROGRAMS += qt/cosanta-qt
 EXTRA_LIBRARIES += qt/libcosantaqt.a
 
-# cosanta qt core #
-QT_TS = \
-  qt/locale/cosanta_ar.ts \
-  qt/locale/cosanta_bg.ts \
-  qt/locale/cosanta_de.ts \
-  qt/locale/cosanta_en.ts \
-  qt/locale/cosanta_es.ts \
-  qt/locale/cosanta_fi.ts \
-  qt/locale/cosanta_fr.ts \
-  qt/locale/cosanta_it.ts \
-  qt/locale/cosanta_ja.ts \
-  qt/locale/cosanta_ko.ts \
-  qt/locale/cosanta_nl.ts \
-  qt/locale/cosanta_pl.ts \
-  qt/locale/cosanta_pt.ts \
-  qt/locale/cosanta_ro.ts \
-  qt/locale/cosanta_ru.ts \
-  qt/locale/cosanta_sk.ts \
-  qt/locale/cosanta_th.ts \
-  qt/locale/cosanta_tr.ts \
-  qt/locale/cosanta_vi.ts \
-  qt/locale/cosanta_zh_CN.ts \
-  qt/locale/cosanta_zh_TW.ts
+# dash qt core #
+include Makefile.qt_locale.include
 
 QT_FORMS_UI = \
   qt/forms/addressbookpage.ui \
@@ -339,7 +318,6 @@ RES_IMAGES = \
   qt/res/images/radio_checked_disabled_light.png \
   qt/res/images/splash.png
 
-
 RES_CSS = \
   qt/res/css/dark.css \
   qt/res/css/general.css \
@@ -410,11 +388,10 @@ endif
 if ENABLE_ZMQ
 qt_cosanta_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
 endif
-qt_cosanta_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
-  $(BACKTRACE_LIB) $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(LIBSECP256K1) \
-  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(BLS_LIBS) $(GMP_LIBS)
-qt_cosanta_qt_LDADD += $(CRYPTO_LIBS)
-qt_cosanta_qt_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_cosanta_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBDASHBLS) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
+  $(BACKTRACE_LIB) $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(SQLITE_LIBS) $(LIBSECP256K1) \
+  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
+qt_cosanta_qt_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 qt_cosanta_qt_LIBTOOLFLAGS = $(AM_LIBTOOLFLAGS) --tag CXX
 
 #locale/foo.ts -> locale/foo.qm
@@ -422,15 +399,15 @@ QT_QM=$(QT_TS:.ts=.qm)
 
 SECONDARY: $(QT_QM)
 
-$(srcdir)/qt/dashstrings.cpp: $(libcosanta_server_a_SOURCES) $(libcosanta_wallet_a_SOURCES) $(libcosanta_common_a_SOURCES) $(libcosanta_zmq_a_SOURCES) $(libcosanta_consensus_a_SOURCES) $(libcosanta_util_a_SOURCES)
+$(srcdir)/qt/cosantastrings.cpp: FORCE
 	@test -n $(XGETTEXT) || echo "xgettext is required for updating translations"
-	$(AM_V_GEN) cd $(srcdir); XGETTEXT=$(XGETTEXT) COPYRIGHT_HOLDERS="$(COPYRIGHT_HOLDERS)" $(PYTHON) ../share/qt/extract_strings_qt.py $(libcosanta_server_a_SOURCES) $(libcosanta_wallet_a_SOURCES) $(libcosanta_common_a_SOURCES) $(libcosanta_zmq_a_SOURCES) $(libcosanta_consensus_a_SOURCES) $(libcosanta_util_a_SOURCES)
+	$(AM_V_GEN) cd $(srcdir); XGETTEXT=$(XGETTEXT) COPYRIGHT_HOLDERS="$(COPYRIGHT_HOLDERS)" $(PYTHON) ../share/qt/extract_strings_qt.py $(libbitcoin_server_a_SOURCES) $(libbitcoin_wallet_a_SOURCES) $(libbitcoin_common_a_SOURCES) $(libbitcoin_zmq_a_SOURCES) $(libbitcoin_consensus_a_SOURCES) $(libbitcoin_util_a_SOURCES)
 
-translate: $(srcdir)/qt/dashstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(BITCOIN_QT_BASE_CPP) qt/bitcoin.cpp $(BITCOIN_QT_WINDOWS_CPP) $(BITCOIN_QT_WALLET_CPP) $(BITCOIN_QT_H) $(BITCOIN_MM)
+translate: $(srcdir)/qt/cosantastrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(BITCOIN_QT_BASE_CPP) qt/bitcoin.cpp $(BITCOIN_QT_WINDOWS_CPP) $(BITCOIN_QT_WALLET_CPP) $(BITCOIN_QT_H) $(BITCOIN_MM)
 	@test -n $(LUPDATE) || echo "lupdate is required for updating translations"
 	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -I$(srcdir) -locations relative -no-obsolete -ts $(srcdir)/qt/locale/cosanta_en.ts
 	@test -n $(LCONVERT) || echo "lconvert is required for updating translations"
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LCONVERT) -o $(srcdir)/qt/locale/cosanta_en.xlf -i $(srcdir)/qt/locale/cosanta_en.ts
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LCONVERT) -o $(srcdir)/qt/locale/dash_en.xlf -i $(srcdir)/qt/locale/cosanta_en.ts
 
 $(QT_QRC_LOCALE_CPP): $(QT_QRC_LOCALE) $(QT_QM)
 	@test -f $(RCC)

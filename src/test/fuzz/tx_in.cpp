@@ -12,7 +12,7 @@
 
 #include <cassert>
 
-void test_one_input(const std::vector<uint8_t>& buffer)
+FUZZ_TARGET(tx_in)
 {
     CDataStream ds(buffer, SER_NETWORK, INIT_PROTO_VERSION);
     CTxIn tx_in;
@@ -25,8 +25,6 @@ void test_one_input(const std::vector<uint8_t>& buffer)
         return;
     }
 
-    (void)GetTransactionInputWeight(tx_in);
-    (void)GetVirtualTransactionInputSize(tx_in);
     (void)RecursiveDynamicUsage(tx_in);
 
     (void)tx_in.ToString();

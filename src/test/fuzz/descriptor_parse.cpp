@@ -4,21 +4,29 @@
 
 #include <chainparams.h>
 #include <key.h>
+#include <pubkey.h>
 #include <script/descriptor.h>
 #include <script/standard.h>
 #include <test/fuzz/fuzz.h>
 
-void initialize()
+void initialize_descriptor_parse()
 {
-    SelectParams(CBaseChainParams::REGTEST);
+    static const ECCVerifyHandle verify_handle;
+    ECC_Start();
+    SelectParams(CBaseChainParams::MAIN);
 }
 
-void test_one_input(const std::vector<uint8_t>& buffer)
+FUZZ_TARGET_INIT(descriptor_parse, initialize_descriptor_parse)
 {
     const std::string descriptor(buffer.begin(), buffer.end());
     FlatSigningProvider signing_provider;
     std::string error;
     for (const bool require_checksum : {true, false}) {
-        Parse(descriptor, signing_provider);
+        const auto desc = Parse(descriptor, signing_provider, error, require_checksum);
+        if (desc) {
+            (void)desc->ToString();
+            (void)desc->IsRange();
+            (void)desc->IsSolvable();
+        }
     }
 }
