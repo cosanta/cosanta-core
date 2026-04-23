@@ -33,7 +33,7 @@ define $(package)_preprocess_cmds
 endef
 
 define $(package)_config_cmds
-  cmake $($(package)_config_opts) -S .. -B .
+  $($(package)_cmake) -S .. -B .
 endef
 
 define $(package)_build_cmds
