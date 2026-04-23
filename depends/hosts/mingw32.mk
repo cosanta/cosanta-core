@@ -3,7 +3,7 @@ mingw32_CXX := $(host)-g++-posix
 endif
 
 mingw32_CFLAGS=-pipe -std=$(C_STANDARD)
-mingw32_CXXFLAGS=-pipe -std=$(CXX_STANDARD)
+mingw32_CXXFLAGS=-pipe -std=c++2a
 
 ifneq ($(LTO),)
 mingw32_AR = $(host_toolchain)gcc-ar
