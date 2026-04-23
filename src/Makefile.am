@@ -562,7 +562,6 @@ crypto_libcosanta_crypto_base_a_SOURCES = \
   crypto/hamsi.c \
   crypto/hamsi_helper.c \
   crypto/haval.c \
-  crypto/muhash.cpp \
   crypto/shabal.c \
   crypto/whirlpool.c \
   crypto/sph_sha2big.c \
