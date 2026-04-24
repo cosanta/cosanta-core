@@ -21,6 +21,7 @@ $(package)_patches += rcc_hardcode_timestamp.patch
 $(package)_patches += duplicate_lcqpafonts.patch
 $(package)_patches += guix_cross_lib_path.patch
 $(package)_patches += memory_resource.patch
+$(package)_patches += qfontdatabase-cxx20-operators.patch
 $(package)_patches += utc_from_string_no_optimize.patch
 $(package)_patches += windows_lto.patch
 $(package)_patches += darwin_no_libm.patch
@@ -256,6 +257,7 @@ define $(package)_preprocess_cmds
   patch -p1 -i $($(package)_patch_dir)/utc_from_string_no_optimize.patch && \
   patch -p1 -i $($(package)_patch_dir)/guix_cross_lib_path.patch && \
   patch -p1 -i $($(package)_patch_dir)/windows_lto.patch && \
+  patch -p1 -i $($(package)_patch_dir)/qfontdatabase-cxx20-operators.patch && \
   patch -p1 -i $($(package)_patch_dir)/darwin_no_libm.patch && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-4211-qtbase-5.15.patch && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-5455-qtbase-5.15.patch && \
