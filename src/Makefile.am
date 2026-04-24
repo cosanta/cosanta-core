@@ -657,6 +657,7 @@ libcosanta_consensus_a_SOURCES = \
   script/script.h \
   script/script_error.cpp \
   script/script_error.h \
+  script/standard.cpp \
   serialize.h \
   span.h \
   streams.h \
@@ -699,7 +700,6 @@ libcosanta_common_a_SOURCES = \
   script/descriptor.cpp \
   script/sign.cpp \
   script/signingprovider.cpp \
-  script/standard.cpp \
   versionbitsinfo.cpp \
   warnings.cpp \
   $(BITCOIN_CORE_H)
