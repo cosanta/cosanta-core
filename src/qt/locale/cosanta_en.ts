@@ -5398,7 +5398,7 @@ Go to File &gt; Open Wallet to load a wallet.
 <context>
     <name>cosanta-core</name>
     <message>
-        <location filename="../dashstrings.cpp" line="+12"/>
+        <location filename="../cosantastrings.cpp" line="+12"/>
         <source>The %s developers</source>
         <translation>The %s developers</translation>
     </message>
