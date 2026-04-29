@@ -50,7 +50,7 @@ IGNORED_WARNINGS=(
 #    "Member variable '.*' is not initialized in the constructor."
 )
 
-# We should attempt to update this with all dash specific code
+# We should attempt to update this with all Cosanta-specific code
 FILES=$(git ls-files -- "src/batchedlogger.*" \
                         "src/bench/bls*.cpp" \
                         "src/bls/*.cpp" \

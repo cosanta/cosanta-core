@@ -3,7 +3,7 @@ Cosanta Core version 0.17.0.3
 
 Release is now available from:
 
-  <https://cosanta.net/en/download/>
+  <https://cosa.is/downloads/>
 
 This is a new hotfix release.
 

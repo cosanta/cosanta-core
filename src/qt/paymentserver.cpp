@@ -226,7 +226,7 @@ void PaymentServer::handleURIOrFile(const QString& s)
         Q_EMIT message(tr("URI handling"), tr("'cosanta://' is not a valid URI. Use 'cosanta:' instead."),
             CClientUIInterface::MSG_ERROR);
     }
-    else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // dash: URI
+    else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // cosanta: URI
     {
         QUrlQuery uri((QUrl(s)));
         // normal URI

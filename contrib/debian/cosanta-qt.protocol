@@ -1,6 +1,6 @@
 [Protocol]
 exec=cosanta-qt '%u'
-protocol=dash
+protocol=cosanta
 input=none
 output=none
 helper=true

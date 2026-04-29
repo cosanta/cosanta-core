@@ -235,7 +235,7 @@
         <translation>確認錢包加密</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
         <translation>警告: 如果把錢包加密後又忘記密碼，你就會從此&lt;b&gt;失去其中所有的達世幣了&lt;/b&gt;！</translation>
     </message>
     <message>
@@ -348,7 +348,7 @@
         <translation>接收(&amp;R)</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and dash: URIs)</source>
+        <source>Request payments (generates QR codes and cosanta: URIs)</source>
         <translation>要求付款(產生 QR Code 和達世幣付款協議的 URI)</translation>
     </message>
     <message>
@@ -536,7 +536,7 @@
         <translation>開啓 &amp;URI...</translation>
     </message>
     <message>
-        <source>Open a dash: URI or payment request</source>
+        <source>Open a cosanta: URI or payment request</source>
         <translation>開啓一個達世幣協議的 URI 或付款要求</translation>
     </message>
     <message>
@@ -879,8 +879,8 @@
         <translation>如果任何一個收款人收到的金額比當前零散錢的閾值還小的話，這個標籤將變為紅色。</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>每組輸入可能有 +/- %1 個 duff(s) 的誤差。</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>每組輸入可能有 +/- %1 個 unit(s) 的誤差。</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -1456,9 +1456,9 @@
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/projects/p/dash/</source>
+https://www.transifex.com/projects/p/cosanta/</source>
         <translation>缺少相關語言或翻譯不完整？請到這裡協助翻譯
-https://www.transifex.com/projects/p/dash/</translation>
+https://www.transifex.com/projects/p/cosanta/</translation>
     </message>
     <message>
         <source>&amp;Unit to show amounts in:</source>
@@ -1604,7 +1604,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>金額和循環次數:</translation>
     </message>
     <message>
-        <source>0 DASH / 0 Rounds</source>
+        <source>0 COSA / 0 Rounds</source>
         <translation>0 達世幣 / 0 循環次數</translation>
     </message>
     <message>
@@ -1723,7 +1723,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>要求付款時發生錯誤</translation>
     </message>
     <message>
-        <source>Cannot start dash: click-to-pay handler</source>
+        <source>Cannot start cosanta: click-to-pay handler</source>
         <translation>無法啟動達世幣 : 點擊支付處理程序</translation>
     </message>
     <message>
@@ -2716,11 +2716,11 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>目標確認時間:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>如果自訂手續費設定為 1000 duffs ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 duffs 的手續費，&lt;br /&gt;而「至少」會支付 1000 duffs。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
+        <source>If the custom fee is set to 1000 units and the transaction is only 250 bytes, then "per kilobyte" only pays 250 units in fee,&lt;br /&gt;while "at least" pays 1000 units. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>如果自訂手續費設定為 1000 units ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 units 的手續費，&lt;br /&gt;而「至少」會支付 1000 units。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>當交易量少於區塊可容納的空間時，只付最低手續費不會有什麽問題。&lt;br /&gt;但是當交易量的需求成長到超過整體網路可以處理的量時，可能會造成一筆一直不會被確認的交易。</translation>
     </message>
     <message>
@@ -2991,7 +2991,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>訊息:</translation>
     </message>
     <message>
-        <source>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
         <translation>附加在達世幣付款協議 URI 中的訊息，會和交易內容一起存起來，給你自己做參考。注意: 這個訊息不會送到達世幣網路上。</translation>
     </message>
     <message>
@@ -3731,7 +3731,7 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
 </context>
 <context>
-    <name>dash-core</name>
+    <name>cosanta-core</name>
     <message>
         <source>Error: Listening for incoming connections failed (listen returned error %s)</source>
         <translation>錯誤: 聽候外來連線失敗(回傳錯誤 %s)</translation>

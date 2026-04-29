@@ -235,7 +235,7 @@
         <translation>确认加密钱包</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
         <translation>警告:如果把钱包加​​密后又忘记密码，您就会从此&lt;b&gt;失去所有的Cosanta&lt;/b&gt;！</translation>
     </message>
     <message>
@@ -348,7 +348,7 @@
         <translation>接收(&amp;R)</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and dash: URIs)</source>
+        <source>Request payments (generates QR codes and cosanta: URIs)</source>
         <translation>请求付款(生成二维码和Cosanta付款协议的URI)</translation>
     </message>
     <message>
@@ -536,7 +536,7 @@
         <translation>打开 &amp;URI...</translation>
     </message>
     <message>
-        <source>Open a dash: URI or payment request</source>
+        <source>Open a cosanta: URI or payment request</source>
         <translation>打开一个Cosanta协议的URI或付款请求</translation>
     </message>
     <message>
@@ -877,8 +877,8 @@
         <translation>当任何一个收款金额小于目前的零散金额上限时，文字会变红色。</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>每笔输入可能会有 +/- %1个duff(s)的偏差.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>每笔输入可能会有 +/- %1个unit(s)的偏差.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -1466,9 +1466,9 @@
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/projects/p/dash/</source>
+https://www.transifex.com/projects/p/cosanta/</source>
         <translation>缺少相关语言或翻译不完整？请到这里协助翻译：
-https://www.transifex.com/projects/p/dash/</translation>
+https://www.transifex.com/projects/p/cosanta/</translation>
     </message>
     <message>
         <source>&amp;Unit to show amounts in:</source>
@@ -1614,7 +1614,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>数量与循环次数：</translation>
     </message>
     <message>
-        <source>0 DASH / 0 Rounds</source>
+        <source>0 COSA / 0 Rounds</source>
         <translation>0 Cosanta / 0 循环数</translation>
     </message>
     <message>
@@ -1733,7 +1733,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>支付请求出错</translation>
     </message>
     <message>
-        <source>Cannot start dash: click-to-pay handler</source>
+        <source>Cannot start cosanta: click-to-pay handler</source>
         <translation>无法启动Cosanta程序：click-to-pay handler</translation>
     </message>
     <message>
@@ -2726,11 +2726,11 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>确认时间目标：</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>如果自定手续费设定为1000 duffs，而交易信息只有250字节的话，那么选择"每千字节"就只会支付250 duffs的手续费，&lt;br /&gt;而"至少"会支付1000 duffs。但如果交易信息大于一千字节,那么两者都要按每千字节付费。</translation>
+        <source>If the custom fee is set to 1000 units and the transaction is only 250 bytes, then "per kilobyte" only pays 250 units in fee,&lt;br /&gt;while "at least" pays 1000 units. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>如果自定手续费设定为1000 units，而交易信息只有250字节的话，那么选择"每千字节"就只会支付250 units的手续费，&lt;br /&gt;而"至少"会支付1000 units。但如果交易信息大于一千字节,那么两者都要按每千字节付费。</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>当交易量少于区块可容纳的空间时，只需支付最低手续费。&lt;br /&gt;但当交易量的需求增长到超过总体网络可处理的量时，可能会造成一笔一直不被确认的交易。</translation>
     </message>
     <message>
@@ -2997,7 +2997,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>消息：</translation>
     </message>
     <message>
-        <source>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
         <translation>附加在Cosanta付款协议URI中的信息，会和交易内容一并存储，可供您参考。提示：此信息不会发送到Cosanta网络上。</translation>
     </message>
     <message>
@@ -3737,7 +3737,7 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
     </context>
 <context>
-    <name>dash-core</name>
+    <name>cosanta-core</name>
     <message>
         <source>Error: Listening for incoming connections failed (listen returned error %s)</source>
         <translation>错误：监听外来连接失败(监听回馈错误 %s)</translation>

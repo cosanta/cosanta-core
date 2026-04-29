@@ -835,7 +835,7 @@ void SetupServerArgs(NodeContext& node)
 std::string LicenseInfo()
 {
     const std::string URL_SOURCE_CODE = "<https://github.com/cosanta/cosanta-core>";
-    const std::string URL_WEBSITE = "<https://cosanta.net>";
+    const std::string URL_WEBSITE = "<https://cosa.is>";
 
     return CopyrightHolders(_("Copyright (C)").translated, 2020, COPYRIGHT_YEAR) + "\n" +
            "\n" +

@@ -41,10 +41,10 @@ public:
      */
     enum Unit
     {
-        COSANTA,
-        mCOSANTA,
-        uCOSANTA,
-        duffs
+        COSA,
+        mCOSA,
+        uCOSA,
+        UNIT
     };
 
     enum SeparatorStyle

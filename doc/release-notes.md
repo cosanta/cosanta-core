@@ -2,7 +2,7 @@
 
 Release is now available from:
 
-  <https://cosanta.net/en/download/>
+  <https://cosa.is/downloads/>
 
 This is a new minor version release, bringing various bugfixes and other
 improvements.
@@ -51,7 +51,7 @@ Running `upgradetohd` can also be interrupted now.
 ## Changes in RPCs, commands and config options
 
 - `wipewallettxes`: New RPC command which removes all wallet transactions
-- `wipetxes`: New command for `dash-wallet` that removes all wallet transactions
+- `wipetxes`: New command for `cosanta-wallet` that removes all wallet transactions
 - `masternodelist`: New mode `hpmn` filters only HPMNs/EvoNodes
 - `protx list`: New type `hpmn` filters only HPMNs/EvoNodes
 - `-blockversion` config option is allowed on non-mainnet networks now
@@ -69,7 +69,7 @@ There were a few other minor changes too, specifically:
 
 # v19.3.0 Change log
 
-See detailed [set of changes](https://github.com/dashpay/dash/compare/v19.2.0...dashpay:v19.3.0).
+See detailed [set of changes](https://github.com/cosanta/cosanta-core/compare/v19.2.0...v19.3.0).
 
 # Credits
 

@@ -235,7 +235,7 @@
         <translation>지갑 암호화 승인</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
         <translation>경고: 지갑을 암호화하고 암호문을 잃어버리는 경우 당신은 &lt;b&gt;모든 대시를 잃게 됩니다&lt;/b&gt;!</translation>
     </message>
     <message>
@@ -348,7 +348,7 @@
         <translation>받기(&amp;R)</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and dash: URIs)</source>
+        <source>Request payments (generates QR codes and cosanta: URIs)</source>
         <translation>지불 요청하기 (QR코드와 대시 URI가 생성됩니다.)</translation>
     </message>
     <message>
@@ -536,7 +536,7 @@
         <translation>URI 열기(&amp;U)...</translation>
     </message>
     <message>
-        <source>Open a dash: URI or payment request</source>
+        <source>Open a cosanta: URI or payment request</source>
         <translation>Cosanta: URI 또는 지불 요청을 엽니다.</translation>
     </message>
     <message>
@@ -879,7 +879,7 @@
         <translation>수령인이 현재 더스트 임계값보다 작은 양을 수신하면 이 라벨이 빨간색으로 변합니다.</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
+        <source>Can vary +/- %1 unit(s) per input.</source>
         <translation>입력당 +/- %1 더프가 달라질 수 있습니다.</translation>
     </message>
     <message>
@@ -1456,9 +1456,9 @@
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/projects/p/dash/</source>
+https://www.transifex.com/projects/p/cosanta/</source>
         <translation>지정하려는 언어가 목록에 없거나 번역이 완성되지 않았다면? 다음의 주소에서 번역을 도와주세요:
-https://www.transifex.com/projects/p/dash/</translation>
+https://www.transifex.com/projects/p/cosanta/</translation>
     </message>
     <message>
         <source>&amp;Unit to show amounts in:</source>
@@ -1604,7 +1604,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>금액과 라운드:</translation>
     </message>
     <message>
-        <source>0 DASH / 0 Rounds</source>
+        <source>0 COSA / 0 Rounds</source>
         <translation>0 대시 / 0 라운드</translation>
     </message>
     <message>
@@ -1723,7 +1723,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>지불 요청 오류</translation>
     </message>
     <message>
-        <source>Cannot start dash: click-to-pay handler</source>
+        <source>Cannot start cosanta: click-to-pay handler</source>
         <translation>대시를 시작할 수 없습니다: 원클릭 지불 핸들러</translation>
     </message>
     <message>
@@ -2712,11 +2712,11 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>승인 시간 목표:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <source>If the custom fee is set to 1000 units and the transaction is only 250 bytes, then "per kilobyte" only pays 250 units in fee,&lt;br /&gt;while "at least" pays 1000 units. For transactions bigger than a kilobyte both pay by kilobyte.</source>
         <translation>만일 사용자 지정 수수료가 1000 더프로 설정되어 있으나 거래는 250바이트에 불과한 경우, 'KB 당'은 오직 250 더프를 수수료로 지불하는 한편 &lt;br /&gt;'최소'는 1000더프를 지불합니다. 1 KB보다 큰 거래를 진행하는 경우 두 옵션 모두 KB 당으로 지불합니다.</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>최소한의 수수료만 지불하기는 블록체인 내의 공간보다 적은 거래가 진행 중인 경우에만 제대로 작동합니다.&lt;br /&gt;이 옵션을 선택하면 대시 네트워크가 처리할 수 있는 것 보다 많은 거래가 진행되는 경우 거래 확인이 이루어지지 않을 수도 있다는 점을 주의하세요.</translation>
     </message>
     <message>
@@ -2987,7 +2987,7 @@ https://www.transifex.com/projects/p/dash/</translation>
         <translation>메시지:</translation>
     </message>
     <message>
-        <source>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
         <translation>대시: URI에 첨부된 메시지는 거래와 함께 참고용으로 저장됩니다. 주의: 이 메시지는 대시 네트워크로 전송되지 않습니다.</translation>
     </message>
     <message>
@@ -3727,7 +3727,7 @@ https://www.transifex.com/projects/p/dash/</translation>
     </message>
 </context>
 <context>
-    <name>dash-core</name>
+    <name>cosanta-core</name>
     <message>
         <source>Error: Listening for incoming connections failed (listen returned error %s)</source>
         <translation>오류: 들어오는 연결을 수신하는 데 실패했습니다 (수신 반환 오류 %s)</translation>

@@ -768,7 +768,7 @@ libcosanta_cli_a_SOURCES = \
 nodist_libcosanta_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# dashd binary #
+# cosantad binary #
 cosantad_SOURCES = bitcoind.cpp
 cosantad_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 cosantad_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
@@ -842,7 +842,7 @@ cosanta_wallet_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 cosanta_wallet_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-cosanta_wallet_SOURCES += dash-wallet-res.rc
+cosanta_wallet_SOURCES += cosanta-wallet-res.rc
 endif
 
 # Libraries below may be listed more than once to resolve circular dependencies (see

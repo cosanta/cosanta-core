@@ -801,7 +801,7 @@ UniValue dumpprivkey(const JSONRPCRequest& request)
         "\nReveals the private key corresponding to 'address'.\n"
         "Then the importprivkey can be used with this output\n",
         {
-            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The dash address for the private key"},
+            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The Cosanta address for the private key"},
         },
         RPCResult{
             RPCResult::Type::STR, "key", "The private key"
@@ -961,7 +961,7 @@ UniValue dumpwallet(const JSONRPCRequest& request)
     file << "\n";
 
     UniValue obj(UniValue::VOBJ);
-    obj.pushKV("dashcoreversion", CLIENT_BUILD);
+    obj.pushKV("cosantacoreversion", CLIENT_BUILD);
     obj.pushKV("lastblockheight", tip_height.value_or(-1));
     obj.pushKV("lastblockhash", tip_height ? pwallet->chain().getBlockHash(*tip_height).ToString() : NullUniValue);
     obj.pushKV("lastblocktime", tip_height ? FormatISO8601DateTime(pwallet->chain().getBlockTime(*tip_height)) : NullUniValue);

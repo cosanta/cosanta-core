@@ -70,7 +70,7 @@ TEST_EXIT_PASSED = 0
 TEST_EXIT_FAILED = 1
 TEST_EXIT_SKIPPED = 77
 
-TMPDIR_PREFIX = "dash_func_test_"
+TMPDIR_PREFIX = "cosanta_func_test_"
 
 class SkipTest(Exception):
     """This exception is raised to skip a test"""
@@ -179,8 +179,14 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         config = configparser.ConfigParser()
         config.read_file(open(self.options.configfile))
         self.config = config
-        self.options.bitcoind = os.getenv("BITCOIND", default=config["environment"]["BUILDDIR"] + '/src/cosantad' + config["environment"]["EXEEXT"])
-        self.options.bitcoincli = os.getenv("BITCOINCLI", default=config["environment"]["BUILDDIR"] + '/src/cosanta-cli' + config["environment"]["EXEEXT"])
+        self.options.bitcoind = (
+            os.getenv("COSANTAD")
+            or config["environment"]["BUILDDIR"] + '/src/cosantad' + config["environment"]["EXEEXT"]
+        )
+        self.options.bitcoincli = (
+            os.getenv("COSANTACLI")
+            or config["environment"]["BUILDDIR"] + '/src/cosanta-cli' + config["environment"]["EXEEXT"]
+        )
 
         self.extra_args_from_options = self.options.cosantad_extra_args
 

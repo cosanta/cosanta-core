@@ -38,7 +38,7 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 #define SPINNER_FRAMES 90
 
 #define QAPP_ORG_NAME "Cosanta"
-#define QAPP_ORG_DOMAIN "cosanta.net"
+#define QAPP_ORG_DOMAIN "cosa.is"
 #define QAPP_APP_NAME_DEFAULT "Cosanta-Qt"
 #define QAPP_APP_NAME_TESTNET "Cosanta-Qt-testnet"
 #define QAPP_APP_NAME_DEVNET "Cosanta-Qt-%s"

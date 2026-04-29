@@ -2,7 +2,7 @@
 
 This issue tracker is only for technical issues related to Cosanta Core.
 
-General Dash questions and/or support requests and are best directed to the [Dashpay Reddit](https://www.reddit.com/r/dashpay/).
+General Cosanta questions and/or support requests are best directed to the Cosanta community channels.
 
 To report critical security issues, email infosec@cosa.is and/or see the COSANTA bug bounty program on [Bugcrowd](https://bugcrowd.com/cosantadigitalcash) instead of creating Github issues.
 

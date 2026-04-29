@@ -17,7 +17,7 @@ BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
             VALUE "CompanyName",        "Cosanta Core"
-            VALUE "FileDescription",    "cosant-wallet (CLI tool for " PACKAGE_NAME " wallets)"
+            VALUE "FileDescription",    "cosanta-wallet (CLI tool for " PACKAGE_NAME " wallets)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "cosanta-wallet"
             VALUE "LegalCopyright",     COPYRIGHT_STR

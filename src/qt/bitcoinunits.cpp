@@ -18,10 +18,10 @@ BitcoinUnits::BitcoinUnits(QObject *parent):
 QList<BitcoinUnits::Unit> BitcoinUnits::availableUnits()
 {
     QList<BitcoinUnits::Unit> unitlist;
-    unitlist.append(COSANTA);
-    unitlist.append(mCOSANTA);
-    unitlist.append(uCOSANTA);
-    unitlist.append(duffs);
+    unitlist.append(COSA);
+    unitlist.append(mCOSA);
+    unitlist.append(uCOSA);
+    unitlist.append(UNIT);
     return unitlist;
 }
 
@@ -29,10 +29,10 @@ bool BitcoinUnits::valid(int unit)
 {
     switch(unit)
     {
-    case COSANTA:
-    case mCOSANTA:
-    case uCOSANTA:
-    case duffs:
+    case COSA:
+    case mCOSA:
+    case uCOSA:
+    case UNIT:
         return true;
     default:
         return false;
@@ -45,10 +45,10 @@ QString BitcoinUnits::name(int unit)
     {
         switch(unit)
         {
-            case COSANTA: return QString("COSA");
-            case mCOSANTA: return QString("mCOSA");
-            case uCOSANTA: return QString::fromUtf8("μCOSA");
-            case duffs: return QString("duffs");
+            case COSA: return QString("COSA");
+            case mCOSA: return QString("mCOSA");
+            case uCOSA: return QString::fromUtf8("μCOSA");
+            case UNIT: return QString("unit");
             default: return QString("???");
         }
     }
@@ -56,10 +56,10 @@ QString BitcoinUnits::name(int unit)
     {
         switch(unit)
         {
-            case COSANTA: return QString("tCOSA");
-            case mCOSANTA: return QString("mtCOSA");
-            case uCOSANTA: return QString::fromUtf8("μtCOSA");
-            case duffs: return QString("tduffs");
+            case COSA: return QString("tCOSA");
+            case mCOSA: return QString("mtCOSA");
+            case uCOSA: return QString::fromUtf8("μtCOSA");
+            case UNIT: return QString("tunit");
             default: return QString("???");
         }
     }
@@ -71,10 +71,10 @@ QString BitcoinUnits::description(int unit)
     {
         switch(unit)
         {
-            case COSANTA: return QString("Cosanta");
-            case mCOSANTA: return QString("Milli-Cosanta (1 / 1" THIN_SP_UTF8 "000)");
-            case uCOSANTA: return QString("Micro-Cosanta (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-            case duffs: return QString("Ten Nano-Cosanta (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case COSA: return QString("Cosanta");
+            case mCOSA: return QString("Milli-Cosanta (1 / 1" THIN_SP_UTF8 "000)");
+            case uCOSA: return QString("Micro-Cosanta (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case UNIT: return QString("Cosanta unit (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
             default: return QString("???");
         }
     }
@@ -82,10 +82,10 @@ QString BitcoinUnits::description(int unit)
     {
         switch(unit)
         {
-            case COSANTA: return QString("TestCosantas");
-            case mCOSANTA: return QString("Milli-TestCosanta (1 / 1" THIN_SP_UTF8 "000)");
-            case uCOSANTA: return QString("Micro-TestCosanta (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-            case duffs: return QString("Ten Nano-TestCosanta (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case COSA: return QString("TestCosantas");
+            case mCOSA: return QString("Milli-TestCosanta (1 / 1" THIN_SP_UTF8 "000)");
+            case uCOSA: return QString("Micro-TestCosanta (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case UNIT: return QString("TestCosanta unit (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
             default: return QString("???");
         }
     }
@@ -95,10 +95,10 @@ qint64 BitcoinUnits::factor(int unit)
 {
     switch(unit)
     {
-    case COSANTA:  return 100000000;
-    case mCOSANTA: return 100000;
-    case uCOSANTA: return 100;
-    case duffs: return 1;
+    case COSA:  return 100000000;
+    case mCOSA: return 100000;
+    case uCOSA: return 100;
+    case UNIT: return 1;
     default:   return 100000000;
     }
 }
@@ -107,10 +107,10 @@ int BitcoinUnits::decimals(int unit)
 {
     switch(unit)
     {
-    case COSANTA: return 8;
-    case mCOSANTA: return 5;
-    case uCOSANTA: return 2;
-    case duffs: return 0;
+    case COSA: return 8;
+    case mCOSA: return 5;
+    case uCOSA: return 2;
+    case UNIT: return 0;
     default: return 0;
     }
 }

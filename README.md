@@ -1,7 +1,7 @@
-Cosanta Core staging tree 18.0
+Cosanta Core staging tree 19.0
 ===========================
 
-https://www.cosanta.net/
+https://cosa.is/
 
 
 What is Cosanta?
@@ -14,7 +14,7 @@ are carried out collectively by the network. Cosanta Core is the name of the ope
 source software which enables the use of this currency.
 
 For more information, as well as an immediately useable, binary version of
-the Cosanta Core software, see https://www.cosanta.net/.
+the Cosanta Core software, see https://cosa.is/.
 
 
 ## Pow / PoS Rewards Breakdown
@@ -123,7 +123,7 @@ the Cosanta Core software, see https://www.cosanta.net/.
 |<=33554466              | 0.00000002 COSA + fees | 60 %          | 40 %               | 2183-04-11 21:33:24 |
 
 For more information, as well as an immediately usable, binary version of
-the Cosanta Core software, see https://cosanta.net/en/download/.
+the Cosanta Core software, see https://cosa.is/downloads/.
 
 License
 -------
@@ -179,4 +179,3 @@ Translations are periodically pulled from Transifex and merged into the git repo
 
 **Important**: We do not accept translation changes as GitHub pull requests because the next
 pull from Transifex would automatically overwrite them again.
-

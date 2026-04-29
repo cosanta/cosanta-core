@@ -252,15 +252,15 @@ debug.log file if inconsistencies are detected.
 
 Valgrind is a programming tool for memory debugging, memory leak detection, and
 profiling. The repo contains a Valgrind suppressions file
-([`valgrind.supp`](https://github.com/dashpay/dash/blob/master/contrib/valgrind.supp))
+([`valgrind.supp`](../contrib/valgrind.supp))
 which includes known Valgrind warnings in our dependencies that cannot be fixed
 in-tree. Example use:
 
 ```shell
-$ valgrind --suppressions=contrib/valgrind.supp src/test/test_dash
+$ valgrind --suppressions=contrib/valgrind.supp src/test/test_cosanta
 $ valgrind --suppressions=contrib/valgrind.supp --leak-check=full \
-      --show-leak-kinds=all src/test/test_dash --log_level=test_suite
-$ valgrind -v --leak-check=full src/dashd -printtoconsole
+      --show-leak-kinds=all src/test/test_cosanta --log_level=test_suite
+$ valgrind -v --leak-check=full src/cosantad -printtoconsole
 ```
 
 ### Compiling for test coverage
@@ -276,7 +276,7 @@ To enable LCOV report generation during test runs:
 make
 make cov
 
-# A coverage report will now be accessible at `./test_dash.coverage/index.html`.
+# A coverage report will now be accessible at `./test_cosanta.coverage/index.html`.
 ```
 
 ### Performance profiling with perf
@@ -304,13 +304,13 @@ Make sure you [understand the security
 trade-offs](https://lwn.net/Articles/420403/) of setting these kernel
 parameters.
 
-To profile a running dashd process for 60 seconds, you could use an
+To profile a running cosantad process for 60 seconds, you could use an
 invocation of `perf record` like this:
 
 ```sh
 $ perf record \
     -g --call-graph dwarf --per-thread -F 140 \
-    -p `pgrep dashd` -- sleep 60
+    -p `pgrep cosantad` -- sleep 60
 ```
 
 You could then analyze the results by running
@@ -405,7 +405,7 @@ Threads
 
 - ThreadMapPort : Universal plug-and-play startup/shutdown
 
-- ThreadSocketHandler : Sends/Receives data from peers on port 9999.
+- ThreadSocketHandler : Sends/Receives data from peers on port 60606.
 
 - ThreadOpenAddedConnections : Opens network connections to added nodes.
 
@@ -417,7 +417,7 @@ Threads
 
 - DumpAddresses : Dumps IP addresses of nodes to peers.dat.
 
-- ThreadRPCServer : Remote procedure call handler, listens on port 9998 for connections and services them.
+- ThreadRPCServer : Remote procedure call handler, listens on port 9606 for connections and services them.
 
 - Shutdown : Does an orderly shutdown of everything.
 
@@ -1059,7 +1059,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
 - Try not to overload methods on argument type. E.g. don't make `getblock(true)` and `getblock("hash")`
   do different things.
 
-  - *Rationale*: This is impossible to use with `dash-cli`, and can be surprising to users.
+  - *Rationale*: This is impossible to use with `cosanta-cli`, and can be surprising to users.
 
   - *Exception*: Some RPC calls can take both an `int` and `bool`, most notably when a bool was switched
     to a multi-value, or due to other historical reasons. **Always** have false map to 0 and
@@ -1078,7 +1078,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
 
 - Add every non-string RPC argument `(method, idx, name)` to the table `vRPCConvertParams` in `rpc/client.cpp`.
 
-  - *Rationale*: `dash-cli` and the GUI debug console use this table to determine how to
+  - *Rationale*: `cosanta-cli` and the GUI debug console use this table to determine how to
     convert a plaintext command line to JSON. If the types don't match, the method can be unusable
     from there.
 
@@ -1099,7 +1099,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
   RPCs whose behavior does *not* depend on the current chainstate may omit this
   call.
 
-  - *Rationale*: In previous versions of Dash Core, the wallet was always
+  - *Rationale*: In previous versions of Cosanta Core, the wallet was always
     in-sync with the chainstate (by virtue of them all being updated in the
     same cs_main lock). In order to maintain the behavior that wallet RPCs
     return results as of at least the highest best-known block an RPC

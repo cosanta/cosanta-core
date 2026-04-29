@@ -57,7 +57,7 @@ the pull request affects. Valid areas as:
 
   - *Consensus* for changes to consensus critical code
   - *Docs* for changes to the documentation
-  - *Qt* for changes to dash-qt
+  - *Qt* for changes to cosanta-qt
   - *Mining* for changes to the mining code
   - *Net* or *P2P* for changes to the peer-to-peer network code
   - *RPC/REST/ZMQ* for changes to the RPC, REST or ZMQ APIs
@@ -82,7 +82,7 @@ Examples:
     Trivial: Fix typo in init.cpp
 
 Note that translations should not be submitted as pull requests, please see
-[Translation Process](https://github.com/dashpay/dash/blob/master/doc/translation_process.md)
+[Translation Process](doc/translation_process.md)
 for more information on helping with translations.
 
 If a pull request is specifically not to be considered for merging (yet) please

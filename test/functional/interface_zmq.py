@@ -17,7 +17,7 @@ from test_framework.util import (
 
 ADDRESS = "tcp://127.0.0.1:28332"
 
-def dashhash_helper(b):
+def cosantahash_helper(b):
     return encode(cosantahash(b)[::-1], 'hex_codec').decode('ascii')
 
 
