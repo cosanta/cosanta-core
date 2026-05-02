@@ -300,7 +300,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_V19].nFalloffCoeff = 5;            // this corresponds to 10 periods
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000009da827ab81ea966f");
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000df7736a8140e4dd3");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -412,6 +412,7 @@ public:
                 {606060, uint256S("0x00007da0a68306dc32e1c096eccbbf818574ff6445f5966d11506ee87a7d82ce")},
                 {876000, uint256S("0x000091c5d4a90042d58097a0e06239a6fa273b02fdd1b7ccd809005d3e3aeace")},
                 {929600, uint256S("0xecf2d7392585b41c5acc81548fe3593410c500d676718f5161e9b8a246cbe3ba")},
+                {958666, uint256S("0x80caa466ea0cfb71168d58c368e53f455dcabeadbc2ceebdad071f42152ee845")},
             }
         };
 
@@ -541,7 +542,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_V19].nFalloffCoeff = 5;            // this corresponds to 10 periods
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000000013f294c61a");
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000083c9c7361558f43");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -637,6 +638,7 @@ public:
                 {94000, uint256S("0x0068a733805059fba4ea3b1b60bbade9401305840a9df89987520e478e6e2465")},
                 {147800,uint256S("0x012ca46fb71629895e065c1900eb5c485e8832dfae8b673373ac49b6a6f505d2")},
                 {444444,uint256S("0x4ca2d67c258b8bfb767947970f8a5945ca93e982c31cac36c7615c9b4ed6755c")},
+                {666666,uint256S("0x08e01c3010fd9a9f6ad7632bbf179775942998c5a6ef945a4d0a2933d8219429")},
             }
         };
 
