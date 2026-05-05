@@ -338,13 +338,13 @@ BOOST_AUTO_TEST_CASE(get_block_header_preserves_pos_fields)
     block.nNonce = 0;
     block.posStakeHash = InsecureRand256();
     block.posStakeN = 42;
+    block.posBlockSig = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE};
 
     CBlockHeader header = block.GetBlockHeader();
 
     BOOST_CHECK_EQUAL(header.posStakeHash, block.posStakeHash);
     BOOST_CHECK_EQUAL(header.posStakeN, block.posStakeN);
-    // Note: posBlockSig is NOT copied by GetBlockHeader() per current implementation
-    // This is by design — the signature is a separate concern
+    BOOST_CHECK(header.posBlockSig == block.posBlockSig);
 }
 
 // ============================================================================

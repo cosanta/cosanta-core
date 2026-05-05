@@ -318,6 +318,7 @@ public:
         block.nNonce         = nNonce;
         block.posStakeHash   = posStakeHash;
         block.posStakeN      = posStakeN;
+        block.posBlockSig    = posBlockSig;
         return block;
     }
 
