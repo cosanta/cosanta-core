@@ -127,7 +127,7 @@ endif
 endif
 
 .PHONY: FORCE check-symbols check-security
-# dash core #
+# cosanta core #
 BITCOIN_CORE_H = \
   addrdb.h \
   addressindex.h \
