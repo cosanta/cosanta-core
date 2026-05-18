@@ -165,7 +165,7 @@ static RPCHelpMan gobject_prepare()
 
     CGovernanceObject govobj(hashParent, nRevision, nTime, uint256(), strDataHex);
 
-    // This command is dangerous because it consumes 5 DASH irreversibly.
+    // This command is dangerous because it consumes 5 COSA irreversibly.
     // If params are lost, it's very hard to bruteforce them and yet
     // users ignore all instructions on dashcentral etc. and do not save them...
     // Let's log them here and hope users do not mess with debug.log
@@ -1059,25 +1059,25 @@ void RegisterGovernanceRPCCommands(CRPCTable &t)
 static const CRPCCommand commands[] =
 { //  category              name                      actor (function)         argNames
   //  --------------------- ------------------------  -----------------------  ----------
-    /* Dash features */
-    { "dash",               "getgovernanceinfo",          &getgovernanceinfo,       {} },
-    { "dash",               "getsuperblockbudget",        &getsuperblockbudget,     {"index"} },
-    { "dash",               "gobject",                    &gobject,                 {"command"} },
-    { "dash",               "gobject", "count",           &gobject_count,           {"mode"} },
-    { "dash",               "gobject", "deserialize",     &gobject_deserialize,     {"hex_data"} },
-    { "dash",               "gobject", "check",           &gobject_check,           {"hex_data"} },
+    /* Cosanta features */
+    { "cosanta",            "getgovernanceinfo",          &getgovernanceinfo,       {} },
+    { "cosanta",            "getsuperblockbudget",        &getsuperblockbudget,     {"index"} },
+    { "cosanta",            "gobject",                    &gobject,                 {"command"} },
+    { "cosanta",            "gobject", "count",           &gobject_count,           {"mode"} },
+    { "cosanta",            "gobject", "deserialize",     &gobject_deserialize,     {"hex_data"} },
+    { "cosanta",            "gobject", "check",           &gobject_check,           {"hex_data"} },
 #ifdef ENABLE_WALLET
-    { "dash",               "gobject", "prepare",         &gobject_prepare,         {"parent-hash", "revision", "time", "data-hex", "use-IS", "outputHash", "outputIndex"} },
-    { "dash",               "gobject", "list-prepared",   &gobject_list_prepared,   {"count"} },
-    { "dash",               "gobject", "vote-many",       &gobject_vote_many,       {"governance-hash", "vote", "vote-outcome"} },
-    { "dash",               "gobject", "vote-alias",      &gobject_vote_alias,      {"governance-hash", "vote", "vote-outcome", "protx-hash"} },
+    { "cosanta",            "gobject", "prepare",         &gobject_prepare,         {"parent-hash", "revision", "time", "data-hex", "use-IS", "outputHash", "outputIndex"} },
+    { "cosanta",            "gobject", "list-prepared",   &gobject_list_prepared,   {"count"} },
+    { "cosanta",            "gobject", "vote-many",       &gobject_vote_many,       {"governance-hash", "vote", "vote-outcome"} },
+    { "cosanta",            "gobject", "vote-alias",      &gobject_vote_alias,      {"governance-hash", "vote", "vote-outcome", "protx-hash"} },
 #endif
-    { "dash",               "gobject", "submit",          &gobject_submit,          {"parent-hash", "revision", "time", "data-hex", "fee-txid"} },
-    { "dash",               "gobject", "list",            &gobject_list,            {"signal", "type"} },
-    { "dash",               "gobject", "diff",            &gobject_diff,            {"signal", "type"} },
-    { "dash",               "gobject", "get",             &gobject_get,             {"governance-hash"} },
-    { "dash",               "gobject", "getcurrentvotes", &gobject_getcurrentvotes, {"governance-hash", "txid", "vout"} },
-    { "dash",               "voteraw",                    &voteraw,                 {"mn-collateral-tx-hash","mn-collateral-tx-index","governance-hash","vote-signal","vote-outcome","time","vote-sig"} },
+    { "cosanta",            "gobject", "submit",          &gobject_submit,          {"parent-hash", "revision", "time", "data-hex", "fee-txid"} },
+    { "cosanta",            "gobject", "list",            &gobject_list,            {"signal", "type"} },
+    { "cosanta",            "gobject", "diff",            &gobject_diff,            {"signal", "type"} },
+    { "cosanta",            "gobject", "get",             &gobject_get,             {"governance-hash"} },
+    { "cosanta",            "gobject", "getcurrentvotes", &gobject_getcurrentvotes, {"governance-hash", "txid", "vout"} },
+    { "cosanta",            "voteraw",                    &voteraw,                 {"mn-collateral-tx-hash","mn-collateral-tx-index","governance-hash","vote-signal","vote-outcome","time","vote-sig"} },
 
 };
 // clang-format on
