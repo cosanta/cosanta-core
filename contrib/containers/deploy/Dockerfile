@@ -1,28 +1,28 @@
 FROM phusion/baseimage:focal-1.0.0
-LABEL maintainer="Dash Developers <dev@dash.org>"
-LABEL description="Dockerised DashCore, built from CI"
+LABEL maintainer="Cosanta Developers <dev@cosa.is>"
+LABEL description="Dockerised CosantaCore, built from CI"
 
 ARG USER_ID
 ARG GROUP_ID
 
-ENV HOME /home/dash
+ENV HOME /home/cosanta
 
 # add user with specified (or default) user/group ids
 ENV USER_ID ${USER_ID:-1000}
 ENV GROUP_ID ${GROUP_ID:-1000}
-RUN groupadd -g ${GROUP_ID} dash && \
-    useradd -u ${USER_ID} -g dash -s /bin/bash -m -d /home/dash dash && \
-    mkdir /home/dash/.dashcore && \
-    chown ${USER_ID}:${GROUP_ID} -R /home/dash
+RUN groupadd -g ${GROUP_ID} cosanta && \
+    useradd -u ${USER_ID} -g cosanta -s /bin/bash -m -d /home/cosanta cosanta && \
+    mkdir /home/cosanta/.cosantacore && \
+    chown ${USER_ID}:${GROUP_ID} -R /home/cosanta
 
 COPY bin/* /usr/local/bin/
 
 RUN chmod a+x /usr/local/bin/*
 
-USER dash
+USER cosanta
 
-VOLUME ["/home/dash"]
+VOLUME ["/home/cosanta"]
 
-EXPOSE 9998 9999 19998 19999
+EXPOSE 9606 60606 9696 60696
 
-WORKDIR /home/dash
+WORKDIR /home/cosanta
