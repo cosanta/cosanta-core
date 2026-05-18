@@ -344,19 +344,19 @@ CLEAN_BITCOIN_TEST = test/*.gcda test/*.gcno test/fuzz/*.gcda test/fuzz/*.gcno t
 CLEANFILES += $(CLEAN_BITCOIN_TEST)
 
 if TARGET_WINDOWS
-dash_test: $(TEST_BINARY)
+cosanta_test: $(TEST_BINARY)
 else
 if ENABLE_BENCH
-dash_test: $(TEST_BINARY) $(BENCH_BINARY)
+cosanta_test: $(TEST_BINARY) $(BENCH_BINARY)
 else
-dash_test: $(TEST_BINARY)
+cosanta_test: $(TEST_BINARY)
 endif
 endif
 
-dash_test_check: $(TEST_BINARY) FORCE
+cosanta_test_check: $(TEST_BINARY) FORCE
 	$(MAKE) check-TESTS TESTS=$^
 
-dash_test_clean : FORCE
+cosanta_test_clean : FORCE
 	rm -f $(CLEAN_BITCOIN_TEST) $(test_test_cosanta_OBJECTS) $(TEST_BINARY)
 
 check-local: $(BITCOIN_TESTS:.cpp=.cpp.test)
@@ -369,7 +369,7 @@ endif
 if TARGET_WINDOWS
 else
 if ENABLE_BENCH
-# Disabled because benchmarks are too heavy in Dash
+# Disabled because benchmarks are too heavy in Cosanta
 #	@echo "Running bench/bench_cosanta"
 #	$(BENCH_BINARY)
 endif
