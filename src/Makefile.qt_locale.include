@@ -9,6 +9,7 @@ QT_TS = \
   qt/locale/cosanta_it.ts \
   qt/locale/cosanta_ja.ts \
   qt/locale/cosanta_ko.ts \
+  qt/locale/cosanta_ml.ts \
   qt/locale/cosanta_nl.ts \
   qt/locale/cosanta_pl.ts \
   qt/locale/cosanta_pt.ts \

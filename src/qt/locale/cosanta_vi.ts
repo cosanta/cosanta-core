@@ -70,8 +70,8 @@
         <translation>Địa chỉ nhận</translation>
     </message>
     <message>
-        <source>These are your Dash addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Đây là các địa chỉ Dash của bạn để gửi thanh toán. Luôn luôn kiểm tra số tiền và địa chỉ nhận trước khi bạn gửi tiền.</translation>
+        <source>These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Đây là các địa chỉ Cosanta của bạn để gửi thanh toán. Luôn luôn kiểm tra số tiền và địa chỉ nhận trước khi bạn gửi tiền.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -204,8 +204,8 @@
         <translation>Xác nhận mã hoá ví</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
-        <translation>Chú ý: Nếu bạn mã hoá ví và mất mật khẩu, bạn sẽ &lt;b&gt;MẤT TẤT CẢ DASH CỦA BẠN&lt;/b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
+        <translation>Chú ý: Nếu bạn mã hoá ví và mất mật khẩu, bạn sẽ &lt;b&gt;MẤT TẤT CẢ COSA CỦA BẠN&lt;/b&gt;!</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -288,16 +288,16 @@
         <translation>&amp;Gửi</translation>
     </message>
     <message>
-        <source>Send coins to a Dash address</source>
-        <translation>Gửi tiền vào địa chỉ Dash</translation>
+        <source>Send coins to a Cosanta address</source>
+        <translation>Gửi tiền vào địa chỉ Cosanta</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
         <translation>&amp;Nhận</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and dash: URIs)</source>
-        <translation>Yêu cầu thanh toán (sinh mã QR và dash: URIs)</translation>
+        <source>Request payments (generates QR codes and cosanta: URIs)</source>
+        <translation>Yêu cầu thanh toán (sinh mã QR và cosanta: URIs)</translation>
     </message>
     <message>
         <source>&amp;Options…</source>
@@ -400,12 +400,12 @@
         <translation>&amp;Khoá Ví</translation>
     </message>
     <message>
-        <source>Sign messages with your Dash addresses to prove you own them</source>
-        <translation>Ký vào thông điệp với địa chỉ Dash để chứng minh bạn là chủ của chúng</translation>
+        <source>Sign messages with your Cosanta addresses to prove you own them</source>
+        <translation>Ký vào thông điệp với địa chỉ Cosanta để chứng minh bạn là chủ của chúng</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Dash addresses</source>
-        <translation>Kiểm tra thông điệp để đảm bảo rằng nó đã được ký bằng địa chỉ Dash nhất định</translation>
+        <source>Verify messages to ensure they were signed with specified Cosanta addresses</source>
+        <translation>Kiểm tra thông điệp để đảm bảo rằng nó đã được ký bằng địa chỉ Cosanta nhất định</translation>
     </message>
     <message>
         <source>&amp;Information</source>
@@ -472,8 +472,8 @@
         <translation>&amp;Các Tuỳ chọn dòng lệnh</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Dash command-line options</source>
-        <translation>Hiển thị %1 tin nhắn hỗ trợ để nhận được danh sách Dash command-line khả dụng</translation>
+        <source>Show the %1 help message to get a list with possible Cosanta command-line options</source>
+        <translation>Hiển thị %1 tin nhắn hỗ trợ để nhận được danh sách Cosanta command-line khả dụng</translation>
     </message>
     <message>
         <source>%1 client</source>
@@ -500,8 +500,8 @@
         <translation>Bảng Thanh công cụ</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Dash network</source>
-        <translation><numerusform>%n kết nối hiện thời tới mạng lưới của Dash</numerusform></translation>
+        <source>%n active connection(s) to Cosanta network</source>
+        <translation><numerusform>%n kết nối hiện thời tới mạng lưới của Cosanta</numerusform></translation>
     </message>
     <message>
         <source>Network activity disabled</source>
@@ -874,8 +874,8 @@
         <translation>Sửa địa chỉ gửi</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Dash address.</source>
-        <translation>Địa chỉ vừa nhập "%1" không phải địa chỉ Dash hợp lệ.</translation>
+        <source>The entered address "%1" is not a valid Cosanta address.</source>
+        <translation>Địa chỉ vừa nhập "%1" không phải địa chỉ Cosanta hợp lệ.</translation>
     </message>
     <message>
         <source>Could not unlock wallet.</source>
@@ -974,8 +974,8 @@
         <translation>Gần đúng %1 GB of data sẽ được lưu giữ trong danh mục này.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Dash block chain.</source>
-        <translation>%1 sẽ download và lưu trữ một bản copy của Dash block chain.</translation>
+        <source>%1 will download and store a copy of the Cosanta block chain.</source>
+        <translation>%1 sẽ download và lưu trữ một bản copy của Cosanta block chain.</translation>
     </message>
     <message>
         <source>The wallet will also be stored in this directory.</source>
@@ -1120,12 +1120,12 @@
         <translation>Form</translation>
     </message>
     <message>
-        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Dash network, as detailed below.</source>
-        <translation>Những giao dịch mới có thể chưa hiện ra, và do đó số dư trong ví của bạn có thể chưa chính xác. Những thông tin này sẽ chính xác một khi ví của bạn đã hoàn tất việc đồng bộ với mạng lưới của Dash, như cụ thể bên dưới.</translation>
+        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</source>
+        <translation>Những giao dịch mới có thể chưa hiện ra, và do đó số dư trong ví của bạn có thể chưa chính xác. Những thông tin này sẽ chính xác một khi ví của bạn đã hoàn tất việc đồng bộ với mạng lưới của Cosanta, như cụ thể bên dưới.</translation>
     </message>
     <message>
-        <source>Attempting to spend Dash that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
-        <translation>Việc chi tiêu Dash khi mà các giao dịch của nó chưa được đồng bộ hết sẽ không được chấp nhận bởi mạng lưới.</translation>
+        <source>Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
+        <translation>Việc chi tiêu Cosanta khi mà các giao dịch của nó chưa được đồng bộ hết sẽ không được chấp nhận bởi mạng lưới.</translation>
     </message>
     <message>
         <source>Number of blocks left</source>
@@ -1217,8 +1217,8 @@
         <translation>Nếu bạn vô hiệu hóa các chi tiêu của phần tiền lẻ chưa được xác nhận, phần tiền lẻ từ một giao dịch &lt;br/&gt;không thể được sử dụng đến khi giao dịch đó nhận được ít nhất một xác nhận. &lt;br/&gt;Điều này ảnh hưởng đến cách tính số dư của bạn.</translation>
     </message>
     <message>
-        <source>Automatically open the Dash Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Tự động mở cổng cho phần mềm Dash Core trên rounter. Điều này chỉ hoạt động được khi rounter của bạn hỗ trợ UpnP và tính năng đó được bật lên.</translation>
+        <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Tự động mở cổng cho phần mềm Cosanta Core trên rounter. Điều này chỉ hoạt động được khi rounter của bạn hỗ trợ UpnP và tính năng đó được bật lên.</translation>
     </message>
     <message>
         <source>Accept connections from outside.</source>
@@ -1229,8 +1229,8 @@
         <translation>Cho phép &amp;nhận kết nối</translation>
     </message>
     <message>
-        <source>Connect to the Dash network through a SOCKS5 proxy.</source>
-        <translation>Kết nối với mạng lưới Dash thông qua một SOCK5 proxy.</translation>
+        <source>Connect to the Cosanta network through a SOCKS5 proxy.</source>
+        <translation>Kết nối với mạng lưới Cosanta thông qua một SOCK5 proxy.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1400,8 +1400,8 @@
         <translation>Biểu mẫu</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Dash network after a connection is established, but this process has not completed yet.</source>
-        <translation>Thông tin được hiển thị có thể đã lỗi thời. Ví của bạn sẽ tự động đồng bộ với mạng lưới Dash sau khi kết nối được thiết lập, tuy nhiên quá trình này chưa hoàn thành.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</source>
+        <translation>Thông tin được hiển thị có thể đã lỗi thời. Ví của bạn sẽ tự động đồng bộ với mạng lưới Cosanta sau khi kết nối được thiết lập, tuy nhiên quá trình này chưa hoàn thành.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -1480,8 +1480,8 @@
         <translation>Số tiền và số vòng:</translation>
     </message>
     <message>
-        <source>0 DASH / 0 Rounds</source>
-        <translation>0 DASH / 0 Vòng</translation>
+        <source>0 COSA / 0 Rounds</source>
+        <translation>0 COSA / 0 Vòng</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -1602,16 +1602,16 @@
         <translation>Yêu cầu thanh toán bị lỗi</translation>
     </message>
     <message>
-        <source>Cannot start dash: click-to-pay handler</source>
-        <translation>Không thể khởi động dash: trình xử lý click-to-pay</translation>
+        <source>Cannot start cosanta: click-to-pay handler</source>
+        <translation>Không thể khởi động cosanta: trình xử lý click-to-pay</translation>
     </message>
     <message>
         <source>URI handling</source>
         <translation>xử lý URI</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid Dash address or malformed URI parameters.</source>
-        <translation>URI không thể phân tích. Nó có thể bởi địa chỉ Dash không hợp lệ hoặc thông số URI dị hình.</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
+        <translation>URI không thể phân tích. Nó có thể bởi địa chỉ Cosanta không hợp lệ hoặc thông số URI dị hình.</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -1658,8 +1658,8 @@
         <translation>Số lượng</translation>
     </message>
     <message>
-        <source>Enter a Dash address (e.g. %1)</source>
-        <translation>Hãy nhập một địa chỉ Dash (VD: %1)</translation>
+        <source>Enter a Cosanta address (e.g. %1)</source>
+        <translation>Hãy nhập một địa chỉ Cosanta (VD: %1)</translation>
     </message>
     <message>
         <source>Appearance Setup</source>
@@ -2058,8 +2058,8 @@
 <context>
     <name>ReceiveCoinsDialog</name>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Dash network.</source>
-        <translation>Một thông điệp tuỳ chọn để đính vào yêu cầu thanh toán, nó sẽ hiển thị khi yêu cầu được mở. Chú ý: Thông điệp sẽ không được gửi thông qua mạng lưới Dash.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <translation>Một thông điệp tuỳ chọn để đính vào yêu cầu thanh toán, nó sẽ hiển thị khi yêu cầu được mở. Chú ý: Thông điệp sẽ không được gửi thông qua mạng lưới Cosanta.</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -2070,8 +2070,8 @@
         <translation>Một nhãn tuỳ chọn để liên kết với địa chỉ nhận mới.</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Dash network.</source>
-        <translation>Một thông điệp tuỳ chọn để đính vào yêu cầu thanh toán, nó sẽ hiển thị khi yêu cầu được mở.&lt;br&gt;Chú ý: Thông điệp sẽ không được gửi thông qua mạng lưới Dash.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <translation>Một thông điệp tuỳ chọn để đính vào yêu cầu thanh toán, nó sẽ hiển thị khi yêu cầu được mở.&lt;br&gt;Chú ý: Thông điệp sẽ không được gửi thông qua mạng lưới Cosanta.</translation>
     </message>
     <message>
         <source>Use this form to request payments. All fields are &lt;b&gt;optional&lt;/b&gt;.</source>
@@ -2427,8 +2427,8 @@
         <translation><numerusform>Ước lượng để bắt đầu xác thực trong vòng %n khối.</numerusform></translation>
     </message>
     <message>
-        <source>Warning: Invalid Dash address</source>
-        <translation>Cảnh báo: Địa chỉ Dash không hợp lệ</translation>
+        <source>Warning: Invalid Cosanta address</source>
+        <translation>Cảnh báo: Địa chỉ Cosanta không hợp lệ</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -2454,8 +2454,8 @@
         <translation>Trả &amp;Cho</translation>
     </message>
     <message>
-        <source>The Dash address to send the payment to</source>
-        <translation>Địa chỉ Dash để gửi thanh toán</translation>
+        <source>The Cosanta address to send the payment to</source>
+        <translation>Địa chỉ Cosanta để gửi thanh toán</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2490,8 +2490,8 @@
         <translation>&amp;Số tiền:</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Dash than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Phí sẽ được trừ trong khoản tiền mà bạn gửi. Bên nhận sẽ nhận được một khoản nhỏ hơn số Dash mà bạn nhập vào ở trong trường số lượng. Nếu có nhiều người nhận được chọn, phí được chia đều cho mọi người.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Cosanta than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>Phí sẽ được trừ trong khoản tiền mà bạn gửi. Bên nhận sẽ nhận được một khoản nhỏ hơn số Cosanta mà bạn nhập vào ở trong trường số lượng. Nếu có nhiều người nhận được chọn, phí được chia đều cho mọi người.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -2506,8 +2506,8 @@
         <translation>Thông điệp:</translation>
     </message>
     <message>
-        <source>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Dash network.</source>
-        <translation>Một thông điệp được đính với dash: URI đó sẽ được lưu trữ với các giao dịch cho các bạn tham khảo. Lưu ý: Thông điệp này sẽ không được gửi qua mạng Dash. </translation>
+        <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <translation>Một thông điệp được đính với cosanta: URI đó sẽ được lưu trữ với các giao dịch cho các bạn tham khảo. Lưu ý: Thông điệp này sẽ không được gửi qua mạng Cosanta. </translation>
     </message>
     <message>
         <source>This is an unauthenticated payment request.</source>
@@ -2548,12 +2548,12 @@
         <translation>&amp;Ký thông điệp</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive Dash sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>Bạn có thể ký vào thông điệp/thoả thuận với địa chỉ của bạn để chứng minh bạn có thể nhận Dash đã gửi cho họ. Hãy cẩn thận không ký vào những gì mơ hồ hay ngẫu nhiên, như là thứ lừa đảo để lừa bạn ký xác nhận của bạn vào đó cho họ. Chỉ ký vào những gì mà bạn hoàn thoàn đồng ý.</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive Cosanta sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>Bạn có thể ký vào thông điệp/thoả thuận với địa chỉ của bạn để chứng minh bạn có thể nhận Cosanta đã gửi cho họ. Hãy cẩn thận không ký vào những gì mơ hồ hay ngẫu nhiên, như là thứ lừa đảo để lừa bạn ký xác nhận của bạn vào đó cho họ. Chỉ ký vào những gì mà bạn hoàn thoàn đồng ý.</translation>
     </message>
     <message>
-        <source>The Dash address to sign the message with</source>
-        <translation>Địa chỉ Dash để ký cho thông điệp</translation>
+        <source>The Cosanta address to sign the message with</source>
+        <translation>Địa chỉ Cosanta để ký cho thông điệp</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2584,8 +2584,8 @@
         <translation>Copy chữ ký hiện tại vào bộ đệm của hệ thống</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Dash address</source>
-        <translation>Ký vào thông điệp để chứng tỏ bạn sở hữu địa chỉ Dash</translation>
+        <source>Sign the message to prove you own this Cosanta address</source>
+        <translation>Ký vào thông điệp để chứng tỏ bạn sở hữu địa chỉ Cosanta</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -2608,12 +2608,12 @@
         <translation>Hãy nhập vào địa chỉ của người nhận, thông điệp (hãy đảm bảo rằng bạn copy cả dấu xuống dòng, dấu cách, dấu tab,… một cách chính xác) và chữ ký bên dưới để kiểm tra thông điệp. Hãy cẩn thận để không đọc thêm vào phần chữ ký mà nó dùng để ký, để tránh bị đánh lừa bởi kiểu tấn công người trung gian. Chú ý đây chỉ để chứng minh chữ ký của bên nhận với địa chỉ đó, nó không thể chứng minh người gửi hoặc bất kỳ giao dich nào!</translation>
     </message>
     <message>
-        <source>The Dash address the message was signed with</source>
-        <translation>Địa chỉ Dash mà thông điệp được ký bởi</translation>
+        <source>The Cosanta address the message was signed with</source>
+        <translation>Địa chỉ Cosanta mà thông điệp được ký bởi</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Dash address</source>
-        <translation>Kiểm tra lại thông điệp để đảm bảo rằng nó được ký với địa chỉ Dash cụ thể</translation>
+        <source>Verify the message to ensure it was signed with the specified Cosanta address</source>
+        <translation>Kiểm tra lại thông điệp để đảm bảo rằng nó được ký với địa chỉ Cosanta cụ thể</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -3211,7 +3211,7 @@
     </message>
     </context>
 <context>
-    <name>dash-core</name>
+    <name>cosanta-core</name>
     <message>
         <source>Error: Listening for incoming connections failed (listen returned error %s)</source>
         <translation>Lỗi: Lắng nghe để nhận kết nối bị lỗi (lỗi trả về %s)</translation>

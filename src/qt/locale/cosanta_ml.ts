@@ -1,4 +1,4 @@
-<TS version="2.1" language="nl">
+<TS language="nl" version="2.1">
 <context>
     <name>AddressBookPage</name>
     <message>
@@ -78,8 +78,8 @@
         <translation>Dit zijn uw Cosanta adressen om betalingen mee uit te voeren. Controleer altijd het bedrag en ontvangstadres voordat u uw Cosanta verzendt.</translation>
     </message>
     <message>
-        <source>These are your Cosanta addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
-        <translation>Dit zijn je Cosanta adressen voor het ontvangen van betalingen. Gebruik de knop 'Nieuw ontvangstadres maken' in het tabblad Ontvangen om nieuwe adressen aan te maken.</translation>
+        <source>These are your Cosanta addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Dit zijn uw Cosanta adressen om betalingen me te ontvangen. Het wordt aangeraden om voor elke transactie een niew ontvangstadres te gebruiken.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -106,8 +106,16 @@
         <translation>Exporteer adressenlijst</translation>
     </message>
     <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Kommagescheiden bestand (*.csv)</translation>
+    </message>
+    <message>
         <source>Exporting Failed</source>
         <translation>Exporteren mislukt</translation>
+    </message>
+    <message>
+        <source>There was an error trying to save the address list to %1. Please try again.</source>
+        <translation>Er is een fout is opgetreden tijdens het opslaan van deze adreslijst naar %1. Probeer het opnieuw.</translation>
     </message>
 </context>
 <context>
@@ -183,8 +191,12 @@
         <translation>Herhaal nieuwe wachtwoordzin</translation>
     </message>
     <message>
-        <source>Show passphrase</source>
-        <translation>Toon wachtwoordzin</translation>
+        <source>Show password</source>
+        <translation>Toon wachtwoord</translation>
+    </message>
+    <message>
+        <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
+        <translation>Voer het nieuwe wachtwoord voor uw portemonnee in. &lt;br/&gt;Gelieve een wachtwoord te gebruiken van &lt;b&gt;tien of meer willekeurige karakters&lt;/b&gt; of &lt;b&gt;acht of meer woorden&lt;/b&gt;.</translation>
     </message>
     <message>
         <source>Encrypt wallet</source>
@@ -195,7 +207,7 @@
         <translation>Deze actie vereist uw portemonneewachtwoord om de wallet te openen.</translation>
     </message>
     <message>
-        <source>Unlock wallet for mixing only</source>
+        <source>Unlock wallet for mixing and staking only</source>
         <translation>Ontgrendel portemonnee alleen om te mixen</translation>
     </message>
     <message>
@@ -203,8 +215,20 @@
         <translation>Ontgrendel portemonnee</translation>
     </message>
     <message>
+        <source>This operation needs your wallet passphrase to decrypt the wallet.</source>
+        <translation>Deze bewerking heeft de wachtwoordzin van je portemonnee nodig om deze te ontgrendelen.</translation>
+    </message>
+    <message>
+        <source>Decrypt wallet</source>
+        <translation>Ontsleutel portemonnee </translation>
+    </message>
+    <message>
         <source>Change passphrase</source>
         <translation>Wijzig wachtwoordzin</translation>
+    </message>
+    <message>
+        <source>Enter the old passphrase and new passphrase to the wallet.</source>
+        <translation>Voer het oude en het nieuwe wachtwoord in voor uw portemonnee.</translation>
     </message>
     <message>
         <source>Confirm wallet encryption</source>
@@ -223,32 +247,12 @@
         <translation>Portemonnee is versleuteld</translation>
     </message>
     <message>
-        <source>Enter the new passphrase for the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
-        <translation>Voer het nieuwe wachtwoord in voor de portemonnee. &lt;br/&gt;Gelieve een wachtwoord te gebruiken van &lt;b&gt;tien of meer willekeurige karakters&lt;/b&gt; , of &lt;b&gt;acht of meer woorden&lt;/b&gt;.</translation>
-    </message>
-    <message>
-        <source>Enter the old passphrase and new passphrase for the wallet.</source>
-        <translation>Voer het oude en het nieuwe wachtwoord in voor de portemonnee.</translation>
-    </message>
-    <message>
-        <source>Remember that encrypting your wallet cannot fully protect your funds from being stolen by malware infecting your computer.</source>
-        <translation>Onthoud dat het versleutelen van uw portemonnee je geld niet volledig kan beschermen tegen diefstal in geval van malware op je computer.</translation>
-    </message>
-    <message>
-        <source>Wallet to be encrypted</source>
-        <translation>Portemonnee die moet worden versleuteld</translation>
-    </message>
-    <message>
-        <source>Your wallet is about to be encrypted. </source>
-        <translation>Je portemonnee staat op het punt versleuteld te worden.</translation>
-    </message>
-    <message>
-        <source>Your wallet is now encrypted. </source>
-        <translation>Je portemonnee is nu versleuteld.</translation>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your funds from being stolen by malware infecting your computer.</source>
+        <translation>%1 wordt nu afgesloten om de versleuteling te voltooien. Denk eraan dat het versleutelen van uw portemonnee niet volledig kan beschermen tegen diefstal van uw geld door malware op uw computer.</translation>
     </message>
     <message>
         <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. Previous backups of the unencrypted wallet file contain the same HD seed and still have full access to all your funds just like the new, encrypted wallet.</source>
-        <translation>BELANGRIJK: Alle eerder gemaakte back-up van uw portemonneebestand dienen vervangen te worden door het nieuw gegenereerde, versleutelde portemonneebestand. Eerdere back-ups van de niet versleutelde portemonnee bevatten dezelfde HD-seed en zullen nog steeds volledig toegang hebben tot uw geld net als de nieuwe, versleutelde portemonnee.</translation>
+        <translation>BELANGRIJK: Alle eerder gemaakte back-up van uw portemonneebestand dienen vervangen te worden door het nieuw gegenereerde, versleutelde portemonneebestand. Eerdere back-ups van de niet versleutelde portemonnee bevatten dezelfde HD seed en zullen nog steeds volledig toegang hebben tot uw geld net als de nieuwe, versleutelde portemonnee.</translation>
     </message>
     <message>
         <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
@@ -273,6 +277,10 @@
     <message>
         <source>The passphrase entered for the wallet decryption was incorrect.</source>
         <translation>Het ingevoerde wachtwoord om de portemonnee te ontsleutelen was incorrect.</translation>
+    </message>
+    <message>
+        <source>Wallet decryption failed</source>
+        <translation>Het ontsleutelen van de portemonnee is mislukt</translation>
     </message>
     <message>
         <source>Wallet passphrase was successfully changed.</source>
@@ -302,10 +310,23 @@
     </message>
 </context>
 <context>
-    <name>BitcoinApplication</name>
-    </context>
-<context>
     <name>BitcoinGUI</name>
+    <message>
+        <source>A fatal error occurred. Cosanta Core can no longer continue safely and will quit.</source>
+        <translation>Er heeft zich een fatale fout voorgedaan. Cosanta Core kan niet veilig worden voortgezet en zal worden afgesloten.</translation>
+    </message>
+    <message>
+        <source>Cosanta Core</source>
+        <translation>Cosanta Core</translation>
+    </message>
+    <message>
+        <source>Wallet</source>
+        <translation>Portemonnee</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Node</translation>
+    </message>
     <message>
         <source>&amp;Overview</source>
         <translation>&amp;Overzicht</translation>
@@ -329,78 +350,6 @@
     <message>
         <source>Request payments (generates QR codes and cosanta: URIs)</source>
         <translation>Vraag betaling aan (genereert QR-codes en Cosanta: URI's)</translation>
-    </message>
-    <message>
-        <source>&amp;Options…</source>
-        <translation>&amp;Opties…</translation>
-    </message>
-    <message>
-        <source>&amp;Encrypt Wallet…</source>
-        <translation>&amp;Versleutel portemonnee…</translation>
-    </message>
-    <message>
-        <source>&amp;Backup Wallet…</source>
-        <translation>&amp;Backup portemonnee…</translation>
-    </message>
-    <message>
-        <source>&amp;Change Passphrase…</source>
-        <translation>&amp;Wijzig wachtwoordzin…</translation>
-    </message>
-    <message>
-        <source>&amp;Unlock Wallet…</source>
-        <translation>&amp;Ontgrendel portemonnee…</translation>
-    </message>
-    <message>
-        <source>Sign &amp;message…</source>
-        <translation>Onderteken &amp;bericht</translation>
-    </message>
-    <message>
-        <source>&amp;Verify message…</source>
-        <translation>&amp;Verifieer handtekening</translation>
-    </message>
-    <message>
-        <source>&amp;Sending addresses</source>
-        <translation>&amp;Verzendadressen</translation>
-    </message>
-    <message>
-        <source>&amp;Receiving addresses</source>
-        <translation>&amp;Ontvangstadressen</translation>
-    </message>
-    <message>
-        <source>Open &amp;URI…</source>
-        <translation>Open &amp;URI</translation>
-    </message>
-    <message>
-        <source>Open Wallet</source>
-        <translation>portemonnee openen</translation>
-    </message>
-    <message>
-        <source>Open a wallet</source>
-        <translation>Open een portemonnee</translation>
-    </message>
-    <message>
-        <source>Close wallet</source>
-        <translation>Portemonnee sluiten</translation>
-    </message>
-    <message>
-        <source>No wallets available</source>
-        <translation>Geen portemonnees beschikbaar</translation>
-    </message>
-    <message>
-        <source>&amp;Window</source>
-        <translation>&amp;Scherm</translation>
-    </message>
-    <message>
-        <source>Minimize</source>
-        <translation>Minimaliseer </translation>
-    </message>
-    <message>
-        <source>Zoom</source>
-        <translation>Zoom</translation>
-    </message>
-    <message>
-        <source>Main Window</source>
-        <translation>Hoofd venster</translation>
     </message>
     <message>
         <source>&amp;Transactions</source>
@@ -427,12 +376,20 @@
         <translation>Sluit applicatie</translation>
     </message>
     <message>
+        <source>Show information about Cosanta Core</source>
+        <translation>Toon informatie over Cosanta Core</translation>
+    </message>
+    <message>
         <source>About &amp;Qt</source>
         <translation>Over &amp;Qt</translation>
     </message>
     <message>
         <source>Show information about Qt</source>
         <translation>Toon informatie over Qt</translation>
+    </message>
+    <message>
+        <source>&amp;Options...</source>
+        <translation>&amp;Opties...</translation>
     </message>
     <message>
         <source>&amp;About %1</source>
@@ -455,16 +412,32 @@
         <translation>Toon of verberg het hoofdscherm</translation>
     </message>
     <message>
+        <source>&amp;Encrypt Wallet...</source>
+        <translation>&amp;Versleutel portemonnee...</translation>
+    </message>
+    <message>
         <source>Encrypt the private keys that belong to your wallet</source>
         <translation>Versleutel de geheime sleutels die behoren tot uw portemonnee</translation>
+    </message>
+    <message>
+        <source>&amp;Backup Wallet...</source>
+        <translation>&amp;Backup portemonnee...</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
         <translation>Backup portemonnee naar een andere locatie</translation>
     </message>
     <message>
+        <source>&amp;Change Passphrase...</source>
+        <translation>&amp;Wijzig wachtwoordzin...</translation>
+    </message>
+    <message>
         <source>Change the passphrase used for wallet encryption</source>
         <translation>Wijzig de wachtwoordzin die wordt gebruikt voor portemonneeversleuteling</translation>
+    </message>
+    <message>
+        <source>&amp;Unlock Wallet...</source>
+        <translation>&amp;Ontgrendel portemonnee...</translation>
     </message>
     <message>
         <source>Unlock wallet</source>
@@ -475,8 +448,16 @@
         <translation>&amp;Portemonnee vergrendelen</translation>
     </message>
     <message>
+        <source>Sign &amp;message...</source>
+        <translation>Onderteken &amp;bericht</translation>
+    </message>
+    <message>
         <source>Sign messages with your Cosanta addresses to prove you own them</source>
         <translation>Onderteken berichten met uw Cosantaadressen om te bewijzen dat u deze adressen bezit.</translation>
+    </message>
+    <message>
+        <source>&amp;Verify message...</source>
+        <translation>&amp;Verifieer handtekening</translation>
     </message>
     <message>
         <source>Verify messages to ensure they were signed with specified Cosanta addresses</source>
@@ -493,6 +474,10 @@
     <message>
         <source>&amp;Debug console</source>
         <translation>&amp;Debug console</translation>
+    </message>
+    <message>
+        <source>Open debugging console</source>
+        <translation>Open debugging console</translation>
     </message>
     <message>
         <source>&amp;Network Monitor</source>
@@ -535,12 +520,28 @@
         <translation>Toon automatisch aangemaakte backups van uw portemonnee</translation>
     </message>
     <message>
+        <source>&amp;Sending addresses...</source>
+        <translation>&amp;Verzendadressen</translation>
+    </message>
+    <message>
         <source>Show the list of used sending addresses and labels</source>
         <translation>Toon de lijst met gebruikte verzendadressen en labels</translation>
     </message>
     <message>
+        <source>&amp;Receiving addresses...</source>
+        <translation>&amp;Ontvangstadressen</translation>
+    </message>
+    <message>
         <source>Show the list of used receiving addresses and labels</source>
         <translation>Toon de lijst met gebruikte ontvangstadressen en labels</translation>
+    </message>
+    <message>
+        <source>Open &amp;URI...</source>
+        <translation>Open &amp;URI</translation>
+    </message>
+    <message>
+        <source>Open a cosanta: URI or payment request</source>
+        <translation>Open een cosanta: URI of betalingsaanvraag</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -549,10 +550,6 @@
     <message>
         <source>Show the %1 help message to get a list with possible Cosanta command-line options</source>
         <translation>Toon het %1 hulpbericht om een lijst te krijgen met mogelijke Cosanta commandoregelopties</translation>
-    </message>
-    <message>
-        <source>default wallet</source>
-        <translation>standaardportemonnee</translation>
     </message>
     <message>
         <source>%1 client</source>
@@ -573,14 +570,6 @@
         <translation>&amp;Bestand</translation>
     </message>
     <message>
-        <source>Show information about %1</source>
-        <translation>Toon informatie over %1</translation>
-    </message>
-    <message>
-        <source>Create a new wallet</source>
-        <translation>Maak een nieuwe portemonnee aan</translation>
-    </message>
-    <message>
         <source>%1 &amp;information</source>
         <translation>%1 &amp;Informatie</translation>
     </message>
@@ -593,6 +582,10 @@
         <translation>&amp;Instellingen</translation>
     </message>
     <message>
+        <source>&amp;Tools</source>
+        <translation>&amp;Hulpmiddelen</translation>
+    </message>
+    <message>
         <source>&amp;Help</source>
         <translation>&amp;Help</translation>
     </message>
@@ -600,21 +593,37 @@
         <source>Tabs toolbar</source>
         <translation>Tab-werkbalk</translation>
     </message>
-    <message>
-        <source>&amp;Governance</source>
-        <translation>&amp;Governance</translation>
-    </message>
-    <message>
-        <source>View Governance Proposals</source>
-        <translation>Governance voorstellen bekijken</translation>
-    </message>
     <message numerus="yes">
         <source>%n active connection(s) to Cosanta network</source>
         <translation><numerusform>%n actieve verbinding met het Cosanta netwerk</numerusform><numerusform>%n actieve verbindingen met het Cosanta netwerk</numerusform></translation>
     </message>
     <message>
         <source>Network activity disabled</source>
-        <translation>Netwerkactiviteit is uitgeschakeld</translation>
+        <translation>Netwerk activiteit uitgeschakeld</translation>
+    </message>
+    <message>
+        <source>Syncing Headers (%1%)...</source>
+        <translation>Kopteksten synchroniseren (%1%)...</translation>
+    </message>
+    <message>
+        <source>Synchronizing with network...</source>
+        <translation>Synchroniseren met het netwerk...</translation>
+    </message>
+    <message>
+        <source>Indexing blocks on disk...</source>
+        <translation>Bezig met indexeren van blocks op harde schijf...</translation>
+    </message>
+    <message>
+        <source>Processing blocks on disk...</source>
+        <translation>Bezig met verwerken van blocks op harde schijf...</translation>
+    </message>
+    <message>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Bezig met herindexeren van blocks op harde schijf...</translation>
+    </message>
+    <message>
+        <source>Connecting to peers...</source>
+        <translation>Verbinden met peers...</translation>
     </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
@@ -625,40 +634,8 @@
         <translation>%1 achter</translation>
     </message>
     <message>
-        <source>Close Wallet…</source>
-        <translation>Portemonnee sluiten…</translation>
-    </message>
-    <message>
-        <source>Create Wallet…</source>
-        <translation>Portemonnee aanmaken…</translation>
-    </message>
-    <message>
-        <source>Syncing Headers (%1%)…</source>
-        <translation>Kopteksten synchroniseren (%1%)…</translation>
-    </message>
-    <message>
-        <source>Synchronizing with network…</source>
-        <translation>Synchroniseren met het netwerk…</translation>
-    </message>
-    <message>
-        <source>Indexing blocks on disk…</source>
-        <translation>Bezig met indexeren van blocks op harde schijf…</translation>
-    </message>
-    <message>
-        <source>Processing blocks on disk…</source>
-        <translation>Bezig met verwerken van blocks op harde schijf…</translation>
-    </message>
-    <message>
-        <source>Reindexing blocks on disk…</source>
-        <translation>Bezig met herindexeren van blocks op harde schijf…</translation>
-    </message>
-    <message>
-        <source>Connecting to peers…</source>
-        <translation>Verbinden met peers…</translation>
-    </message>
-    <message>
-        <source>Catching up…</source>
-        <translation>Aan het bijwerken…</translation>
+        <source>Catching up...</source>
+        <translation>Aan het bijwerken...</translation>
     </message>
     <message>
         <source>Last received block was generated %1 ago.</source>
@@ -681,16 +658,8 @@
         <translation>Fout</translation>
     </message>
     <message>
-        <source>Error: %1</source>
-        <translation>Fout: %1</translation>
-    </message>
-    <message>
         <source>Warning</source>
         <translation>Waarschuwing</translation>
-    </message>
-    <message>
-        <source>Warning: %1</source>
-        <translation>Waarschuwing: %1</translation>
     </message>
     <message>
         <source>Information</source>
@@ -760,7 +729,7 @@
     </message>
     <message>
         <source>HD key generation is &lt;b&gt;enabled&lt;/b&gt;</source>
-        <translation>HD-sleutelgeneratie is &lt;b&gt;ingeschakeld&lt;/b&gt;</translation>
+        <translation>HD sleutel generatie is &lt;b&gt;ingeschakeld&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
@@ -773,14 +742,6 @@
     <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Portemonnee is &lt;b&gt;versleuteld&lt;/b&gt; en momenteel &lt;b&gt;vergrendeld&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Proxy is &lt;b&gt;enabled&lt;/b&gt;: %1</source>
-        <translation>Proxy is &lt;b&gt;ingeschakeld&lt;/b&gt;: %1</translation>
-    </message>
-    <message>
-        <source>Original message:</source>
-        <translation>Originele bericht:</translation>
     </message>
 </context>
 <context>
@@ -934,12 +895,16 @@
         <translation>Deze label wordt rood als een ontvanger een hoeveelheid kleiner dan de huidige dust-drempel krijgt.</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Kan +/- %1 duff(s) per invoer variëren.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Kan +/- %1 unit(s) per invoer variëren.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
         <translation>Sommige munten zijn niet geselecteerd omdat ze al zijn uitgegeven.</translation>
+    </message>
+    <message>
+        <source>Some coins were unselected because they do not have enough mixing rounds.</source>
+        <translation>Sommige munten zijn niet geselecteerd omdat ze niet genoeg mengrondes hebben.</translation>
     </message>
     <message>
         <source>Show all coins</source>
@@ -974,60 +939,6 @@
         <translation>N.v.t.</translation>
     </message>
 </context>
-<context>
-    <name>CreateWalletActivity</name>
-    <message>
-        <source>Creating Wallet &lt;b&gt;%1&lt;/b&gt;…</source>
-        <translation>Portemonnee &lt;b&gt;%1&lt;/b&gt; wordt aangemaakt…</translation>
-    </message>
-    <message>
-        <source>Create wallet failed</source>
-        <translation>Portemonnee aanmaken mislukt</translation>
-    </message>
-    <message>
-        <source>Create wallet warning</source>
-        <translation>Waarschuwing portemonnee aanmaken</translation>
-    </message>
-</context>
-<context>
-    <name>CreateWalletDialog</name>
-    <message>
-        <source>Create Wallet</source>
-        <translation>Portemonnee aanmaken</translation>
-    </message>
-    <message>
-        <source>Wallet Name</source>
-        <translation>Portemonnee naam</translation>
-    </message>
-    <message>
-        <source>Encrypt the wallet. The wallet will be encrypted with a passphrase of your choice.</source>
-        <translation>Versleutel de portemonnee. De portemonnee wordt versleuteld met een wachtwoordzin naar keuze.</translation>
-    </message>
-    <message>
-        <source>Encrypt Wallet</source>
-        <translation>Portemonnee versleutelen</translation>
-    </message>
-    <message>
-        <source>Disable private keys for this wallet. Wallets with private keys disabled will have no private keys and cannot have an HD seed or imported private keys. This is ideal for watch-only wallets.</source>
-        <translation>Schakel privésleutels voor deze portemonnee uit. Portemonnees met uitgeschakelde privésleutels hebben geen privésleutels en kunnen geen HD-seed of geïmporteerde privésleutels hebben. Dit is ideaal voor watch-only portemonnees.</translation>
-    </message>
-    <message>
-        <source>Disable Private Keys</source>
-        <translation>Privésleutels uitschakelen</translation>
-    </message>
-    <message>
-        <source>Make a blank wallet. Blank wallets do not initially have private keys or scripts. Private keys and addresses can be imported, or an HD seed can be set, at a later time.</source>
-        <translation>Maak een lege portemonnee. Lege portemonnees hebben in eerste instantie geen privésleutels of scripts. Deze kunnen op een later tijdstip worden geïmporteerd of er kan een HD-seed worden ingesteld.</translation>
-    </message>
-    <message>
-        <source>Make Blank Wallet</source>
-        <translation>Maak lege portemonnee</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation>Aanmaken</translation>
-    </message>
-    </context>
 <context>
     <name>EditAddressDialog</name>
     <message>
@@ -1067,12 +978,8 @@
         <translation>Het ingevoerde adres "%1" is geen geldig Cosanta adres.</translation>
     </message>
     <message>
-        <source>Address "%1" already exists as a receiving address with label "%2" and so cannot be added as a sending address.</source>
-        <translation>Adres "%1" met label "%2" bestaat al als ontvangstadres en kan niet als verzendadres worden toegevoegd.</translation>
-    </message>
-    <message>
-        <source>The entered address "%1" is already in the address book with label "%2".</source>
-        <translation>Het opgegeven adres "%1" met label "%2" bestaat al in het adresboek.</translation>
+        <source>The entered address "%1" is already in the address book.</source>
+        <translation>Het opgegeven adres "%1" bestaat al in uw adresboek.</translation>
     </message>
     <message>
         <source>Could not unlock wallet.</source>
@@ -1107,33 +1014,14 @@
     </message>
 </context>
 <context>
-    <name>GovernanceList</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>Filter List:</source>
-        <translation>Filter Lijst:</translation>
-    </message>
-    <message>
-        <source>Proposal Count:</source>
-        <translation>Proposal aantal:</translation>
-    </message>
-    <message>
-        <source>Filter by Title</source>
-        <translation>Filter op titel</translation>
-    </message>
-    <message>
-        <source>Proposal Info: %1</source>
-        <translation>Proposal Info: %1</translation>
-    </message>
-</context>
-<context>
     <name>HelpMessageDialog</name>
     <message>
         <source>version</source>
         <translation>Versie</translation>
+    </message>
+    <message>
+        <source>(%1-bit)</source>
+        <translation>(%1-bit)</translation>
     </message>
     <message>
         <source>About %1</source>
@@ -1165,6 +1053,10 @@
     <message>
         <source>As this is the first time the program is launched, you can choose where %1 will store its data.</source>
         <translation>Omdat dit de eerste keer is dat het programma gestart is, kunt u nu kiezen waar %1 de data moet opslaan.</translation>
+    </message>
+    <message>
+        <source>When you click OK, %1 will begin to download and process the full %4 block chain (%2GB) starting with the earliest transactions in %3 when %4 initially launched.</source>
+        <translation>Als u op OK klikt, dan zal %1 beginnen met downloaden en verwerken van de volledige %4 blokketen (%2GB) startend met de eerste transacties in %3 toen %4 initeel werd gestart.</translation>
     </message>
     <message>
         <source>This initial synchronisation is very demanding, and may expose hardware problems with your computer that had previously gone unnoticed. Each time you run %1, it will continue downloading where it left off.</source>
@@ -1206,6 +1098,14 @@
         <source>Error</source>
         <translation>Fout</translation>
     </message>
+    <message>
+        <source>%1 GB of free space available</source>
+        <translation>%1 GB aan vrije opslagruimte beschikbaar</translation>
+    </message>
+    <message>
+        <source>(of %1 GB needed)</source>
+        <translation>(van %1 GB benodigd)</translation>
+    </message>
 </context>
 <context>
     <name>MasternodeList</name>
@@ -1216,6 +1116,10 @@
     <message>
         <source>Status</source>
         <translation>Status</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
     </message>
     <message>
         <source>Filter List:</source>
@@ -1286,12 +1190,8 @@
         <translation>Kopieer Onderpand Outpoint</translation>
     </message>
     <message>
-        <source>Please wait…</source>
-        <translation>Wachten aub…</translation>
-    </message>
-    <message>
-        <source>Updating…</source>
-        <translation>Bezig met bijwerken…</translation>
+        <source>Updating...</source>
+        <translation>Bezig met bijwerken...</translation>
     </message>
     <message>
         <source>ENABLED</source>
@@ -1326,8 +1226,12 @@
         <translation>Filter op elke eigenschap (bv. adres of protx hash)</translation>
     </message>
     <message>
+        <source>Please wait...</source>
+        <translation>Wachten aub...</translation>
+    </message>
+    <message>
         <source>Additional information for DIP3 Masternode %1</source>
-        <translation>Extra informatie voor DIP3-masternode %1</translation>
+        <translation>Extra informatie voor DIP3 Masternode %1</translation>
     </message>
 </context>
 <context>
@@ -1349,12 +1253,8 @@
         <translation>Aantal blocks resterend.</translation>
     </message>
     <message>
-        <source>Unknown…</source>
-        <translation>Onbekend…</translation>
-    </message>
-    <message>
-        <source>calculating…</source>
-        <translation>Berekenen…</translation>
+        <source>Unknown...</source>
+        <translation>Onbekend...</translation>
     </message>
     <message>
         <source>Last block time</source>
@@ -1369,6 +1269,10 @@
         <translation>Vooruitgang per uur</translation>
     </message>
     <message>
+        <source>calculating...</source>
+        <translation>Berekenen...</translation>
+    </message>
+    <message>
         <source>Estimated time left until synced</source>
         <translation>Geschatte tijd tot volledig synchroon</translation>
     </message>
@@ -1377,8 +1281,8 @@
         <translation>Verbergen</translation>
     </message>
     <message>
-        <source>Unknown. Syncing Headers (%1, %2%)…</source>
-        <translation>Onbekend. Kopteksten synchroniseren (%1, %2%)…</translation>
+        <source>Unknown. Syncing Headers (%1)...</source>
+        <translation>Onbekend. Kopteksten synchroniseren (%1%)...</translation>
     </message>
 </context>
 <context>
@@ -1388,27 +1292,20 @@
         <translation>Open URI</translation>
     </message>
     <message>
+        <source>Open payment request from URI or file</source>
+        <translation>Open betalingsverzoek via URI of bestand</translation>
+    </message>
+    <message>
         <source>URI:</source>
         <translation>URI:</translation>
     </message>
-</context>
-<context>
-    <name>OpenWalletActivity</name>
     <message>
-        <source>Open wallet failed</source>
-        <translation>Portemonnee openen mislukt</translation>
+        <source>Select payment request file</source>
+        <translation>Selecteer betalingsverzoek bestand</translation>
     </message>
     <message>
-        <source>Open wallet warning</source>
-        <translation>Waarschuwing portemonnee aanmaken</translation>
-    </message>
-    <message>
-        <source>default wallet</source>
-        <translation>standaard portemonnee</translation>
-    </message>
-    <message>
-        <source>Opening Wallet &lt;b&gt;%1&lt;/b&gt;…</source>
-        <translation>Portemonnee &lt;b&gt;%1&lt;/b&gt; wordt geopend…</translation>
+        <source>Select payment request file to open</source>
+        <translation>Selecteer betalingsverzoekbestand om te openen</translation>
     </message>
 </context>
 <context>
@@ -1424,6 +1321,10 @@
     <message>
         <source>Size of &amp;database cache</source>
         <translation>Grootte van de &amp;database cache</translation>
+    </message>
+    <message>
+        <source>MB</source>
+        <translation>MB</translation>
     </message>
     <message>
         <source>Number of script &amp;verification threads</source>
@@ -1442,36 +1343,12 @@
         <translation>&amp;Uiterlijk</translation>
     </message>
     <message>
-        <source>Prune &amp;block storage to</source>
-        <translation>Prune &amp;blokopslag naar</translation>
-    </message>
-    <message>
-        <source>GB</source>
-        <translation>GB</translation>
-    </message>
-    <message>
-        <source>Reverting this setting requires re-downloading the entire blockchain.</source>
-        <translation>Deze instelling terugdraaien vereist het opnieuw downloaden van de complete blokketen.</translation>
-    </message>
-    <message>
-        <source>MiB</source>
-        <translation>MiB</translation>
-    </message>
-    <message>
         <source>Show additional tab listing all your masternodes in first sub-tab&lt;br/&gt;and all masternodes on the network in second sub-tab.</source>
         <translation>Toon extra tabblad waarin je al jouw masternodes toont in de eerste sub-tab&lt;br/&gt; en alle masternodes op het netwerk in het tweede sub-tabblad.</translation>
     </message>
     <message>
         <source>Show Masternodes Tab</source>
         <translation>Toon Masternodes tab</translation>
-    </message>
-    <message>
-        <source>Show additional tab listing governance proposals.</source>
-        <translation>Toon extra tabblad met governance proposals.</translation>
-    </message>
-    <message>
-        <source>Show Governance Tab</source>
-        <translation>Toon Governance tab</translation>
     </message>
     <message>
         <source>If you disable the spending of unconfirmed change, the change from a transaction&lt;br/&gt;cannot be used until that transaction has at least one confirmation.&lt;br/&gt;This also affects how your balance is computed.</source>
@@ -1530,10 +1407,6 @@
         <translation>Open automatisch de Cosanta client poort op de router. Dit werkt alleen als uw router UPnP ondersteunt en dit is ingeschakeld.</translation>
     </message>
     <message>
-        <source>Map port using NA&amp;T-PMP</source>
-        <translation>Map de poort door middel van  NA&amp;T-PMP</translation>
-    </message>
-    <message>
         <source>Accept connections from outside.</source>
         <translation>Accepteer verbindingen van buitenaf.</translation>
     </message>
@@ -1554,8 +1427,16 @@
         <translation>Toont of de opgegeven standaard SOCK5 proxy gebruikt is om peers via dit netwerk type te bereiken.</translation>
     </message>
     <message>
-        <source>Options set in this dialog are overridden by the command line or in the configuration file:</source>
-        <translation>Opties die in dit dialoogvenster worden ingesteld, worden overschreven door de opdrachtregel(CLI) of in het configuratiebestand:</translation>
+        <source>Use separate SOCKS&amp;5 proxy to reach peers via Tor hidden services:</source>
+        <translation>Gebruik afzonderlijke SOCKS&amp;5 proxy om peers te bereiken via verborgen Tor services:</translation>
+    </message>
+    <message>
+        <source>Hide the icon from the system tray.</source>
+        <translation>Verberg het pictogram in het systeemvak.</translation>
+    </message>
+    <message>
+        <source>&amp;Hide tray icon</source>
+        <translation>&amp;Verberg het pictogram in het systeemvak</translation>
     </message>
     <message>
         <source>Minimize instead of exit the application when the window is closed. When this option is enabled, the application will be closed only after selecting Exit in the menu.</source>
@@ -1583,7 +1464,7 @@
     </message>
     <message>
         <source>Enable coin &amp;control features</source>
-        <translation>Coin &amp;Control inschakelen</translation>
+        <translation>Coin &amp;Control activeren</translation>
     </message>
     <message>
         <source>&amp;Spend unconfirmed change</source>
@@ -1596,10 +1477,6 @@
     <message>
         <source>&amp;Network</source>
         <translation>&amp;Netwerk</translation>
-    </message>
-    <message>
-        <source>Enabling pruning significantly reduces the disk space required to store transactions. All blocks are still fully validated. Reverting this setting requires re-downloading the entire blockchain.</source>
-        <translation>Door terugsnoeien in te schakelen, wordt de schijfruimte die nodig is om transacties op te slaan aanzienlijk verminderd. Alle blocks zijn nog volledig gevalideerd. Om deze instelling terug te zetten, moet de hele blockchain opnieuw worden gedownload.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -1638,6 +1515,10 @@
         <translation>Tor</translation>
     </message>
     <message>
+        <source>Connect to the Cosanta network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Maak verbinding met Cosantanetwerk door een aparte SOCKS5-proxy voor verborgen diensten van Tor.</translation>
+    </message>
+    <message>
         <source>Show only a tray icon after minimizing the window.</source>
         <translation>Laat alleen een systeemvak-icoon zien wanneer het venster geminimaliseerd is</translation>
     </message>
@@ -1662,6 +1543,12 @@
         <translation>De taal van de gebruikersinterface kan hier ingesteld worden. Deze instelling zal pas van kracht worden nadat %1 herstart wordt.</translation>
     </message>
     <message>
+        <source>Language missing or translation incomplete? Help contributing translations here:
+https://www.transifex.com/projects/p/cosanta/</source>
+        <translation>Is een een taal te kort of een vertaling onvolledig ? Help de vertaling hier:
+https://www.transifex.com/projects/p/cosanta/</translation>
+    </message>
+    <message>
         <source>&amp;Unit to show amounts in:</source>
         <translation>&amp;Eenheid om bedrag in te tonen:</translation>
     </message>
@@ -1672,6 +1559,10 @@
     <message>
         <source>Decimal digits</source>
         <translation>Decimalen</translation>
+    </message>
+    <message>
+        <source>Active command-line options that override above options:</source>
+        <translation>Actieve commandoregelopties die bovenstaande opties overschrijven:</translation>
     </message>
     <message>
         <source>Reset all client options to default.</source>
@@ -1826,7 +1717,7 @@
     </message>
     <message>
         <source>The denominations you submitted to the Masternode.&lt;br&gt;To mix, other users must submit the exact same denominations.</source>
-        <translation>De denominaties zijn bij de Masternode ingebracht. 
+        <translation>De denominaties zijn bij de Masternode ingebracht.
 Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</translation>
     </message>
     <message>
@@ -1835,7 +1726,7 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
     </message>
     <message>
         <source>Automatic backups are disabled, no mixing available!</source>
-        <translation>Automatische backups zijn uitgeschakeld, Mixfunctie is niet beschikbaar!</translation>
+        <translation>Automatische backups uitgeschakeld, Mixfunctie is niet beschikbaar!</translation>
     </message>
     <message>
         <source>No inputs detected</source>
@@ -1927,7 +1818,7 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
     </message>
     <message>
         <source>Mixing is disabled, please close your wallet and fix the issue!</source>
-        <translation>Mixen is uitgeschakeld, gelieve de portemonnee af te sluiten en het probleem op te lossen!</translation>
+        <translation>Mixen is uiteschakeld, gelieve de portemonnee af te sluiten en het probleem op te lossen!</translation>
     </message>
     <message>
         <source>Enabled</source>
@@ -1942,9 +1833,6 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>WAARSCHUWING! Het aanvullen van de keypool is mislukt, ontgrendel alstublieft uw portemonnee om dit te doen.</translation>
     </message>
 </context>
-<context>
-    <name>PSBTOperationsDialog</name>
-    </context>
 <context>
     <name>PaymentServer</name>
     <message>
@@ -1964,6 +1852,14 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>'cosanta://' is geen geldige URI. Gebruik in plaats daarvan 'cosanta:'.</translation>
     </message>
     <message>
+        <source>Payment request fetch URL is invalid: %1</source>
+        <translation>URL om betalingsverzoek te verkrijgen is ongeldig: %1</translation>
+    </message>
+    <message>
+        <source>Invalid payment address %1</source>
+        <translation>Ongeldig betalingsadres %1</translation>
+    </message>
+    <message>
         <source>URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
         <translation>URI kan niet verwerkt worden! Dit kan het gevolg zijn van een ongeldig Cosanta adres of misvormde URI parameters.</translation>
     </message>
@@ -1971,78 +1867,92 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <source>Payment request file handling</source>
         <translation>Betalingsverzoek bestandsafhandeling</translation>
     </message>
+    <message>
+        <source>Payment request file cannot be read! This can be caused by an invalid payment request file.</source>
+        <translation>Betalingsverzoekbestand kan niet gelezen of verwerkt worden! Dit kan veroorzaakt worden door een ongeldig betalingsverzoekbestand.</translation>
+    </message>
+    <message>
+        <source>Payment request rejected</source>
+        <translation>Betalingsverzoek geweigerd</translation>
+    </message>
+    <message>
+        <source>Payment request network doesn't match client network.</source>
+        <translation>Betalingsaanvraagnetwerk komt niet overeen met klantennetwerk.</translation>
+    </message>
+    <message>
+        <source>Payment request expired.</source>
+        <translation>Betalingsverzoek verlopen.</translation>
+    </message>
+    <message>
+        <source>Payment request is not initialized.</source>
+        <translation>Betalingsaanvraag is niet geïnitialiseerd.</translation>
+    </message>
+    <message>
+        <source>Unverified payment requests to custom payment scripts are unsupported.</source>
+        <translation>Niet-geverifieerde betalingsverzoeken naar aangepaste betalingsscripts worden niet ondersteund.</translation>
+    </message>
+    <message>
+        <source>Invalid payment request.</source>
+        <translation>Ongeldig betalingsverzoek.</translation>
+    </message>
+    <message>
+        <source>Requested payment amount of %1 is too small (considered dust).</source>
+        <translation>Het gevraagde betalingsbedrag van %1 is te weinig (beschouwd als stof).</translation>
+    </message>
+    <message>
+        <source>Refund from %1</source>
+        <translation>Restitutie van %1</translation>
+    </message>
+    <message>
+        <source>Payment request %1 is too large (%2 bytes, allowed %3 bytes).</source>
+        <translation>Betalingsverzoek %1 is te groot (%2 bytes, toegestaan ​​%3 bytes).</translation>
+    </message>
+    <message>
+        <source>Error communicating with %1: %2</source>
+        <translation>Fout bij communiceren met %1: %2</translation>
+    </message>
+    <message>
+        <source>Payment request cannot be parsed!</source>
+        <translation>Betalingsverzoek kan niet worden verwerkt!</translation>
+    </message>
+    <message>
+        <source>Bad response from server %1</source>
+        <translation>Ongeldige respons van server %1</translation>
+    </message>
+    <message>
+        <source>Network request error</source>
+        <translation>Fout bij netwerkverzoek</translation>
+    </message>
+    <message>
+        <source>Payment acknowledged</source>
+        <translation>Betaling bevestigd</translation>
+    </message>
 </context>
 <context>
     <name>PeerTableModel</name>
     <message>
+        <source>NodeId</source>
+        <translation>Node ID</translation>
+    </message>
+    <message>
+        <source>Node/Service</source>
+        <translation>Node/Dienst</translation>
+    </message>
+    <message>
         <source>User Agent</source>
-        <extracomment>Title of Peers Table column which contains the peer's User Agent string.</extracomment>
         <translation>User Agent</translation>
     </message>
     <message>
         <source>Ping</source>
-        <extracomment>Title of Peers Table column which indicates the current latency of the connection with the peer.</extracomment>
         <translation>Ping</translation>
     </message>
     <message>
         <source>Sent</source>
-        <extracomment>Title of Peers Table column which indicates the total amount of network information we have sent to the peer.</extracomment>
         <translation>Verstuurd</translation>
     </message>
     <message>
         <source>Received</source>
-        <extracomment>Title of Peers Table column which indicates the total amount of network information we have received from the peer.</extracomment>
         <translation>Ontvangen</translation>
-    </message>
-    </context>
-<context>
-    <name>Proposal</name>
-    <message>
-        <source>Passing +%1</source>
-        <translation>Slaagt +%1</translation>
-    </message>
-    <message>
-        <source>Needs additional %1 votes</source>
-        <translation>Heeft extra %1 stemmen nodig</translation>
-    </message>
-</context>
-<context>
-    <name>ProposalModel</name>
-    <message>
-        <source>Yes</source>
-        <translation>Ja</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>Nee</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation>Hash</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Titel</translation>
-    </message>
-    <message>
-        <source>Start</source>
-        <translation>Start</translation>
-    </message>
-    <message>
-        <source>End</source>
-        <translation>Einde</translation>
-    </message>
-    <message>
-        <source>Amount</source>
-        <translation>Bedrag</translation>
-    </message>
-    <message>
-        <source>Active</source>
-        <translation>Actief</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
     </message>
 </context>
 <context>
@@ -2080,52 +1990,16 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>Reset alle wijzigingen aan instellingen gedaan in de GUI</translation>
     </message>
     <message>
+        <source>Set SSL root certificates for payment request (default: -system-)</source>
+        <translation>Zet SSL root certificaten voor betalingsverzoek (standaard: -sytem-)</translation>
+    </message>
+    <message>
         <source>Show splash screen on startup (default: %u)</source>
         <translation>Toon splash-scherm bij opstarten (standaard: %u)</translation>
     </message>
     <message>
-        <source>Error: Specified data directory "%1" does not exist.</source>
-        <translation>Fout: Opgegeven gegevensmap "%1" bestaat niet.</translation>
-    </message>
-    <message>
-        <source>Error: Cannot parse configuration file: %1.</source>
-        <translation>Fout: Kan configuratiebestand niet verwerken: %1.</translation>
-    </message>
-    <message>
-        <source>Error: %1</source>
-        <translation>Fout: %1</translation>
-    </message>
-    <message>
-        <source>Error: Failed to load application fonts.</source>
-        <translation>Fout: kan lettertypen niet laden.</translation>
-    </message>
-    <message>
-        <source>Error: Specified font-family invalid. Valid values: %1.</source>
-        <translation>Fout: opgegeven lettertypefamilie ongeldig. Geldige waarden: %1.</translation>
-    </message>
-    <message>
-        <source>Error: Specified font-weight-normal invalid. Valid range %1 to %2.</source>
-        <translation>Fout: opgegeven lettertypegewicht normaal ongeldig. Geldig bereik %1 tot %2.</translation>
-    </message>
-    <message>
-        <source>Error: Specified font-weight-bold invalid. Valid range %1 to %2.</source>
-        <translation>Fout: opgegeven lettertypegewicht vet is ongeldig. Geldig bereik %1 tot %2.</translation>
-    </message>
-    <message>
-        <source>Error: Specified font-scale invalid. Valid range %1 to %2.</source>
-        <translation>Fout: opgegeven lettertype grootte is ongeldig. Geldig bereik %1 tot %2.</translation>
-    </message>
-    <message>
-        <source>Error: Invalid -custom-css-dir path.</source>
-        <translation>Fout: ongeldig pad van -custom-css-dir.</translation>
-    </message>
-    <message>
-        <source>Error: %1 CSS file(s) missing in -custom-css-dir path.</source>
-        <translation>Fout: %1 CSS-bestand(en) ontbreken in het pad -custom-css-dir.</translation>
-    </message>
-    <message>
-        <source>%1 didn't yet exit safely…</source>
-        <translation>%1 sloot nog niet veilig af…</translation>
+        <source>%1 didn't yet exit safely...</source>
+        <translation>%1 sloot nog niet veilig af...</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2225,6 +2099,49 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
     </message>
 </context>
 <context>
+    <name>QObject::QObject</name>
+    <message>
+        <source>Error: Specified data directory "%1" does not exist.</source>
+        <translation>Fout: Opgegeven gegevensmap "%1" bestaat niet.</translation>
+    </message>
+    <message>
+        <source>Error: Cannot parse configuration file: %1. Only use key=value syntax.</source>
+        <translation>Fout: Kan configuratiebestand niet verwerken: %1. Gebruik enkel de key=value syntax.</translation>
+    </message>
+    <message>
+        <source>Error: %1</source>
+        <translation>Fout: %1</translation>
+    </message>
+    <message>
+        <source>Error: Failed to load application fonts.</source>
+        <translation>Fout: kan lettertypen niet laden.</translation>
+    </message>
+    <message>
+        <source>Error: Specified font-family invalid. Valid values: %1.</source>
+        <translation>Fout: opgegeven lettertypefamilie ongeldig. Geldige waarden: %1.</translation>
+    </message>
+    <message>
+        <source>Error: Specified font-weight-normal invalid. Valid range %1 to %2.</source>
+        <translation>Fout: opgegeven lettertype-normaal ongeldig. Geldig bereik %1 tot %2.</translation>
+    </message>
+    <message>
+        <source>Error: Specified font-weight-bold invalid. Valid range %1 to %2.</source>
+        <translation>Fout: opgegeven lettertype vet is ongeldig. Geldig bereik %1 tot %2.</translation>
+    </message>
+    <message>
+        <source>Error: Specified font-scale invalid. Valid range %1 to %2.</source>
+        <translation>Fout: opgegeven lettertype grootte is ongeldig. Geldig bereik %1 tot %2.</translation>
+    </message>
+    <message>
+        <source>Error: Invalid -custom-css-dir path.</source>
+        <translation>Fout: ongeldig pad van -custom-css-dir.</translation>
+    </message>
+    <message>
+        <source>Error: %1 CSS file(s) missing in -custom-css-dir path.</source>
+        <translation>Fout: %1 CSS-bestand(en) ontbreken in het pad -custom-css-dir.</translation>
+    </message>
+</context>
+<context>
     <name>QRDialog</name>
     <message>
         <source>QR-Code Title</source>
@@ -2235,37 +2152,52 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>QR-code</translation>
     </message>
     <message>
-        <source>&amp;Save Image…</source>
-        <translation>&amp;Sla afbeelding op…</translation>
+        <source>&amp;Save Image...</source>
+        <translation>&amp;Sla afbeelding op...</translation>
+    </message>
+    <message>
+        <source>Error creating QR Code.</source>
+        <translation>Fout bij het Creëren van QR Code.</translation>
     </message>
 </context>
 <context>
-    <name>QRImageWidget</name>
+    <name>QRGeneralImageWidget</name>
     <message>
-        <source>&amp;Save Image…</source>
-        <translation>&amp;Sla afbeelding op…</translation>
+        <source>&amp;Save Image...</source>
+        <translation>&amp;Sla afbeelding op...</translation>
     </message>
     <message>
         <source>&amp;Copy Image</source>
         <translation>&amp;Afbeelding kopiëren</translation>
     </message>
     <message>
-        <source>Resulting URI too long, try to reduce the text for label / message.</source>
-        <translation>Resulterende URI te lang, probeer de tekst korter te maken voor het label/bericht.</translation>
+        <source>Save QR Code</source>
+        <translation>Sla QR Code op.</translation>
     </message>
     <message>
-        <source>Error encoding URI into QR Code.</source>
-        <translation>Fout tijdens encoderen URI in QR-code</translation>
+        <source>PNG Image (*.png)</source>
+        <translation>PNG afbeelding (*.png)</translation>
+    </message>
+</context>
+<context>
+    <name>QRImageWidget</name>
+    <message>
+        <source>&amp;Save Image...</source>
+        <translation>&amp;Sla afbeelding op...</translation>
     </message>
     <message>
-        <source>QR code support not available.</source>
-        <translation>Ondersteuning voor QR-codes niet beschikbaar.</translation>
+        <source>&amp;Copy Image</source>
+        <translation>&amp;Afbeelding kopiëren</translation>
     </message>
     <message>
         <source>Save QR Code</source>
         <translation>Sla QR-code op</translation>
     </message>
-    </context>
+    <message>
+        <source>PNG Image (*.png)</source>
+        <translation>PNG afbeelding (*.png)</translation>
+    </message>
+</context>
 <context>
     <name>RPCConsole</name>
     <message>
@@ -2313,12 +2245,24 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>Debug-logbestand</translation>
     </message>
     <message>
+        <source>Current number of blocks</source>
+        <translation>Huidig aantal blocks </translation>
+    </message>
+    <message>
         <source>Client version</source>
         <translation>Clientversie</translation>
     </message>
     <message>
+        <source>Using BerkeleyDB version</source>
+        <translation>Gebruikt BerkeleyDB versie</translation>
+    </message>
+    <message>
         <source>Block chain</source>
         <translation>Blokketen</translation>
+    </message>
+    <message>
+        <source>Number of Masternodes</source>
+        <translation>Aantal Masternodes</translation>
     </message>
     <message>
         <source>Memory Pool</source>
@@ -2369,6 +2313,14 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>Selecteer een peer om details te bekijken</translation>
     </message>
     <message>
+        <source>Whitelisted</source>
+        <translation>Toegestaan</translation>
+    </message>
+    <message>
+        <source>Direction</source>
+        <translation>Richting</translation>
+    </message>
+    <message>
         <source>Version</source>
         <translation>Versie</translation>
     </message>
@@ -2393,16 +2345,16 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>Herscan blokketenbestanden 2</translation>
     </message>
     <message>
-        <source>The buttons below will restart the wallet with command-line options to repair the wallet, fix issues with corrupt blockchain files or missing/obsolete transactions.</source>
-        <translation>De knoppen onderaan zal de portemonnee herstarten met commandoregelopties voor portemonneeherstel, voor reparatie van corrupte blockchain bestanden, of om ontbrekende transacties te herstellen.</translation>
-    </message>
-    <message>
         <source>-rescan=1: Rescan the block chain for missing wallet transactions starting from wallet creation time.</source>
         <translation>-rescan=1: Scan de blockchain opnieuw op ontbrekende transacties vanaf het moment dat de portefeuille is aangemaakt.</translation>
     </message>
     <message>
         <source>-rescan=2: Rescan the block chain for missing wallet transactions starting from genesis block.</source>
         <translation>-rescan=2: Scan de Blockchain opnieuw op ontbrekende transacties, startend bij de allereerste block.</translation>
+    </message>
+    <message>
+        <source>Wallet Path</source>
+        <translation>Portemonnee bestandspad</translation>
     </message>
     <message>
         <source>User Agent</source>
@@ -2413,32 +2365,8 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>Gegevensmap</translation>
     </message>
     <message>
-        <source>To specify a non-default location of the data directory use the '%1' option.</source>
-        <translation>Om een niet-standaardlocatie van de gegevensmap op te geven, gebruik de optie '%1'. </translation>
-    </message>
-    <message>
-        <source>Blocksdir</source>
-        <translation>Blocks map</translation>
-    </message>
-    <message>
-        <source>To specify a non-default location of the blocks directory use the '%1' option.</source>
-        <translation>Om een niet-standaardlocatie van de blocks map op te geven, gebruik de optie '%1'. </translation>
-    </message>
-    <message>
-        <source>Current block height</source>
-        <translation>Huidige block hoogte</translation>
-    </message>
-    <message>
         <source>Last block hash</source>
         <translation>Laatste block hash</translation>
-    </message>
-    <message>
-        <source>Latest ChainLocked block hash</source>
-        <translation>Nieuwste ChainLocked block hash</translation>
-    </message>
-    <message>
-        <source>Latest ChainLocked block height</source>
-        <translation>Nieuwste ChainLocked block hoogte</translation>
     </message>
     <message>
         <source>Open the %1 debug log file from the current data directory. This can take a few seconds for large log files.</source>
@@ -2477,6 +2405,10 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>Services</translation>
     </message>
     <message>
+        <source>Ban Score</source>
+        <translation>Verbanningscore</translation>
+    </message>
+    <message>
         <source>Connection Time</source>
         <translation>Verbindingstijd</translation>
     </message>
@@ -2511,6 +2443,42 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
     <message>
         <source>&amp;Wallet Repair</source>
         <translation>&amp;Portemonnee Herstel</translation>
+    </message>
+    <message>
+        <source>Salvage wallet</source>
+        <translation>Herstel portemonnee</translation>
+    </message>
+    <message>
+        <source>Recover transactions 1</source>
+        <translation>Herstel transacties 1</translation>
+    </message>
+    <message>
+        <source>Recover transactions 2</source>
+        <translation>Herstel transacties 2</translation>
+    </message>
+    <message>
+        <source>Upgrade wallet format</source>
+        <translation>Upgrade portemonnee</translation>
+    </message>
+    <message>
+        <source>The buttons below will restart the wallet with command-line options to repair the wallet, fix issues with corrupt blockhain files or missing/obsolete transactions.</source>
+        <translation>De knoppen onderaan zal de portemonnee herstarten met commandoregelopties om de portemonnee te herstellen of om problemen met corrupte blokketenbestanden of ontbrekende transacties te herstellen.</translation>
+    </message>
+    <message>
+        <source>-salvagewallet: Attempt to recover private keys from a corrupt wallet.dat.</source>
+        <translation>-herstel portemonnee: Poging om geheime sleutels terug te halen uit het beschadigde portemonnee bestand (wallet.dat.)</translation>
+    </message>
+    <message>
+        <source>-zapwallettxes=1: Recover transactions from blockchain (keep meta-data, e.g. account owner).</source>
+        <translation>-zapwallettxes=1: Herstel transacties van de blocks (behoud metadata; bv. accounteigenaar)</translation>
+    </message>
+    <message>
+        <source>-zapwallettxes=2: Recover transactions from blockchain (drop meta-data).</source>
+        <translation>-zapwallettxes=2: Herstel transacties van de blocks (laat metadata vervallen)</translation>
+    </message>
+    <message>
+        <source>-upgradewallet: Upgrade wallet to latest format on startup. (Note: this is NOT an update of the wallet itself!)</source>
+        <translation>-upgrade portemonnee= Upgrade portemonnee naar het laatste formaat bij het starten: (Let op: dit is GEEN update van de portemonnee zelf!)</translation>
     </message>
     <message>
         <source>Wallet repair options.</source>
@@ -2582,7 +2550,7 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
     </message>
     <message>
         <source>Network activity disabled</source>
-        <translation>Netwerkactiviteit is uitgeschakeld</translation>
+        <translation>Netwerkactiviteit uitgeschakeld</translation>
     </message>
     <message>
         <source>Total: %1 (Enabled: %2)</source>
@@ -2597,8 +2565,32 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <translation>Opdracht uitvoeren met portemonnee "%1" </translation>
     </message>
     <message>
+        <source>(node id: %1)</source>
+        <translation>(node id: %1)</translation>
+    </message>
+    <message>
         <source>via %1</source>
         <translation>via %1</translation>
+    </message>
+    <message>
+        <source>never</source>
+        <translation>nooit</translation>
+    </message>
+    <message>
+        <source>Inbound</source>
+        <translation>Inkomend</translation>
+    </message>
+    <message>
+        <source>Outbound</source>
+        <translation>Uitgaand</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Nee</translation>
     </message>
     <message>
         <source>Regular</source>
@@ -2616,7 +2608,7 @@ Om te mixen moeten andere gebruikers exact dezelfde denominaties inbrengen.</tra
         <source>Unknown</source>
         <translation>onbekend</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>ReceiveCoinsDialog</name>
     <message>
@@ -2653,8 +2645,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>&amp;Bedrag</translation>
     </message>
     <message>
-        <source>&amp;Create new receiving address</source>
-        <translation>&amp;Maak nieuw ontvangadres aan</translation>
+        <source>&amp;Request payment</source>
+        <translation>&amp;Betalingsverzoek</translation>
     </message>
     <message>
         <source>Clear all fields of the form.</source>
@@ -2697,10 +2689,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Kopieer URI</translation>
     </message>
     <message>
-        <source>Copy address</source>
-        <translation>Kopiëer adres</translation>
-    </message>
-    <message>
         <source>Copy label</source>
         <translation>Kopieer label</translation>
     </message>
@@ -2712,9 +2700,13 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <source>Copy amount</source>
         <translation>Kopieer bedrag</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>ReceiveRequestDialog</name>
+    <message>
+        <source>QR Code</source>
+        <translation>QR-code</translation>
+    </message>
     <message>
         <source>Copy &amp;URI</source>
         <translation>Kopieer &amp;URI</translation>
@@ -2724,8 +2716,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Kopieer &amp;adres</translation>
     </message>
     <message>
-        <source>&amp;Save Image…</source>
-        <translation>&amp;Sla afbeelding op…</translation>
+        <source>&amp;Save Image...</source>
+        <translation>&amp;Sla afbeelding op...</translation>
     </message>
     <message>
         <source>Request payment to %1</source>
@@ -2734,6 +2726,38 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Payment information</source>
         <translation>Betalingsinformatie</translation>
+    </message>
+    <message>
+        <source>URI</source>
+        <translation>URI</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>Adres</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Bedrag</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Label</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Bericht</translation>
+    </message>
+    <message>
+        <source>Wallet</source>
+        <translation>Portemonnee</translation>
+    </message>
+    <message>
+        <source>Resulting URI too long, try to reduce the text for label / message.</source>
+        <translation>Resulterende URI te lang, probeer de tekst korter te maken voor het label/bericht.</translation>
+    </message>
+    <message>
+        <source>Error encoding URI into QR Code.</source>
+        <translation>Fout tijdens encoderen URI in QR-code</translation>
     </message>
 </context>
 <context>
@@ -2778,12 +2802,16 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Coin controleopties</translation>
     </message>
     <message>
+        <source>Inputs...</source>
+        <translation>Inputs...</translation>
+    </message>
+    <message>
         <source>automatically selected</source>
         <translation>automatisch geselecteerd</translation>
     </message>
     <message>
         <source>Insufficient funds!</source>
-        <translation>Onvoldoende geld!</translation>
+        <translation>Onvoldoende fonds!</translation>
     </message>
     <message>
         <source>Quantity:</source>
@@ -2806,10 +2834,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Stof:</translation>
     </message>
     <message>
-        <source>Inputs…</source>
-        <translation>Inputs…</translation>
-    </message>
-    <message>
         <source>After Fee:</source>
         <translation>Na vergoeding:</translation>
     </message>
@@ -2830,16 +2854,24 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Transactiekosten</translation>
     </message>
     <message>
-        <source>(Smart fee not initialized yet. This usually takes a few blocks…)</source>
-        <translation>(Slimme kosten zijn nog niet geïnitialiseerd Dit duurt meestal een paar blocks …)</translation>
+        <source>Choose...</source>
+        <translation>Kies...</translation>
+    </message>
+    <message>
+        <source>collapse fee-settings</source>
+        <translation>Klap de vergoedinginstellingen dicht</translation>
     </message>
     <message>
         <source>Confirmation time target:</source>
         <translation>Bevestigingstijddoel:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Als de aangepaste vergoeding is ingesteld op 1000 duffs en de transactie is maar 250 bytes, dan wordt bij "per kilobyte" 250 duffs aan toeslag berekend, &lt;br /&gt;terwijl er bij "tenminste" 1000 duffs worden berekend. Voor transacties die groter zijn dan een kilobyte, wordt in beide gevallen per kilobyte de toeslag berekend.</translation>
+        <source>If the custom fee is set to 1000 units and the transaction is only 250 bytes, then "per kilobyte" only pays 250 units in fee,&lt;br /&gt;while "at least" pays 1000 units. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Als de aangepaste vergoeding is ingesteld op 1000 units en de transactie is maar 250 bytes, dan wordt bij "per kilobyte" 250 units aan toeslag berekend, &lt;br /&gt;terwijl er bij "tenminste" 1000 units worden berekend. Voor transacties die groter zijn dan een kilobyte, wordt in beide gevallen per kilobyte de toeslag berekend.</translation>
+    </message>
+    <message>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>Het betalen van de minimale vergoeding is prima zo lang er minder transactie volume is dan ruimte in de blocks. &lt;br /&gt;Maar houd er rekening mee dat dit kan eindigen in een nooit bevestigde transactie zodra er meer vraag is voor Cosanta transacties fdan het netwerk kan verwerken.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -2850,20 +2882,16 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Het gebruik van de terugval vergoeding kan resulteren in het verzenden van een transactie die enkele uren of dagen (of nooit) duurt om te bevestigen. Overweeg uw tarief handmatig te kiezen of wacht tot u de volledige keten hebt gevalideerd.</translation>
     </message>
     <message>
-        <source>Choose…</source>
-        <translation>Kies…</translation>
-    </message>
-    <message>
         <source>Note: Not enough data for fee estimation, using the fallback fee instead.</source>
         <translation>Opmerking: niet genoeg gegevens voor het schatten van de transactievergoeding, in plaats daarvan wordt de terugval vergoeding gebruikte.</translation>
     </message>
     <message>
-        <source>Hide transaction fee settings</source>
-        <translation>Instellingen transactiekosten verbergen</translation>
-    </message>
-    <message>
         <source>Hide</source>
         <translation>Verbergen</translation>
+    </message>
+    <message>
+        <source>(read the tooltip)</source>
+        <translation>(lees de tooltip)</translation>
     </message>
     <message>
         <source>Recommended:</source>
@@ -2872,6 +2900,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Custom:</source>
         <translation>Aangepast:</translation>
+    </message>
+    <message>
+        <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
+        <translation>(Slimme kosten zijn nog niet geïnitialiseerd Dit duurt meestal een paar blocks ...)</translation>
     </message>
     <message>
         <source>Confirm the send action</source>
@@ -2934,6 +2966,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>%1 (%2 blokken)</translation>
     </message>
     <message>
+        <source>from wallet %1</source>
+        <translation>van portemonnee %1</translation>
+    </message>
+    <message>
         <source>using</source>
         <translation>gebruiken</translation>
     </message>
@@ -2944,6 +2980,14 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Are you sure you want to send?</source>
         <translation>Weet u zeker dat u wilt verzenden?</translation>
+    </message>
+    <message>
+        <source>are added as transaction fee</source>
+        <translation>worden toegevoegd als transactiekosten</translation>
+    </message>
+    <message>
+        <source>Total Amount = &lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;= %2</source>
+        <translation>Totaal bedrag = &lt;b&gt;%1&lt;/b&gt;&lt;br /&gt;=%2</translation>
     </message>
     <message>
         <source>&lt;b&gt;(%1 of %2 entries displayed)&lt;/b&gt;</source>
@@ -2963,11 +3007,7 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     </message>
     <message>
         <source>any available funds</source>
-        <translation>Beschikbarar geld</translation>
-    </message>
-    <message>
-        <source>Transaction fee</source>
-        <translation>Transactiekosten</translation>
+        <translation>Beschikbare fondsen</translation>
     </message>
     <message>
         <source>(%1 transactions have higher fees usually due to no change output being allowed)</source>
@@ -2988,18 +3028,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Warning: Using %1 with %2 or more inputs can harm your privacy and is not recommended</source>
         <translation>Waarschuwing: het gebruik van %1 met %2 of meer ingangen kan uw privacy schaden en wordt niet aanbevolen</translation>
-    </message>
-    <message>
-        <source>Click to learn more</source>
-        <translation>Klik om meer te leren</translation>
-    </message>
-    <message>
-        <source>Total Amount</source>
-        <translation>Totaalbedrag</translation>
-    </message>
-    <message>
-        <source>or</source>
-        <translation>of</translation>
     </message>
     <message>
         <source>Confirm send coins</source>
@@ -3030,8 +3058,20 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Transactiecreatie mislukt</translation>
     </message>
     <message>
+        <source>The transaction was rejected with the following reason: %1</source>
+        <translation>De transactie werd afgewezen om de volgende reden: %1</translation>
+    </message>
+    <message>
         <source>A fee higher than %1 is considered an absurdly high fee.</source>
         <translation>Een vergoeding van meer dan %1 wordt beschouwd als een absurd hoge vergoeding.</translation>
+    </message>
+    <message>
+        <source>Payment request expired.</source>
+        <translation>Betalingsverzoek verlopen.</translation>
+    </message>
+    <message>
+        <source>Pay only the required fee of %1</source>
+        <translation>Betaal alleen de verplichte transactie vergoeding van %1</translation>
     </message>
     <message numerus="yes">
         <source>Estimated to begin confirmation within %n block(s).</source>
@@ -3060,6 +3100,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
 </context>
 <context>
     <name>SendCoinsEntry</name>
+    <message>
+        <source>This is a normal payment.</source>
+        <translation>Dit is een normale betaling.</translation>
+    </message>
     <message>
         <source>Pay &amp;To:</source>
         <translation>Betaal &amp;Aan:</translation>
@@ -3101,10 +3145,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Bedra&amp;g:</translation>
     </message>
     <message>
-        <source>The amount to send in the selected unit</source>
-        <translation>Het te verzenden bedrag in de geselecteerde eenheid</translation>
-    </message>
-    <message>
         <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Cosanta than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>De vergoeding zal worden afgetrokken van het bedrag dat wordt verzonden. De ontvanger zal een lagere hoeveelheid Cosanta ontvangt dan u in het veld bedrag invoert. Als meerdere ontvangers zijn geselecteerd, wordt de vergoeding gelijk verdeeld.</translation>
     </message>
@@ -3140,12 +3180,23 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <source>Memo:</source>
         <translation>Memo:</translation>
     </message>
+    <message>
+        <source>Enter a label for this address to add it to your address book</source>
+        <translation>Vul een label in voor dit adres om het toe te voegen aan uw adresboek</translation>
+    </message>
+</context>
+<context>
+    <name>SendConfirmationDialog</name>
+    <message>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
 </context>
 <context>
     <name>ShutdownWindow</name>
     <message>
-        <source>%1 is shutting down…</source>
-        <translation>%1 is aan het afsluiten…</translation>
+        <source>%1 is shutting down...</source>
+        <translation>%1 is aan het afsluiten...</translation>
     </message>
     <message>
         <source>Do not shut down the computer until this window disappears.</source>
@@ -3227,14 +3278,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Het Cosantaadres waarmee het bericht ondertekend is</translation>
     </message>
     <message>
-        <source>The signed message to verify</source>
-        <translation>Het ondertekende bericht om te verifiëren</translation>
-    </message>
-    <message>
-        <source>The signature given when the message was signed</source>
-        <translation>De handtekening die is gegeven toen het bericht werd ondertekend</translation>
-    </message>
-    <message>
         <source>Verify the message to ensure it was signed with the specified Cosanta address</source>
         <translation>Verifieer het bericht om zeker te zijn dat het getekend werd met het opgegeven Cosanta adres</translation>
     </message>
@@ -3309,6 +3352,13 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Message verified.</source>
         <translation>Bericht geverifiëerd.</translation>
+    </message>
+</context>
+<context>
+    <name>SplashScreen</name>
+    <message>
+        <source>[testnet]</source>
+        <translation>[testnetwerk]</translation>
     </message>
 </context>
 <context>
@@ -3467,6 +3517,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Transaction total size</source>
         <translation>Transactie totale grootte</translation>
+    </message>
+    <message>
+        <source>Merchant</source>
+        <translation>Handelaar</translation>
     </message>
     <message>
         <source>Generated coins must mature %1 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to "not accepted" and it won't be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
@@ -3674,8 +3728,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Dit jaar</translation>
     </message>
     <message>
-        <source>Range…</source>
-        <translation>Bereik…</translation>
+        <source>Range...</source>
+        <translation>Bereik...</translation>
     </message>
     <message>
         <source>Most Common</source>
@@ -3758,8 +3812,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Kopieer volledige transactiedetials</translation>
     </message>
     <message>
-        <source>Edit address label</source>
-        <translation>Bewerk adres label</translation>
+        <source>Edit label</source>
+        <translation>Bewerk label</translation>
     </message>
     <message>
         <source>Show transaction details</source>
@@ -3772,6 +3826,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Export Transaction History</source>
         <translation>Exporteer transactiegeschiedenis</translation>
+    </message>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Kommagescheiden bestand (*.csv)</translation>
     </message>
     <message>
         <source>Confirmed</source>
@@ -3838,32 +3896,17 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     </message>
 </context>
 <context>
-    <name>WalletController</name>
-    <message>
-        <source>Close wallet</source>
-        <translation>Portemonnee sluiten</translation>
-    </message>
-    <message>
-        <source>Are you sure you wish to close the wallet &lt;i&gt;%1&lt;/i&gt;?</source>
-        <translation>Weet je zeker dat je portemonnee &lt;i&gt;%1&lt;/i&gt; wilt sluiten?</translation>
-    </message>
-    <message>
-        <source>Closing the wallet for too long can result in having to resync the entire chain if pruning is enabled.</source>
-        <translation>Als u de portemonnee te afgesloten laat met terugsnoeien ingeschakeld, kan dit ertoe leiden dat de hele blockchain opnieuw moet worden gesynchroniseerd.</translation>
-    </message>
-    </context>
-<context>
     <name>WalletFrame</name>
-    </context>
+    <message>
+        <source>No wallet has been loaded.</source>
+        <translation>Er is geen portemonnee geladen.</translation>
+    </message>
+</context>
 <context>
     <name>WalletModel</name>
     <message>
         <source>Send Coins</source>
         <translation>Verstuur munten</translation>
-    </message>
-    <message>
-        <source>default wallet</source>
-        <translation>standaard portemonnee</translation>
     </message>
 </context>
 <context>
@@ -3883,6 +3926,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Backup Wallet</source>
         <translation>Portemonnee backuppen</translation>
+    </message>
+    <message>
+        <source>Wallet Data (*.dat)</source>
+        <translation>Portemonneedata (*.dat)</translation>
     </message>
     <message>
         <source>Backup Failed</source>
@@ -3912,16 +3959,12 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Fout: luisteren naar binnenkomende verbindingen mislukt (luisteren gaf foutmelding %s)</translation>
     </message>
     <message>
-        <source>Fee estimation failed. Fallbackfee is disabled. Wait a few blocks or enable -fallbackfee.</source>
-        <translation>Vergoedingskosten raming mislukt. Fallbackfee is uitgeschakeld. Wacht een paar blocks of schakel -fallbackfee in.</translation>
-    </message>
-    <message>
-        <source>This error could occur if this wallet was not shutdown cleanly and was last loaded using a build with a newer version of Berkeley DB. If so, please use the software that last loaded this wallet</source>
-        <translation>Deze fout kan optreden als deze portemonnee niet correct is afgesloten of voor het laatst is geladen met een nieuwere buildversie  van Berkeley DB. Als dit het geval is, gebruik dan de software waarmee deze portemonnee voor het laatst is geladen</translation>
-    </message>
-    <message>
         <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
         <translation>Dit is een pre-release testversie - gebruik op eigen risico! Gebruik deze niet voor het delven van munten of handelsdoeleinden</translation>
+    </message>
+    <message>
+        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
+        <translation>Waarschuwing: Het lijkt erop dat het netwerk geen consensus kan vinden! Sommige delvers lijken problemen te ondervinden.</translation>
     </message>
     <message>
         <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
@@ -3930,6 +3973,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Already have that input.</source>
         <translation>Deze invoer is reeds gekend</translation>
+    </message>
+    <message>
+        <source>Cannot downgrade wallet</source>
+        <translation>Kan de portemonnee niet verlagen van versie</translation>
     </message>
     <message>
         <source>Collateral not valid.</source>
@@ -3972,6 +4019,14 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Fout bij het lezen van de database, programma wordt beëindigd.</translation>
     </message>
     <message>
+        <source>Error</source>
+        <translation>Fout</translation>
+    </message>
+    <message>
+        <source>Error: Disk space is low!</source>
+        <translation>Fout: Schijfruimte is laag!</translation>
+    </message>
+    <message>
         <source>Failed to listen on any port. Use -listen=0 if you want this.</source>
         <translation>Het is mislukt om naar gelijk welke poort te luisteren. Gebruik -listen=0 als je dit wil</translation>
     </message>
@@ -4008,8 +4063,28 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Invoer overschrijdt de maximale grootte.</translation>
     </message>
     <message>
+        <source>Failed to load fulfilled requests cache from</source>
+        <translation>Fout bij het inladen van de fulfilled requests cache uit</translation>
+    </message>
+    <message>
+        <source>Failed to load governance cache from</source>
+        <translation>Fout bij het inladen van de governance cache uit</translation>
+    </message>
+    <message>
+        <source>Failed to load masternode cache from</source>
+        <translation>Fout bij het inladen van de masternode cache uit</translation>
+    </message>
+    <message>
         <source>Found enough users, signing ( waiting %s )</source>
         <translation>Voldoende gebruikers gevonden, aan het ondertekenen ( wacht %s )</translation>
+    </message>
+    <message>
+        <source>Found enough users, signing ...</source>
+        <translation>Voldoende gebruikers gevonden, aan het ondertekenen ...</translation>
+    </message>
+    <message>
+        <source>Importing...</source>
+        <translation>Importeren...</translation>
     </message>
     <message>
         <source>Incompatible mode.</source>
@@ -4022,6 +4097,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Incorrect or no genesis block found. Wrong datadir for network?</source>
         <translation>Incorrect of geen genesisblok gevonden. Verkeerde gegevensmap voor het netwerk?</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Informatie</translation>
     </message>
     <message>
         <source>Input is not valid.</source>
@@ -4044,8 +4123,28 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Ongeldig minumum aantal spork ondertekenaars zoals ingesteld met -minsporkkeys</translation>
     </message>
     <message>
+        <source>Keypool ran out, please call keypoolrefill first</source>
+        <translation>Keypool op geraakt, roep alsjeblieft eerst keypoolrefill functie aan</translation>
+    </message>
+    <message>
+        <source>Loading banlist...</source>
+        <translation>Verbanningslijst aan het laden...</translation>
+    </message>
+    <message>
+        <source>Loading fulfilled requests cache...</source>
+        <translation>Laden fulfilled requests chache...</translation>
+    </message>
+    <message>
+        <source>Loading masternode cache...</source>
+        <translation>Laden masternode cache...</translation>
+    </message>
+    <message>
         <source>Lock is already in place.</source>
         <translation>Vergrendeling is al op zijn plaats.</translation>
+    </message>
+    <message>
+        <source>Mixing in progress...</source>
+        <translation>Bezig met mixen...</translation>
     </message>
     <message>
         <source>Need to specify a port with -whitebind: '%s'</source>
@@ -4061,27 +4160,11 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     </message>
     <message>
         <source>Not enough funds to mix.</source>
-        <translation>Onvoldoende geld om te mixen.</translation>
+        <translation>Onvoldoende fondsen om te mixen.</translation>
     </message>
     <message>
         <source>Not in the Masternode list.</source>
         <translation>Niet in de Masternode lijst.</translation>
-    </message>
-    <message>
-        <source>Pruning blockstore…</source>
-        <translation>Terugsnoeien blockstore…</translation>
-    </message>
-    <message>
-        <source>Replaying blocks…</source>
-        <translation>Replaying blocks…</translation>
-    </message>
-    <message>
-        <source>Rescanning…</source>
-        <translation>Opnieuw scannen…</translation>
-    </message>
-    <message>
-        <source>Starting network threads…</source>
-        <translation>Netwerkthread starten…</translation>
     </message>
     <message>
         <source>Submitted to masternode, waiting in queue %s</source>
@@ -4092,14 +4175,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Synchronisatie voltooid</translation>
     </message>
     <message>
-        <source>Synchronizing blockchain…</source>
-        <translation>Blokketen aan het synchronizeren…</translation>
-    </message>
-    <message>
-        <source>Synchronizing governance objects…</source>
-        <translation>Synchroniseren governance objecten…</translation>
-    </message>
-    <message>
         <source>Unable to start HTTP server. See debug log for details.</source>
         <translation>Niet mogelijk ok HTTP-server te starten. Zie debuglogboek voor details.</translation>
     </message>
@@ -4108,8 +4183,28 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Onbekend reactie.</translation>
     </message>
     <message>
+        <source>Unsupported argument -benchmark ignored, use -debug=bench.</source>
+        <translation>Niet-ondersteund argument -benchmark genegeerd, gebruik -debug=bench.</translation>
+    </message>
+    <message>
+        <source>Unsupported argument -debugnet ignored, use -debug=net.</source>
+        <translation>Niet-ondersteund argument -debugnet genegeerd, gebruik -debug=net</translation>
+    </message>
+    <message>
+        <source>Unsupported argument -tor found, use -onion.</source>
+        <translation>Niet-ondersteund argument -tor gevonden, gebruik -onion.</translation>
+    </message>
+    <message>
         <source>User Agent comment (%s) contains unsafe characters.</source>
         <translation>User Agentcommentaar (%s) bevat onveilige karakters.</translation>
+    </message>
+    <message>
+        <source>Verifying wallet(s)...</source>
+        <translation>Portemonnee(s) verifiëren..... </translation>
+    </message>
+    <message>
+        <source>Will retry...</source>
+        <translation>Opnieuw aan het proberen...</translation>
     </message>
     <message>
         <source>Can't find random Masternode.</source>
@@ -4122,6 +4217,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>%s is idle.</source>
         <translation>%s is in rust.</translation>
+    </message>
+    <message>
+        <source>%s request incomplete: %s</source>
+        <translation>%s aanvraag niet volledig: %s</translation>
     </message>
     <message>
         <source>Can't mix while sync in progress.</source>
@@ -4140,6 +4239,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>%s bestand bevat alle persoonlijke sleutel van deze portemonnee. Deel deze met niemand!</translation>
     </message>
     <message>
+        <source>-masternode option is deprecated and ignored, specifying -masternodeblsprivkey is enough to start this node as a masternode.</source>
+        <translation>-masternode optie is verouderd en genegeerd, het specificeren van -masternodeblsprivkey is voldoende om deze node als een masternode te starten.</translation>
+    </message>
+    <message>
         <source>Failed to create backup, file already exists! This could happen if you restarted wallet in less than 60 seconds. You can continue if you are ok with this.</source>
         <translation>Backup maken is mislukt, het bestand bestaat al! Dit kan gebeuren als u de wallet herstart binnen 60 seconden. U kunt verder gaan als u hier ok mee bent.</translation>
     </message>
@@ -4156,6 +4259,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Prune: laatste wallet synchronisatie gaat verder terug dan de middels -prune beperkte data. U moet -reindex gebruiken (downloadt opnieuw de gehele blockchain voor een pruned node)</translation>
     </message>
     <message>
+        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
+        <translation>Herscannen is niet mogelijk i.c.m. -prune. U moet -reindex gebruiken dat de hele blockchain opnieuw zal downloaden.</translation>
+    </message>
+    <message>
         <source>The block database contains a block which appears to be from the future. This may be due to your computer's date and time being set incorrectly. Only rebuild the block database if you are sure that your computer's date and time are correct</source>
         <translation>De blokdatabase bevat een blok dat lijkt uit de toekomst te komen. Dit kan gebeuren omdat de datum en tijd van uw computer niet goed staat. Herbouw de blokdatabase pas nadat u de datum en tijd van uw computer correct heeft ingesteld.</translation>
     </message>
@@ -4168,12 +4275,24 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Totale lengte van netwerkversiestring (%i) overschrijdt maximale lengte (%i). Verminder het aantal of grootte van uacomments.</translation>
     </message>
     <message>
+        <source>Unsupported argument -socks found. Setting SOCKS version isn't possible anymore, only SOCKS5 proxies are supported.</source>
+        <translation>Niet-ondersteund argument -socks gevonden. Instellen van SOCKS-versie is niet meer mogelijk, alleen SOCKS5-proxies worden ondersteund.</translation>
+    </message>
+    <message>
+        <source>Unsupported argument -whitelistalwaysrelay ignored, use -whitelistrelay and/or -whitelistforcerelay.</source>
+        <translation>Niet ondersteund argument -whitelistalwaysrelay genegeerd, gebruik -whitelistrelay en/of -whitelistforcerelay.</translation>
+    </message>
+    <message>
         <source>WARNING! Failed to replenish keypool, please unlock your wallet to do so.</source>
         <translation>WAARSCHUWING! Het bijvullen van de keypool is mislukt, ontgrendel alstublieft uw wallet om dit te doen. </translation>
     </message>
     <message>
         <source>Wallet is locked, can't replenish keypool! Automatic backups and mixing are disabled, please unlock your wallet to replenish keypool.</source>
         <translation>Wallet is vergrendeld, niet instaat om keypool aan te vullen! Automatische backups en mixen zijn uitgeschakeld, ontgrendel alstublieft uw wallet om de keypool aan te vullen.</translation>
+    </message>
+    <message>
+        <source>Warning: Unknown block versions being mined! It's possible unknown rules are in effect</source>
+        <translation>Waarschuwing: Onbekende blok versies worden gemined! Er zijn mogelijk onbekende regels in werking getreden</translation>
     </message>
     <message>
         <source>You need to rebuild the database using -reindex to change -timestampindex</source>
@@ -4184,8 +4303,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>U moet de database herbouwen met -reindex om terug te gaan naar de niet-prune modus. Dit zal de gehele blockchain opnieuw downloaden.</translation>
     </message>
     <message>
-        <source>%s failed</source>
-        <translation>%s is mislukt</translation>
+        <source>-litemode is deprecated.</source>
+        <translation>-litemode is vervallen.</translation>
     </message>
     <message>
         <source>-maxmempool must be at least %d MB</source>
@@ -4196,40 +4315,36 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Automatische backups uitgeschakeld</translation>
     </message>
     <message>
-        <source>Cannot set -peerblockfilters without -blockfilterindex.</source>
-        <translation>Kan -peerblockfilters niet instellen zonder -blockfilterindex.</translation>
-    </message>
-    <message>
-        <source>Config setting for %s only applied on %s network when in [%s] section.</source>
-        <translation>Configuratie instelling voor %s alleen toegepast op %s netwerk in [%s] sectie.</translation>
-    </message>
-    <message>
-        <source>Could not find asmap file %s</source>
-        <translation>Kon asmap bestand %s niet vinden</translation>
-    </message>
-    <message>
-        <source>Could not parse asmap file %s</source>
-        <translation>Kon asmap bestand %s niet verwerken</translation>
-    </message>
-    <message>
         <source>ERROR! Failed to create automatic backup</source>
         <translation>FOUT! Het maken van een automatische backup is mislukt</translation>
-    </message>
-    <message>
-        <source>Error loading %s: Private keys can only be disabled during creation</source>
-        <translation>Fout bij laden %s: privésleutels kunnen alleen worden uitgeschakeld tijdens aanmaken</translation>
     </message>
     <message>
         <source>Error upgrading evo database</source>
         <translation>Fout bij het upgraden van de evo database</translation>
     </message>
     <message>
-        <source>Error: Disk space is low for %s</source>
-        <translation>Fout: Schijfruimte is laag voor %s</translation>
+        <source>Error: A fatal internal error occurred, see debug.log for details</source>
+        <translation>Fout: er is een fout opgetreden,  zie debug.log voor details</translation>
+    </message>
+    <message>
+        <source>Error: failed to add socket to epollfd (epoll_ctl returned error %s)</source>
+        <translation>Fout: kan geen socket toevoegen aan epollfd (epoll_ctl geeft fout %s)</translation>
     </message>
     <message>
         <source>Exceeded max tries.</source>
         <translation>Maximum aantal pogingen overschreden.</translation>
+    </message>
+    <message>
+        <source>Failed to clear fulfilled requests cache at</source>
+        <translation>Fout bij het wissen van de fulfilled requests cache uit</translation>
+    </message>
+    <message>
+        <source>Failed to clear governance cache at</source>
+        <translation>Fout bij het wissen van de governance cache uit</translation>
+    </message>
+    <message>
+        <source>Failed to clear masternode cache at</source>
+        <translation>Fout bij het wissen van de masternode cache uit</translation>
     </message>
     <message>
         <source>Failed to commit EvoDB</source>
@@ -4248,16 +4363,12 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Verwijderen van de back-up is mislukt, foutmelding: %s</translation>
     </message>
     <message>
+        <source>Failed to load sporks cache from</source>
+        <translation>Fout bij het inladen van de sporks cache uit</translation>
+    </message>
+    <message>
         <source>Failed to rescan the wallet during initialization</source>
         <translation>Het herscannen van de portemonnee is mislukt tijdens het initialiseren</translation>
-    </message>
-    <message>
-        <source>Found enough users, signing…</source>
-        <translation>Voldoende gebruikers gevonden, aan het ondertekenen…</translation>
-    </message>
-    <message>
-        <source>Invalid P2P permission: '%s'</source>
-        <translation>Ongeldige P2P machtiging: '%s'</translation>
     </message>
     <message>
         <source>Invalid amount for -fallbackfee=&lt;amount&gt;: '%s'</source>
@@ -4266,6 +4377,34 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Invalid masternodeblsprivkey. Please see documentation.</source>
         <translation>Ongeldige masternodeblsprivkey. Zie documentatie.</translation>
+    </message>
+    <message>
+        <source>It has been replaced by -disablegovernance.</source>
+        <translation>Het is vervangen door -disablegovernance.</translation>
+    </message>
+    <message>
+        <source>Its replacement -disablegovernance has been forced instead.</source>
+        <translation>In plaats daarvan is -disablegovernance als vervanging afgedwongen.</translation>
+    </message>
+    <message>
+        <source>Loading block index...</source>
+        <translation>Laden blokindex...</translation>
+    </message>
+    <message>
+        <source>Loading governance cache...</source>
+        <translation>Laden governance cache...</translation>
+    </message>
+    <message>
+        <source>Loading sporks cache...</source>
+        <translation>Laden sporks cache...</translation>
+    </message>
+    <message>
+        <source>Loading wallet... (%3.2f %%)</source>
+        <translation>Laden portemonnee... (%3.2f %%)</translation>
+    </message>
+    <message>
+        <source>Loading wallet...</source>
+        <translation>Laden portemonnee...</translation>
     </message>
     <message>
         <source>Masternode queue is full.</source>
@@ -4278,10 +4417,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Missing input transaction information.</source>
         <translation>De input transactieinformatie ontbreekt.</translation>
-    </message>
-    <message>
-        <source>Mixing in progress…</source>
-        <translation>Bezig met mixen…</translation>
     </message>
     <message>
         <source>No errors detected.</source>
@@ -4312,8 +4447,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Terugsnoeimodus is niet compatibel met -txindex.</translation>
     </message>
     <message>
-        <source>Section [%s] is not recognized.</source>
-        <translation>Sectie [%s] wordt niet herkend.</translation>
+        <source>Pruning blockstore...</source>
+        <translation>Terugsnoeien blockstore...</translation>
     </message>
     <message>
         <source>Specified -walletdir "%s" does not exist</source>
@@ -4326,6 +4461,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Specified -walletdir "%s" is not a directory</source>
         <translation>Opgegeven -walletdir "%s" is geen map</translation>
+    </message>
+    <message>
+        <source>Synchronizing blockchain...</source>
+        <translation>Blokketen aan het synchronizeren...</translation>
     </message>
     <message>
         <source>The wallet will avoid paying less than the minimum relay fee.</source>
@@ -4360,36 +4499,32 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Transactie te groot</translation>
     </message>
     <message>
-        <source>Unable to bind to %s on this computer. %s is probably already running.</source>
-        <translation>Niet in staat om %s te verbinden op deze computer. %s draait waarschijnlijk al.</translation>
+        <source>Trying to connect...</source>
+        <translation>Proberen te verbinden...</translation>
     </message>
     <message>
-        <source>Unable to create the PID file '%s': %s</source>
-        <translation>Kan het PID bestand '%s' niet maken: %s</translation>
+        <source>Unable to bind to %s on this computer. %s is probably already running.</source>
+        <translation>Niet in staat om %s te verbinden op deze computer. %s draait waarschijnlijk al.</translation>
     </message>
     <message>
         <source>Unable to generate initial keys</source>
         <translation>Kan eerste sleutels niet genereren</translation>
     </message>
     <message>
-        <source>Unknown -blockfilterindex value %s.</source>
-        <translation>Onbekende -blockfilterindex waarde %s.</translation>
-    </message>
-    <message>
         <source>Upgrading UTXO database</source>
         <translation>Upgraden UTXO-database</translation>
     </message>
     <message>
-        <source>Verifying blocks…</source>
-        <translation>blocks aan het controleren…</translation>
-    </message>
-    <message>
-        <source>Verifying wallet(s)…</source>
-        <translation>Portemonnee(s) verifiëren….. </translation>
+        <source>Wallet %s resides outside wallet directory %s</source>
+        <translation>Portemonnee %s bevindt zich buiten de portemonnee map %s</translation>
     </message>
     <message>
         <source>Wallet needed to be rewritten: restart %s to complete</source>
         <translation>Portemonnee moest herschreven worden: Herstart %s om te voltooien</translation>
+    </message>
+    <message>
+        <source>Warning: unknown new rules activated (versionbit %i)</source>
+        <translation>Waarschuwing: onbekende nieuwe regels geactiveerd (versionbit %i)</translation>
     </message>
     <message>
         <source>Wasn't able to create wallet backup folder %s!</source>
@@ -4408,12 +4543,20 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>U moet de database opnieuw opbouwen met behulp van -reindex om -spentindex te wijzigen</translation>
     </message>
     <message>
+        <source>You need to rebuild the database using -reindex to change -txindex</source>
+        <translation>U moet de database opnieuw opbouwen met behulp van -reindex om -txindex te wijzigen</translation>
+    </message>
+    <message>
         <source>no mixing available.</source>
         <translation>Mixen is niet beschikbaar.</translation>
     </message>
     <message>
         <source>see debug.log for details.</source>
         <translation>zie debug.log voor meer informatie.</translation>
+    </message>
+    <message>
+        <source>Cosanta Core</source>
+        <translation>Cosanta Core</translation>
     </message>
     <message>
         <source>The %s developers</source>
@@ -4460,12 +4603,24 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Dit is de transactievergoeding die je mogelijk betaalt indien geschatte tarief niet beschikbaar is</translation>
     </message>
     <message>
+        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit %s and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
+        <translation>Dit product bevat software dat ontwikkeld is door het OpenSSL Project voor gebruik in de OpenSSL Toolkit %s en cryptografische software geschreven door Eric Young en UPnP software geschreven door Thomas Bernard.</translation>
+    </message>
+    <message>
         <source>Unable to replay blocks. You will need to rebuild the database using -reindex-chainstate.</source>
         <translation>Kan blokken niet nalopen. U moet de database opnieuw opbouwen met behulp van -reindex-chainstate.</translation>
     </message>
     <message>
-        <source>Warning: Private keys detected in wallet {%s} with disabled private keys</source>
-        <translation>Waarschuwing: privésleutels gedetecteerd in portemonnee {%s} terwijl privésleutels zijn uitgeschakeld</translation>
+        <source>Warning: Wallet file corrupt, data salvaged! Original %s saved as %s in %s; if your balance or transactions are incorrect you should restore from a backup.</source>
+        <translation>Waarschuwing: portemonnee bestand is corrupt, data is veiliggesteld! Originele %s is opgeslagen als %s in %s; als uw balans of transacties incorrect zijn dient u een backup terug te zetten.</translation>
+    </message>
+    <message>
+        <source>%d of last 100 blocks have unexpected version</source>
+        <translation>%d van de laatste 100 blokken hebben een onverwachte versie</translation>
+    </message>
+    <message>
+        <source>%s corrupt, salvage failed</source>
+        <translation>%s corrupt, veiligstellen mislukt</translation>
     </message>
     <message>
         <source>%s is not a valid backup folder!</source>
@@ -4474,10 +4629,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>%s is set very high!</source>
         <translation>%s is zeer hoog ingesteld!</translation>
-    </message>
-    <message>
-        <source>%s request incomplete:</source>
-        <translation>%s aanvraag niet volledig:</translation>
     </message>
     <message>
         <source>-devnet can only be specified once</source>
@@ -4490,10 +4641,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>-rpcport must be specified when -devnet and -server are specified</source>
         <translation>-rpcport moet worden opgegeven wanneer -devnet en -server worden gebruikt</translation>
-    </message>
-    <message>
-        <source>A fatal internal error occurred, see debug.log for details</source>
-        <translation>Er is een fatale interne fout opgetreden, zie debug.log voor details</translation>
     </message>
     <message>
         <source>Cannot resolve -%s address: '%s'</source>
@@ -4512,10 +4659,6 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Copyright (C)</translation>
     </message>
     <message>
-        <source>Disk space is too low!</source>
-        <translation>Schijfruimte is te laag!</translation>
-    </message>
-    <message>
         <source>Error loading %s</source>
         <translation>Fout bij het laden van %s</translation>
     </message>
@@ -4532,64 +4675,24 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Fout bij laden %s. HD kan niet worden uitgeschakeld bij een HD portemonnee.</translation>
     </message>
     <message>
+        <source>Error loading wallet %s. Duplicate -wallet filename specified.</source>
+        <translation>Fout bij het laden van portemonnee %s. Dubbele -wallet bestandsnaam gespecificeerd.</translation>
+    </message>
+    <message>
         <source>Error upgrading chainstate database</source>
         <translation>Fout bij het upgraden van de ketenstaat database</translation>
     </message>
     <message>
-        <source>Loading P2P addresses…</source>
-        <translation>P2P-adressen aan het laden…</translation>
-    </message>
-    <message>
-        <source>Loading banlist…</source>
-        <translation>Verbanningslijst aan het laden…</translation>
-    </message>
-    <message>
-        <source>Loading block index…</source>
-        <translation>Laden blokindex…</translation>
-    </message>
-    <message>
-        <source>Loading wallet…</source>
-        <translation>Laden portemonnee…</translation>
-    </message>
-    <message>
-        <source>Failed to clear fulfilled requests cache at %s</source>
-        <translation>Fout bij het wissen van de fulfilled requests cache %s</translation>
-    </message>
-    <message>
-        <source>Failed to clear governance cache at %s</source>
-        <translation>Fout bij het wissen van de governance cache %s</translation>
-    </message>
-    <message>
-        <source>Failed to clear masternode cache at %s</source>
-        <translation>Fout bij het wissen van de masternode cache %s</translation>
+        <source>Error: failed to add socket to kqueuefd (kevent returned error %s)</source>
+        <translation>Fout: kan socket niet toevoegen aan kqueuefd (kevent geeft fout %s)</translation>
     </message>
     <message>
         <source>Failed to find mixing queue to join</source>
         <translation>Het is niet gelukt om een mixwachtrij te vinden om bij aan te sluiten</translation>
     </message>
     <message>
-        <source>Failed to load fulfilled requests cache from %s</source>
-        <translation>Fout bij het inladen van de fulfilled requests cache uit %s</translation>
-    </message>
-    <message>
-        <source>Failed to load governance cache from %s</source>
-        <translation>Fout bij het inladen van de governance cache uit %s</translation>
-    </message>
-    <message>
-        <source>Failed to load masternode cache from %s</source>
-        <translation>Fout bij het inladen van de masternode cache uit %s</translation>
-    </message>
-    <message>
-        <source>Failed to load sporks cache from %s</source>
-        <translation>Fout bij het inladen van de sporks cache uit %s</translation>
-    </message>
-    <message>
         <source>Failed to start a new mixing queue</source>
         <translation>Het is niet gelukt om een nieuwe mixwachtrij te starten</translation>
-    </message>
-    <message>
-        <source>Importing…</source>
-        <translation>Importeren…</translation>
     </message>
     <message>
         <source>Incorrect -rescan mode, falling back to default value</source>
@@ -4620,8 +4723,20 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Ongeldig sporkadres opgegeven met -sporkaddr</translation>
     </message>
     <message>
+        <source>Loading P2P addresses...</source>
+        <translation>P2P-adressen aan het laden...</translation>
+    </message>
+    <message>
         <source>Reducing -maxconnections from %d to %d, because of system limitations.</source>
         <translation>Verminder -maxconnections van %d naar %d, vanwege systeembeperkingen.</translation>
+    </message>
+    <message>
+        <source>Replaying blocks...</source>
+        <translation>Replaying blocks...</translation>
+    </message>
+    <message>
+        <source>Rescanning...</source>
+        <translation>Opnieuw scannen...</translation>
     </message>
     <message>
         <source>Session not complete!</source>
@@ -4644,12 +4759,16 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Vorige wachtrij is te recent gecreëerd.</translation>
     </message>
     <message>
-        <source>%s corrupt. Try using the wallet tool cosanta-wallet to salvage or restoring a backup.</source>
-        <translation>%s corrupt. Probeer de portemonnee tool te gebruiken om een back-up te redden of te herstellen.</translation>
-    </message>
-    <message>
         <source>Last successful action was too recent.</source>
         <translation>Vorige succesvolle actie is te recent.</translation>
+    </message>
+    <message>
+        <source>Starting network threads...</source>
+        <translation>Netwerkthread starten...</translation>
+    </message>
+    <message>
+        <source>Synchronizing governance objects...</source>
+        <translation>Synchroniseren governance objecten...</translation>
     </message>
     <message>
         <source>The source code is available from %s.</source>
@@ -4680,8 +4799,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Transactie is niet geldig.</translation>
     </message>
     <message>
-        <source>Trying to connect…</source>
-        <translation>Proberen te verbinden…</translation>
+        <source>Transaction too large for fee policy</source>
+        <translation>De transactie is te groot voor het transactiekostenbeleid</translation>
     </message>
     <message>
         <source>Unable to bind to %s on this computer (bind returned error %s)</source>
@@ -4712,8 +4831,8 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Niet-ondersteunde logboekcategorie %s=%s.</translation>
     </message>
     <message>
-        <source>Upgrading txindex database</source>
-        <translation>Upgraden txindex database</translation>
+        <source>Verifying blocks...</source>
+        <translation>blocks aan het controleren...</translation>
     </message>
     <message>
         <source>Very low number of keys left: %d</source>
@@ -4724,16 +4843,20 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
         <translation>Portemonnee zit op slot.</translation>
     </message>
     <message>
+        <source>Warning</source>
+        <translation>Waarschuwing</translation>
+    </message>
+    <message>
+        <source>Warning: %s is deprecated, please use %s instead</source>
+        <translation>Waarschuwing: %s is verouderd, gebruik in plaats daarvan %s</translation>
+    </message>
+    <message>
         <source>Warning: can't use %s and %s together, will prefer %s</source>
         <translation>Waarschuwing: kan %s en %s niet samen gebruiken, voorkeur voor %s</translation>
     </message>
     <message>
         <source>Warning: incorrect parameter %s, path must exist! Using default path.</source>
         <translation>Waarschuwing: onjuiste parameter %s, pad moet bestaan! Standaard pad wordt gebruikt</translation>
-    </message>
-    <message>
-        <source>Will retry…</source>
-        <translation>Opnieuw aan het proberen…</translation>
     </message>
     <message>
         <source>You are starting with governance validation disabled.</source>
@@ -4746,6 +4869,10 @@ Nota: Het bericht zal niet verzonden worden met de betaling over het Cosanta net
     <message>
         <source>Your entries added successfully.</source>
         <translation>Uw gegevens zijn succesvol toegevoegd.</translation>
+    </message>
+    <message>
+        <source>Zapping all transactions from wallet...</source>
+        <translation>Bezig met het zappen van alle transacties van de portemonnee...</translation>
     </message>
 </context>
 </TS>
