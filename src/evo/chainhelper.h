@@ -37,6 +37,7 @@ public:
     CChainstateHelper(const CChainstateHelper&) = delete;
 
 public:
+    const CSporkManager& sporkman;
     const std::unique_ptr<CMNPaymentsProcessor> mn_payments;
     const std::unique_ptr<CSpecialTxProcessor> special_tx;
 };

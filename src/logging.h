@@ -61,6 +61,10 @@ namespace BCLog {
         I2P         = (1 << 22),
         LOCK        = (1 << 24),
 
+        //Start Cosanta
+        STAKING  = ((uint64_t)1 << 31),
+        //End Cosanta
+
         //Start Dash
         CHAINLOCKS  = ((uint64_t)1 << 32),
         GOBJECT     = ((uint64_t)1 << 33),

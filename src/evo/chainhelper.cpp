@@ -12,7 +12,8 @@ CChainstateHelper::CChainstateHelper(CCreditPoolManager& cpoolman, CDeterministi
                                      llmq::CQuorumBlockProcessor& qblockman, const ChainstateManager& chainman, const Consensus::Params& consensus_params,
                                      const CMasternodeSync& mn_sync, const CSporkManager& sporkman, const llmq::CChainLocksHandler& clhandler,
                                      const llmq::CQuorumManager& qman)
-    : mn_payments{std::make_unique<CMNPaymentsProcessor>(dmnman, govman, chainman, consensus_params, mn_sync, sporkman)},
+    : sporkman{sporkman},
+      mn_payments{std::make_unique<CMNPaymentsProcessor>(dmnman, govman, chainman, consensus_params, mn_sync, sporkman)},
       special_tx{std::make_unique<CSpecialTxProcessor>(cpoolman, dmnman, mnhfman, qblockman, chainman, consensus_params, clhandler, qman)}
 {}
 
