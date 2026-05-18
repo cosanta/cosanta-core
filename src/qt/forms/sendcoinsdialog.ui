@@ -1161,7 +1161,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../dash.qrc"/>
+  <include location="../cosanta.qrc"/>
  </resources>
  <connections/>
  <buttongroups>
