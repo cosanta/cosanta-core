@@ -18,7 +18,7 @@
 #include <util/translation.h>
 
 const std::string UNIX_EPOCH_TIME = "UNIX epoch time";
-const std::string EXAMPLE_ADDRESS[2] = {"XunLY9Tf7Zsef8gMGL2fhWA9ZmMjt4KPw0", "XwQQkwA4FYkq2XERzMY2CiAZhJTEDAbtc0"};
+const std::string EXAMPLE_ADDRESS[2] = {"Cbbp3meofT1ESU5p4d9ucXpXw9pxKCMEyi", "CaDHX3ZgGKReX1MxczGEAzCTQgM6zvEfXX"};
 
 std::string GetAllOutputTypes()
 {
@@ -202,7 +202,7 @@ std::string ShellQuoteIfNeeded(const std::string& s)
 
 std::string HelpExampleCli(const std::string& methodname, const std::string& args)
 {
-    return "> dash-cli " + methodname + " " + args + "\n";
+    return "> cosanta-cli " + methodname + " " + args + "\n";
 }
 
 std::string HelpExampleCliNamed(const std::string& methodname, const RPCArgList& args)
@@ -222,7 +222,7 @@ std::string HelpExampleRpc(const std::string& methodname, const std::string& arg
 {
     return "> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", "
         "\"method\": \"" + methodname + "\", \"params\": [" + args + "]}' -H 'content-type: text/plain;'"
-        " http://127.0.0.1:9998/\n";
+        " http://127.0.0.1:9606/\n";
 }
 
 std::string HelpExampleRpcNamed(const std::string& methodname, const RPCArgList& args)

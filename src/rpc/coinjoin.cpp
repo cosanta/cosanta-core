@@ -470,16 +470,16 @@ void RegisterCoinJoinRPCCommands(CRPCTable &t)
 static const CRPCCommand commands[] =
 { //  category               actor (function)
   //  ---------------------  -----------------------
-    { "dash",                &getcoinjoininfo,        },
+    { "cosanta",             &getcoinjoininfo,        },
 #ifdef ENABLE_WALLET
-    { "dash",                &coinjoin,               },
-    { "dash",                &coinjoin_reset,         },
-    { "dash",                &coinjoin_start,         },
-    { "dash",                &coinjoin_stop,          },
-    { "dash",                &coinjoinsalt,           },
-    { "dash",                &coinjoinsalt_generate,  },
-    { "dash",                &coinjoinsalt_get,       },
-    { "dash",                &coinjoinsalt_set,       },
+    { "cosanta",             &coinjoin,               },
+    { "cosanta",             &coinjoin_reset,         },
+    { "cosanta",             &coinjoin_start,         },
+    { "cosanta",             &coinjoin_stop,          },
+    { "cosanta",             &coinjoinsalt,           },
+    { "cosanta",             &coinjoinsalt_generate,  },
+    { "cosanta",             &coinjoinsalt_get,       },
+    { "cosanta",             &coinjoinsalt_set,       },
 
     { "hidden",              &getpoolinfo,            },
 #endif // ENABLE_WALLET
