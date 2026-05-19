@@ -61,7 +61,7 @@ IGNORED_WARNINGS=(
     "unusedStructMember"
 )
 
-# We should attempt to update this with all dash specific code
+# We should attempt to update this with all Cosanta-specific code
 FILES=$(git ls-files -- $(cat test/util/data/non-backported.txt))
 
 

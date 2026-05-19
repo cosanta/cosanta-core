@@ -1260,7 +1260,7 @@
   <tabstop>deleteButton_s</tabstop>
  </tabstops>
  <resources>
-  <include location="../dash.qrc"/>
+  <include location="../cosanta.qrc"/>
  </resources>
  <connections/>
 </ui>
