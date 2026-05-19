@@ -98,13 +98,13 @@
         <context-group purpose="location"><context context-type="linenumber">92</context></context-group>
       </trans-unit>
       <trans-unit id="_msg19" approved="yes">
-        <source xml:space="preserve">These are your Dash addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <target xml:space="preserve">These are your Dash addresses for sending payments. Always check the amount and the receiving address before sending coins.</target>
+        <source xml:space="preserve">These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <target xml:space="preserve">These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</target>
         <context-group purpose="location"><context context-type="linenumber">99</context></context-group>
       </trans-unit>
       <trans-unit id="_msg20" approved="yes">
-        <source xml:space="preserve">These are your Dash addresses for receiving payments. Use the &apos;Create new receiving address&apos; button in the receive tab to create new addresses.</source>
-        <target xml:space="preserve">These are your Dash addresses for receiving payments. Use the &apos;Create new receiving address&apos; button in the receive tab to create new addresses.</target>
+        <source xml:space="preserve">These are your Cosanta addresses for receiving payments. Use the &apos;Create new receiving address&apos; button in the receive tab to create new addresses.</source>
+        <target xml:space="preserve">These are your Cosanta addresses for receiving payments. Use the &apos;Create new receiving address&apos; button in the receive tab to create new addresses.</target>
         <context-group purpose="location"><context context-type="linenumber">104</context></context-group>
       </trans-unit>
       <trans-unit id="_msg21" approved="yes">
@@ -289,8 +289,8 @@
         <context-group purpose="location"><context context-type="linenumber">125</context></context-group>
       </trans-unit>
       <trans-unit id="_msg53" approved="yes">
-        <source xml:space="preserve">Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
-        <target xml:space="preserve">Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</target>
+        <source xml:space="preserve">Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
+        <target xml:space="preserve">Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</target>
         <context-group purpose="location"><context context-type="linenumber">126</context></context-group>
       </trans-unit>
       <trans-unit id="_msg54" approved="yes">
@@ -550,7 +550,7 @@
         <context-group purpose="location"><context context-type="linenumber">742</context></context-group>
       </trans-unit>
     </group>
-    <group restype="x-trolltech-linguist-context" resname="dash-core">
+    <group restype="x-trolltech-linguist-context" resname="cosanta-core">
       <trans-unit id="_msg100" approved="yes">
         <source xml:space="preserve">Settings file could not be read</source>
         <target xml:space="preserve">Settings file could not be read</target>
@@ -581,8 +581,8 @@
         <context-group purpose="location"><context context-type="linenumber">356</context></context-group>
       </trans-unit>
       <trans-unit id="_msg105" approved="yes">
-        <source xml:space="preserve">Send coins to a Dash address</source>
-        <target xml:space="preserve">Send coins to a Dash address</target>
+        <source xml:space="preserve">Send coins to a Cosanta address</source>
+        <target xml:space="preserve">Send coins to a Cosanta address</target>
         <context-group purpose="location"><context context-type="linenumber">357</context></context-group>
       </trans-unit>
       <trans-unit id="_msg106" approved="yes">
@@ -591,8 +591,8 @@
         <context-group purpose="location"><context context-type="linenumber">365</context></context-group>
       </trans-unit>
       <trans-unit id="_msg107" approved="yes">
-        <source xml:space="preserve">Request payments (generates QR codes and dash: URIs)</source>
-        <target xml:space="preserve">Request payments (generates QR codes and dash: URIs)</target>
+        <source xml:space="preserve">Request payments (generates QR codes and cosanta: URIs)</source>
+        <target xml:space="preserve">Request payments (generates QR codes and cosanta: URIs)</target>
         <context-group purpose="location"><context context-type="linenumber">366</context></context-group>
       </trans-unit>
       <trans-unit id="_msg108" approved="yes">
@@ -746,8 +746,8 @@
         <context-group purpose="location"><context context-type="linenumber">384</context></context-group>
       </trans-unit>
       <trans-unit id="_msg138" approved="yes">
-        <source xml:space="preserve">Send %1 funds to a Dash address</source>
-        <target xml:space="preserve">Send %1 funds to a Dash address</target>
+        <source xml:space="preserve">Send %1 funds to a Cosanta address</source>
+        <target xml:space="preserve">Send %1 funds to a Cosanta address</target>
         <context-group purpose="location"><context context-type="linenumber">362</context></context-group>
       </trans-unit>
       <trans-unit id="_msg139" approved="yes">
@@ -791,13 +791,13 @@
         <context-group purpose="location"><context context-type="linenumber">406</context></context-group>
       </trans-unit>
       <trans-unit id="_msg147" approved="yes">
-        <source xml:space="preserve">Sign messages with your Dash addresses to prove you own them</source>
-        <target xml:space="preserve">Sign messages with your Dash addresses to prove you own them</target>
+        <source xml:space="preserve">Sign messages with your Cosanta addresses to prove you own them</source>
+        <target xml:space="preserve">Sign messages with your Cosanta addresses to prove you own them</target>
         <context-group purpose="location"><context context-type="linenumber">408</context></context-group>
       </trans-unit>
       <trans-unit id="_msg148" approved="yes">
-        <source xml:space="preserve">Verify messages to ensure they were signed with specified Dash addresses</source>
-        <target xml:space="preserve">Verify messages to ensure they were signed with specified Dash addresses</target>
+        <source xml:space="preserve">Verify messages to ensure they were signed with specified Cosanta addresses</source>
+        <target xml:space="preserve">Verify messages to ensure they were signed with specified Cosanta addresses</target>
         <context-group purpose="location"><context context-type="linenumber">410</context></context-group>
       </trans-unit>
       <trans-unit id="_msg149" approved="yes">
@@ -881,8 +881,8 @@
         <context-group purpose="location"><context context-type="linenumber">463</context></context-group>
       </trans-unit>
       <trans-unit id="_msg165" approved="yes">
-        <source xml:space="preserve">Show the %1 help message to get a list with possible Dash command-line options</source>
-        <target xml:space="preserve">Show the %1 help message to get a list with possible Dash command-line options</target>
+        <source xml:space="preserve">Show the %1 help message to get a list with possible Cosanta command-line options</source>
+        <target xml:space="preserve">Show the %1 help message to get a list with possible Cosanta command-line options</target>
         <context-group purpose="location"><context context-type="linenumber">465</context></context-group>
       </trans-unit>
       <trans-unit id="_msg166" approved="yes">
@@ -923,8 +923,8 @@
         <context-group purpose="location"><context context-type="linenumber">419</context></context-group>
       </trans-unit>
       <trans-unit id="_msg173" approved="yes">
-        <source xml:space="preserve">Open a dash: URI</source>
-        <target xml:space="preserve">Open a dash: URI</target>
+        <source xml:space="preserve">Open a cosanta: URI</source>
+        <target xml:space="preserve">Open a cosanta: URI</target>
         <context-group purpose="location"><context context-type="linenumber">446</context></context-group>
       </trans-unit>
       <trans-unit id="_msg174" approved="yes">
@@ -986,12 +986,12 @@
         <context-group purpose="location"><context context-type="linenumber">1293</context></context-group>
         <note annotates="source" from="developer">A substring of the tooltip.</note>
         <trans-unit id="_msg185[0]" approved="yes">
-          <source xml:space="preserve">%n active connection(s) to Dash network</source>
-          <target xml:space="preserve">%n active connection to Dash network</target>
+          <source xml:space="preserve">%n active connection(s) to Cosanta network</source>
+          <target xml:space="preserve">%n active connection to Cosanta network</target>
         </trans-unit>
         <trans-unit id="_msg185[1]" approved="yes">
-          <source xml:space="preserve">%n active connection(s) to Dash network</source>
-          <target xml:space="preserve">%n active connections to Dash network</target>
+          <source xml:space="preserve">%n active connection(s) to Cosanta network</source>
+          <target xml:space="preserve">%n active connections to Cosanta network</target>
         </trans-unit>
       </group>
       <trans-unit id="_msg186" approved="yes">
@@ -1723,8 +1723,8 @@
         <context-group purpose="location"><context context-type="linenumber">38</context></context-group>
       </trans-unit>
       <trans-unit id="_msg319" approved="yes">
-        <source xml:space="preserve">The entered address &quot;%1&quot; is not a valid Dash address.</source>
-        <target xml:space="preserve">The entered address &quot;%1&quot; is not a valid Dash address.</target>
+        <source xml:space="preserve">The entered address &quot;%1&quot; is not a valid Cosanta address.</source>
+        <target xml:space="preserve">The entered address &quot;%1&quot; is not a valid Cosanta address.</target>
         <context-group purpose="location"><context context-type="linenumber">114</context></context-group>
       </trans-unit>
       <trans-unit id="_msg320" approved="yes">
@@ -1816,8 +1816,8 @@
         </trans-unit>
       </group>
       <trans-unit id="_msg335" approved="yes">
-        <source xml:space="preserve">%1 will download and store a copy of the Dash block chain.</source>
-        <target xml:space="preserve">%1 will download and store a copy of the Dash block chain.</target>
+        <source xml:space="preserve">%1 will download and store a copy of the Cosanta block chain.</source>
+        <target xml:space="preserve">%1 will download and store a copy of the Cosanta block chain.</target>
         <context-group purpose="location"><context context-type="linenumber">398</context></context-group>
       </trans-unit>
       <trans-unit id="_msg336" approved="yes">
@@ -1957,8 +1957,8 @@
         <context-group purpose="location"><context context-type="linenumber">111</context></context-group>
       </trans-unit>
       <trans-unit id="_msg360" approved="yes">
-        <source xml:space="preserve">&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Dash in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 DASH, 0.01 DASH, 0.1 DASH, 1 DASH and 10 DASH -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</source>
-        <target xml:space="preserve">&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Dash in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 DASH, 0.01 DASH, 0.1 DASH, 1 DASH and 10 DASH -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</target>
+        <source xml:space="preserve">&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</source>
+        <target xml:space="preserve">&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different &quot;inputs&quot; which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type=&quot;1&quot;&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called &quot;masternodes.&quot; These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know &quot;who&quot; you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users&apos; wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it&apos;s called a &quot;round.&quot; Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these &quot;change addresses.&quot; Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style=&quot;%2&quot; href=&quot;%3&quot;&gt;%1 documentation&lt;/a&gt;.</target>
         <context-group purpose="location"><context context-type="linenumber">115</context></context-group>
       </trans-unit>
     </group>
@@ -2207,13 +2207,13 @@
         <context-group purpose="location"><context context-type="linenumber">14</context></context-group>
       </trans-unit>
       <trans-unit id="_msg406" approved="yes">
-        <source xml:space="preserve">Recent transactions may not yet be visible, and therefore your wallet&apos;s balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Dash network, as detailed below.</source>
-        <target xml:space="preserve">Recent transactions may not yet be visible, and therefore your wallet&apos;s balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Dash network, as detailed below.</target>
+        <source xml:space="preserve">Recent transactions may not yet be visible, and therefore your wallet&apos;s balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</source>
+        <target xml:space="preserve">Recent transactions may not yet be visible, and therefore your wallet&apos;s balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</target>
         <context-group purpose="location"><context context-type="linenumber">114</context></context-group>
       </trans-unit>
       <trans-unit id="_msg407" approved="yes">
-        <source xml:space="preserve">Attempting to spend Dash that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
-        <target xml:space="preserve">Attempting to spend Dash that are affected by not-yet-displayed transactions will not be accepted by the network.</target>
+        <source xml:space="preserve">Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
+        <target xml:space="preserve">Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</target>
         <context-group purpose="location"><context context-type="linenumber">127</context></context-group>
       </trans-unit>
       <trans-unit id="_msg408" approved="yes">
@@ -2535,8 +2535,8 @@
         <context-group purpose="location"><context context-type="linenumber">595</context></context-group>
       </trans-unit>
       <trans-unit id="_msg467" approved="yes">
-        <source xml:space="preserve">Automatically open the Dash Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <target xml:space="preserve">Automatically open the Dash Core client port on the router. This only works when your router supports UPnP and it is enabled.</target>
+        <source xml:space="preserve">Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <target xml:space="preserve">Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</target>
         <context-group purpose="location"><context context-type="linenumber">641</context></context-group>
       </trans-unit>
       <trans-unit id="_msg468" approved="yes">
@@ -2555,8 +2555,8 @@
         <context-group purpose="location"><context context-type="linenumber">664</context></context-group>
       </trans-unit>
       <trans-unit id="_msg471" approved="yes">
-        <source xml:space="preserve">Connect to the Dash network through a SOCKS5 proxy.</source>
-        <target xml:space="preserve">Connect to the Dash network through a SOCKS5 proxy.</target>
+        <source xml:space="preserve">Connect to the Cosanta network through a SOCKS5 proxy.</source>
+        <target xml:space="preserve">Connect to the Cosanta network through a SOCKS5 proxy.</target>
         <context-group purpose="location"><context context-type="linenumber">671</context></context-group>
       </trans-unit>
       <trans-unit id="_msg472" approved="yes">
@@ -2573,9 +2573,9 @@
       </trans-unit>
       <trans-unit id="_msg474" approved="yes">
         <source xml:space="preserve">Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/dash/dash/</source>
+https://explore.transifex.com/cosanta/cosanta/</source>
         <target xml:space="preserve">Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/dash/dash/</target>
+https://explore.transifex.com/cosanta/cosanta/</target>
         <context-group purpose="location"><context context-type="linenumber">972</context></context-group>
       </trans-unit>
       <trans-unit id="_msg475" approved="yes">
@@ -2645,8 +2645,8 @@ https://explore.transifex.com/dash/dash/</target>
         <context-group purpose="location"><context context-type="linenumber">644</context></context-group>
       </trans-unit>
       <trans-unit id="_msg488" approved="yes">
-        <source xml:space="preserve">Automatically open the Dash Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
-        <target xml:space="preserve">Automatically open the Dash Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</target>
+        <source xml:space="preserve">Automatically open the Cosanta Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
+        <target xml:space="preserve">Automatically open the Cosanta Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</target>
         <context-group purpose="location"><context context-type="linenumber">651</context></context-group>
       </trans-unit>
       <trans-unit id="_msg489" approved="yes">
@@ -2714,8 +2714,8 @@ https://explore.transifex.com/dash/dash/</target>
         <context-group purpose="location"><context context-type="linenumber">77</context></context-group>
       </trans-unit>
       <trans-unit id="_msg501" approved="yes">
-        <source xml:space="preserve">Connect to the Dash network through a separate SOCKS5 proxy for Tor onion services.</source>
-        <target xml:space="preserve">Connect to the Dash network through a separate SOCKS5 proxy for Tor onion services.</target>
+        <source xml:space="preserve">Connect to the Cosanta network through a separate SOCKS5 proxy for Tor onion services.</source>
+        <target xml:space="preserve">Connect to the Cosanta network through a separate SOCKS5 proxy for Tor onion services.</target>
         <context-group purpose="location"><context context-type="linenumber">828</context></context-group>
       </trans-unit>
       <trans-unit id="_msg502" approved="yes">
@@ -2818,8 +2818,8 @@ https://explore.transifex.com/dash/dash/</target>
         <context-group purpose="location"><context context-type="linenumber">20</context></context-group>
       </trans-unit>
       <trans-unit id="_msg520" approved="yes">
-        <source xml:space="preserve">The displayed information may be out of date. Your wallet automatically synchronizes with the Dash network after a connection is established, but this process has not completed yet.</source>
-        <target xml:space="preserve">The displayed information may be out of date. Your wallet automatically synchronizes with the Dash network after a connection is established, but this process has not completed yet.</target>
+        <source xml:space="preserve">The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</source>
+        <target xml:space="preserve">The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</target>
         <context-group purpose="location"><context context-type="linenumber">80</context></context-group>
         <context-group purpose="location"><context context-type="linenumber">378</context></context-group>
         <context-group purpose="location"><context context-type="linenumber">615</context></context-group>
@@ -2920,8 +2920,8 @@ https://explore.transifex.com/dash/dash/</target>
         <context-group purpose="location"><context context-type="linenumber">465</context></context-group>
       </trans-unit>
       <trans-unit id="_msg540" approved="yes">
-        <source xml:space="preserve">0 DASH / 0 Rounds</source>
-        <target xml:space="preserve">0 DASH / 0 Rounds</target>
+        <source xml:space="preserve">0 COSA / 0 Rounds</source>
+        <target xml:space="preserve">0 COSA / 0 Rounds</target>
         <context-group purpose="location"><context context-type="linenumber">472</context></context-group>
       </trans-unit>
       <trans-unit id="_msg541" approved="yes">
@@ -3305,8 +3305,8 @@ https://explore.transifex.com/dash/dash/</target>
         <context-group purpose="location"><context context-type="linenumber">153</context></context-group>
       </trans-unit>
       <trans-unit id="_msg609" approved="yes">
-        <source xml:space="preserve">Cannot start dash: click-to-pay handler</source>
-        <target xml:space="preserve">Cannot start dash: click-to-pay handler</target>
+        <source xml:space="preserve">Cannot start cosanta: click-to-pay handler</source>
+        <target xml:space="preserve">Cannot start cosanta: click-to-pay handler</target>
         <context-group purpose="location"><context context-type="linenumber">154</context></context-group>
       </trans-unit>
       <trans-unit id="_msg610" approved="yes">
@@ -3318,8 +3318,8 @@ https://explore.transifex.com/dash/dash/</target>
         <context-group purpose="location"><context context-type="linenumber">233</context></context-group>
       </trans-unit>
       <trans-unit id="_msg611" approved="yes">
-        <source xml:space="preserve">&apos;dash://&apos; is not a valid URI. Use &apos;dash:&apos; instead.</source>
-        <target xml:space="preserve">&apos;dash://&apos; is not a valid URI. Use &apos;dash:&apos; instead.</target>
+        <source xml:space="preserve">&apos;cosanta://&apos; is not a valid URI. Use &apos;cosanta:&apos; instead.</source>
+        <target xml:space="preserve">&apos;cosanta://&apos; is not a valid URI. Use &apos;cosanta:&apos; instead.</target>
         <context-group purpose="location"><context context-type="linenumber">204</context></context-group>
       </trans-unit>
       <trans-unit id="_msg612" approved="yes">
@@ -3331,8 +3331,8 @@ Due to discontinued support, you should request the merchant to provide you with
         <context-group purpose="location"><context context-type="linenumber">244</context></context-group>
       </trans-unit>
       <trans-unit id="_msg613" approved="yes">
-        <source xml:space="preserve">URI cannot be parsed! This can be caused by an invalid Dash address or malformed URI parameters.</source>
-        <target xml:space="preserve">URI cannot be parsed! This can be caused by an invalid Dash address or malformed URI parameters.</target>
+        <source xml:space="preserve">URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
+        <target xml:space="preserve">URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</target>
         <context-group purpose="location"><context context-type="linenumber">234</context></context-group>
       </trans-unit>
       <trans-unit id="_msg614" approved="yes">
@@ -3434,8 +3434,8 @@ Due to discontinued support, you should request the merchant to provide you with
   <file original="../guiutil.cpp" datatype="cpp" source-language="en" target-language="en"><body>
     <group restype="x-trolltech-linguist-context" resname="QObject">
       <trans-unit id="_msg628" approved="yes">
-        <source xml:space="preserve">Enter a Dash address (e.g. %1)</source>
-        <target xml:space="preserve">Enter a Dash address (e.g. %1)</target>
+        <source xml:space="preserve">Enter a Cosanta address (e.g. %1)</source>
+        <target xml:space="preserve">Enter a Cosanta address (e.g. %1)</target>
         <context-group purpose="location"><context context-type="linenumber">298</context></context-group>
       </trans-unit>
       <trans-unit id="_msg629" approved="yes">
@@ -4500,8 +4500,8 @@ For more information on using this console, type %6.
   <file original="../forms/receivecoinsdialog.ui" datatype="x-trolltech-designer-ui" source-language="en" target-language="en"><body>
     <group restype="x-trolltech-linguist-context" resname="ReceiveCoinsDialog">
       <trans-unit id="_msg809" approved="yes">
-        <source xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Dash network.</source>
-        <target xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Dash network.</target>
+        <source xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <target xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</target>
         <context-group purpose="location"><context context-type="linenumber">34</context></context-group>
       </trans-unit>
       <trans-unit id="_msg810" approved="yes">
@@ -4515,8 +4515,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">77</context></context-group>
       </trans-unit>
       <trans-unit id="_msg812" approved="yes">
-        <source xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Dash network.</source>
-        <target xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Dash network.</target>
+        <source xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <target xml:space="preserve">An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</target>
         <context-group purpose="location"><context context-type="linenumber">60</context></context-group>
       </trans-unit>
       <trans-unit id="_msg813" approved="yes">
@@ -4817,8 +4817,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">658</context></context-group>
       </trans-unit>
       <trans-unit id="_msg868" approved="yes">
-        <source xml:space="preserve">When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <target xml:space="preserve">When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</target>
+        <source xml:space="preserve">When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for cosanta transactions than the network can process.</source>
+        <target xml:space="preserve">When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for cosanta transactions than the network can process.</target>
         <context-group purpose="location"><context context-type="linenumber">822</context></context-group>
       </trans-unit>
       <trans-unit id="_msg869" approved="yes">
@@ -4837,8 +4837,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">968</context></context-group>
       </trans-unit>
       <trans-unit id="_msg872" approved="yes">
-        <source xml:space="preserve">If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 duffs in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <target xml:space="preserve">If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 duffs in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</target>
+        <source xml:space="preserve">If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 unit in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <target xml:space="preserve">If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 unit in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</target>
         <context-group purpose="location"><context context-type="linenumber">789</context></context-group>
       </trans-unit>
       <trans-unit id="_msg873" approved="yes">
@@ -5177,8 +5177,8 @@ For more information on using this console, type %6.
         </trans-unit>
       </group>
       <trans-unit id="_msg936" approved="yes">
-        <source xml:space="preserve">Warning: Invalid Dash address</source>
-        <target xml:space="preserve">Warning: Invalid Dash address</target>
+        <source xml:space="preserve">Warning: Invalid Cosanta address</source>
+        <target xml:space="preserve">Warning: Invalid Cosanta address</target>
         <context-group purpose="location"><context context-type="linenumber">977</context></context-group>
       </trans-unit>
       <trans-unit id="_msg937" approved="yes">
@@ -5211,8 +5211,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">39</context></context-group>
       </trans-unit>
       <trans-unit id="_msg942" approved="yes">
-        <source xml:space="preserve">The Dash address to send the payment to</source>
-        <target xml:space="preserve">The Dash address to send the payment to</target>
+        <source xml:space="preserve">The Cosanta address to send the payment to</source>
+        <target xml:space="preserve">The Cosanta address to send the payment to</target>
         <context-group purpose="location"><context context-type="linenumber">57</context></context-group>
       </trans-unit>
       <trans-unit id="_msg943" approved="yes">
@@ -5266,8 +5266,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">158</context></context-group>
       </trans-unit>
       <trans-unit id="_msg952" approved="yes">
-        <source xml:space="preserve">The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Dash than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <target xml:space="preserve">The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Dash than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</target>
+        <source xml:space="preserve">The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Cosanta than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <target xml:space="preserve">The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Cosanta than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</target>
         <context-group purpose="location"><context context-type="linenumber">165</context></context-group>
       </trans-unit>
       <trans-unit id="_msg953" approved="yes">
@@ -5286,8 +5286,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">184</context></context-group>
       </trans-unit>
       <trans-unit id="_msg956" approved="yes">
-        <source xml:space="preserve">A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Dash network.</source>
-        <target xml:space="preserve">A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Dash network.</target>
+        <source xml:space="preserve">A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <target xml:space="preserve">A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</target>
         <context-group purpose="location"><context context-type="linenumber">194</context></context-group>
       </trans-unit>
       <trans-unit id="_msg957" approved="yes">
@@ -5327,13 +5327,13 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">31</context></context-group>
       </trans-unit>
       <trans-unit id="_msg963" approved="yes">
-        <source xml:space="preserve">You can sign messages/agreements with your addresses to prove you can receive Dash sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <target xml:space="preserve">You can sign messages/agreements with your addresses to prove you can receive Dash sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</target>
+        <source xml:space="preserve">You can sign messages/agreements with your addresses to prove you can receive Cosanta sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <target xml:space="preserve">You can sign messages/agreements with your addresses to prove you can receive Cosanta sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</target>
         <context-group purpose="location"><context context-type="linenumber">66</context></context-group>
       </trans-unit>
       <trans-unit id="_msg964" approved="yes">
-        <source xml:space="preserve">The Dash address to sign the message with</source>
-        <target xml:space="preserve">The Dash address to sign the message with</target>
+        <source xml:space="preserve">The Cosanta address to sign the message with</source>
+        <target xml:space="preserve">The Cosanta address to sign the message with</target>
         <context-group purpose="location"><context context-type="linenumber">84</context></context-group>
       </trans-unit>
       <trans-unit id="_msg965" approved="yes">
@@ -5374,8 +5374,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">154</context></context-group>
       </trans-unit>
       <trans-unit id="_msg972" approved="yes">
-        <source xml:space="preserve">Sign the message to prove you own this Dash address</source>
-        <target xml:space="preserve">Sign the message to prove you own this Dash address</target>
+        <source xml:space="preserve">Sign the message to prove you own this Cosanta address</source>
+        <target xml:space="preserve">Sign the message to prove you own this Cosanta address</target>
         <context-group purpose="location"><context context-type="linenumber">168</context></context-group>
       </trans-unit>
       <trans-unit id="_msg973" approved="yes">
@@ -5405,8 +5405,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">236</context></context-group>
       </trans-unit>
       <trans-unit id="_msg978" approved="yes">
-        <source xml:space="preserve">The Dash address the message was signed with</source>
-        <target xml:space="preserve">The Dash address the message was signed with</target>
+        <source xml:space="preserve">The Cosanta address the message was signed with</source>
+        <target xml:space="preserve">The Cosanta address the message was signed with</target>
         <context-group purpose="location"><context context-type="linenumber">257</context></context-group>
       </trans-unit>
       <trans-unit id="_msg979" approved="yes">
@@ -5420,8 +5420,8 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">289</context></context-group>
       </trans-unit>
       <trans-unit id="_msg981" approved="yes">
-        <source xml:space="preserve">Verify the message to ensure it was signed with the specified Dash address</source>
-        <target xml:space="preserve">Verify the message to ensure it was signed with the specified Dash address</target>
+        <source xml:space="preserve">Verify the message to ensure it was signed with the specified Cosanta address</source>
+        <target xml:space="preserve">Verify the message to ensure it was signed with the specified Cosanta address</target>
         <context-group purpose="location"><context context-type="linenumber">301</context></context-group>
       </trans-unit>
       <trans-unit id="_msg982" approved="yes">
@@ -6378,8 +6378,8 @@ Go to File &gt; Open Wallet to load a wallet.
       </trans-unit>
     </group>
   </body></file>
-  <file original="../dashstrings.cpp" datatype="cpp" source-language="en" target-language="en"><body>
-    <group restype="x-trolltech-linguist-context" resname="dash-core">
+  <file original="../cosantastrings.cpp" datatype="cpp" source-language="en" target-language="en"><body>
+    <group restype="x-trolltech-linguist-context" resname="cosanta-core">
       <trans-unit id="_msg1154" approved="yes">
         <source xml:space="preserve">Fee estimation failed. Fallbackfee is disabled. Wait a few blocks or enable -fallbackfee.</source>
         <target xml:space="preserve">Fee estimation failed. Fallbackfee is disabled. Wait a few blocks or enable -fallbackfee.</target>
@@ -7221,8 +7221,8 @@ Go to File &gt; Open Wallet to load a wallet.
         <context-group purpose="location"><context context-type="linenumber">67</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1322" approved="yes">
-        <source xml:space="preserve">Error: Dumpfile version is not supported. This version of bitcoin-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</source>
-        <target xml:space="preserve">Error: Dumpfile version is not supported. This version of bitcoin-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</target>
+        <source xml:space="preserve">Error: Dumpfile version is not supported. This version of cosanta-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</source>
+        <target xml:space="preserve">Error: Dumpfile version is not supported. This version of cosanta-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</target>
         <context-group purpose="location"><context context-type="linenumber">69</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1323" approved="yes">
@@ -7581,12 +7581,12 @@ Go to File &gt; Open Wallet to load a wallet.
         <context-group purpose="location"><context context-type="linenumber">310</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1394" approved="yes">
-        <source xml:space="preserve">%s corrupt. Try using the wallet tool dash-wallet to salvage or restoring a backup.</source>
-        <target xml:space="preserve">%s corrupt. Try using the wallet tool dash-wallet to salvage or restoring a backup.</target>
+        <source xml:space="preserve">%s corrupt. Try using the wallet tool cosanta-wallet to salvage or restoring a backup.</source>
+        <target xml:space="preserve">%s corrupt. Try using the wallet tool cosanta-wallet to salvage or restoring a backup.</target>
         <context-group purpose="location"><context context-type="linenumber">13</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1395">
-        <source xml:space="preserve">%s request to listen on port %u. This port is considered &quot;bad&quot; and thus it is unlikely that any Dash Core peers connect to it. See doc/p2p-bad-ports.md for details and a full list.</source>
+        <source xml:space="preserve">%s request to listen on port %u. This port is considered &quot;bad&quot; and thus it is unlikely that any Cosanta Core peers connect to it. See doc/p2p-bad-ports.md for details and a full list.</source>
         <target xml:space="preserve"></target>
         <context-group purpose="location"><context context-type="linenumber">19</context></context-group>
       </trans-unit>
