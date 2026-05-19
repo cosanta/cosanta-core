@@ -281,6 +281,14 @@ bool CMNPaymentsProcessor::IsBlockPayeeValid(const CTransaction& txNew, const CB
 {
     const int nBlockHeight = pindexPrev  == nullptr ? 0 : pindexPrev->nHeight + 1;
 
+    if (nBlockHeight < m_consensus_params.nSuperblockStartBlock) {
+        // We are still using budgets, but we have no data about them anymore.
+        // These historical Cosanta blocks were accepted by v19 without exact payee
+        // verification, so keep that behavior while validating the old chain.
+        LogPrint(BCLog::GOBJECT, "CMNPaymentsProcessor::%s -- WARNING! Client synced but old budget system is disabled, accepting any payee\n", __func__);
+        return true; // not an error
+    }
+
     // Check for correct masternode payment
     if (IsTransactionValid(txNew, pindexPrev, blockSubsidy, feeReward)) {
         LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- Valid masternode payment at height %d: %s", __func__, nBlockHeight, txNew.ToString()); /* Continued */
@@ -293,16 +301,6 @@ bool CMNPaymentsProcessor::IsBlockPayeeValid(const CTransaction& txNew, const CB
         // governance data is either incomplete or non-existent
         LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- WARNING! Not enough data, skipping superblock payee checks\n", __func__);
         return true;  // not an error
-    }
-
-    if (nBlockHeight < m_consensus_params.nSuperblockStartBlock) {
-        // We are still using budgets, but we have no data about them anymore,
-        // we can only check masternode payments.
-        // NOTE: old budget system is disabled since 12.1 and we should never enter this branch
-        // anymore when sync is finished (on mainnet). We have no old budget data but these blocks
-        // have tons of confirmations and can be safely accepted without payee verification
-        LogPrint(BCLog::GOBJECT, "CMNPaymentsProcessor::%s -- WARNING! Client synced but old budget system is disabled, accepting any payee\n", __func__);
-        return true; // not an error
     }
 
     // superblocks started

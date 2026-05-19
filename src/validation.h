@@ -46,6 +46,7 @@ class CBlockTreeDB;
 class CChainParams;
 class CEvoDB;
 class CMNHFManager;
+class CSporkManager;
 class CTxMemPool;
 class TxValidationState;
 class CChainstateHelper;
@@ -107,6 +108,11 @@ enum class SynchronizationState {
     POST_INIT
 };
 
+struct StakeHasher
+{
+    size_t operator()(const COutPoint& op) const { return ReadLE64(op.hash.begin()) + op.n; }
+};
+
 extern RecursiveMutex cs_main;
 extern Mutex g_best_block_mutex;
 extern std::condition_variable g_best_block_cv;
@@ -125,6 +131,10 @@ extern int64_t nMaxTipAge;
 extern bool fLargeWorkForkFound;
 extern bool fLargeWorkInvalidChainFound;
 
+extern int64_t nReserveBalance;
+
+extern std::atomic<bool> fDIP0001ActiveAtTip;
+
 /** Block hash whose ancestors we will assume to have valid scripts without checking them. */
 extern uint256 hashAssumeValid;
 
@@ -133,6 +143,9 @@ extern arith_uint256 nMinimumChainWork;
 
 /** Documentation for argument 'checklevel'. */
 extern const std::vector<std::string> CHECKLEVEL_DOC;
+
+extern uint32_t nFirstPoSBlock;
+extern uint32_t nlastPoWBlock;
 
 /** Run instances of script checking worker threads */
 void StartScriptCheckWorkerThreads(int threads_num);
@@ -345,7 +358,7 @@ void InitScriptExecutionCache();
 /** Functions for validating blocks and updating the block tree */
 
 /** Context-independent validity checks */
-bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true);
+bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckProof = true, bool fCheckMerkleRoot = true);
 
 /** Check a block is completely valid from start to finish (only works on top of our current best block) */
 bool TestBlockValidity(BlockValidationState& state,
@@ -1015,7 +1028,7 @@ public:
      * @param[in]  chainparams The params for the chain we want to connect to
      * @param[out] ppindex If set, the pointer will be set to point to the last new block index object for the given headers
      */
-    bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& block, BlockValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex = nullptr) LOCKS_EXCLUDED(cs_main);
+    bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& block, BlockValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex = nullptr, CBlockHeader* first_invalid = nullptr) LOCKS_EXCLUDED(cs_main);
 
     /**
      * Try to add a transaction to the memory pool.
@@ -1039,6 +1052,14 @@ public:
     ~ChainstateManager();
 };
 
+/** Global variable that points to the active block tree (protected by cs_main) */
+extern std::unique_ptr<CBlockTreeDB> pblocktree;
+
+/**
+ * Determine what nVersion a new block should use.
+ */
+int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params, bool fCheckMasternodesUpgraded = false, bool isPos = false);
+
 /**
  * Return true if hash can be found in active_chain at nBlockHeight height.
  * Fills hashRet with found hash, if no nBlockHeight is specified - active_chain.Height() is used.
@@ -1052,6 +1073,14 @@ bool DumpMempool(const CTxMemPool& pool, FopenFn mockable_fopen_function = fsbri
 
 /** Load the mempool from disk. */
 bool LoadMempool(CTxMemPool& pool, CChainState& active_chainstate, FopenFn mockable_fopen_function = fsbridge::fopen);
+
+/** Check if Proof-of-Stake is required for particular height **/
+bool IsPoSEnforcedHeight(int nBlockHeight);
+bool IsPoSV2EnforcedHeight(int nFirstPoSv2Block);
+bool IsPowActiveHeight(int nBlockHeight, const CSporkManager* sporkman = nullptr);
+
+bool CheckProof(BlockValidationState& state, const CBlockIndex& pindex, const Consensus::Params& params, const BlockManager* blockman = nullptr, const CChain* active_chain = nullptr);
+bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Consensus::Params& params, const BlockManager* blockman = nullptr, const CChain* active_chain = nullptr);
 
 /**
  * Return the expected assumeutxo value for a given height, if one exists.

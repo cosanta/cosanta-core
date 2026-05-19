@@ -172,7 +172,7 @@ static UniValue generateBlocks(ChainstateManager& chainman, const NodeContext& n
         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(chainman.ActiveChainstate(), node, mempool, Params()).CreateNewBlock(coinbase_script));
         if (!pblocktemplate.get())
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Couldn't create new block");
-        CBlock *pblock = &pblocktemplate->block;
+        CBlock *pblock = pblocktemplate->block.get();
 
         uint256 block_hash;
         if (!GenerateBlock(chainman, *pblock, nMaxTries, nExtraNonce, block_hash)) {
@@ -265,7 +265,7 @@ static RPCHelpMan generatetoaddress()
         "\nMine blocks immediately to a specified address (before the RPC call returns)\n",
         {
             {"nblocks", RPCArg::Type::NUM, RPCArg::Optional::NO, "How many blocks are generated immediately."},
-            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The address to send the newly generated coins to."},
+            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The address to send the newly generated Cosanta to."},
             {"maxtries", RPCArg::Type::NUM, RPCArg::Default{DEFAULT_MAX_TRIES}, "How many iterations to try."},
         },
         RPCResult{
@@ -380,7 +380,7 @@ static RPCHelpMan generateblock()
         if (!blocktemplate) {
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Couldn't create new block");
         }
-        block = blocktemplate->block;
+        block = *blocktemplate->block;
     }
 
     // 1 coinbase + could have a few quorum commitments
@@ -827,7 +827,7 @@ static RPCHelpMan getblocktemplate()
         pindexPrev = pindexPrevNew;
     }
     CHECK_NONFATAL(pindexPrev);
-    CBlock* pblock = &pblocktemplate->block; // pointer for convenience
+    CBlock* pblock = pblocktemplate->block.get(); // pointer for convenience
     const Consensus::Params& consensusParams = Params().GetConsensus();
 
     // Update nTime
@@ -1110,12 +1110,64 @@ static RPCHelpMan submitheader()
     };
 }
 
+static RPCHelpMan reservebalance()
+{
+    return RPCHelpMan{"reservebalance",
+        "\nShow or set the reserve amount not participating in staking.\n",
+        {
+            {"reserve", RPCArg::Type::BOOL, RPCArg::Optional::OMITTED, "Set true to enable reserve balance, false to disable it."},
+            {"amount", RPCArg::Type::AMOUNT, RPCArg::Optional::OMITTED, "Amount to reserve. Required when reserve is true."},
+        },
+        RPCResult{
+            RPCResult::Type::OBJ, "", "",
+            {
+                {RPCResult::Type::BOOL, "reserve", "Whether reserve balance is enabled"},
+                {RPCResult::Type::STR_AMOUNT, "amount", "Reserved amount"},
+            }},
+        RPCExamples{
+            HelpExampleCli("reservebalance", "true 5000") +
+            HelpExampleRpc("reservebalance", "true 5000")
+        },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+{
+    const auto& params = request.params;
+    const CAmount CENT = 1000000;
+
+    if (!params[0].isNull()) {
+        const bool fReserve = params[0].get_bool();
+        if (fReserve) {
+            if (params[1].isNull()) {
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "must provide amount to reserve balance");
+            }
+            CAmount nAmount = AmountFromValue(params[1]);
+            nAmount = (nAmount / CENT) * CENT; // round to cent
+            if (nAmount < 0) {
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "amount cannot be negative");
+            }
+            nReserveBalance = nAmount;
+        } else {
+            if (!params[1].isNull()) {
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "cannot specify amount to turn off reserve");
+            }
+            nReserveBalance = 0;
+        }
+    }
+
+    UniValue result(UniValue::VOBJ);
+    result.pushKV("reserve", nReserveBalance > 0);
+    result.pushKV("amount", ValueFromAmount(nReserveBalance));
+    return result;
+},
+    };
+}
+
 void RegisterMiningRPCCommands(CRPCTable& t)
 {
 // clang-format off
 static const CRPCCommand commands[] =
 { //  category               actor (function)
   //  ---------------------  -----------------------
+    { "mining",              &reservebalance,         },
     { "mining",              &getnetworkhashps,        },
     { "mining",              &getmininginfo,           },
     { "mining",              &prioritisetransaction,   },

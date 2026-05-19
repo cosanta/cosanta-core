@@ -6,6 +6,7 @@
 #ifndef BITCOIN_NODE_MINER_H
 #define BITCOIN_NODE_MINER_H
 
+#include <threadinterrupt.h>
 #include <primitives/block.h>
 #include <txmempool.h>
 
@@ -23,6 +24,7 @@ class BlockManager;
 class CBlockIndex;
 class CChainParams;
 class CChainstateHelper;
+class CChainState;
 class CConnman;
 class CCreditPoolManager;
 class CDeterministicMNManager;
@@ -31,6 +33,7 @@ class CMNHFManager;
 class CScript;
 struct LLMQContext;
 struct NodeContext;
+class CWallet;
 
 namespace Consensus { struct Params; };
 namespace llmq {
@@ -45,7 +48,7 @@ static const bool DEFAULT_PRINTPRIORITY = false;
 
 struct CBlockTemplate
 {
-    CBlock block;
+    std::shared_ptr<CBlock> block{new CBlock()};
     std::vector<CAmount> vTxFees;
     std::vector<int64_t> vTxSigOps;
     uint32_t nPrevBits; // nBits of previous block (for subsidy calculation)
@@ -193,7 +196,7 @@ public:
                             const Options& options);
 
     /** Construct a new block template with coinbase to scriptPubKeyIn */
-    std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn);
+    std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, std::shared_ptr<CWallet> pwallet = nullptr, int64_t block_time=0, bool isPos = false);
 
     inline static std::optional<int64_t> m_last_block_num_txs{};
     inline static std::optional<int64_t> m_last_block_size{};
@@ -236,5 +239,9 @@ private:
 /** Modify the extranonce in a block */
 void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
 int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev);
+void PoSMiner(std::shared_ptr<CWallet> pwallet, NodeContext& node, CThreadInterrupt& interrupt);
+bool IsStakingActive();
+std::string getMiningStatus();
+void SetThreadPriority(int nPriority);
 
 #endif // BITCOIN_NODE_MINER_H

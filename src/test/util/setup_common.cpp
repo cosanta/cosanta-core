@@ -461,7 +461,7 @@ CBlock TestChainSetup::CreateBlock(
 {
     const CChainParams& chainparams = Params();
     CTxMemPool empty_pool;
-    CBlock block = BlockAssembler(chainstate, m_node, empty_pool, chainparams).CreateNewBlock(scriptPubKey)->block;
+    CBlock block = *BlockAssembler(m_node.chainman->ActiveChainstate(), m_node, empty_pool, chainparams).CreateNewBlock(scriptPubKey)->block;
 
     std::vector<CTransactionRef> llmqCommitments;
     for (const auto& tx : block.vtx) {
@@ -603,4 +603,3 @@ CBlock getBlock13b8a()
     stream >> block;
     return block;
 }
-
