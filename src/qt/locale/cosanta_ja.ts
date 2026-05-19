@@ -66,12 +66,12 @@
         <translation>選択 (&amp;H)</translation>
     </message>
     <message>
-        <source>These are your Dash addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>これらは送金するためのあなたの Dash アドレスです。送金する前に常に金額と受取アドレスを確認してください。</translation>
+        <source>These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>これらは送金するためのあなたの Cosanta アドレスです。送金する前に常に金額と受取アドレスを確認してください。</translation>
     </message>
     <message>
-        <source>These are your Dash addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
-        <translation>これらは、支払いを受け取るためのお客様のDashアドレスです。受取タブにある「新しい受取アドレスを作成」のボタンを使用し、新しいアドレスを作成します。</translation>
+        <source>These are your Cosanta addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
+        <translation>これらは、支払いを受け取るためのお客様のCosantaアドレスです。受取タブにある「新しい受取アドレスを作成」のボタンを使用し、新しいアドレスを作成します。</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -225,8 +225,8 @@
         <translation>ウォレットの暗号化を確認</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
-        <translation>警告: ウォレットを暗号化しパスフレーズを紛失した場合、あなたは &lt;b&gt;すべてのDash&lt;/b&gt;を失います!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
+        <translation>警告: ウォレットを暗号化しパスフレーズを紛失した場合、あなたは &lt;b&gt;すべてのCosanta&lt;/b&gt;を失います!</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -365,16 +365,16 @@
         <translation>送金する (&amp;S)</translation>
     </message>
     <message>
-        <source>Send coins to a Dash address</source>
-        <translation>Dash アドレスに送金</translation>
+        <source>Send coins to a Cosanta address</source>
+        <translation>Cosanta アドレスに送金</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
         <translation>入金する (&amp;R)</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and dash: URIs)</source>
-        <translation>送金を要求 (QRコードとdash:URIを生成)</translation>
+        <source>Request payments (generates QR codes and cosanta: URIs)</source>
+        <translation>送金を要求 (QRコードとcosanta:URIを生成)</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
@@ -489,8 +489,8 @@
         <translation>%1 について (&amp;A)</translation>
     </message>
     <message>
-        <source>Send %1 funds to a Dash address</source>
-        <translation>Dashアドレスに%1の資金を送金します</translation>
+        <source>Send %1 funds to a Cosanta address</source>
+        <translation>Cosantaアドレスに%1の資金を送金します</translation>
     </message>
     <message>
         <source>Modify configuration options for %1</source>
@@ -525,12 +525,12 @@
         <translation>ウォレットをロックする (&amp;L)</translation>
     </message>
     <message>
-        <source>Sign messages with your Dash addresses to prove you own them</source>
-        <translation>あなたがDash アドレスを所有していることを証明するために、あなたのDashアドレスでメッセージに署名してください。</translation>
+        <source>Sign messages with your Cosanta addresses to prove you own them</source>
+        <translation>あなたがCosanta アドレスを所有していることを証明するために、あなたのCosantaアドレスでメッセージに署名してください。</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Dash addresses</source>
-        <translation>指定されたDashアドレスで署名されたことを確認するためにメッセージを検証してください。</translation>
+        <source>Verify messages to ensure they were signed with specified Cosanta addresses</source>
+        <translation>指定されたCosantaアドレスで署名されたことを確認するためにメッセージを検証してください。</translation>
     </message>
     <message>
         <source>&amp;Information</source>
@@ -593,8 +593,8 @@
         <translation>コマンドラインオプション (&amp;C)</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Dash command-line options</source>
-        <translation>有効なDashのコマンドラインオプションのリストを見るために %1 のヘルプメッセージを表示</translation>
+        <source>Show the %1 help message to get a list with possible Cosanta command-line options</source>
+        <translation>有効なCosantaのコマンドラインオプションのリストを見るために %1 のヘルプメッセージを表示</translation>
     </message>
     <message>
         <source>default wallet</source>
@@ -654,7 +654,7 @@
         <translation>ウォレット設定ファイルを開く(&amp;W)</translation>
     </message>
     <message>
-        <source>Open a dash: URI</source>
+        <source>Open a cosanta: URI</source>
         <translation>dashを開く: URI</translation>
     </message>
     <message>
@@ -744,7 +744,7 @@
         <translation>表示(&amp;H)</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Dash network</source>
+        <source>%n active connection(s) to Cosanta network</source>
         <extracomment>A substring of the tooltip.</extracomment>
         <translation><numerusform>%n アクティブコネクション</numerusform></translation>
     </message>
@@ -1297,8 +1297,8 @@
         <translation>送金アドレスを編集</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Dash address.</source>
-        <translation>入力されたアドレス "%1" は有効なDashアドレスではありません。</translation>
+        <source>The entered address "%1" is not a valid Cosanta address.</source>
+        <translation>入力されたアドレス "%1" は有効なCosantaアドレスではありません。</translation>
     </message>
     <message>
         <source>Address "%1" already exists as a receiving address with label "%2" and so cannot be added as a sending address.</source>
@@ -1546,8 +1546,8 @@ Do you wish to continue?</source>
         <translation>%1の情報</translation>
     </message>
     <message>
-        <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Dash in your wallet is comprised of different "inputs" which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 DASH, 0.01 DASH, 0.1 DASH, 1 DASH and 10 DASH -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called "masternodes." These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know "who" you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users' wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it's called a "round." Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these "change addresses." Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style="%2" href="%3"&gt;%1 documentation&lt;/a&gt;.</source>
-        <translation>&lt;h3&gt;%1の基本内容&lt;/h3&gt; %1は、お客様の資金の出所を隠すことで、本当の意味での金融プライバシーを提供します。お客様のウォレットにあるすべてのDashは、異なる「入力」で構成されており、別個の独立したコインと考えることができます。&lt;br&gt;%1は、革新的なプロセスによって、お客様のインプットと他の2人以上のインプットをミキシングしますが、お客様のウォレットからコインが出ることはありません。お客様はいつでも自分のお金を管理できます。&lt;hr&gt; &lt;b&gt;%1のプロセスは次のように機能します。&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1は最初に取引の入力を標準的な金額に分解します。0.001 DASH、0.01 DASH、0.1 DASH、1 DASH、10 DASHなど、あなたが毎日使っている紙幣と同じような金額になります。&lt;/li&gt; &lt;li&gt;お客様のウォレットは、ネットワーク上にある「マスターノード」と呼ばれる特別に設定されたソフトウェアノードにリクエストを送ります。このとき、これらのマスタノードには、お客様が特定の金額を混合することに関心があると伝えられます。個人を特定できるような情報はマスタノードに送られないため、お客様が「誰」であるか知られることはありません。&lt;/li&gt; &lt;li&gt;他の2人以上の人物が同じようなメッセージを送り、同じ金額のミキシングを希望すると、ミキシングセッションが開始されます。マスターノードは入力をミキシングし、3人のユーザー全員のウォレットに、その時点で変換された入力を3人全員に支払うように指示します。お客様のウォレットは、その金額をウォレット自体に直接支払いますが、別のアドレス（変更アドレスと呼ぶ）になります。&lt;/li&gt; &lt;li&gt;お客様の資金を完全に隠すために、お客様のウォレットではこのプロセスを各金額で何度も繰り返される必要があります。このプロセスが完了する度に、「ラウンド」と呼ばれます。%1の各ラウンドは、お客様の資金が発生した場所を判断するのを指数関数的に難しくします。&lt;/li&gt; &lt;li&gt;このミキシングプロセスはバックグラウンドで行われ、お客様側の介入は一切ありません。お客様が取引をしたいときは、お客様の資金はすでにミキシングされています。さらに待つ必要はありません。&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;重要事項：&lt;/b&gt; お客様のウォレットには、この「変更アドレス」が1000個しか入っていません。ミキシング作業が発生する度に、お客様のアドレスのうち最大9個が使用されます。したがって、この1000個のアドレスは、約100回までのミキシング作業に使えるということです。そのうち900個を使い切ると、お客様はご自身のウォレットにさらにアドレスを作成する必要があります。ただし、これは自動バックアップを有効にしている場合に限ります。&lt;br&gt;そのため、バックアップを無効にしているユーザーは、%1も無効になります。&lt;hr&gt;詳細は、&lt;a style="%2" href="%3"&gt;%1のドキュメント&lt;/a&gt;を参照してください。</translation>
+        <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different "inputs" which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called "masternodes." These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know "who" you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users' wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it's called a "round." Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these "change addresses." Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style="%2" href="%3"&gt;%1 documentation&lt;/a&gt;.</source>
+        <translation>&lt;h3&gt;%1の基本内容&lt;/h3&gt; %1は、お客様の資金の出所を隠すことで、本当の意味での金融プライバシーを提供します。お客様のウォレットにあるすべてのCosantaは、異なる「入力」で構成されており、別個の独立したコインと考えることができます。&lt;br&gt;%1は、革新的なプロセスによって、お客様のインプットと他の2人以上のインプットをミキシングしますが、お客様のウォレットからコインが出ることはありません。お客様はいつでも自分のお金を管理できます。&lt;hr&gt; &lt;b&gt;%1のプロセスは次のように機能します。&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1は最初に取引の入力を標準的な金額に分解します。0.001 COSA、0.01 COSA、0.1 COSA、1 COSA、10 COSAなど、あなたが毎日使っている紙幣と同じような金額になります。&lt;/li&gt; &lt;li&gt;お客様のウォレットは、ネットワーク上にある「マスターノード」と呼ばれる特別に設定されたソフトウェアノードにリクエストを送ります。このとき、これらのマスタノードには、お客様が特定の金額を混合することに関心があると伝えられます。個人を特定できるような情報はマスタノードに送られないため、お客様が「誰」であるか知られることはありません。&lt;/li&gt; &lt;li&gt;他の2人以上の人物が同じようなメッセージを送り、同じ金額のミキシングを希望すると、ミキシングセッションが開始されます。マスターノードは入力をミキシングし、3人のユーザー全員のウォレットに、その時点で変換された入力を3人全員に支払うように指示します。お客様のウォレットは、その金額をウォレット自体に直接支払いますが、別のアドレス（変更アドレスと呼ぶ）になります。&lt;/li&gt; &lt;li&gt;お客様の資金を完全に隠すために、お客様のウォレットではこのプロセスを各金額で何度も繰り返される必要があります。このプロセスが完了する度に、「ラウンド」と呼ばれます。%1の各ラウンドは、お客様の資金が発生した場所を判断するのを指数関数的に難しくします。&lt;/li&gt; &lt;li&gt;このミキシングプロセスはバックグラウンドで行われ、お客様側の介入は一切ありません。お客様が取引をしたいときは、お客様の資金はすでにミキシングされています。さらに待つ必要はありません。&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;重要事項：&lt;/b&gt; お客様のウォレットには、この「変更アドレス」が1000個しか入っていません。ミキシング作業が発生する度に、お客様のアドレスのうち最大9個が使用されます。したがって、この1000個のアドレスは、約100回までのミキシング作業に使えるということです。そのうち900個を使い切ると、お客様はご自身のウォレットにさらにアドレスを作成する必要があります。ただし、これは自動バックアップを有効にしている場合に限ります。&lt;br&gt;そのため、バックアップを無効にしているユーザーは、%1も無効になります。&lt;hr&gt;詳細は、&lt;a style="%2" href="%3"&gt;%1のドキュメント&lt;/a&gt;を参照してください。</translation>
     </message>
 </context>
 <context>
@@ -1623,8 +1623,8 @@ Do you wish to continue?</source>
         <translation><numerusform>(%n日前のバックアップを復元するのに十分)</numerusform></translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Dash block chain.</source>
-        <translation>%1はDashのブロックチェーンの複製をダウンロードし保存します。</translation>
+        <source>%1 will download and store a copy of the Cosanta block chain.</source>
+        <translation>%1はCosantaのブロックチェーンの複製をダウンロードし保存します。</translation>
     </message>
     <message>
         <source>The wallet will also be stored in this directory.</source>
@@ -1900,12 +1900,12 @@ Do you wish to continue?</source>
         <translation>フォーム</translation>
     </message>
     <message>
-        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Dash network, as detailed below.</source>
-        <translation>確認できない最新のトランザクションがあるかもしれません。これによりウォレットの残高は不正確なものである可能性があります。この情報はウォレットが一度Dashのネットワークへの同期が完了すると正確なものとなります。詳細は下記を参照してください。</translation>
+        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</source>
+        <translation>確認できない最新のトランザクションがあるかもしれません。これによりウォレットの残高は不正確なものである可能性があります。この情報はウォレットが一度Cosantaのネットワークへの同期が完了すると正確なものとなります。詳細は下記を参照してください。</translation>
     </message>
     <message>
-        <source>Attempting to spend Dash that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
-        <translation>表示されてないトランザクションに影響を受けたDashを使用しようとするとネットワークに承認されません。</translation>
+        <source>Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
+        <translation>表示されてないトランザクションに影響を受けたCosantaを使用しようとするとネットワークに承認されません。</translation>
     </message>
     <message>
         <source>Number of blocks left</source>
@@ -2232,8 +2232,8 @@ Do you wish to continue?</source>
         <translation>最大</translation>
     </message>
     <message>
-        <source>Automatically open the Dash Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>自動的にルーターのDash Core クライアントポートを開放します。これはルーターがUPnP機能をサポートしておりUPnP機能が有効な場合にのみ機能します。</translation>
+        <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>自動的にルーターのCosanta Core クライアントポートを開放します。これはルーターがUPnP機能をサポートしておりUPnP機能が有効な場合にのみ機能します。</translation>
     </message>
     <message>
         <source>Map port using NA&amp;T-PMP</source>
@@ -2248,8 +2248,8 @@ Do you wish to continue?</source>
         <translation>受信接続を許可する (&amp;I)</translation>
     </message>
     <message>
-        <source>Connect to the Dash network through a SOCKS5 proxy.</source>
-        <translation>SOCKS5プロキシ経由でDashネットワークに接続します。</translation>
+        <source>Connect to the Cosanta network through a SOCKS5 proxy.</source>
+        <translation>SOCKS5プロキシ経由でCosantaネットワークに接続します。</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -2261,9 +2261,9 @@ Do you wish to continue?</source>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/dash/dash/</source>
+https://explore.transifex.com/cosanta/cosanta/</source>
         <translation>言語が抜けていたり、翻訳が不十分である場合、以下のリンクから翻訳の作成にご協力ください。
-https://explore.transifex.com/dash/dash/</translation>
+https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -2314,8 +2314,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>UPnPを使ってポートを割り当てる (&amp;U)</translation>
     </message>
     <message>
-        <source>Automatically open the Dash Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
-        <translation>ルーター上でDashコアのクライアントポートを自動的に開きます。これは、ルーターがNAT-PMPをサポートしており、有効になっている場合にのみ機能します。外部ポートはランダムになる可能性があります。</translation>
+        <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
+        <translation>ルーター上でCosantaコアのクライアントポートを自動的に開きます。これは、ルーターがNAT-PMPをサポートしており、有効になっている場合にのみ機能します。外部ポートはランダムになる可能性があります。</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -2366,8 +2366,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>表示 (&amp;D)</translation>
     </message>
     <message>
-        <source>Connect to the Dash network through a separate SOCKS5 proxy for Tor onion services.</source>
-        <translation>Torオニオンサービス用の個別のSOCKS5プロキシを経由して、Dashネットワークに接続します。</translation>
+        <source>Connect to the Cosanta network through a separate SOCKS5 proxy for Tor onion services.</source>
+        <translation>Torオニオンサービス用の個別のSOCKS5プロキシを経由して、Cosantaネットワークに接続します。</translation>
     </message>
     <message>
         <source>Use separate SOCKS&amp;5 proxy to reach peers via Tor onion services:</source>
@@ -2469,8 +2469,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>フォーム</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Dash network after a connection is established, but this process has not completed yet.</source>
-        <translation>表示された情報は古いかもしれません。接続が確立されればあなたのウォレットは Dashネットワークと自動的に同期しますが、このプロセスはまだ完了していません。</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</source>
+        <translation>表示された情報は古いかもしれません。接続が確立されればあなたのウォレットは Cosantaネットワークと自動的に同期しますが、このプロセスはまだ完了していません。</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -2549,8 +2549,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>金額とラウンド</translation>
     </message>
     <message>
-        <source>0 DASH / 0 Rounds</source>
-        <translation>0 DASH / 0 ラウンド</translation>
+        <source>0 COSA / 0 Rounds</source>
+        <translation>0 COSA / 0 ラウンド</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -2832,16 +2832,16 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>支払いリクエストのエラー</translation>
     </message>
     <message>
-        <source>Cannot start dash: click-to-pay handler</source>
-        <translation>Dash を起動できません: click-to-pay ハンドラー</translation>
+        <source>Cannot start cosanta: click-to-pay handler</source>
+        <translation>Cosanta を起動できません: click-to-pay ハンドラー</translation>
     </message>
     <message>
         <source>URI handling</source>
         <translation>URI のハンドリング</translation>
     </message>
     <message>
-        <source>'dash://' is not a valid URI. Use 'dash:' instead.</source>
-        <translation>「dash://」は有効なURIではありません。代わりに「dash:」を使ってください。</translation>
+        <source>'cosanta://' is not a valid URI. Use 'cosanta:' instead.</source>
+        <translation>「cosanta://」は有効なURIではありません。代わりに「cosanta:」を使ってください。</translation>
     </message>
     <message>
         <source>Cannot process payment request as BIP70 is no longer supported.
@@ -2850,8 +2850,8 @@ Due to discontinued support, you should request the merchant to provide you with
 サポートが終了したため、BIP21対応のURIを提示するよう販売者に要請するか、BIP70のサポートを継続しているウォレットを使用してください。</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid Dash address or malformed URI parameters.</source>
-        <translation>URI を解析できません! これは無効な Dash アドレスあるいは不正な形式の URI パラメーターによって引き起こされた可能性があります。</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
+        <translation>URI を解析できません! これは無効な Cosanta アドレスあるいは不正な形式の URI パラメーターによって引き起こされた可能性があります。</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -3235,8 +3235,8 @@ You will now be redirected to monitor and broadcast your new proposal, you can r
         <translation>総額</translation>
     </message>
     <message>
-        <source>Enter a Dash address (e.g. %1)</source>
-        <translation>Dashアドレスを入力してください (例 %1)</translation>
+        <source>Enter a Cosanta address (e.g. %1)</source>
+        <translation>Cosantaアドレスを入力してください (例 %1)</translation>
     </message>
     <message>
         <source>Appearance Setup</source>
@@ -3785,8 +3785,8 @@ You will now be redirected to monitor and broadcast your new proposal, you can r
         <translation>ローカルアドレス</translation>
     </message>
     <message>
-        <source>Network addresses that your Dash node is currently using to communicate with other nodes.</source>
-        <translation>あなたの Dash ノードが他のノードとの通信に現在使用しているネットワークアドレス。</translation>
+        <source>Network addresses that your Cosanta node is currently using to communicate with other nodes.</source>
+        <translation>あなたの Cosanta ノードが他のノードとの通信に現在使用しているネットワークアドレス。</translation>
     </message>
     <message>
         <source>Number of regular Masternodes</source>
@@ -4195,8 +4195,8 @@ For more information on using this console, type %6.
 <context>
     <name>ReceiveCoinsDialog</name>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Dash network.</source>
-        <translation>支払いリクエストが開始された時に表示される、支払いリクエストに添付される任意のメッセージです。注意：このメッセージはDashネットワークを通じて支払いと共に送信されるわけではありません。</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <translation>支払いリクエストが開始された時に表示される、支払いリクエストに添付される任意のメッセージです。注意：このメッセージはCosantaネットワークを通じて支払いと共に送信されるわけではありません。</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -4207,8 +4207,8 @@ For more information on using this console, type %6.
         <translation>新しい受け取り用アドレスに紐づく任意のラベル。</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Dash network.</source>
-        <translation>支払いリクエストが開始された時に表示される、支払いリクエストに添付される任意のメッセージです。注意：このメッセージはDashネットワークを通じて支払いと共に送信されるわけではありません。</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <translation>支払いリクエストが開始された時に表示される、支払いリクエストに添付される任意のメッセージです。注意：このメッセージはCosantaネットワークを通じて支払いと共に送信されるわけではありません。</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address (used by you to identify an invoice).  It is also attached to the payment request.</source>
@@ -4500,7 +4500,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>取引量がブロックの空き容量よりも少ない場合、マイナーや リレーするノードは最低手数料を強制することがあります。この最低手数料のみを支払うことは全く問題ありませんが、ネットワークが処理できる量よりもDashの取引の需要が多くなると、確認されない取引になる可能性があることに留意してください。</translation>
+        <translation>取引量がブロックの空き容量よりも少ない場合、マイナーや リレーするノードは最低手数料を強制することがあります。この最低手数料のみを支払うことは全く問題ありませんが、ネットワークが処理できる量よりもCosantaの取引の需要が多くなると、確認されない取引になる可能性があることに留意してください。</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -4804,8 +4804,8 @@ For more information on using this console, type %6.
         <translation><numerusform>%n ブロック以内に検証が開始されると予想されます</numerusform></translation>
     </message>
     <message>
-        <source>Warning: Invalid Dash address</source>
-        <translation>警告：Dashアドレスが無効です</translation>
+        <source>Warning: Invalid Cosanta address</source>
+        <translation>警告：Cosantaアドレスが無効です</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -4831,8 +4831,8 @@ For more information on using this console, type %6.
         <translation>送金先: (&amp;T)</translation>
     </message>
     <message>
-        <source>The Dash address to send the payment to</source>
-        <translation>送金先Dashアドレス</translation>
+        <source>The Cosanta address to send the payment to</source>
+        <translation>送金先Cosantaアドレス</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -4871,8 +4871,8 @@ For more information on using this console, type %6.
         <translation>選択した単位で送金する金額</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Dash than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>手数料は総額から差し引かれます。受取人は入力した金額より少ないDashを受け取ります。複数の受取人を選択した場合、手数料は等しく分割されます。</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Cosanta than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>手数料は総額から差し引かれます。受取人は入力した金額より少ないCosantaを受け取ります。複数の受取人を選択した場合、手数料は等しく分割されます。</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -4887,8 +4887,8 @@ For more information on using this console, type %6.
         <translation>メッセージ：</translation>
     </message>
     <message>
-        <source>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Dash network.</source>
-        <translation>Dash: URIに添付されていたメッセージです。これは参照用としてトランザクションとともに保存されます。注意：このメッセージはDashネットワークを経由して送信されるわけではありません。</translation>
+        <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <translation>Cosanta: URIに添付されていたメッセージです。これは参照用としてトランザクションとともに保存されます。注意：このメッセージはCosantaネットワークを経由して送信されるわけではありません。</translation>
     </message>
 </context>
 <context>
@@ -4924,12 +4924,12 @@ For more information on using this console, type %6.
         <translation>メッセージを署名する (&amp;S)</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive Dash sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>あなたのアドレスを使用してあなたがDashを受け取ることができるようにメッセージやアグリーメントに署名できます。充分に詳細が判明していてあなたが確認しているものだけに署名してください。フィッシングによってあなたの署名を読み取られないように注意してください。</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive Cosanta sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>あなたのアドレスを使用してあなたがCosantaを受け取ることができるようにメッセージやアグリーメントに署名できます。充分に詳細が判明していてあなたが確認しているものだけに署名してください。フィッシングによってあなたの署名を読み取られないように注意してください。</translation>
     </message>
     <message>
-        <source>The Dash address to sign the message with</source>
-        <translation>メッセージを署名する際に使用するDashアドレス</translation>
+        <source>The Cosanta address to sign the message with</source>
+        <translation>メッセージを署名する際に使用するCosantaアドレス</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -4960,8 +4960,8 @@ For more information on using this console, type %6.
         <translation>現在の署名をシステムのクリップボードにコピー</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Dash address</source>
-        <translation>この Dash アドレスを所有していることを証明するためにメッセージに署名</translation>
+        <source>Sign the message to prove you own this Cosanta address</source>
+        <translation>この Cosanta アドレスを所有していることを証明するためにメッセージに署名</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -4984,8 +4984,8 @@ For more information on using this console, type %6.
         <translation>受取人のアドレスとメッセージ（改行やスペース、タブなども完全に一致するよう注意してください）および署名を以下に入力し、メッセージを検証してください。中間者攻撃により騙されるのを防ぐため、署名対象のメッセージに書かれていること以上の意味を署名から読み取ろうとしないよう注意してください。これは署名作成者がこのアドレスで受け取ることを証明するだけであり、トランザクションの送信者を証明するものではないことに注意してください！</translation>
     </message>
     <message>
-        <source>The Dash address the message was signed with</source>
-        <translation>メッセージの署名に使用されたDashアドレス</translation>
+        <source>The Cosanta address the message was signed with</source>
+        <translation>メッセージの署名に使用されたCosantaアドレス</translation>
     </message>
     <message>
         <source>The signed message to verify</source>
@@ -4996,8 +4996,8 @@ For more information on using this console, type %6.
         <translation>メッセージの署名時に付与された署名</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Dash address</source>
-        <translation>指定されたDashアドレスで署名されたことを確認するためメッセージを検証</translation>
+        <source>Verify the message to ensure it was signed with the specified Cosanta address</source>
+        <translation>指定されたCosantaアドレスで署名されたことを確認するためメッセージを検証</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -5777,7 +5777,7 @@ Go to File &gt; Open Wallet to load a wallet.
     </message>
 </context>
 <context>
-    <name>dash-core</name>
+    <name>cosanta-core</name>
     <message>
         <source>This error could occur if this wallet was not shutdown cleanly and was last loaded using a build with a newer version of Berkeley DB. If so, please use the software that last loaded this wallet</source>
         <translation>このエラーは、このウォレットが正常にシャットダウンされず、Berkeley DBの新しいバージョンを含むビルドを使用して直前にロードされた場合に発生する可能性があります。その場合は、このウォレットを直前にロードしたソフトウェアを使用してください。</translation>
@@ -6031,8 +6031,8 @@ Go to File &gt; Open Wallet to load a wallet.
         <translation>%s の読み込みエラー: 外部署名者サポートがコンパイルされていない状態で外部署名者ウォレットが読み込まれています</translation>
     </message>
     <message>
-        <source>Error: Dumpfile version is not supported. This version of dash-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</source>
-        <translation>エラー: ダンプファイルのバージョンがサポートされていません。このバージョンのdash-walletはバージョン1のダンプファイルのみサポートしています。バージョン %s のダンプファイルを取得しました</translation>
+        <source>Error: Dumpfile version is not supported. This version of cosanta-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</source>
+        <translation>エラー: ダンプファイルのバージョンがサポートされていません。このバージョンのcosanta-walletはバージョン1のダンプファイルのみサポートしています。バージョン %s のダンプファイルを取得しました</translation>
     </message>
     <message>
         <source>Failed to create backup, file already exists! This could happen if you restarted wallet in less than 60 seconds. You can continue if you are ok with this.</source>
@@ -6743,8 +6743,8 @@ Go to File &gt; Open Wallet to load a wallet.
         <translation>直近のキューがかなり最近に作成されました。</translation>
     </message>
     <message>
-        <source>%s corrupt. Try using the wallet tool dash-wallet to salvage or restoring a backup.</source>
-        <translation>%sが破損しています。ウォレットツールのdash-walletを使用してサルベージするか、バックアップを復元してみてください。</translation>
+        <source>%s corrupt. Try using the wallet tool cosanta-wallet to salvage or restoring a backup.</source>
+        <translation>%sが破損しています。ウォレットツールのcosanta-walletを使用してサルベージするか、バックアップを復元してみてください。</translation>
     </message>
     <message>
         <source>%s is set very high! Fees this large could be paid on a single transaction.</source>
