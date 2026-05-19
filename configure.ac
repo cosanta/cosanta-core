@@ -1778,6 +1778,7 @@ AC_MSG_RESULT($build_bitcoin_util)
 
 AC_MSG_CHECKING([whether to build libraries])
 AM_CONDITIONAL([BUILD_BITCOIN_LIBS], [test $build_bitcoin_libs = "yes"])
+AM_CONDITIONAL([EMBEDDED_UNIVALUE], [true])
 if test "$build_bitcoin_libs" = "yes"; then
   AC_DEFINE([HAVE_CONSENSUS_LIB], [1], [Define this symbol if the consensus lib has been built])
   AC_CONFIG_FILES([libcosantaconsensus.pc:libcosantaconsensus.pc.in])
