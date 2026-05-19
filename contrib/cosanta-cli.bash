@@ -1,10 +1,10 @@
-# bash programmable completion for dash-cli(1)
+# bash programmable completion for cosanta-cli(1)
 # Copyright (c) 2012-2019 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-# call $dash-cli for RPC
-_dash_rpc() {
+# call $cosanta-cli for RPC
+_cosanta_rpc() {
     # determine already specified args necessary for RPC
     local rpcargs=()
     for i in ${COMP_LINE}; do
@@ -14,16 +14,16 @@ _dash_rpc() {
                 ;;
         esac
     done
-    $dash_cli "${rpcargs[@]}" "$@"
+    $cosanta_cli "${rpcargs[@]}" "$@"
 }
 
-_dash_cli() {
+_cosanta_cli() {
     local cur prev words=() cword
-    local dash_cli
+    local cosanta_cli
 
-    # save and use original argument to invoke dash-cli for -help, help and RPC
-    # as dash-cli might not be in $PATH
-    dash_cli="$1"
+    # save and use original argument to invoke cosanta-cli for -help, help and RPC
+    # as cosanta-cli might not be in $PATH
+    cosanta_cli="$1"
 
     COMPREPLY=()
     _get_comp_words_by_ref -n = cur prev words cword
@@ -112,12 +112,12 @@ _dash_cli() {
 
             # only parse -help if senseful
             if [[ -z "$cur" || "$cur" =~ ^- ]]; then
-                helpopts=$($dash_cli -help 2>&1 | awk '$1 ~ /^-/ { sub(/=.*/, "="); print $1 }' )
+                helpopts=$($cosanta_cli -help 2>&1 | awk '$1 ~ /^-/ { sub(/=.*/, "="); print $1 }' )
             fi
 
             # only parse help if senseful
             if [[ -z "$cur" || "$cur" =~ ^[a-z] ]]; then
-                commands=$(_dash_rpc help 2>/dev/null | awk '$1 ~ /^[a-z]/ { print $1; }')
+                commands=$(_cosanta_rpc help 2>/dev/null | awk '$1 ~ /^[a-z]/ { print $1; }')
             fi
 
             COMPREPLY=( $( compgen -W "$helpopts $commands" -- "$cur" ) )
@@ -130,7 +130,7 @@ _dash_cli() {
             ;;
     esac
 } &&
-complete -F _dash_cli dash-cli
+complete -F _cosanta_cli cosanta-cli
 
 # Local variables:
 # mode: shell-script
