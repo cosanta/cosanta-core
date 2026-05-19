@@ -642,6 +642,7 @@ crypto_libbitcoin_crypto_base_a_SOURCES = \
   crypto/pkcs5_pbkdf2_hmac_sha512.h \
   crypto/ripemd160.cpp \
   crypto/ripemd160.h \
+  crypto/scrypt-sse2.cpp \
   crypto/sha1.cpp \
   crypto/sha1.h \
   crypto/sha256.cpp \
@@ -650,6 +651,14 @@ crypto_libbitcoin_crypto_base_a_SOURCES = \
   crypto/sha3.h \
   crypto/sha512.cpp \
   crypto/sha512.h \
+  crypto/fugue.c \
+  crypto/hamsi.c \
+  crypto/hamsi_helper.c \
+  crypto/haval.c \
+  crypto/shabal.c \
+  crypto/whirlpool.c \
+  crypto/sph_sha2big.c \
+  crypto/streebog.c \
   crypto/siphash.cpp \
   crypto/siphash.h
 
@@ -669,7 +678,7 @@ crypto_libbitcoin_crypto_avx2_a_CXXFLAGS += $(AVX2_CXXFLAGS)
 crypto_libbitcoin_crypto_avx2_a_CPPFLAGS += -DENABLE_AVX2
 crypto_libbitcoin_crypto_avx2_a_SOURCES = crypto/sha256_avx2.cpp
 
-# x11
+# x11 and Cosanta hash support
 crypto_libbitcoin_crypto_base_a_SOURCES += \
   crypto/x11/aes_helper.c \
   crypto/x11/blake.c \
@@ -694,7 +703,23 @@ crypto_libbitcoin_crypto_base_a_SOURCES += \
   crypto/x11/sph_shavite.h \
   crypto/x11/sph_simd.h \
   crypto/x11/sph_skein.h \
-  crypto/x11/sph_types.h
+  crypto/sph_types.h \
+  crypto/x11/sph_types.h \
+  crypto/sph_fugue.h \
+  crypto/sph_hamsi.h \
+  crypto/sph_haval.h \
+  crypto/sph_sha2.h \
+  crypto/sph_shabal.h \
+  crypto/sph_streebog.h \
+  crypto/sph_whirlpool.h \
+  crypto/algos/Lyra2Z/Lyra2.c \
+  crypto/algos/Lyra2Z/Lyra2.h \
+  crypto/algos/Lyra2Z/Lyra2Z.c \
+  crypto/algos/Lyra2Z/Lyra2Z.h \
+  crypto/algos/Lyra2Z/Sponge.c \
+  crypto/algos/Lyra2Z/Sponge.h \
+  crypto/algos/Lyra2Z/sph_blake.h \
+  crypto/algos/Lyra2Z/sph_types.h
 
 crypto_libbitcoin_crypto_x86_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libbitcoin_crypto_x86_shani_a_CPPFLAGS = $(AM_CPPFLAGS)
