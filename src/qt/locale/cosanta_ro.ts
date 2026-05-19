@@ -66,12 +66,12 @@
         <translation>A&amp;lege</translation>
     </message>
     <message>
-        <source>These are your Dash addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Acestea sunt adresele tale Dash pentru efectuarea platilor. Intotdeauna verifica atent suma de plata si adresa beneficiarului inainte de a trimite monede.</translation>
+        <source>These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Acestea sunt adresele tale Cosanta pentru efectuarea platilor. Intotdeauna verifica atent suma de plata si adresa beneficiarului inainte de a trimite monede.</translation>
     </message>
     <message>
-        <source>These are your Dash addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
-        <translation>Acestea sunt adresele dumneavoastră Dash pentru primirea plăților. Folosiți butonul 'Creează o nouă adresă de primire' în tab-ul de primire pentru a crea adrese noi.</translation>
+        <source>These are your Cosanta addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
+        <translation>Acestea sunt adresele dumneavoastră Cosanta pentru primirea plăților. Folosiți butonul 'Creează o nouă adresă de primire' în tab-ul de primire pentru a crea adrese noi.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -225,8 +225,8 @@
         <translation>Confirmaţi criptarea portofelului</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR DASH&lt;/b&gt;!</source>
-        <translation>Avertisment: dacă criptezi portofelul și pierzi fraza de acces, vei &lt;b&gt;PIERDE TOATE MONEDELE TALE DASH&lt;/b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
+        <translation>Avertisment: dacă criptezi portofelul și pierzi fraza de acces, vei &lt;b&gt;PIERDE TOATE MONEDELE TALE COSA&lt;/b&gt;!</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -365,16 +365,16 @@
         <translation>Trimite</translation>
     </message>
     <message>
-        <source>Send coins to a Dash address</source>
-        <translation>Trimite monede către o adresă Dash</translation>
+        <source>Send coins to a Cosanta address</source>
+        <translation>Trimite monede către o adresă Cosanta</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
         <translation>P&amp;rimeşte</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and dash: URIs)</source>
-        <translation>Cereţi plăţi (generează coduri QR şi Dash-uri: URls)</translation>
+        <source>Request payments (generates QR codes and cosanta: URIs)</source>
+        <translation>Cereţi plăţi (generează coduri QR şi Cosanta-uri: URls)</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
@@ -489,8 +489,8 @@
         <translation>&amp;Despre %1</translation>
     </message>
     <message>
-        <source>Send %1 funds to a Dash address</source>
-        <translation>Trimite fonduri %1 către o adresă Dash</translation>
+        <source>Send %1 funds to a Cosanta address</source>
+        <translation>Trimite fonduri %1 către o adresă Cosanta</translation>
     </message>
     <message>
         <source>Modify configuration options for %1</source>
@@ -525,12 +525,12 @@
         <translation>Blochează portofelul</translation>
     </message>
     <message>
-        <source>Sign messages with your Dash addresses to prove you own them</source>
-        <translation>Semnaţi mesaje cu adresa dvs. Dash pentru a dovedi că vă aparţin</translation>
+        <source>Sign messages with your Cosanta addresses to prove you own them</source>
+        <translation>Semnaţi mesaje cu adresa dvs. Cosanta pentru a dovedi că vă aparţin</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Dash addresses</source>
-        <translation>Verificaţi mesaje pentru a vă asigura că au fost semnate cu adresa Dash specificată</translation>
+        <source>Verify messages to ensure they were signed with specified Cosanta addresses</source>
+        <translation>Verificaţi mesaje pentru a vă asigura că au fost semnate cu adresa Cosanta specificată</translation>
     </message>
     <message>
         <source>&amp;Information</source>
@@ -593,8 +593,8 @@
         <translation>Opţiuni linie de &amp;comandă</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Dash command-line options</source>
-        <translation>Arată mesajul de ajutor %1 pentru a obţine o listă cu opţiunile posibile de linii de comandă Dash</translation>
+        <source>Show the %1 help message to get a list with possible Cosanta command-line options</source>
+        <translation>Arată mesajul de ajutor %1 pentru a obţine o listă cu opţiunile posibile de linii de comandă Cosanta</translation>
     </message>
     <message>
         <source>default wallet</source>
@@ -655,8 +655,8 @@
         <translation>Deschide fișierul de configurare al &amp;portofelului</translation>
     </message>
     <message>
-        <source>Open a dash: URI</source>
-        <translation>Deschide un URI dash:</translation>
+        <source>Open a cosanta: URI</source>
+        <translation>Deschide un URI cosanta:</translation>
     </message>
     <message>
         <source>Create a new wallet</source>
@@ -745,9 +745,9 @@
         <translation>A&amp;rată</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Dash network</source>
+        <source>%n active connection(s) to Cosanta network</source>
         <extracomment>A substring of the tooltip.</extracomment>
-        <translation><numerusform>%n conexiune activă la rețeaua Dash</numerusform><numerusform>%n conexiuni active la rețeaua Dash</numerusform><numerusform>%n conexiuni active la rețeaua Dash </numerusform></translation>
+        <translation><numerusform>%n conexiune activă la rețeaua Cosanta</numerusform><numerusform>%n conexiuni active la rețeaua Cosanta</numerusform><numerusform>%n conexiuni active la rețeaua Cosanta </numerusform></translation>
     </message>
     <message>
         <source>Network activity disabled</source>
@@ -1298,8 +1298,8 @@
         <translation>Editează adresa de trimitere</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Dash address.</source>
-        <translation>Adresa introdusă "%1" nu este o adresă Dash validă</translation>
+        <source>The entered address "%1" is not a valid Cosanta address.</source>
+        <translation>Adresa introdusă "%1" nu este o adresă Cosanta validă</translation>
     </message>
     <message>
         <source>Address "%1" already exists as a receiving address with label "%2" and so cannot be added as a sending address.</source>
@@ -1547,8 +1547,8 @@ Doriți să continuați?</translation>
         <translation>Informații %1</translation>
     </message>
     <message>
-        <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Dash in your wallet is comprised of different "inputs" which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 DASH, 0.01 DASH, 0.1 DASH, 1 DASH and 10 DASH -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called "masternodes." These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know "who" you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users' wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it's called a "round." Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these "change addresses." Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style="%2" href="%3"&gt;%1 documentation&lt;/a&gt;.</source>
-        <translation>&lt;h3&gt;Noțiuni de bază %1&lt;/h3&gt; %1 vă oferă adevărată confidențialitate financiară prin ascunderea originii fondurilor dumneavoastră. Toate monedele Dash din portofelul dumneavoastră sunt compuse din diferite "intrări" pe care le puteți considera ca monede separate, discrete.&lt;br&gt; %1 folosește un proces inovator pentru a amesteca intrările dumneavoastră cu intrările a două sau mai multe alte persoane, fără ca monedele dumneavoastră să părăsească vreodată portofelul. Rețineți controlul banilor dumneavoastră în orice moment.&lt;hr&gt; &lt;b&gt;Procesul %1 funcționează astfel:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 începe prin defalcarea intrărilor de tranzacție în denominații standard. Aceste denominații sunt 0.001 DASH, 0.01 DASH, 0.1 DASH, 1 DASH și 10 DASH -- similar cu bancnotele pe care le folosiți în fiecare zi.&lt;/li&gt; &lt;li&gt;Portofelul dumneavoastră trimite apoi cereri către noduri software special configurate în rețea, numite "masternode-uri." Aceste masternode-uri sunt informate că sunteți interesat să amestecați o anumită denominație. Nicio informație identificabilă nu este trimisă către masternode-uri, astfel încât acestea nu știu niciodată "cine" sunteți.&lt;/li&gt; &lt;li&gt;Când două sau mai multe persoane trimit mesaje similare, indicând că doresc să amestece aceeași denominație, începe o sesiune de amestecare. Masternode-ul amestecă intrările și instruiește portofelele tuturor celor trei utilizatori să plătească intrarea acum transformată înapoi către ei înșiși. Portofelul dumneavoastră plătește acea denominație direct către sine, dar la o adresă diferită (numită adresă de rest).&lt;/li&gt; &lt;li&gt;Pentru a ascunde complet fondurile dumneavoastră, portofelul trebuie să repete acest proces de mai multe ori cu fiecare denominație. De fiecare dată când procesul este finalizat, se numește o "rundă." Fiecare rundă de %1 face exponențial mai dificil de determinat de unde au provenit fondurile dumneavoastră.&lt;/li&gt; &lt;li&gt;Acest proces de amestecare se întâmplă în fundal fără nicio intervenție din partea dumneavoastră. Când doriți să faceți o tranzacție, fondurile dumneavoastră vor fi deja amestecate. Nu este necesară nicio așteptare suplimentară.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Portofelul dumneavoastră conține doar 1000 dintre aceste "adrese de rest." De fiecare dată când are loc un eveniment de amestecare, până la 9 dintre adresele dumneavoastră sunt folosite. Aceasta înseamnă că cele 1000 de adrese durează pentru aproximativ 100 de evenimente de amestecare. Când 900 dintre ele sunt folosite, portofelul trebuie să creeze mai multe adrese. Cu toate acestea, poate face acest lucru doar dacă aveți activat backup-urile automate.&lt;br&gt; În consecință, utilizatorii care au backup-urile dezactivate vor avea și %1 dezactivat. &lt;hr&gt;Pentru mai multe informații, consultați &lt;a style="%2" href="%3"&gt;documentația %1&lt;/a&gt;.</translation>
+        <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different "inputs" which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called "masternodes." These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know "who" you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users' wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it's called a "round." Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these "change addresses." Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style="%2" href="%3"&gt;%1 documentation&lt;/a&gt;.</source>
+        <translation>&lt;h3&gt;Noțiuni de bază %1&lt;/h3&gt; %1 vă oferă adevărată confidențialitate financiară prin ascunderea originii fondurilor dumneavoastră. Toate monedele Cosanta din portofelul dumneavoastră sunt compuse din diferite "intrări" pe care le puteți considera ca monede separate, discrete.&lt;br&gt; %1 folosește un proces inovator pentru a amesteca intrările dumneavoastră cu intrările a două sau mai multe alte persoane, fără ca monedele dumneavoastră să părăsească vreodată portofelul. Rețineți controlul banilor dumneavoastră în orice moment.&lt;hr&gt; &lt;b&gt;Procesul %1 funcționează astfel:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 începe prin defalcarea intrărilor de tranzacție în denominații standard. Aceste denominații sunt 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA și 10 COSA -- similar cu bancnotele pe care le folosiți în fiecare zi.&lt;/li&gt; &lt;li&gt;Portofelul dumneavoastră trimite apoi cereri către noduri software special configurate în rețea, numite "masternode-uri." Aceste masternode-uri sunt informate că sunteți interesat să amestecați o anumită denominație. Nicio informație identificabilă nu este trimisă către masternode-uri, astfel încât acestea nu știu niciodată "cine" sunteți.&lt;/li&gt; &lt;li&gt;Când două sau mai multe persoane trimit mesaje similare, indicând că doresc să amestece aceeași denominație, începe o sesiune de amestecare. Masternode-ul amestecă intrările și instruiește portofelele tuturor celor trei utilizatori să plătească intrarea acum transformată înapoi către ei înșiși. Portofelul dumneavoastră plătește acea denominație direct către sine, dar la o adresă diferită (numită adresă de rest).&lt;/li&gt; &lt;li&gt;Pentru a ascunde complet fondurile dumneavoastră, portofelul trebuie să repete acest proces de mai multe ori cu fiecare denominație. De fiecare dată când procesul este finalizat, se numește o "rundă." Fiecare rundă de %1 face exponențial mai dificil de determinat de unde au provenit fondurile dumneavoastră.&lt;/li&gt; &lt;li&gt;Acest proces de amestecare se întâmplă în fundal fără nicio intervenție din partea dumneavoastră. Când doriți să faceți o tranzacție, fondurile dumneavoastră vor fi deja amestecate. Nu este necesară nicio așteptare suplimentară.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Portofelul dumneavoastră conține doar 1000 dintre aceste "adrese de rest." De fiecare dată când are loc un eveniment de amestecare, până la 9 dintre adresele dumneavoastră sunt folosite. Aceasta înseamnă că cele 1000 de adrese durează pentru aproximativ 100 de evenimente de amestecare. Când 900 dintre ele sunt folosite, portofelul trebuie să creeze mai multe adrese. Cu toate acestea, poate face acest lucru doar dacă aveți activat backup-urile automate.&lt;br&gt; În consecință, utilizatorii care au backup-urile dezactivate vor avea și %1 dezactivat. &lt;hr&gt;Pentru mai multe informații, consultați &lt;a style="%2" href="%3"&gt;documentația %1&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -1623,8 +1623,8 @@ Doriți să continuați?</translation>
         <translation><numerusform>(suficient pentru a restaura backup-uri vechi de %n zile)</numerusform><numerusform>(suficient pentru a restaura backup-uri vechi de %n zile)</numerusform><numerusform>(suficient pentru a restaura backup-uri vechi de %n zile)</numerusform></translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Dash block chain.</source>
-        <translation>%1 va descarca si stoca o copie a blockchainului Dash</translation>
+        <source>%1 will download and store a copy of the Cosanta block chain.</source>
+        <translation>%1 va descarca si stoca o copie a blockchainului Cosanta</translation>
     </message>
     <message>
         <source>The wallet will also be stored in this directory.</source>
@@ -1900,12 +1900,12 @@ Doriți să continuați?</translation>
         <translation>Form</translation>
     </message>
     <message>
-        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Dash network, as detailed below.</source>
-        <translation>Tranzactiile recente pot sa nu fie inca vizibile, de aceea balanta portofelului poate fi incorecta. Aceasta informatie va fi corecta de indata ce portofelul va fi complet sincronizat cu reteaua Dash, asa cum este detaliat mai jos.</translation>
+        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</source>
+        <translation>Tranzactiile recente pot sa nu fie inca vizibile, de aceea balanta portofelului poate fi incorecta. Aceasta informatie va fi corecta de indata ce portofelul va fi complet sincronizat cu reteaua Cosanta, asa cum este detaliat mai jos.</translation>
     </message>
     <message>
-        <source>Attempting to spend Dash that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
-        <translation>Încercarea de a cheltui monede Dash care sunt afectate de tranzacțiile care nu au fost încă afișate nu va fi acceptată de rețea.</translation>
+        <source>Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
+        <translation>Încercarea de a cheltui monede Cosanta care sunt afectate de tranzacțiile care nu au fost încă afișate nu va fi acceptată de rețea.</translation>
     </message>
     <message>
         <source>Number of blocks left</source>
@@ -2232,8 +2232,8 @@ Doriți să continuați?</translation>
         <translation>Maxim</translation>
     </message>
     <message>
-        <source>Automatically open the Dash Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Deschide automat portul client Dash Core de pe router. Asta funcționează numai atunci când routerul dvs. acceptă UPnP și este activat.</translation>
+        <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Deschide automat portul client Cosanta Core de pe router. Asta funcționează numai atunci când routerul dvs. acceptă UPnP și este activat.</translation>
     </message>
     <message>
         <source>Map port using NA&amp;T-PMP</source>
@@ -2248,8 +2248,8 @@ Doriți să continuați?</translation>
         <translation>Permite conexiuni de &amp;intrare</translation>
     </message>
     <message>
-        <source>Connect to the Dash network through a SOCKS5 proxy.</source>
-        <translation>Conectare la reţeaua Dash printr-un proxy SOCKS.</translation>
+        <source>Connect to the Cosanta network through a SOCKS5 proxy.</source>
+        <translation>Conectare la reţeaua Cosanta printr-un proxy SOCKS.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -2261,9 +2261,9 @@ Doriți să continuați?</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/dash/dash/</source>
+https://explore.transifex.com/cosanta/cosanta/</source>
         <translation>Limba lipsește sau traducerea este incompletă? Ajutați contribuind la traduceri aici:
-https://explore.transifex.com/dash/dash/</translation>
+https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -2314,8 +2314,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>Mapare port folosind &amp;UPnP</translation>
     </message>
     <message>
-        <source>Automatically open the Dash Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
-        <translation>Deschide automat portul clientului Dash Core pe router. Aceasta funcționează doar când routerul dvs. suportă NAT-PMP și este activat. Portul extern poate fi aleatoriu.</translation>
+        <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
+        <translation>Deschide automat portul clientului Cosanta Core pe router. Aceasta funcționează doar când routerul dvs. suportă NAT-PMP și este activat. Portul extern poate fi aleatoriu.</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -2366,8 +2366,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>&amp;Afişare</translation>
     </message>
     <message>
-        <source>Connect to the Dash network through a separate SOCKS5 proxy for Tor onion services.</source>
-        <translation>Conectați-vă la rețeaua Dash printr-un proxy SOCKS5 separat pentru serviciile Tor onion.</translation>
+        <source>Connect to the Cosanta network through a separate SOCKS5 proxy for Tor onion services.</source>
+        <translation>Conectați-vă la rețeaua Cosanta printr-un proxy SOCKS5 separat pentru serviciile Tor onion.</translation>
     </message>
     <message>
         <source>Use separate SOCKS&amp;5 proxy to reach peers via Tor onion services:</source>
@@ -2469,8 +2469,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>Form</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Dash network after a connection is established, but this process has not completed yet.</source>
-        <translation>Informatia afisata poate fi depasita.  Portofel se sincronizează automat cu rețeaua Dash după ce se stabilește o conexiune, dar acest proces nu s-a finalizat încă.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</source>
+        <translation>Informatia afisata poate fi depasita.  Portofel se sincronizează automat cu rețeaua Cosanta după ce se stabilește o conexiune, dar acest proces nu s-a finalizat încă.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -2549,8 +2549,8 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>Suma și Runde:</translation>
     </message>
     <message>
-        <source>0 DASH / 0 Rounds</source>
-        <translation>0 DASH / 0 Runde</translation>
+        <source>0 COSA / 0 Rounds</source>
+        <translation>0 COSA / 0 Runde</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -2832,16 +2832,16 @@ https://explore.transifex.com/dash/dash/</translation>
         <translation>Eroare la cererea de plată</translation>
     </message>
     <message>
-        <source>Cannot start dash: click-to-pay handler</source>
-        <translation>Dash nu poate porni: click-to-pay handler</translation>
+        <source>Cannot start cosanta: click-to-pay handler</source>
+        <translation>Cosanta nu poate porni: click-to-pay handler</translation>
     </message>
     <message>
         <source>URI handling</source>
         <translation>Gestionare URI</translation>
     </message>
     <message>
-        <source>'dash://' is not a valid URI. Use 'dash:' instead.</source>
-        <translation>'dash://' nu este un URI valid. Folosiți 'dash:' în schimb.</translation>
+        <source>'cosanta://' is not a valid URI. Use 'cosanta:' instead.</source>
+        <translation>'cosanta://' nu este un URI valid. Folosiți 'cosanta:' în schimb.</translation>
     </message>
     <message>
         <source>Cannot process payment request as BIP70 is no longer supported.
@@ -2850,8 +2850,8 @@ Due to discontinued support, you should request the merchant to provide you with
 Din cauza încetării suportului, ar trebui să cereți comerciantului să vă furnizeze un URI compatibil BIP21 sau să folosiți un portofel care continuă să suporte BIP70.</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid Dash address or malformed URI parameters.</source>
-        <translation>URI nu poate fi analizat! Acest lucru poate fi cauzat de o adresă Dash invalidă sau parametri URI deformaţi.</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
+        <translation>URI nu poate fi analizat! Acest lucru poate fi cauzat de o adresă Cosanta invalidă sau parametri URI deformaţi.</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -3235,8 +3235,8 @@ Veți fi redirecționat acum pentru a monitoriza și difuza noua propunere, pute
         <translation>Cantitate</translation>
     </message>
     <message>
-        <source>Enter a Dash address (e.g. %1)</source>
-        <translation>Introduceţi o adresă Dash (de exemplu %1)</translation>
+        <source>Enter a Cosanta address (e.g. %1)</source>
+        <translation>Introduceţi o adresă Cosanta (de exemplu %1)</translation>
     </message>
     <message>
         <source>Appearance Setup</source>
@@ -3785,8 +3785,8 @@ Veți fi redirecționat acum pentru a monitoriza și difuza noua propunere, pute
         <translation>Adrese locale</translation>
     </message>
     <message>
-        <source>Network addresses that your Dash node is currently using to communicate with other nodes.</source>
-        <translation>Adresele de rețea pe care nodul dvs. Dash le folosește în prezent pentru a comunica cu alte noduri.</translation>
+        <source>Network addresses that your Cosanta node is currently using to communicate with other nodes.</source>
+        <translation>Adresele de rețea pe care nodul dvs. Cosanta le folosește în prezent pentru a comunica cu alte noduri.</translation>
     </message>
     <message>
         <source>Number of regular Masternodes</source>
@@ -4195,8 +4195,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
 <context>
     <name>ReceiveCoinsDialog</name>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Dash network.</source>
-        <translation>Un mesaj opţional de ataşat la cererea de plată, care va fi afişat cînd cererea este deschisă. Notă: Acest mesaj nu va fi trimis cu plata către reţeaua Dash.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <translation>Un mesaj opţional de ataşat la cererea de plată, care va fi afişat cînd cererea este deschisă. Notă: Acest mesaj nu va fi trimis cu plata către reţeaua Cosanta.</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -4207,8 +4207,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>O etichetă opţională de asociat cu adresa de primire.</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Dash network.</source>
-        <translation>Un mesaj opțional pentru a atașa solicitării de plată, care va fi afișat la deschiderea cererii.&lt;br&gt;Notă: mesajul nu va fi trimis cu plata prin rețeaua Dash.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</source>
+        <translation>Un mesaj opțional pentru a atașa solicitării de plată, care va fi afișat la deschiderea cererii.&lt;br&gt;Notă: mesajul nu va fi trimis cu plata prin rețeaua Cosanta.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address (used by you to identify an invoice).  It is also attached to the payment request.</source>
@@ -4804,8 +4804,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation><numerusform>Înceaperea confirmării estimată într-un %n block.</numerusform><numerusform>Înceaperea confirmării estimată în %n block-uri.</numerusform><numerusform>Înceaperea confirmării estimată în %n block-uri.</numerusform></translation>
     </message>
     <message>
-        <source>Warning: Invalid Dash address</source>
-        <translation>Atenţie: Adresa Dash nevalidă!</translation>
+        <source>Warning: Invalid Cosanta address</source>
+        <translation>Atenţie: Adresa Cosanta nevalidă!</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -4831,8 +4831,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Plăteşte că&amp;tre:</translation>
     </message>
     <message>
-        <source>The Dash address to send the payment to</source>
-        <translation>Adresa Dash către care se face plata</translation>
+        <source>The Cosanta address to send the payment to</source>
+        <translation>Adresa Cosanta către care se face plata</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -4871,8 +4871,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Suma de trimis în unitatea selectată</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Dash than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Taxa va fi dedusă din suma trimisă. Destinatarul va primi o sumă mai mică de Dash decât introduci în câmpul pentru suma. Dacă sunt selectați mai mulți destinatari, taxa este împărțită în mod egal.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Cosanta than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>Taxa va fi dedusă din suma trimisă. Destinatarul va primi o sumă mai mică de Cosanta decât introduci în câmpul pentru suma. Dacă sunt selectați mai mulți destinatari, taxa este împărțită în mod egal.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -4887,8 +4887,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Mesaj:</translation>
     </message>
     <message>
-        <source>A message that was attached to the dash: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Dash network.</source>
-        <translation>un mesaj a fost ataşat la Dash: URI care va fi stocat cu tranzacţia pentru referinţa dvs. Notă: Acest mesaj nu va fi trimis către reţeaua Dash.</translation>
+        <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
+        <translation>un mesaj a fost ataşat la Cosanta: URI care va fi stocat cu tranzacţia pentru referinţa dvs. Notă: Acest mesaj nu va fi trimis către reţeaua Cosanta.</translation>
     </message>
 </context>
 <context>
@@ -4924,11 +4924,11 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>&amp;Semnează mesaj</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive Dash sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>Poți semna mesaje / acorduri cu adreseletale pentru a dovedi că poți primi Dash trimis la ele. Ai grijă să nu semnezi nimic vag sau întâmplător, deoarece atacurile de tip phishing pot încerca să te păcălească să le dai identitatea ta. Semnează declarații complet-detaliate cu care ești de acord.</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive Cosanta sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>Poți semna mesaje / acorduri cu adreseletale pentru a dovedi că poți primi Cosanta trimis la ele. Ai grijă să nu semnezi nimic vag sau întâmplător, deoarece atacurile de tip phishing pot încerca să te păcălească să le dai identitatea ta. Semnează declarații complet-detaliate cu care ești de acord.</translation>
     </message>
     <message>
-        <source>The Dash address to sign the message with</source>
+        <source>The Cosanta address to sign the message with</source>
         <translation>Adresa cu care semnaţi mesajul</translation>
     </message>
     <message>
@@ -4960,8 +4960,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Copiaza semnatura curenta in clipboard-ul sistemului</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Dash address</source>
-        <translation>Semnează mesajul pentru a dovedi ca deţineţi acestă adresă Dash</translation>
+        <source>Sign the message to prove you own this Cosanta address</source>
+        <translation>Semnează mesajul pentru a dovedi ca deţineţi acestă adresă Cosanta</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -4984,8 +4984,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Introduceţi adresa de semnatură, mesajul (asiguraţi-vă că aţi copiat spaţiile, taburile etc. exact) şi semnatura dedesubt pentru a verifica mesajul. Aveţi grijă să nu citiţi mai mult în semnatură decît mesajul în sine, pentru a evita să fiţi păcăliţi de un atac de tip man-in-the-middle. De notat ca aceasta dovedeste doar ca semnatarul primeste odata cu adresa, nu dovedesta insa trimiterea vreunei tranzactii.</translation>
     </message>
     <message>
-        <source>The Dash address the message was signed with</source>
-        <translation>Introduceţi o adresă Dash</translation>
+        <source>The Cosanta address the message was signed with</source>
+        <translation>Introduceţi o adresă Cosanta</translation>
     </message>
     <message>
         <source>The signed message to verify</source>
@@ -4996,8 +4996,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Semnătura furnizată când mesajul a fost semnat</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Dash address</source>
-        <translation>Verificaţi mesajul pentru a vă asigura că a fost semnat cu adresa Dash specificată</translation>
+        <source>Verify the message to ensure it was signed with the specified Cosanta address</source>
+        <translation>Verificaţi mesajul pentru a vă asigura că a fost semnat cu adresa Cosanta specificată</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -5777,7 +5777,7 @@ Mergeți la Fișier &gt; Deschide portofel pentru a încărca un portofel.
     </message>
 </context>
 <context>
-    <name>dash-core</name>
+    <name>cosanta-core</name>
     <message>
         <source>This error could occur if this wallet was not shutdown cleanly and was last loaded using a build with a newer version of Berkeley DB. If so, please use the software that last loaded this wallet</source>
         <translation>Această eroare ar putea apărea dacă acest portofel nu a fost închis corect și a fost încărcat ultima dată folosind o versiune cu o versiune mai nouă de Berkeley DB. Dacă este așa, vă rugăm să folosiți software-ul care a încărcat ultima dată acest portofel</translation>
@@ -6031,8 +6031,8 @@ Mergeți la Fișier &gt; Deschide portofel pentru a încărca un portofel.
         <translation>Eroare la încărcarea %s: Portofelul semnatarului extern este încărcat fără suport compilat pentru semnatar extern</translation>
     </message>
     <message>
-        <source>Error: Dumpfile version is not supported. This version of dash-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</source>
-        <translation>Eroare: Versiunea fișierului de descărcare nu este suportată. Această versiune de dash-wallet suportă doar fișiere de descărcare versiunea 1. S-a primit fișier de descărcare cu versiunea %s</translation>
+        <source>Error: Dumpfile version is not supported. This version of cosanta-wallet only supports version 1 dumpfiles. Got dumpfile with version %s</source>
+        <translation>Eroare: Versiunea fișierului de descărcare nu este suportată. Această versiune de cosanta-wallet suportă doar fișiere de descărcare versiunea 1. S-a primit fișier de descărcare cu versiunea %s</translation>
     </message>
     <message>
         <source>Failed to create backup, file already exists! This could happen if you restarted wallet in less than 60 seconds. You can continue if you are ok with this.</source>
@@ -6743,8 +6743,8 @@ Mergeți la Fișier &gt; Deschide portofel pentru a încărca un portofel.
         <translation>Ultima coadă a fost creată prea recent.</translation>
     </message>
     <message>
-        <source>%s corrupt. Try using the wallet tool dash-wallet to salvage or restoring a backup.</source>
-        <translation>%s corupt. Încercați să folosiți instrumentul portofel dash-wallet pentru a salva sau a restaura o copie de siguranță.</translation>
+        <source>%s corrupt. Try using the wallet tool cosanta-wallet to salvage or restoring a backup.</source>
+        <translation>%s corupt. Încercați să folosiți instrumentul portofel cosanta-wallet pentru a salva sau a restaura o copie de siguranță.</translation>
     </message>
     <message>
         <source>%s is set very high! Fees this large could be paid on a single transaction.</source>
