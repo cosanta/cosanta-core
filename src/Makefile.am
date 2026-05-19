@@ -740,6 +740,7 @@ crypto_libbitcoin_crypto_base_la_SOURCES = \
   crypto/pkcs5_pbkdf2_hmac_sha512.h \
   crypto/ripemd160.cpp \
   crypto/ripemd160.h \
+  crypto/scrypt-sse2.cpp \
   crypto/sha1.cpp \
   crypto/sha1.h \
   crypto/sha256.cpp \
@@ -780,6 +781,13 @@ crypto_libbitcoin_crypto_sph_la_CPPFLAGS += \
   -DSPH_SMALL_FOOTPRINT_CUBEHASH=1 \
   -DSPH_SMALL_FOOTPRINT_JH=1
 crypto_libbitcoin_crypto_sph_la_SOURCES = \
+  crypto/fugue.c \
+  crypto/hamsi.c \
+  crypto/haval.c \
+  crypto/shabal.c \
+  crypto/sph_sha2big.c \
+  crypto/streebog.c \
+  crypto/whirlpool.c \
   crypto/x11/aes.cpp \
   crypto/x11/aes.h \
   crypto/x11/blake.c \
@@ -808,7 +816,22 @@ crypto_libbitcoin_crypto_sph_la_SOURCES = \
   crypto/x11/sph_skein.h \
   crypto/x11/sph_types.h \
   crypto/x11/util/consts_aes.hpp \
-  crypto/x11/util/util.hpp
+  crypto/x11/util/util.hpp \
+  crypto/sph_types.h \
+  crypto/sph_fugue.h \
+  crypto/sph_hamsi.h \
+  crypto/sph_haval.h \
+  crypto/sph_sha2.h \
+  crypto/sph_shabal.h \
+  crypto/sph_streebog.h \
+  crypto/sph_whirlpool.h \
+  crypto/algos/Lyra2Z/Lyra2.c \
+  crypto/algos/Lyra2Z/Lyra2.h \
+  crypto/algos/Lyra2Z/Lyra2Z.h \
+  crypto/algos/Lyra2Z/Sponge.c \
+  crypto/algos/Lyra2Z/Sponge.h \
+  crypto/algos/Lyra2Z/sph_blake.h \
+  crypto/algos/Lyra2Z/sph_types.h
 
 # See explanation for -static in crypto_libbitcoin_crypto_base_la's LDFLAGS and
 # CXXFLAGS above
