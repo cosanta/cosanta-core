@@ -1,12 +1,15 @@
 WINDOWS BUILD NOTES
 ====================
 
-Below are some notes on how to build Dash Core for Windows.
+Below are some notes on how to build Cosanta Core for Windows.
 
-The options known to work for building Dash Core on Windows are:
+The options known to work for building Cosanta Core on Windows are:
 
-* On Linux, using the [Mingw-w64](https://www.mingw-w64.org/) cross compiler tool chain.
-* On Windows, using [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/windows/wsl/about) and Mingw-w64.
+* On Linux, using the [Mingw-w64](https://mingw-w64.org/doku.php) cross compiler tool chain. Ubuntu Focal 20.04 is required
+and is the platform used to build the Cosanta Core Windows release binaries.
+* On Windows, using [Windows
+Subsystem for Linux (WSL)](https://docs.microsoft.com/windows/wsl/about) and the Mingw-w64 cross compiler tool chain.
+* On Windows, using a native compiler tool chain such as [Visual Studio](https://www.visualstudio.com).
 
 Other options which may work, but which have not been extensively tested are (please contribute instructions):
 
@@ -44,8 +47,8 @@ The first step is to install the mingw-w64 cross-compilation tool chain:
 
 Once the toolchain is installed the build steps are common:
 
-Note that for WSL the Dash Core source path MUST be somewhere in the default mount file system, for
-example /usr/src/dash, AND not under /mnt/d/. If this is not the case the dependency autoconf scripts will fail.
+Note that for WSL the Cosanta Core source path MUST be somewhere in the default mount file system, for
+example /usr/src/cosanta-core, AND not under /mnt/d/. If this is not the case the dependency autoconf scripts will fail.
 This means you cannot use a directory that is located directly on the host Windows file system to perform the build.
 
 Additional WSL Note: WSL support for [launching Win32 applications](https://docs.microsoft.com/en-us/archive/blogs/wsl/windows-and-ubuntu-interoperability#launching-win32-applications-from-within-wsl)
