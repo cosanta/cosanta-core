@@ -72,7 +72,7 @@ OptionsDialog::OptionsDialog(QWidget* parent, bool enableWallet)
 
     /* Dust protection */
     ui->dustProtectionThreshold->setEnabled(false);
-    ui->dustProtectionThresholdUnitLabel->setText(BitcoinUnits::name(BitcoinUnits::Unit::duffs));
+    ui->dustProtectionThresholdUnitLabel->setText(BitcoinUnits::name(BitcoinUnits::Unit::UNIT));
     connect(ui->dustProtection, &QCheckBox::toggled, ui->dustProtectionThreshold, &QWidget::setEnabled);
 
     /* Wallet */

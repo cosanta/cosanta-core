@@ -394,6 +394,15 @@ static void ListTransactions(const CWallet& wallet, const CWalletTx& wtx, int nM
                 else
                     entry.pushKV("category", "generate");
             }
+            else if (wtx.tx->IsCoinStake())
+            {
+                if (wallet.GetTxDepthInMainChain(wtx) < 1)
+                    entry.pushKV("category", "stake-orphan");
+                else if (wallet.GetTxBlocksToMaturity(wtx) > 0)
+                    entry.pushKV("category", "stake");
+                else
+                    entry.pushKV("category", "stake-mint");
+            }
             else if (wtx.IsPlatformTransfer())
             {
                 entry.pushKV("category", "platform-transfer");
