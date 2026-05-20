@@ -9,6 +9,7 @@ feature_llmq_evo.py
 Checks EvoNodes
 
 '''
+from _decimal import Decimal
 from io import BytesIO
 from typing import Optional
 
@@ -20,7 +21,7 @@ from test_framework.test_framework import (
     MasternodeInfo,
 )
 from test_framework.util import (
-    assert_equal, assert_greater_than_or_equal,
+    assert_equal, assert_greater_than_or_equal, p2p_port
 )
 
 
@@ -191,6 +192,38 @@ class LLMQEvoNodesTest(DashTestFramework):
                 if mn['proTxHash'] == evo_protx:
                     found_in_evos = True
             assert_equal(found_in_evos, True)
+
+    def test_evo_is_rejected_before_v19(self):
+        bls = self.nodes[0].bls('generate')
+        collateral_address = self.nodes[0].getnewaddress()
+        funds_address = self.nodes[0].getnewaddress()
+        owner_address = self.nodes[0].getnewaddress()
+        voting_address = self.nodes[0].getnewaddress()
+        reward_address = self.nodes[0].getnewaddress()
+
+        collateral_amount = 40000
+        outputs = {collateral_address: collateral_amount, funds_address: 1}
+        collateral_txid = self.nodes[0].sendmany("", outputs)
+        self.nodes[0].generate(8)
+        self.sync_all(self.nodes)
+
+        rawtx = self.nodes[0].getrawtransaction(collateral_txid, 1)
+        collateral_vout = 0
+        for txout in rawtx['vout']:
+            if txout['value'] == Decimal(collateral_amount):
+                collateral_vout = txout['n']
+                break
+        assert collateral_vout is not None
+
+        ipAndPort = '127.0.0.1:%d' % p2p_port(len(self.nodes))
+        operatorReward = len(self.nodes)
+
+        try:
+            self.nodes[0].protx('register_evo', collateral_txid, collateral_vout, ipAndPort, owner_address, bls['public'], voting_address, operatorReward, reward_address, funds_address, True)
+            # this should never succeed
+            assert False
+        except:
+            self.log.info("protx_evo rejected")
 
     def test_masternode_count(self, expected_mns_count, expected_evo_count):
         mn_count = self.nodes[0].masternode('count')
