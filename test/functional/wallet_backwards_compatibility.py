@@ -215,10 +215,10 @@ class BackwardsCompatibilityTest(BitcoinTestFramework):
 
         # Instead, we stop node and try to launch it with the wallet:
         self.stop_node(node_v17.index)
-        # it expected to fail with error 'DBErrors::TOO_NEW' but Dash Core can open v18 by version 17
+        # it expected to fail with error 'DBErrors::TOO_NEW' but Cosanta Core can open v18 by version 17
         # can be implemented in future if there's any incompatible versions
-        #node_v17.assert_start_raises_init_error(["-wallet=w3_v18"], "Error: Error loading w3_v18: Wallet requires newer version of Dash Core")
-        #node_v17.assert_start_raises_init_error(["-wallet=w3"], "Error: Error loading w3: Wallet requires newer version of Dash Core")
+        #node_v17.assert_start_raises_init_error(["-wallet=w3_v18"], "Error: Error loading w3_v18: Wallet requires newer version of Cosanta Core")
+        #node_v17.assert_start_raises_init_error(["-wallet=w3"], "Error: Error loading w3: Wallet requires newer version of Cosanta Core")
         self.start_node(node_v17.index)
 
         if not self.options.descriptors:
@@ -229,7 +229,7 @@ class BackwardsCompatibilityTest(BitcoinTestFramework):
             assert info['keypoolsize'] == 1
 
         self.log.info("Test wallet upgrade path...")
-        # Bitcoin creates hd wallets by default since v16, but Dash Core v17 does not.
+        # Bitcoin creates hd wallets by default since v16, but Cosanta Core v17 does not.
         # enforce it by restarting v17
         self.restart_node(node_v17.index, extra_args=["-usehd=1"])
         # u1: regular wallet, created with v0.17

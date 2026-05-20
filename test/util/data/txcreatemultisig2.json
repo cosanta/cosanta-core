@@ -15,7 +15,7 @@
                 "asm": "OP_HASH160 1c6fbaf46d64221e80cbae182c33ddf81b9294ac OP_EQUAL",
                 "desc": "addr(7V11XGPxzBWxkiuw15a1Vgk7XT74tyYtCY)#2m9p8juh",
                 "hex": "a9141c6fbaf46d64221e80cbae182c33ddf81b9294ac87",
-                "address": "7V11XGPxzBWxkiuw15a1Vgk7XT74tyYtCY",
+                "address": "6GzCZwW6re8LJRVfvpa43JvkdwLEnkgEjx",
                 "type": "scripthash"
             }
         }
