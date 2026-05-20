@@ -126,6 +126,7 @@ private:
     WalletFrame* walletFrame = nullptr;
 
     UnitDisplayStatusBarControl* unitDisplayControl = nullptr;
+    QLabel* labelStakingIcon = nullptr;
     QLabel* labelWalletEncryptionIcon = nullptr;
     QLabel* labelWalletHDStatusIcon = nullptr;
     GUIUtil::ClickableLabel* labelConnectionsIcon = nullptr;
@@ -167,6 +168,7 @@ private:
     QAction* showMnemonicAction = nullptr;
     QAction* unlockWalletAction = nullptr;
     QAction* lockWalletAction = nullptr;
+    QAction* startStakingAction = nullptr;
     QAction* aboutQtAction = nullptr;
     QAction* openInfoAction = nullptr;
     QAction* openRPCConsoleAction = nullptr;
@@ -313,6 +315,8 @@ public Q_SLOTS:
     */
     void message(const QString& title, QString message, unsigned int style, bool* ret = nullptr, const QString& detailed_message = QString());
 
+    void setStakingStatus();
+
 #ifdef ENABLE_WALLET
     void setCurrentWallet(WalletModel* wallet_model);
     void setCurrentWalletBySelectorIndex(int index);
@@ -390,7 +394,7 @@ public Q_SLOTS:
     void showPeers();
     void showRepair();
 
-    /** Open external (default) editor with dash.conf */
+    /** Open external (default) editor with cosanta.conf */
     void showConfEditor();
     /** Show folder with wallet backups in default file browser */
     void showBackups();

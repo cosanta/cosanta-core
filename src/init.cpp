@@ -83,6 +83,12 @@
 #include <active/masternode.h>
 #include <bls/bls.h>
 #include <coinjoin/coinjoin.h>
+#ifdef ENABLE_WALLET
+#include <coinjoin/client.h>
+#include <coinjoin/options.h>
+#include <wallet/context.h>
+#include <wallet/wallet.h>
+#endif // ENABLE_WALLET
 #include <coinjoin/server.h>
 #include <coinjoin/walletman.h>
 #include <dsnotificationinterface.h>
@@ -108,17 +114,13 @@
 #include <spork.h>
 #include <stats/client.h>
 
-#ifdef ENABLE_WALLET
-#include <coinjoin/client.h>
-#include <coinjoin/options.h>
-#endif // ENABLE_WALLET
-
 #include <algorithm>
 #include <condition_variable>
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include <functional>
+#include <limits>
 #include <set>
 #include <memory>
 #include <optional>
@@ -243,6 +245,38 @@ static void ShutdownNotify(const ArgsManager& args)
 }
 #endif
 
+#ifdef ENABLE_WALLET
+static std::unique_ptr<CThreadInterrupt> g_staking_interrupt;
+static std::thread g_staking_thread;
+
+static void StartStakingThread(NodeContext& node)
+{
+    if (g_staking_thread.joinable() || ShutdownRequested()) {
+        return;
+    }
+
+    auto* wallet_context = node.wallet_loader ? node.wallet_loader->context() : nullptr;
+    if (wallet_context == nullptr) {
+        LogPrintf("Staking start skipped: wallet context is unavailable\n");
+        return;
+    }
+
+    auto wallets = wallet::GetWallets(*wallet_context);
+    if (wallets.empty()) {
+        LogPrintf("Staking start skipped: no wallets loaded\n");
+        return;
+    }
+
+    LogPrintf("Staking with wallet: %s\n", wallets[0]->GetName().c_str());
+    g_staking_interrupt = std::make_unique<CThreadInterrupt>();
+    LogPrintf("About to start staking thread\n");
+    g_staking_thread = std::thread([wallet = wallets[0], &node]() {
+        LogPrintf("Entered staking thread lambda\n");
+        node::PoSMiner(wallet, node, *Assert(g_staking_interrupt));
+    });
+}
+#endif // ENABLE_WALLET
+
 void Interrupt(NodeContext& node)
 {
 #if HAVE_SYSTEM
@@ -260,6 +294,9 @@ void Interrupt(NodeContext& node)
         node.peerman->InterruptHandlers();
     }
     InterruptMapPort();
+#ifdef ENABLE_WALLET
+    if (g_staking_interrupt) (*g_staking_interrupt)();
+#endif // ENABLE_WALLET
     if (node.connman)
         node.connman->Interrupt();
     if (g_txindex) {
@@ -307,6 +344,10 @@ void PrepareShutdown(NodeContext& node)
     // using the other before destroying them.
     if (node.clhandler) UnregisterValidationInterface(node.clhandler.get());
     if (node.peerman) UnregisterValidationInterface(node.peerman.get());
+#ifdef ENABLE_WALLET
+    if (g_staking_thread.joinable()) g_staking_thread.join();
+    g_staking_interrupt.reset();
+#endif // ENABLE_WALLET
     if (node.connman) node.connman->Stop();
 
     StopTorControl();
@@ -823,6 +864,16 @@ void SetupServerArgs(ArgsManager& argsman)
     argsman.AddArg("-statsperiod=<seconds>", strprintf("Specify the number of seconds between periodic measurements (default: %d)", DEFAULT_STATSD_PERIOD), ArgsManager::ALLOW_ANY, OptionsCategory::STATSD);
     argsman.AddArg("-statsprefix=<string>", strprintf("Specify an optional string prepended to every stats key (default: %s)", DEFAULT_STATSD_PREFIX), ArgsManager::ALLOW_ANY, OptionsCategory::STATSD);
     argsman.AddArg("-statssuffix=<string>", strprintf("Specify an optional string appended to every stats key (default: %s)", DEFAULT_STATSD_SUFFIX), ArgsManager::ALLOW_ANY, OptionsCategory::STATSD);
+#ifdef ENABLE_WALLET
+    argsman.AddArg("-staking=<n>", strprintf("Enable staking functionality (0-1, default: %u)", 1), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    argsman.AddArg("-reservebalance=<amt>", "Keep the specified amount available for spending at all times (default: 0)", ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    argsman.AddArg("-stakesplitthreshold=<n>", strprintf("Splits stake reward by threshold (1-%d, default: %d)", wallet::MAX_STAKE_SPLIT_THRESHOLD, wallet::DEFAULT_STAKE_SPLIT_THRESHOLD), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    argsman.AddArg("-stakemaxsplit=<n>", strprintf("Sets the number of max inputs & outputs of a stake (default: %d)", wallet::DEFAULT_STAKE_MAX_SPLIT), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    argsman.AddArg("-stakeautocombine=<n>", strprintf("Autocombine feature: 0 - disable, 1 - same account, 2 - any account (default: %d)", wallet::DEFAULT_STAKE_AUTOCOMBINE), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    argsman.AddArg("-inputstakeprotect=<n>", strprintf("Don't use masternode collateral for staking (0-1, default: %u)", wallet::DEFAULT_INPUT_STAKE_PROTECT), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+    argsman.AddArg("-printcoinstake", "", ArgsManager::ALLOW_ANY, OptionsCategory::HIDDEN);
+    argsman.AddArg("-poshashinterval=<n>", strprintf("Specify the number of seconds between stake hash attempts (1-%u, default: %u)", wallet::MAX_POS_HASH_INTERVAL, wallet::DEFAULT_POS_HASH_INTERVAL), ArgsManager::ALLOW_ANY, OptionsCategory::POS);
+#endif
 #if HAVE_DECL_FORK
     argsman.AddArg("-daemon", strprintf("Run in the background as a daemon and accept commands (default: %d)", DEFAULT_DAEMON), ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
     argsman.AddArg("-daemonwait", strprintf("Wait for initialization to be finished before exiting. This implies -daemon (default: %d)", DEFAULT_DAEMONWAIT), ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
@@ -1163,6 +1214,28 @@ bool AppInitParameterInteraction(const ArgsManager& args)
     if (!warnings.empty()) {
         InitWarning(warnings);
     }
+
+#ifdef ENABLE_WALLET
+    const int64_t stake_split_threshold = args.GetIntArg("-stakesplitthreshold", wallet::DEFAULT_STAKE_SPLIT_THRESHOLD);
+    if (stake_split_threshold <= 0 || stake_split_threshold > wallet::MAX_STAKE_SPLIT_THRESHOLD) {
+        return InitError(strprintf(_("-stakesplitthreshold must be between 1 and %d"), wallet::MAX_STAKE_SPLIT_THRESHOLD));
+    }
+
+    const int64_t stake_max_split = args.GetIntArg("-stakemaxsplit", wallet::DEFAULT_STAKE_MAX_SPLIT);
+    if (stake_max_split < 0 || stake_max_split > std::numeric_limits<int>::max()) {
+        return InitError(strprintf(_("-stakemaxsplit must be between 0 and %d"), std::numeric_limits<int>::max()));
+    }
+
+    const int64_t stake_autocombine = args.GetIntArg("-stakeautocombine", wallet::DEFAULT_STAKE_AUTOCOMBINE);
+    if (stake_autocombine < wallet::AUTOCOMBINE_DISABLE || stake_autocombine > wallet::AUTOCOMBINE_ANY) {
+        return InitError(strprintf(_("-stakeautocombine must be between %d and %d"), wallet::AUTOCOMBINE_DISABLE, wallet::AUTOCOMBINE_ANY));
+    }
+
+    const int64_t pos_hash_interval = args.GetIntArg("-poshashinterval", wallet::DEFAULT_POS_HASH_INTERVAL);
+    if (pos_hash_interval <= 0 || pos_hash_interval > wallet::MAX_POS_HASH_INTERVAL) {
+        return InitError(strprintf(_("-poshashinterval must be between 1 and %u"), wallet::MAX_POS_HASH_INTERVAL));
+    }
+#endif
 
     if (!fs::is_directory(gArgs.GetBlocksDirPath())) {
         return InitError(strprintf(_("Specified blocks directory \"%s\" does not exist."), args.GetArg("-blocksdir", "")));
@@ -2699,6 +2772,12 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
     for (const auto& client : node.chain_clients) {
         client->start(*node.scheduler);
     }
+
+#ifdef ENABLE_WALLET
+    if (args.GetBoolArg("-staking", true) && !args.IsArgSet("-masternodeblsprivkey")) {
+        node.scheduler->scheduleFromNow([&node]() { StartStakingThread(node); }, std::chrono::milliseconds{1000});
+    }
+#endif // ENABLE_WALLET
 
     BanMan* banman = node.banman.get();
     node.scheduler->scheduleEvery([banman]{

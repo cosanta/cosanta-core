@@ -49,6 +49,7 @@ private:
 
 public:
     const chainlock::Chainlocks& m_chainlocks;
+    const CSporkManager& sporkman;
     const std::unique_ptr<CMNHFManager> ehf_manager;
     const std::unique_ptr<CMNPaymentsProcessor> mn_payments;
     const std::unique_ptr<CSpecialTxProcessor> special_tx;

@@ -83,6 +83,12 @@ using node::fImporting;
 using node::fPruneMode;
 using node::fReindex;
 
+#if defined(NDEBUG)
+# error "Cosanta Core cannot be compiled without assertions."
+#endif
+
+static std::deque<const CBlockIndex*> vToFetchCache GUARDED_BY(cs_main);
+
 /** Maximum number of in-flight objects from a peer */
 static constexpr int32_t MAX_PEER_OBJECT_IN_FLIGHT = 100;
 /** Maximum number of announced objects from a peer */
@@ -469,6 +475,9 @@ struct CNodeState {
     /** Whether this peer will send us cmpctblocks if we request them. */
     bool m_provides_cmpctblocks{false};
 
+    //! Headers postponed until current in-flight blocks are processed.
+    std::vector<CBlockHeader> vPostponedHeaders;
+
     /** State used to enforce CHAIN_SYNC_TIMEOUT and EXTRA_PEER_CHECK_INTERVAL logic.
       *
       * Both are only in effect for outbound, non-manual, non-protected connections.
@@ -753,7 +762,7 @@ private:
         EXCLUSIVE_LOCKS_REQUIRED(!m_peer_mutex, cs_main);
     /** Process a single headers message from a peer. */
     void ProcessHeadersMessage(CNode& pfrom, Peer& peer,
-                               const std::vector<CBlockHeader>& headers,
+                               std::vector<CBlockHeader> headers,
                                bool via_compact_block)
         EXCLUSIVE_LOCKS_REQUIRED(!m_peer_mutex, g_msgproc_mutex);
     [[nodiscard]] MessageProcessingResult ProcessPlatformBanMessage(NodeId node, std::string_view msg_type, CDataStream& vRecv)
@@ -1422,6 +1431,58 @@ void PeerManagerImpl::FindNextBlocksToDownload(const Peer& peer, unsigned int co
 
     // Make sure pindexBestKnownBlock is up to date, we'll need it.
     ProcessBlockAvailability(peer.m_id);
+
+    // A special case to do parallel initial download
+    const CBlockIndex* best_header{m_chainman.m_best_header};
+    if (((state->pindexBestKnownBlock == nullptr) || state->fSyncStarted) &&
+        m_chainman.ActiveChainstate().IsInitialBlockDownload() &&
+        (best_header != nullptr)
+    ) {
+        // Minimize the work done on walk till the oldest not fetched blocks.
+        auto max_height = std::min<int>(
+            best_header->nHeight,
+            m_chainman.ActiveChain().Height() + MAX_HEADERS_UNCOMPRESSED_RESULT
+        );
+
+        if (vToFetchCache.size() < count) {
+            vToFetchCache.clear();
+            auto pIndexWalk = best_header;
+
+            for (; pIndexWalk != nullptr; pIndexWalk = pIndexWalk->pprev) {
+                if (pIndexWalk->nHeight > max_height) {
+                    // optimize skip
+                    continue;
+                }
+
+                if (m_chainman.ActiveChain().Contains(pIndexWalk)) {
+                    break;
+                }
+
+                if (!pIndexWalk->IsValid(BLOCK_VALID_TREE)) {
+                    // This should never happen by fact
+                    break;
+                }
+
+                if (!(pIndexWalk->nStatus & BLOCK_HAVE_DATA) &&
+                    (mapBlocksInFlight.find(pIndexWalk->GetBlockHash()) == mapBlocksInFlight.end())
+                ) {
+                    vToFetchCache.push_front(pIndexWalk);
+                }
+            }
+        }
+
+        auto begin = vToFetchCache.begin();
+        auto curr = begin;
+
+        while ((curr != vToFetchCache.end()) && (vBlocks.size() < count)) {
+            vBlocks.push_back(*curr);
+            ++curr;
+        }
+
+        vToFetchCache.erase(begin, curr);
+
+        return;
+    }
 
     if (state->pindexBestKnownBlock == nullptr || state->pindexBestKnownBlock->nChainWork < m_chainman.ActiveChain().Tip()->nChainWork || state->pindexBestKnownBlock->nChainWork < nMinimumChainWork) {
         // This peer has nothing interesting.
@@ -3261,23 +3322,37 @@ void PeerManagerImpl::UpdatePeerStateForReceivedHeaders(CNode& pfrom,
 }
 
 void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, Peer& peer,
-                                            const std::vector<CBlockHeader>& headers,
+                                            std::vector<CBlockHeader> headers,
                                             bool via_compact_block)
 {
-    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());
-    size_t nCount = headers.size();
+    const bool uses_compressed = UsesCompressedHeaders(peer);
+    const std::string msg_type = uses_compressed ? NetMsgType::GETHEADERS2 : NetMsgType::GETHEADERS;
+    const size_t headers_limit = GetHeadersLimit(pfrom, uses_compressed);
+    bool get_more_headers{headers.size() == headers_limit};
 
-    if (nCount == 0) {
-        // Nothing interesting. Stop asking this peers for more headers.
-        return;
+    const CBlockIndex* pindexLast{nullptr};
+    const CBlockIndex* pindexPrev{nullptr};
+
+    {
+        LOCK(cs_main);
+        CNodeState* nodestate = State(pfrom.GetId());
+        if (!nodestate->vPostponedHeaders.empty()) {
+            if (!headers.empty()) {
+                LogPrint(BCLog::NET, "New headers while having postponed headers from %d\n", pfrom.GetId());
+            }
+            headers.swap(nodestate->vPostponedHeaders);
+            get_more_headers = true;
+        } else if (headers.empty()) {
+            // Nothing interesting. Stop asking this peer for more headers.
+            return;
+        }
+
+        pindexPrev = m_chainman.m_blockman.LookupBlockIndex(headers.front().hashPrevBlock);
     }
 
-    const CBlockIndex *pindexLast = nullptr;
+    const size_t nCount = headers.size();
 
-    // Do these headers connect to something in our block index?
-    bool headers_connect_blockindex{WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) != nullptr)};
-
-    if (!headers_connect_blockindex) {
+    if (pindexPrev == nullptr) {
         if (nCount <= MAX_BLOCKS_TO_ANNOUNCE) {
             // If this looks like it could be a BIP 130 block announcement, use
             // special logic for handling headers that don't connect, as this
@@ -3297,28 +3372,64 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, Peer& peer,
 
     // If we don't have the last header, then this peer will have given us
     // something new (if these headers are valid).
-    bool received_new_header{WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash()) == nullptr)};
+    const bool received_new_header{WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash()) == nullptr)};
 
     BlockValidationState state;
-    if (!m_chainman.ProcessNewBlockHeaders(headers, state, &pindexLast)) {
+    CBlockHeader first_invalid_header;
+    if (!m_chainman.ProcessNewBlockHeaders(headers, state, m_chainparams, &pindexLast, &first_invalid_header)) {
         if (state.IsInvalid()) {
             MaybePunishNodeForBlock(pfrom.GetId(), state, via_compact_block, "invalid header received");
             return;
         }
+        if (state.IsError() || state.IsTransientError()) {
+            // Cosanta: transient PoS header failures can mean the stake input
+            // is not available locally yet. Keep syncing blocks and retry the
+            // postponed headers once the current in-flight blocks are done.
+            LogPrint(BCLog::NET, "peer %d sent us header which we are unable to process yet\n", pfrom.GetId());
+            if (pindexLast == nullptr && !first_invalid_header.IsNull()) {
+                LOCK(cs_main);
+                pindexLast = m_chainman.m_blockman.LookupBlockIndex(first_invalid_header.hashPrevBlock);
+            }
+            if (pindexLast == nullptr) {
+                pindexLast = pindexPrev;
+            }
+            get_more_headers = true;
+        }
+        if (pindexLast == nullptr) {
+            // This situation should not happen in normal operation. It may
+            // happen during invalidation of the active chain on our side.
+            Misbehaving(pfrom.GetId(), 50);
+            LogPrint(BCLog::NET, "peer %d sent us unconnected headers we could not process\n", pfrom.GetId());
+            return;
+        }
     }
 
-    // Consider fetching more headers.
-    const bool uses_compressed = UsesCompressedHeaders(peer);
-    const std::string msg_type = uses_compressed ? NetMsgType::GETHEADERS2 : NetMsgType::GETHEADERS;
-    if (nCount == GetHeadersLimit(pfrom, uses_compressed)) {
-        // Headers message had its maximum size; the peer may have more headers.
+    UpdatePeerStateForReceivedHeaders(pfrom, *pindexLast, received_new_header, get_more_headers);
+
+    bool saved_postponed_headers{false};
+    {
+        LOCK(cs_main);
+        CNodeState* nodestate = State(pfrom.GetId());
+        if (!headers.empty() && !m_chainman.ActiveChain().Contains(pindexLast)) {
+            if (!nodestate->vPostponedHeaders.empty()) {
+                LogPrint(BCLog::NET, "peer %d sent us more headers while postponed headers are pending\n", pfrom.GetId());
+                saved_postponed_headers = true;
+            } else {
+                nodestate->vPostponedHeaders = std::move(headers);
+                saved_postponed_headers = true;
+                LogPrint(BCLog::NET, "saving postponed headers for peer %d\n", pfrom.GetId());
+            }
+        }
+    }
+
+    if (!saved_postponed_headers && get_more_headers) {
+        // Headers message had its maximum size, or a transient PoS header
+        // error stopped this batch. The peer may have more headers.
         if (MaybeSendGetHeaders(pfrom, msg_type, m_chainman.ActiveChain().GetLocator(pindexLast), peer)) {
             LogPrint(BCLog::NET, "more %s (%d) to end to peer=%d (startheight:%d)\n",
                     msg_type, pindexLast->nHeight, pfrom.GetId(), peer.m_starting_height);
         }
     }
-
-    UpdatePeerStateForReceivedHeaders(pfrom, *pindexLast, received_new_header, nCount == GetHeadersLimit(pfrom, uses_compressed));
 
     // Consider immediately downloading blocks.
     HeadersDirectFetchBlocks(pfrom, peer, *pindexLast);
@@ -4822,10 +4933,21 @@ void PeerManagerImpl::ProcessMessage(
 
         const CBlockIndex *pindex = nullptr;
         BlockValidationState state;
-        if (!m_chainman.ProcessNewBlockHeaders({cmpctblock.header}, state, &pindex)) {
+        if (!m_chainman.ProcessNewBlockHeaders({cmpctblock.header}, state, m_chainparams, &pindex)) {
             if (state.IsInvalid()) {
                 MaybePunishNodeForBlock(pfrom.GetId(), state, /*via_compact_block=*/true, "invalid header via cmpctblock");
                 return;
+            }
+            // Cosanta: a transient error (e.g. PoS stake input not yet in
+            // our local chain) means we cannot fully validate this header
+            // right now. Don't enter the cmpctblock fast-path below — pindex
+            // is unset and assert(pindex) would fire. Instead reroute the
+            // header through the normal headers-message path, which puts it
+            // into vPostponedHeaders / arms get_more_headers so the peer can
+            // be re-queried once our chain catches up.
+            if (state.IsError() || state.IsTransientError()) {
+                LogPrint(BCLog::NET, "peer %d sent us cmpctblock header we are unable to process yet, deferring to header path\n", pfrom.GetId());
+                return ProcessHeadersMessage(pfrom, *peer, {cmpctblock.header}, /*via_compact_block=*/true);
             }
         }
 
@@ -5108,10 +5230,13 @@ void PeerManagerImpl::ProcessMessage(
             }
         } else if (msg_type == NetMsgType::HEADERS2) {
             std::list<int32_t> last_unique_versions;
+            std::vector<CBlockHeader> previous_headers;
+            previous_headers.reserve(nCount);
             for (unsigned int n = 0; n < nCount; n++) {
                 CompressibleBlockHeader block_header_compressed;
                 vRecv >> block_header_compressed;
-                block_header_compressed.Uncompress(headers, last_unique_versions);
+                block_header_compressed.Uncompress(previous_headers, last_unique_versions);
+                previous_headers.push_back(block_header_compressed);
                 headers.push_back(block_header_compressed);
             }
         }
@@ -5558,6 +5683,22 @@ bool PeerManagerImpl::ProcessMessages(CNode* pfrom, std::atomic<bool>& interrupt
 
     PeerRef peer = GetPeerRef(pfrom->GetId());
     if (peer == nullptr) return false;
+
+    // Continue processing postponed headers after the in-flight blocks they
+    // depend on have been processed.
+    std::vector<CBlockHeader> postponed_headers;
+    {
+        LOCK(cs_main);
+        auto state = State(pfrom->GetId());
+        if ((state->nBlocksInFlight == 0) && !state->vPostponedHeaders.empty()) {
+            postponed_headers.swap(state->vPostponedHeaders);
+        }
+    }
+    if (!postponed_headers.empty()) {
+        LogPrint(BCLog::NET, "Retrying postponed headers for peer %d\n", pfrom->GetId());
+        ProcessHeadersMessage(*pfrom, *peer, std::move(postponed_headers), /*via_compact_block=*/false);
+        return !pfrom->fDisconnect;
+    }
 
     {
         LOCK(peer->m_getdata_requests_mutex);

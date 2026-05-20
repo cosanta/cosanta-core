@@ -264,6 +264,10 @@ SporkValue CSporkManager::GetSporkValue(SporkId nSporkID) const
         switch (nSporkID) {
             case SPORK_21_QUORUM_ALL_CONNECTED:
                 return 1;
+            case SPORK_31_FIRST_POS_BLOCK:
+            case SPORK_32_FIRST_POS_V2_BLOCK:
+            case SPORK_33_LAST_POW_BLOCK:
+                break;
             default:
                 return 0;
         }

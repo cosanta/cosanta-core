@@ -256,6 +256,7 @@ BITCOIN_CORE_H = \
   indirectmap.h \
   init.h \
   init/common.h \
+  pos_kernel.h \
   interfaces/chain.h \
   interfaces/coinjoin.h \
   interfaces/echo.h \
@@ -597,6 +598,7 @@ libbitcoin_node_a_SOURCES = \
   policy/packages.cpp \
   policy/policy.cpp \
   policy/settings.cpp \
+  pos_kernel.cpp \
   pow.cpp \
   rest.cpp \
   rpc/blockchain.cpp \
@@ -664,6 +666,7 @@ libbitcoin_wallet_a_SOURCES = \
   wallet/bip39.cpp \
   wallet/coinjoin.cpp \
   wallet/coincontrol.cpp \
+  wallet/coinstake.cpp \
   wallet/context.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \
