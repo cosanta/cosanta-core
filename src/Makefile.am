@@ -1144,25 +1144,31 @@ cosanta_wallet_SOURCES += init/bitcoin-wallet.cpp
 cosanta_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
 cosanta_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
 cosanta_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
-cosanta_wallet_LDADD = \
-  $(LIBBITCOIN_WALLET_TOOL) \
-  $(LIBBITCOIN_WALLET) \
-  $(LIBBITCOIN_COMMON) \
-  $(LIBBITCOIN_UTIL) \
-  $(LIBUNIVALUE) \
-  $(LIBBITCOIN_CONSENSUS) \
-  $(LIBBITCOIN_CRYPTO) \
-  $(LIBDASHBLS) \
-  $(LIBSECP256K1) \
-  $(BACKTRACE_LIBS) \
-  $(BOOST_LIBS) \
-  $(BDB_LIBS) \
-  $(SQLITE_LIBS) \
-  $(GMP_LIBS)
 
 if TARGET_WINDOWS
 cosanta_wallet_SOURCES += cosanta-wallet-res.rc
 endif
+
+# Libraries below may be listed more than once to resolve circular dependencies (see
+# https://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking#circular-dependency)
+cosanta_wallet_LDADD = \
+  $(LIBBITCOIN_WALLET_TOOL) \
+  $(LIBBITCOIN_NODE) \
+  $(LIBBITCOIN_WALLET) \
+  $(LIBBITCOIN_NODE) \
+  $(LIBBITCOIN_COMMON) \
+  $(LIBBITCOIN_CONSENSUS) \
+  $(LIBBITCOIN_UTIL) \
+  $(LIBBITCOIN_CRYPTO) \
+  $(LIBBITCOIN_ZMQ) \
+  $(LIBDASHBLS) \
+  $(LIBLEVELDB) \
+  $(LIBLEVELDB_SSE42) \
+  $(LIBMEMENV) \
+  $(LIBSECP256K1) \
+  $(LIBUNIVALUE)
+
+cosanta_wallet_LDADD += $(BACKTRACE_LIBS) $(BOOST_LIBS) $(BDB_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(SQLITE_LIBS) $(ZMQ_LIBS) $(GMP_LIBS)
 #
 
 # cosanta-util binary #
