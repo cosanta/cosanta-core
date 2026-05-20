@@ -1,11 +1,11 @@
-# Dash Core version v23.1.2
+# Cosanta Core version v23.1.2
 
 This is a new patch version release, bringing GUI improvements, new features, bugfixes, and performance optimizations.
 This release is **optional** for all nodes, although recommended.
 
 Please report bugs using the issue tracker at GitHub:
 
-  <https://github.com/dashpay/dash/issues>
+  <https://github.com/cosanta/cosanta-core/issues>
 
 # Upgrading and downgrading
 
@@ -13,8 +13,8 @@ Please report bugs using the issue tracker at GitHub:
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over /Applications/Dash-Qt (on Mac) or
-dashd/dash-qt (on Linux).
+installer (on Windows) or just copy over /Applications/Cosanta-Qt (on Mac) or
+cosantad/cosanta-qt (on Linux).
 
 ## Downgrade warning
 
@@ -29,7 +29,7 @@ require a reindex.
 
 - Introduced a framework for sourcing and applying data with dedicated feeds, used by the Masternode and Proposal list views for improved data flow and separation of concerns (dash#7146).
 - Added a new "Proposal Information" widget to the Information tab with an interactive donut chart showing proposal budget allocation (dash#7159).
-- Added distinct widgets for Dash-specific reporting in the Debug window, including dedicated Information and Network tabs (dash#7118).
+- Added distinct widgets for Cosanta-specific reporting in the Debug window, including dedicated Information and Network tabs (dash#7118).
 - Added support for reporting `OP_RETURN` payloads as Data Transactions in the transaction list (dash#7144).
 - Added Tahoe styled icons for macOS with runtime styling for each network type (mainnet, testnet, devnet, regtest), updated bundle icon, and added mask-based tray icon with generation scripts (dash#7180).
 - Filter preferences in the masternode list are now persisted across sessions (dash#7148).
@@ -48,7 +48,7 @@ require a reindex.
 
 ## Miscellaneous
 
-- Renamed `bitcoin-util` manpage and test references to `dash-util` (dash#7221).
+- Renamed `bitcoin-util` manpage and test references to `cosanta-util` (dash#7221).
 
 ## Interfaces
 
@@ -78,18 +78,18 @@ debug the release candidates.
 
 These releases are considered obsolete. Old release notes can be found here:
 
-- [v23.1.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-23.1.0.md) released Feb/15/2026
-- [v23.0.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-23.0.2.md) released Dec/4/2025
-- [v23.0.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-23.0.0.md) released Nov/10/2025
-- [v22.1.3](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-22.1.3.md) released Jul/15/2025
-- [v22.1.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-22.1.2.md) released Apr/15/2025
-- [v22.1.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-22.1.1.md) released Feb/17/2025
-- [v22.1.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-22.1.0.md) released Feb/10/2025
-- [v22.0.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-22.0.0.md) released Dec/12/2024
-- [v21.1.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-21.1.1.md) released Oct/22/2024
-- [v21.1.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-21.1.0.md) released Aug/8/2024
-- [v21.0.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-21.0.2.md) released Aug/1/2024
-- [v21.0.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-21.0.0.md) released Jul/25/2024
-- [v20.1.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-20.1.1.md) released April/3/2024
+- [v23.1.0](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-23.1.0.md) released Feb/15/2026
+- [v23.0.2](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-23.0.2.md) released Dec/4/2025
+- [v23.0.0](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-23.0.0.md) released Nov/10/2025
+- [v22.1.3](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-22.1.3.md) released Jul/15/2025
+- [v22.1.2](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-22.1.2.md) released Apr/15/2025
+- [v22.1.1](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-22.1.1.md) released Feb/17/2025
+- [v22.1.0](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-22.1.0.md) released Feb/10/2025
+- [v22.0.0](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-22.0.0.md) released Dec/12/2024
+- [v21.1.1](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-21.1.1.md) released Oct/22/2024
+- [v21.1.0](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-21.1.0.md) released Aug/8/2024
+- [v21.0.2](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-21.0.2.md) released Aug/1/2024
+- [v21.0.0](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-21.0.0.md) released Jul/25/2024
+- [v20.1.1](https://github.com/cosanta/cosanta-core/blob/master/doc/release-notes/dash/release-notes-20.1.1.md) released April/3/2024
 
-[set-of-changes]: https://github.com/dashpay/dash/compare/v23.1.0...dashpay:v23.1.2
+[set-of-changes]: https://github.com/cosanta/cosanta-core/compare/v23.1.0...v23.1.2
