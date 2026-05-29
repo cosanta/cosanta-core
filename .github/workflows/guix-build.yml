@@ -1,20 +1,16 @@
 name: Guix Build
 
 on:
-  pull_request:
-    types: [ labeled ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: [ "self-hosted", "linux", "x64", "ubuntu-core" ]
-    if: contains(github.event.pull_request.labels.*.name, 'guix-build')
     timeout-minutes: 480
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           path: cosanta
           fetch-depth: 0
 
