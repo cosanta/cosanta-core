@@ -244,8 +244,8 @@ public:
         consensus.DIP0020Height = 145152;
         consensus.DIP0024Height = 512064;
         consensus.DIP0024QuorumsHeight = 512064;
-        consensus.V19Height = 0;
-        consensus.MinBIP9WarningHeight = consensus.V19Height == 0 ? 0 : consensus.V19Height + 2016; // V19 activation height + miner confirmation window
+        consensus.V19Height = 975744; // locked_in since 971712 + v19 window 4032
+        consensus.MinBIP9WarningHeight = consensus.V19Height + 2016; // V19 activation height + miner confirmation window
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.posLimit = uint256S("000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 24
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Cosanta: 1 day
@@ -1466,7 +1466,4 @@ void SelectParams(const std::string& network)
 {
     SelectBaseParams(network);
     globalChainParams = CreateChainParams(gArgs, network);
-    if (network == CBaseChainParams::MAIN) {
-        throw std::runtime_error("Cosanta mainnet is disabled until V19 activation height is configured; remove this guard deliberately");
-    }
 }
