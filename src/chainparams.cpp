@@ -269,7 +269,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_V20].nFalloffCoeff = 5;            // this corresponds to 10 periods
 
         consensus.vDeployments[Consensus::DEPLOYMENT_MN_RR].bit = 10;
-        consensus.vDeployments[Consensus::DEPLOYMENT_MN_RR].nStartTime = 1788220800;   // September 1, 2026
+        consensus.vDeployments[Consensus::DEPLOYMENT_MN_RR].nStartTime = 1783900800;   // July 13, 2026
         consensus.vDeployments[Consensus::DEPLOYMENT_MN_RR].nTimeout = 1819756800;     // September 1, 2027
         // NOTE: nWindowSize for MN_RR __MUST__ be greater than or equal to nSuperblockMaturityWindow for CSuperblock::GetPaymentsLimit() to work correctly
         consensus.vDeployments[Consensus::DEPLOYMENT_MN_RR].nWindowSize = 4032;
@@ -279,10 +279,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_MN_RR].useEHF = true;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000e22bed197c5abb04");
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000ffd5d92baf8f67b5");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0xf8c06e7c8cda993331b08f01d7078614793aeeaae10c26a46fbdfa1783b5ba12");
+        consensus.defaultAssumeValid = uint256S("0x418ad26eb587d9e5e6a2f544bae0901b28a9c0bc97c0cc1d2904e16c825af3f4");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -392,6 +392,7 @@ public:
                 {929600, uint256S("0xecf2d7392585b41c5acc81548fe3593410c500d676718f5161e9b8a246cbe3ba")},
                 {958666, uint256S("0x80caa466ea0cfb71168d58c368e53f455dcabeadbc2ceebdad071f42152ee845")},
                 {961389, uint256S("0xf8c06e7c8cda993331b08f01d7078614793aeeaae10c26a46fbdfa1783b5ba12")},
+                {985666, uint256S("0x418ad26eb587d9e5e6a2f544bae0901b28a9c0bc97c0cc1d2904e16c825af3f4")},
             }
         };
 
@@ -399,11 +400,11 @@ public:
             // TODO to be specified in a future patch.
         };
 
-        // getchaintxstats 17280 f8c06e7c8cda993331b08f01d7078614793aeeaae10c26a46fbdfa1783b5ba12
+        // getchaintxstats 17280 418ad26eb587d9e5e6a2f544bae0901b28a9c0bc97c0cc1d2904e16c825af3f4
         chainTxData = ChainTxData{
-            1778140554,
-            3227590,
-            0.02433884353674038
+            1781969241,
+            3320212,
+            0.02410005385077027
         };
     }
 };
