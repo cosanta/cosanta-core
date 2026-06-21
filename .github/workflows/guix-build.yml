@@ -6,8 +6,7 @@ permissions:
   attestations: write
 
 on:
-  pull_request_target:
-  push:
+  workflow_dispatch:
 
 jobs:
   build-image:
@@ -19,7 +18,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           path: cosanta
           fetch-depth: 0
 
@@ -65,7 +63,6 @@ jobs:
     needs: build-image
     # runs-on: [ "self-hosted", "linux", "x64", "ubuntu-core" ]
     runs-on: ubuntu-latest
-#    if: ${{ contains(github.event.pull_request.labels.*.name, 'guix-build') }}
     strategy:
       matrix:
         build_target: [x86_64-linux-gnu, arm-linux-gnueabihf, aarch64-linux-gnu, riscv64-linux-gnu, x86_64-w64-mingw32, x86_64-apple-darwin, arm64-apple-darwin]
@@ -75,7 +72,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           path: cosanta
           fetch-depth: 0
 
@@ -97,6 +93,13 @@ jobs:
       - name: Create .cache folder if missing
         if: steps.guix-cache-restore.outputs.cache-hit != 'true'
         run: mkdir -p .cache
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Guix build
         timeout-minutes: 480
