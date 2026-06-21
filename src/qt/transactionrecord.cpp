@@ -39,7 +39,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
     auto node = interfaces::MakeNode();
     auto& coinJoinOptions = node->coinJoinOptions();
 
-    if (nNet > 0 || wtx.is_coinbase || wtx.is_platform_transfer)
+    if (nNet > 0 || wtx.is_coinbase || wtx.is_coinstake || wtx.is_platform_transfer)
     {
         //
         // Credit
@@ -73,6 +73,11 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
                 {
                     // Generated
                     sub.type = TransactionRecord::Generated;
+                }
+                if (wtx.is_coinstake)
+                {
+                    // Generated
+                    continue;
                 }
                 if (wtx.is_platform_transfer)
                 {
@@ -269,7 +274,7 @@ void TransactionRecord::updateStatus(const interfaces::WalletTxStatus& wtx, cons
     // Sort order, unrecorded transactions sort to the top
     status.sortKey = strprintf("%010d-%01d-%010u-%03d",
         wtx.block_height,
-        wtx.is_coinbase ? 1 : 0,
+        (wtx.is_coinbase || wtx.is_coinstake) ? 1 : 0,
         wtx.time_received,
         idx);
     status.countsForBalance = wtx.is_trusted && !(wtx.blocks_to_maturity > 0);
