@@ -244,9 +244,9 @@ public:
         consensus.DIP0020Height = 145152;
         consensus.DIP0024Height = 512064;
         consensus.DIP0024QuorumsHeight = 512064;
-        consensus.V19Height = 0;
-        consensus.V20Height = 0;
-        consensus.MN_RRHeight = 0;
+        consensus.V19Height = 975744;
+        consensus.V20Height = 991872;
+        consensus.MN_RRHeight = 1013576;
         consensus.MinBIP9WarningHeight = 0;
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.posLimit = uint256S("000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 24
@@ -263,7 +263,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1672444800; // December 31, 2022
 
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].bit = 11;
-        consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nStartTime = 1728864000;   // October 14, 2024
+        consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nStartTime = 1785628800;   // August 2, 2026
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nTimeout = 1760400000; // October 14, 2025
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nWindowSize = 4032;
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nThresholdStart = 3226;     // 80% of 4032
@@ -272,10 +272,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].useEHF = true;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000e22bed197c5abb04");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000010a8a6bdb06094dbc");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0xf8c06e7c8cda993331b08f01d7078614793aeeaae10c26a46fbdfa1783b5ba12");
+        consensus.defaultAssumeValid = uint256S("0x39c67d1d0479e45eb12ac9a85da72846577d7ab4e3b7eb78444580cf7b7157aa");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -386,6 +386,7 @@ public:
                 {929600, uint256S("0xecf2d7392585b41c5acc81548fe3593410c500d676718f5161e9b8a246cbe3ba")},
                 {958666, uint256S("0x80caa466ea0cfb71168d58c368e53f455dcabeadbc2ceebdad071f42152ee845")},
                 {961389, uint256S("0xf8c06e7c8cda993331b08f01d7078614793aeeaae10c26a46fbdfa1783b5ba12")},
+                {997606, uint256S("0x39c67d1d0479e45eb12ac9a85da72846577d7ab4e3b7eb78444580cf7b7157aa")},
             }
         };
 
@@ -393,11 +394,11 @@ public:
             // TODO to be specified in a future patch.
         };
 
-        // getchaintxstats 17280 f8c06e7c8cda993331b08f01d7078614793aeeaae10c26a46fbdfa1783b5ba12
+        // getchaintxstats 17280 d61ece13b4173cba7295d2bd21753a4ff6a801eac32d09bd3c608db3b22b3371
         chainTxData = ChainTxData{
-            1778140554,
-            3227590,
-            0.02433884353674038
+            1783851941,
+            3361761,
+            0.02257553011477715
         };
     }
 };
@@ -441,7 +442,7 @@ public:
         consensus.DIP0024QuorumsHeight = 444500;
         consensus.V19Height = 764500;
         consensus.V20Height = 767900;
-        consensus.MN_RRHeight = 0;
+        consensus.MN_RRHeight = 809520;
         consensus.MinBIP9WarningHeight = consensus.V20Height + 2016;  // v20 activation height + miner confirmation window
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.posLimit = uint256S("0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 4
@@ -458,7 +459,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1672444800; // December 31, 2022
 
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].bit = 11;
-        consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nStartTime = 1728864000;   // October 14, 2024
+        consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nStartTime = 1784073600;   // July 15, 2026
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nWindowSize = 100;
         consensus.vDeployments[Consensus::DEPLOYMENT_WITHDRAWALS].nThresholdStart = 80;     // 80% of 100
@@ -1445,12 +1446,6 @@ void SelectParams(const std::string& network)
 {
     SelectBaseParams(network);
     globalChainParams = CreateChainParams(gArgs, network);
-    if (network == CBaseChainParams::MAIN) {
-        throw std::runtime_error("Cosanta mainnet is disabled until activation heights are reviewed; remove this guard deliberately");
-    }
-    if (network == CBaseChainParams::TESTNET) {
-        throw std::runtime_error("Cosanta testnet is disabled until activation heights are reviewed; remove this guard deliberately");
-    }
 }
 
 void SetupChainParamsOptions(ArgsManager& argsman)
