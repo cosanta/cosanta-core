@@ -247,7 +247,7 @@ public:
         consensus.V19Height = 975744;
         consensus.V20Height = 991872;
         consensus.MN_RRHeight = 1013576;
-        consensus.MinBIP9WarningHeight = 0;
+        consensus.MinBIP9WarningHeight = consensus.V20Height + consensus.nMinerConfirmationWindow;
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.posLimit = uint256S("000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 24
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Cosanta: 1 day
