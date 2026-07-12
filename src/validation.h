@@ -1052,9 +1052,6 @@ public:
     ~ChainstateManager();
 };
 
-/** Global variable that points to the active block tree (protected by cs_main) */
-extern std::unique_ptr<CBlockTreeDB> pblocktree;
-
 /**
  * Determine what nVersion a new block should use.
  */
