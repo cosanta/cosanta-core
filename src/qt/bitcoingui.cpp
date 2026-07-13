@@ -10,6 +10,7 @@
 #include <interfaces/coinjoin.h>
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
+#include <node/miner.h>
 #include <node/interface_ui.h>
 #include <util/system.h>
 #include <util/translation.h>
@@ -44,6 +45,7 @@
 #include <qt/macdockiconhandler.h>
 #endif
 
+#include <functional>
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
@@ -189,6 +191,7 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const NetworkStyle* networkStyle,
     QHBoxLayout *frameBlocksLayout = new QHBoxLayout(frameBlocks);
     frameBlocksLayout->setContentsMargins(3,0,3,0);
     frameBlocksLayout->setSpacing(3);
+    labelStakingIcon = new QLabel();
     unitDisplayControl = new UnitDisplayStatusBarControl();
     labelWalletEncryptionIcon = new QLabel();
     labelWalletHDStatusIcon = new QLabel();
@@ -207,6 +210,8 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const NetworkStyle* networkStyle,
         labelWalletEncryptionIcon->hide();
     }
     frameBlocksLayout->addWidget(labelProxyIcon);
+    frameBlocksLayout->addStretch();
+    frameBlocksLayout->addWidget(labelStakingIcon);
     frameBlocksLayout->addStretch();
     frameBlocksLayout->addWidget(labelConnectionsIcon);
     frameBlocksLayout->addStretch();
@@ -274,6 +279,11 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const NetworkStyle* networkStyle,
 #ifdef ENABLE_WALLET
     connect(incomingTransactionsTimer, &QTimer::timeout, this, &BitcoinGUI::showIncomingTransactions);
 #endif
+
+    QTimer* timerStakingIcon = new QTimer(labelStakingIcon);
+    connect(timerStakingIcon, &QTimer::timeout, this, &BitcoinGUI::setStakingStatus);
+    timerStakingIcon->start(10000);
+    setStakingStatus();
 
     bool fDebugCustomStyleSheets = gArgs.GetBoolArg("-debug-ui", false) && GUIUtil::isStyleSheetDirectoryCustom();
     if (fDebugCustomStyleSheets) {
@@ -392,14 +402,16 @@ void BitcoinGUI::stopConnectingAnimation()
 void BitcoinGUI::createActions()
 {
     sendCoinsAction = new QAction(tr("&Send"), this);
-    sendCoinsAction->setStatusTip(tr("Send coins to a Dash address"));
+    sendCoinsAction->setStatusTip(tr("Send coins to a Cosanta address"));
+    sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
+
     QString strCoinJoinName = QString::fromStdString(gCoinJoinName);
     coinJoinCoinsAction = new QAction(QString("&%1").arg(strCoinJoinName), this);
-    coinJoinCoinsAction->setStatusTip(tr("Send %1 funds to a Dash address").arg(strCoinJoinName));
+    coinJoinCoinsAction->setStatusTip(tr("Send %1 funds to a Cosanta address").arg(strCoinJoinName));
     coinJoinCoinsAction->setToolTip(coinJoinCoinsAction->statusTip());
 
     receiveCoinsAction = new QAction(tr("&Receive"), this);
-    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and dash: URIs)"));
+    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and cosanta: URIs)"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
 
 #ifdef ENABLE_WALLET
@@ -440,14 +452,16 @@ void BitcoinGUI::createActions()
     unlockWalletAction = new QAction(tr("&Unlock Wallet…"), this);
     unlockWalletAction->setToolTip(tr("Unlock wallet"));
     lockWalletAction = new QAction(tr("&Lock Wallet"), this);
+    startStakingAction = new QAction(tr("Start Staking…"), this);
+    startStakingAction->setToolTip(tr("Unlock wallet for mixing and staking only"));
     signMessageAction = new QAction(tr("Sign &message…"), this);
-    signMessageAction->setStatusTip(tr("Sign messages with your Dash addresses to prove you own them"));
+    signMessageAction->setStatusTip(tr("Sign messages with your Cosanta addresses to prove you own them"));
     verifyMessageAction = new QAction(tr("&Verify message…"), this);
-    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Dash addresses"));
+    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Cosanta addresses"));
     m_load_psbt_action = new QAction(tr("&Load PSBT from file…"), this);
-    m_load_psbt_action->setStatusTip(tr("Load Partially Signed Blockchain Transaction"));
+    m_load_psbt_action->setStatusTip(tr("Load Partially Signed Cosanta Transaction"));
     m_load_psbt_clipboard_action = new QAction(tr("Load PSBT from &clipboard…"), this);
-    m_load_psbt_clipboard_action->setStatusTip(tr("Load Partially Signed Blockchain Transaction from clipboard"));
+    m_load_psbt_clipboard_action->setStatusTip(tr("Load Partially Signed Cosanta Transaction from clipboard"));
 
     openInfoAction = new QAction(tr("&Information"), this);
     openInfoAction->setStatusTip(tr("Show diagnostic information"));
@@ -481,7 +495,7 @@ void BitcoinGUI::createActions()
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
 
     openAction = new QAction(tr("Open &URI…"), this);
-    openAction->setStatusTip(tr("Open a dash: URI"));
+    openAction->setStatusTip(tr("Open a cosanta: URI"));
 
     m_open_wallet_action = new QAction(tr("Open Wallet"), this);
     m_open_wallet_action->setEnabled(false);
@@ -506,7 +520,7 @@ void BitcoinGUI::createActions()
 
     showHelpMessageAction = new QAction(tr("&Command-line options"), this);
     showHelpMessageAction->setMenuRole(QAction::NoRole);
-    showHelpMessageAction->setStatusTip(tr("Show the %1 help message to get a list with possible Dash command-line options").arg(PACKAGE_NAME));
+    showHelpMessageAction->setStatusTip(tr("Show the %1 help message to get a list with possible Cosanta command-line options").arg(PACKAGE_NAME));
 
     showCoinJoinHelpAction = new QAction(tr("%1 &information").arg(strCoinJoinName), this);
     showCoinJoinHelpAction->setMenuRole(QAction::NoRole);
@@ -552,6 +566,7 @@ void BitcoinGUI::createActions()
         connect(unlockWalletAction, &QAction::triggered, walletFrame, &WalletFrame::unlockWallet);
         connect(lockWalletAction, &QAction::triggered, walletFrame, &WalletFrame::lockWallet);
         connect(signMessageAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
+        connect(startStakingAction, &QAction::triggered, walletFrame, &WalletFrame::unlockWalletForMixingOnly);
         connect(signMessageAction, &QAction::triggered, [this]{ gotoSignMessageTab(); });
         connect(m_load_psbt_action, &QAction::triggered, [this]{ gotoLoadPSBT(); });
         connect(m_load_psbt_clipboard_action, &QAction::triggered, [this]{ gotoLoadPSBT(true); });
@@ -671,6 +686,7 @@ void BitcoinGUI::createMenuBar()
         settings->addAction(showMnemonicAction);
         settings->addAction(unlockWalletAction);
         settings->addAction(lockWalletAction);
+        settings->addAction(startStakingAction);
         settings->addSeparator();
         settings->addAction(m_mask_values_action);
         settings->addSeparator();
@@ -1419,7 +1435,7 @@ void BitcoinGUI::updateNetworkState()
     QString tooltip;
     if (fNetworkActive) {
         //: A substring of the tooltip.
-        tooltip = tr("%n active connection(s) to Dash network", "", count);
+        tooltip = tr("%n active connection(s) to Cosanta network", "", count);
     } else {
         tooltip = tr("Network activity disabled");
         icon = "connect_4";
@@ -2125,6 +2141,25 @@ bool BitcoinGUI::eventFilter(QObject *object, QEvent *event)
     return QMainWindow::eventFilter(object, event);
 }
 
+
+void BitcoinGUI::setStakingStatus()
+{
+    if (node::IsStakingActive()) {
+        GUIUtil::ThemedColor color = GUIUtil::ThemedColor::GREEN;
+        labelStakingIcon->show();
+        labelStakingIcon->setPixmap(GUIUtil::getIcon("staking_active", color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelStakingIcon->setToolTip(tr("Staking is <b>enabled</b>"));
+    } else {
+        GUIUtil::ThemedColor color = GUIUtil::ThemedColor::ORANGE;
+        QString detailed_status = QString::fromStdString(node::getMiningStatus());
+        if (progressBarLabel->isVisible() && !progressBarLabel->text().isEmpty()) {
+            detailed_status = QString(":<br>- %1").arg(progressBarLabel->text());
+        }
+        labelStakingIcon->show();
+        labelStakingIcon->setPixmap(GUIUtil::getIcon("staking_inactive", color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelStakingIcon->setToolTip(tr("Staking is <b>disabled</b> %1").arg(detailed_status));
+    }
+}
 #ifdef ENABLE_WALLET
 bool BitcoinGUI::handlePaymentRequest(const SendCoinsRecipient& recipient)
 {
@@ -2167,6 +2202,7 @@ void BitcoinGUI::setEncryptionStatus(int status)
         unlockWalletAction->setVisible(false);
         lockWalletAction->setVisible(false);
         encryptWalletAction->setEnabled(true);
+        startStakingAction->setVisible(false);
         break;
     case WalletModel::Unlocked:
         labelWalletEncryptionIcon->show();
@@ -2175,16 +2211,18 @@ void BitcoinGUI::setEncryptionStatus(int status)
         changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(false);
         lockWalletAction->setVisible(true);
-        encryptWalletAction->setEnabled(false);
+        encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+        startStakingAction->setVisible(false);
         break;
     case WalletModel::UnlockedForMixingOnly:
         labelWalletEncryptionIcon->show();
         labelWalletEncryptionIcon->setPixmap(GUIUtil::getIcon("lock_open", GUIUtil::ThemedColor::ORANGE).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
-        labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for mixing only"));
+        labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for mixing only and staking only"));
         changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(true);
         lockWalletAction->setVisible(true);
-        encryptWalletAction->setEnabled(false);
+        encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+        startStakingAction->setVisible(false);
         break;
     case WalletModel::Locked:
         labelWalletEncryptionIcon->show();
@@ -2193,7 +2231,8 @@ void BitcoinGUI::setEncryptionStatus(int status)
         changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(true);
         lockWalletAction->setVisible(false);
-        encryptWalletAction->setEnabled(false);
+        encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+        startStakingAction->setVisible(true);
         break;
     }
 }

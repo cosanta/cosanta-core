@@ -17,6 +17,7 @@
 #include <interfaces/wallet.h>
 #include <key.h>
 #include <key_io.h>
+#include <pos_kernel.h>
 #include <policy/fees.h>
 #include <policy/policy.h>
 #include <primitives/block.h>
@@ -26,6 +27,7 @@
 #include <script/script.h>
 #include <script/sign.h>
 #include <script/signingprovider.h>
+#include <script/standard.h>
 #include <support/cleanse.h>
 #include <txmempool.h>
 #include <util/check.h>
@@ -40,9 +42,12 @@
 #include <wallet/coincontrol.h>
 #include <wallet/context.h>
 #include <wallet/external_signer_scriptpubkeyman.h>
+#include <wallet/receive.h>
+#include <wallet/spend.h>
 #include <warnings.h>
 
 #include <coinjoin/options.h>
+#include <evo/dmn_types.h>
 #include <evo/providertx.h>
 #include <governance/vote.h>
 
@@ -1959,7 +1964,7 @@ void CWallet::ReacceptWalletTransactions()
 
         int nDepth = GetTxDepthInMainChain(wtx);
 
-        if (!wtx.IsCoinBase() && (nDepth == 0 && !IsTxLockedByInstantSend(wtx) && !wtx.isAbandoned())) {
+        if (!wtx.IsCoinBase() && !wtx.tx->IsCoinStake() && (nDepth == 0 && !IsTxLockedByInstantSend(wtx) && !wtx.isAbandoned())) {
             mapSorted.insert(std::make_pair(wtx.nOrderPos, &wtx));
         }
     }
@@ -1984,6 +1989,7 @@ bool CWallet::CanTxBeResent(const CWalletTx& wtx) const
         // Don't try to submit coinbase transactions. These would fail anyway but would
         // cause log spam.
         !wtx.IsCoinBase() &&
+        !wtx.tx->IsCoinStake() &&
         // Don't try to submit conflicted or confirmed transactions.
         GetTxDepthInMainChain(wtx) == 0 &&
         // Don't try to submit transactions locked via InstantSend.
@@ -2239,6 +2245,92 @@ bool CWallet::SignGovernanceVote(const CKeyID& keyID, CGovernanceVote& vote) con
 
     vote.SetSignature(std::vector<unsigned char>(opt_decoded->data(), opt_decoded->data() + opt_decoded->size()));
     return true;
+}
+
+bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount) const
+{
+    const auto curr_time = GetTime();
+    const auto min_age = Params().MinStakeAge();
+
+    StakeCandidates wallet_candidates;
+    std::map<COutPoint, Coin> coins;
+    {
+        LOCK(cs_wallet);
+        CCoinControl coin_control(CoinType::ALL_COINS);
+        const std::vector<COutput> vCoins{AvailableCoins(*this, &coin_control, std::nullopt, MIN_STAKE_AMOUNT).all()};
+        wallet_candidates.reserve(vCoins.size());
+
+        for (const COutput& out : vCoins) {
+            const CWalletTx* wtx = GetWalletTx(out.outpoint.hash);
+            if (!wtx) continue;
+
+            const CAmount out_value = out.txout.nValue;
+
+            // make sure not to outrun target amount
+            if (out_value > nTargetAmount) continue;
+            if (out_value < MIN_STAKE_AMOUNT) continue;
+
+            // Do not touch collaterals
+            if (inputStakeProtect && dmn_types::IsCollateralAmount(out_value)) continue;
+
+            // check for min age
+            if (curr_time - out.time < min_age) continue;
+
+            // check that it is matured
+            if (out.depth < (wtx->IsCoinBase() ? COINBASE_MATURITY : 10)) continue;
+
+            wallet_candidates.emplace_back(out_value, wtx, out.outpoint.n);
+            coins.emplace(out.outpoint, Coin{});
+        }
+    }
+
+    // Keep wallet and chainstate checks in separate passes to avoid taking
+    // cs_main and cs_wallet in reverse order against wallet startup.
+    chain().findCoins(coins);
+
+    for (const auto& candidate : wallet_candidates) {
+        const auto* wtx = std::get<1>(candidate);
+        const unsigned int output_index = std::get<2>(candidate);
+        COutPoint outpoint(wtx->tx->GetHash(), output_index);
+        const auto coin_it = coins.find(outpoint);
+        if (coin_it == coins.end() || coin_it->second.IsSpent()) {
+            continue;
+        }
+
+        setCoins.push_back(candidate);
+    }
+
+    return !setCoins.empty();
+}
+
+bool CWallet::MintableCoins()
+{
+    if (m_args.IsArgSet("-reservebalance")) {
+        const auto parsed = ParseMoney(m_args.GetArg("-reservebalance", ""));
+        if (!parsed) return error("MintableCoins() : invalid reserve balance amount");
+        nReserveBalance = *parsed;
+    }
+    const CAmount nBalance = GetBalance(*this).m_mine_trusted;
+    if (nBalance <= nReserveBalance) return false;
+
+    const auto min_age = Params().MinStakeAge();
+    LOCK(cs_wallet);
+    const std::vector<COutput> vCoins{AvailableCoins(*this).all()};
+    for (const COutput& out : vCoins) {
+        const CWalletTx* wtx = GetWalletTx(out.outpoint.hash);
+        if (!wtx) continue;
+
+        if (out.depth < (wtx->IsCoinBase() ? COINBASE_MATURITY : 10)) continue;
+
+        const CAmount out_value = out.txout.nValue;
+        if (inputStakeProtect && dmn_types::IsCollateralAmount(out_value)) continue;
+        if (out_value < MIN_STAKE_AMOUNT) continue;
+
+        // Some more filters are possible, but excessive
+        if (GetTime() - out.time >= min_age) return true;
+    }
+
+    return false;
 }
 
 void CWallet::CommitTransaction(CTransactionRef tx, mapValue_t mapValue, std::vector<std::pair<std::string, std::string>> orderForm)
@@ -3667,11 +3759,13 @@ int CWallet::GetTxBlocksToMaturity(const CWalletTx& wtx) const
 {
     AssertLockHeld(cs_wallet);
 
-    if (!wtx.IsCoinBase()) {
+    if (!wtx.IsCoinBase() && !wtx.tx->IsCoinStake()) {
         return 0;
     }
     int chain_depth = GetTxDepthInMainChain(wtx);
-    assert(chain_depth >= 0); // coinbase tx should not be conflicted
+    if (chain_depth < 0) {
+        return COINBASE_MATURITY + 1;
+    }
     return std::max(0, (COINBASE_MATURITY+1) - chain_depth);
 }
 
@@ -3679,7 +3773,7 @@ bool CWallet::IsTxImmatureCoinBase(const CWalletTx& wtx) const
 {
     AssertLockHeld(cs_wallet);
 
-    // note GetBlocksToMaturity is 0 for non-coinbase tx
+    // note GetBlocksToMaturity is 0 for non-generated transactions
     return GetTxBlocksToMaturity(wtx) > 0;
 }
 
