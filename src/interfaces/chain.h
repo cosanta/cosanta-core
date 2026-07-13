@@ -238,6 +238,12 @@ public:
     //! Check if p2p enabled.
     virtual bool p2pEnabled() = 0;
 
+    //! Check if the node has any P2P connections.
+    virtual bool hasP2PConnections() = 0;
+
+    //! Check if masternode synchronization, including governance, is complete.
+    virtual bool isMasternodeSynced() = 0;
+
     //! Check if the node is ready to broadcast transactions.
     virtual bool isReadyToBroadcast() = 0;
 
