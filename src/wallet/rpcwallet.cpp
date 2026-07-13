@@ -2716,13 +2716,12 @@ static RPCHelpMan getstakingstatus()
 
     LOCK(pwallet->cs_wallet);
 
-    // Wallet RPC handlers do not own CConnman directly; the chain interface
-    // tells us whether P2P is available, while mnsync covers the synced state.
-    const bool fHaveConnections = pwallet->chain().p2pEnabled();
+    // Wallet RPC requests carry WalletContext instead of NodeContext. Query
+    // node state through the wallet's chain interface.
+    const bool fHaveConnections = pwallet->chain().hasP2PConnections();
     const bool fMintableCoins = pwallet->MintableCoins();
     const bool fLessReserveBalance = pwallet->nReserveBalance >= pwallet->GetBalance().m_mine_trusted;
-    const NodeContext* const node_context = GetContext<NodeContext>(request.context);
-    const bool fMnSynced = node_context != nullptr && node_context->mn_sync != nullptr && node_context->mn_sync->IsSynced();
+    const bool fMnSynced = pwallet->chain().isMasternodeSynced();
     const bool fStatus = !(pwallet->IsLocked(true) || !fMintableCoins || fLessReserveBalance || !fMnSynced || !fHaveConnections);
 
     UniValue obj(UniValue::VOBJ);
