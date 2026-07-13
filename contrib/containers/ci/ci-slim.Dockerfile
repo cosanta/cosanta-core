@@ -136,13 +136,13 @@ RUN set -ex; \
 ARG USER_ID=1000 \
     GROUP_ID=1000
 RUN set -ex; \
-    (getent group ${GROUP_ID} && usermod -g ${GROUP_ID} ubuntu) || groupmod -g ${GROUP_ID} -n dash ubuntu; \
-    usermod -u ${USER_ID} -md /home/dash -l dash ubuntu; \
-    chown ${USER_ID}:${GROUP_ID} -R /home/dash; \
-    mkdir -p /src/dash && \
+    (getent group ${GROUP_ID} && usermod -g ${GROUP_ID} ubuntu) || groupmod -g ${GROUP_ID} -n cosanta ubuntu; \
+    usermod -u ${USER_ID} -md /home/cosanta -l cosanta ubuntu; \
+    chown ${USER_ID}:${GROUP_ID} -R /home/cosanta; \
+    mkdir -p /src/cosanta && \
     chown ${USER_ID}:${GROUP_ID} /src && \
     chown ${USER_ID}:${GROUP_ID} -R /src
 
-WORKDIR /src/dash
+WORKDIR /src/cosanta
 
-USER dash
+USER cosanta
