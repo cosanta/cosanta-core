@@ -6,19 +6,19 @@ reset-files.bash
 *.tar.gz
 
 *.exe
-src/dash
-src/dashd
-src/dash-cli
-src/dash-gui
-src/dash-node
-src/dash-tx
-src/dash-util
-src/dash-wallet
+src/cosanta
+src/cosantad
+src/cosanta-cli
+src/cosanta-gui
+src/cosanta-node
+src/cosanta-tx
+src/cosanta-util
+src/cosanta-wallet
 src/test/fuzz/fuzz
-src/test/test_dash
-src/qt/test/test_dash-qt
+src/test/test_cosanta
+src/qt/test/test_cosanta-qt
 src/qt/res/css/colors/*
-src/bench/bench_dash
+src/bench/bench_cosanta
 
 # autoreconf
 Makefile.in
@@ -93,15 +93,15 @@ libconftest.dylib*
 *.qm
 Makefile
 !depends/Makefile
-dash-qt
-Dash-Qt.app
+cosanta-qt
+Cosanta-Qt.app
 
 # Qt Creator
 Makefile.am.user
 
 # Unit-tests
 Makefile.test
-dash-qt_test
+cosanta-qt_test
 
 # Resources cpp
 qrc_*.cpp
@@ -118,7 +118,7 @@ releases
 *.gcno
 *.gcda
 /*.info
-test_dash.coverage/
+test_cosanta.coverage/
 total.coverage/
 fuzz.coverage/
 coverage_percent.txt
@@ -140,15 +140,15 @@ test/.mypy_cache/
 .autotools
 /doc/doxygen/
 
-libdashconsensus.pc
+libcosantaconsensus.pc
 contrib/devtools/split-debug.sh
-src/qt/dash-qt.bash
+src/qt/cosanta-qt.bash
 qa/pull-tester/tests-config.sh
 
 #development symlinks
-dash-cli
-dashd
-dash-qt
+cosanta-cli
+cosantad
+cosanta-qt
 make
 
 /docker/bin
@@ -175,3 +175,4 @@ test/lint/.cppcheck/*
 # Editor and tooling
 .vscode/
 compile_commands.json
+*.background.tiff
