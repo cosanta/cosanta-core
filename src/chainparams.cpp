@@ -1451,12 +1451,6 @@ void SelectParams(const std::string& network)
 {
     SelectBaseParams(network);
     globalChainParams = CreateChainParams(gArgs, network);
-    if (network == CBaseChainParams::MAIN) {
-        throw std::runtime_error("Cosanta mainnet is disabled until activation heights are reviewed; remove this guard deliberately");
-    }
-    if (network == CBaseChainParams::TESTNET) {
-        throw std::runtime_error("Cosanta testnet is disabled until activation heights are reviewed; remove this guard deliberately");
-    }
 }
 
 void SetupChainParamsOptions(ArgsManager& argsman)
