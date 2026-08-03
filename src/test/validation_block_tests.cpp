@@ -67,7 +67,7 @@ std::shared_ptr<CBlock> MinerTestingSetup::Block(const uint256& prev_hash)
     static uint64_t time = Params().GenesisBlock().nTime;
 
     auto ptemplate = BlockAssembler(m_node.chainman->ActiveChainstate(), m_node, m_node.mempool.get(), Params()).CreateNewBlock(CScript{} << i++ << OP_TRUE);
-    auto pblock = std::make_shared<CBlock>(ptemplate->block);
+    auto pblock = std::make_shared<CBlock>(*ptemplate->block);
     pblock->hashPrevBlock = prev_hash;
     pblock->nTime = ++time;
 
@@ -99,7 +99,7 @@ std::shared_ptr<CBlock> MinerTestingSetup::FinalizeBlock(std::shared_ptr<CBlock>
     // submit block header, so that miner can get the block height from the
     // global state and the node has the topology of the chain
     BlockValidationState ignored;
-    BOOST_CHECK(Assert(m_node.chainman)->ProcessNewBlockHeaders({pblock->GetBlockHeader()}, ignored));
+    BOOST_CHECK(Assert(m_node.chainman)->ProcessNewBlockHeaders({pblock->GetBlockHeader()}, ignored, Params()));
 
     return pblock;
 }
