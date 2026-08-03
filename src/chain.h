@@ -19,7 +19,7 @@
  * Maximum amount of time that a block timestamp is allowed to exceed the
  * current network-adjusted time before the block will be accepted.
  */
-static constexpr int64_t MAX_FUTURE_BLOCK_TIME = 2 * 60 * 60;
+static constexpr int64_t MAX_FUTURE_BLOCK_TIME = 5 * 60;
 
 /**
  * Timestamp window used as a grace period by code that compares external
@@ -183,12 +183,22 @@ public:
     //! @sa ActivateSnapshot
     uint32_t nStatus GUARDED_BY(::cs_main){0};
 
+    uint32_t& nStakeModifier() {
+        return nNonce;
+    }
+    const uint32_t& nStakeModifier() const {
+        return nNonce;
+    }
+
     //! block header
     int32_t nVersion{0};
     uint256 hashMerkleRoot{};
     uint32_t nTime{0};
     uint32_t nBits{0};
     uint32_t nNonce{0};
+    uint256 posStakeHash{};
+    uint32_t posStakeN{0};
+    std::vector<unsigned char> posBlockSig{};
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     int32_t nSequenceId{0};
@@ -201,7 +211,10 @@ public:
           hashMerkleRoot{block.hashMerkleRoot},
           nTime{block.nTime},
           nBits{block.nBits},
-          nNonce{block.nNonce}
+          nNonce{block.nNonce},
+          posStakeHash{block.posStakeHash},
+          posStakeN{block.posStakeN},
+          posBlockSig{block.posBlockSig}
     {
     }
 
@@ -234,9 +247,12 @@ public:
         if (pprev)
             block.hashPrevBlock = pprev->GetBlockHash();
         block.hashMerkleRoot = hashMerkleRoot;
-        block.nTime = nTime;
-        block.nBits = nBits;
-        block.nNonce = nNonce;
+        block.nTime          = nTime;
+        block.nBits          = nBits;
+        block.nNonce         = nNonce;
+        block.posStakeHash   = posStakeHash;
+        block.posStakeN      = posStakeN;
+        block.posBlockSig    = posBlockSig;
         return block;
     }
 
@@ -279,6 +295,38 @@ public:
 
         std::sort(pbegin, pend);
         return pbegin[(pend - pbegin) / 2];
+    }
+
+    bool IsProofOfWork() const
+    {
+        return !IsProofOfStake();
+    }
+
+    bool IsProofOfStake() const
+    {
+        return (nVersion & CBlockHeader::POS_BIT) != 0;
+    }
+
+    bool IsProofOfStakeV2() const
+    {
+        return (nVersion & CBlockHeader::POSV2_BITS) == CBlockHeader::POSV2_BITS;
+    }
+
+    COutPoint StakeInput() const {
+        return COutPoint(posStakeHash, posStakeN);
+    }
+
+    unsigned int GetStakeEntropyBit() const
+    {
+        unsigned int nEntropyBit = (ReadLE64(GetBlockHash().begin()) & 1);
+        return nEntropyBit;
+    }
+
+    bool IsGeneratedStakeModifier() const
+    {
+        return (pprev && (
+                    !pprev->IsProofOfStake() ||
+                    (pprev->nStakeModifier() != nStakeModifier())));
     }
 
     std::string ToString() const;
@@ -360,20 +408,16 @@ const CBlockIndex* LastCommonAncestor(const CBlockIndex* pa, const CBlockIndex* 
 class CDiskBlockIndex : public CBlockIndex
 {
 public:
-    uint256 hash;
-    uint256 hashPrev;
+    uint256 hash{};
+    uint256 hashPrev{};
 
-    CDiskBlockIndex()
-    {
-        hash = uint256();
-        hashPrev = uint256();
-    }
+    CDiskBlockIndex() = default;
 
-    explicit CDiskBlockIndex(const CBlockIndex* pindex) : CBlockIndex(*pindex)
-    {
-        hash = (hash == uint256() ? pindex->GetBlockHash() : hash);
-        hashPrev = (pprev ? pprev->GetBlockHash() : uint256());
-    }
+    explicit CDiskBlockIndex(const CBlockIndex* pindex) :
+        CBlockIndex(*pindex),
+        hash(pindex->GetBlockHash()),
+        hashPrev(pprev ? pprev->GetBlockHash() : uint256())
+    {}
 
     SERIALIZE_METHODS(CDiskBlockIndex, obj)
     {
@@ -397,11 +441,16 @@ public:
         READWRITE(obj.nTime);
         READWRITE(obj.nBits);
         READWRITE(obj.nNonce);
+        if (obj.IsProofOfStake()) {
+            READWRITE(obj.posStakeHash);
+            READWRITE(obj.posStakeN);
+            READWRITE(obj.posBlockSig);
+        }
     }
 
     uint256 ConstructBlockHash() const
     {
-        if(hash != uint256()) return hash;
+        if (hash != uint256()) return hash;
         // should never really get here, keeping this as a fallback
         CBlockHeader block;
         block.nVersion = nVersion;
@@ -410,6 +459,9 @@ public:
         block.nTime = nTime;
         block.nBits = nBits;
         block.nNonce = nNonce;
+        block.posStakeHash = posStakeHash;
+        block.posStakeN = posStakeN;
+        block.posBlockSig = posBlockSig;
         return block.GetHash();
     }
 
@@ -446,6 +498,12 @@ public:
         if (nHeight < 0 || nHeight >= (int)vChain.size())
             return nullptr;
         return vChain[nHeight];
+    }
+
+    /** Compare two chains efficiently. */
+    friend bool operator==(const CChain &a, const CChain &b) {
+        return a.vChain.size() == b.vChain.size() &&
+               a.vChain[a.vChain.size() - 1] == b.vChain[b.vChain.size() - 1];
     }
 
     /** Efficiently check whether a block is present in this chain. */
