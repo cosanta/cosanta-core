@@ -1,8 +1,8 @@
 # Cosanta Core version v23.1.8
 
-This is a new patch version release, fixing three remotely reachable crashes and
+This is a new patch version release, fixing four remotely reachable crashes and
 bringing further hardening of the peer-to-peer message handlers along with
-networking, RPC and build fixes.
+Proof-of-Stake, wallet, networking, RPC and build fixes.
 Upgrading is **strongly recommended** for all nodes, and required for
 masternodes.
 
@@ -30,7 +30,7 @@ require a reindex.
 
 ## Critical fixes
 
-This release fixes three crashes that a remote party could trigger. None of
+This release fixes four crashes that a remote party could trigger. None of
 them affect consensus rules or put funds at risk, but each one can take a node
 offline, so all operators should upgrade promptly.
 
@@ -52,6 +52,10 @@ offline, so all operators should upgrade promptly.
   no exception handler could contain. Commitments with a parentless quorum base
   block are now rejected, and the LLMQ activation check treats a null
   predecessor as "not enabled" rather than a contract violation.
+- Fixed a crash during Proof-of-Stake header validation when a crafted header
+  referenced a real staking transaction but supplied an out-of-range output
+  index. The peer-controlled index is now checked before transaction outputs
+  are accessed, and malformed headers are rejected.
 
 ## Security
 
@@ -91,6 +95,21 @@ masternodes in particular - so upgrading is recommended.
   (dash#7398), including detection of mutated blocks as a defence-in-depth
   measure.
 
+## Proof of Stake and Wallet
+
+- Header-only fork validation now advances through every unvalidated
+  Proof-of-Stake header when checking for reuse of a stake UTXO. The previous
+  frozen walk could miss reuse in intermediate headers; the corrected walk also
+  stops safely at genesis.
+- Stake input auto-combining now sweeps up to `-stakecombinemax` inputs (100 by
+  default) into kernels that have already reached the split threshold, so small
+  staking rewards do not accumulate indefinitely. Candidate selection respects
+  `-reservebalance` and `-inputstakeprotect`, requires confirmed and mature
+  UTXOs, and observes the block's remaining size and signature-operation
+  budgets.
+- Fixed a lock-order inversion while signing Proof-of-Stake blocks with an
+  encrypted wallet that could deadlock staking after prolonged operation.
+
 ## RPC
 
 - `protx listdiff` no longer reports an always-zero `platformP2PPort` /
@@ -122,6 +141,9 @@ masternodes in particular - so upgrading is recommended.
 - Skip collecting block txids during IBD to prevent unbounded memory growth in `ChainLockSigner` (dash#7208).
 - Serialize `TrySignChainTip` to prevent concurrent signing races that could split signing shares across different block hashes (dash#7209).
 - Properly skip evodb repair when reindexing to prevent unnecessary repair attempts (dash#7222).
+- Parallel block fetching during initial block download now respects each
+  peer's advertised starting height and does not request blocks the peer has not
+  claimed to possess.
 
 ## Build and CI
 
@@ -157,6 +179,7 @@ See detailed [set of changes][set-of-changes].
 
 Thanks to everyone who directly contributed to this release:
 
+- Dmitriy Korniychuk
 - Konstantin Akimov
 - PastaClaw
 - PastaPastaPasta
