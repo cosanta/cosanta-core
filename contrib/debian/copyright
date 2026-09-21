@@ -6,7 +6,7 @@ Source: https://github.com/cosanta/cosanta-core
 Files: *
 Copyright: 2009-2026, Bitcoin Core Developers,
            2019-2026, Dash Core Developers,
-           2020-2026, Cosanta Core Developers
+           2021-2026, Cosanta Core Developers
 License: Expat
 Comment: The Bitcoin Core Developers encompasses all contributors to the
          project, listed in the release notes or the git log. The Dash Core
