@@ -18,8 +18,10 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <active/masternode.h>
 #include <consensus/amount.h>
 #include <arith_uint256.h>
+#include <bls/bls.h>
 #include <chain.h>
 #include <chainparams.h>
 #include <consensus/consensus.h>
@@ -33,7 +35,10 @@
 #include <chainlock/chainlock.h>
 #include <llmq/blockprocessor.h>
 #include <llmq/context.h>
+#include <llmq/signing_shares.h>
+#include <masternode/sync.h>
 #include <instantsend/instantsend.h>
+#include <instantsend/signing.h>
 #include <evo/evodb.h>
 #include <node/miner.h>
 #include <pos_kernel.h>
@@ -45,6 +50,7 @@
 #include <script/standard.h>
 #include <spork.h>
 #include <test/util/index.h>
+#include <test/util/logging.h>
 #include <test/util/random.h>
 #include <test/util/setup_common.h>
 #include <timedata.h>
@@ -59,6 +65,7 @@
 #include <memory>
 #include <optional>
 #include <thread>
+#include <vector>
 
 // ============================================================================
 // Test fixture
@@ -699,52 +706,82 @@ BOOST_AUTO_TEST_CASE(pos_max_block_ahead_time)
 // 7. INSTANTSEND EXCLUSION FOR COINSTAKE
 // ============================================================================
 
+// The two tests below guard the coinstake exclusion added in a5b5ae3e28, lost
+// when rebasing onto Dash v23 and restored in d770ff4191. Upstream Dash has no
+// coinstake, so every future rebase can drop it again. Without it, masternodes
+// lock coinstakes; when the staked block is orphaned the lock outlives it, and
+// nodes holding the lock reject the next block that stakes the same outputs
+// with "conflict-tx-lock" until they are restarted.
+
 BOOST_AUTO_TEST_CASE(pos_instantsend_excludes_coinstake_from_processing)
 {
-    // Verify that IsCoinStake() transactions are correctly excluded
-    // from InstantSend processing.
-    //
-    // The fix (commit a5b5ae3e28) ensures:
-    // 1. ProcessTx() returns early for coinstake
-    // 2. GetConflictingLock() returns nullptr for coinstake
-
     CKey key;
     key.MakeNewKey(true);
+    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(EncodeDestination(PKHash(key.GetPubKey()))));
+    BOOST_REQUIRE(m_node.sporkman->SetPrivKey(EncodeSecret(key)));
+    BOOST_REQUIRE(m_node.sporkman->UpdateSpork(SPORK_2_INSTANTSEND_ENABLED, 0).has_value());
+    auto& isman = *Assert(m_node.isman);
+    BOOST_REQUIRE(isman.IsInstantSendEnabled());
 
-    // Construct a coinstake transaction
-    CMutableTransaction mtxStake;
-    mtxStake.vin.resize(1);
-    mtxStake.vin[0].prevout = COutPoint(InsecureRand256(), 0);
-    mtxStake.vout.resize(2);
-    mtxStake.vout[0].nValue = 0; mtxStake.vout[0].scriptPubKey.clear();
-    mtxStake.vout[1].nValue = 10 * COIN;
-    mtxStake.vout[1].scriptPubKey = ScriptForKey(key);
+    m_node.mn_sync->SwitchToNextAsset();
+    BOOST_REQUIRE(m_node.mn_sync->IsBlockchainSynced());
 
-    CTransaction txStake(mtxStake);
-    BOOST_CHECK(txStake.IsCoinStake());
+    auto& chainman = *Assert(m_node.chainman);
+    auto& llmq_ctx = *Assert(m_node.llmq_ctx);
+    CBLSSecretKey operator_sk;
+    operator_sk.MakeNewKey();
+    CActiveMasternodeManager mn_activeman(*Assert(m_node.connman), *Assert(m_node.dmnman), operator_sk);
+    llmq::CSigSharesManager shareman(*m_node.connman, chainman, *llmq_ctx.sigman,
+                                     mn_activeman, *llmq_ctx.qman, *m_node.sporkman);
+    instantsend::InstantSendSigner signer(chainman, *m_node.chainlocks, isman,
+                                          *llmq_ctx.sigman, shareman, *llmq_ctx.qman, *m_node.sporkman,
+                                          *m_node.mempool, *m_node.mn_sync);
+    const auto& params = Params().GetConsensus();
 
-    // Construct a regular transaction (NOT coinstake)
-    CMutableTransaction mtxRegular;
-    mtxRegular.vin.resize(1);
-    mtxRegular.vin[0].prevout = COutPoint(InsecureRand256(), 0);
-    mtxRegular.vout.resize(1);
-    mtxRegular.vout[0].nValue = 5 * COIN;
-    mtxRegular.vout[0].scriptPubKey = ScriptForKey(key);
+    // A locked parent makes the input eligible without requiring txindex or a
+    // mined funding transaction. The lock does not conflict with its spend.
+    const COutPoint prevout(InsecureRand256(), 0);
+    auto parent_lock = std::make_shared<instantsend::InstantSendLock>();
+    parent_lock->txid = prevout.hash;
+    parent_lock->inputs.emplace_back(InsecureRand256(), 0);
+    isman.WriteNewISLock(::SerializeHash(*parent_lock), parent_lock, /*minedHeight=*/std::nullopt);
+    BOOST_REQUIRE(isman.IsLocked(prevout.hash));
 
-    CTransaction txRegular(mtxRegular);
-    BOOST_CHECK(!txRegular.IsCoinStake());
+    const CTransaction txStake(CreateStakeTx(prevout, key, 50 * COIN));
+    BOOST_REQUIRE(txStake.IsCoinStake());
+    CMutableTransaction mtxRegular(txStake);
+    mtxRegular.vout.erase(mtxRegular.vout.begin());
+    const CTransaction txRegular(mtxRegular);
+    BOOST_REQUIRE(!txRegular.IsCoinStake());
 
-    // GetConflictingLock should always return nullptr for coinstake
-    // (even if IS is not enabled, the logic path should be safe)
-    if (m_node.isman) {
-        auto conflicting = m_node.isman->GetConflictingLock(txStake);
-        BOOST_CHECK_MESSAGE(conflicting == nullptr,
-            "GetConflictingLock must return nullptr for coinstake transactions");
+    // Observe dispatch to input signing through its existing diagnostic. No
+    // quorum is needed to attempt signing; this test does not claim recovery
+    // of an actual quorum signature.
+    const auto attempts_signing = [&](const CTransaction& tx, bool retroactive) {
+        bool attempted{false};
+        {
+            DebugLogHelper log{strprintf("TrySignInputLocks -- txid=%s: trying to vote on input", tx.GetHash().ToString()),
+                               [&](const std::string* line) {
+                                   attempted |= line != nullptr;
+                                   return false;
+                               }};
+            signer.ProcessTx(tx, retroactive, params);
+        }
+        return attempted;
+    };
+
+    for (const bool retroactive : {true, false}) {
+        BOOST_REQUIRE_MESSAGE(attempts_signing(txRegular, retroactive),
+                              "control: regular tx did not reach input signing, retroactive=" << retroactive);
+        BOOST_CHECK_MESSAGE(!attempts_signing(txStake, retroactive),
+                            "coinstake entered InstantSend input signing, retroactive=" << retroactive);
     }
 }
 
 BOOST_AUTO_TEST_CASE(pos_coinstake_ignores_conflicting_instantsend_lock)
 {
+    // Blocks must not be rejected because their coinstake shares an input with
+    // a stored lock, while ordinary spends of that input stay protected.
     CKey key;
     key.MakeNewKey(true);
 
@@ -782,7 +819,9 @@ BOOST_AUTO_TEST_CASE(pos_coinstake_ignores_conflicting_instantsend_lock)
     const auto conflict = isman.GetConflictingLock(txRegular);
     BOOST_REQUIRE(conflict);
     BOOST_CHECK(conflict->txid == lockedStake->GetHash());
-    BOOST_CHECK(isman.GetConflictingLock(txStake) == nullptr);
+    BOOST_CHECK_MESSAGE(isman.GetConflictingLock(txStake) == nullptr,
+                        "coinstake conflicts with a stored InstantSend lock: "
+                        "CInstantSendManager::GetConflictingLock must ignore IsCoinStake(), see d770ff4191");
 }
 
 // ============================================================================
