@@ -1571,6 +1571,22 @@ void CWallet::blockDisconnected(const interfaces::BlockInfo& block)
         }
     }
 
+    // Cosanta: a coinstake of a disconnected block can never be mined again
+    for (const CTransactionRef& ptx : Assert(block.data)->vtx) {
+        if (!ptx->IsCoinStake() || !mapWallet.count(ptx->GetHash())) continue;
+
+        WalletLogPrintf("Abandoning staking tx %s\n", ptx->GetHash().ToString());
+        AbandonTransaction(ptx->GetHash());
+
+        // Deep scan other orphans
+        for (const auto& [wtxid, wtx] : mapWallet) {
+            if (wtx.tx->IsCoinStake() && GetTxDepthInMainChain(wtx) == 0 && !IsTxLockedByInstantSend(wtx) && !wtx.isAbandoned()) {
+                WalletLogPrintf("Abandoning orphan tx %s\n", wtxid.ToString());
+                AbandonTransaction(wtxid);
+            }
+        }
+    }
+
     // reset cache to make sure no longer mature coins are excluded
     fAnonymizableTallyCached = false;
     fAnonymizableTallyCachedNonDenom = false;
@@ -2214,6 +2230,16 @@ void CWallet::ResubmitWalletTransactions(bool relay, bool force)
         for (auto& [txid, wtx] : mapWallet) {
             // Only rebroadcast unconfirmed txs
             if (!wtx.isUnconfirmed()) continue;
+
+            // On startup/import, release inputs of generated transactions that
+            // lost their block. They cannot be submitted to the mempool again.
+            if (force && !relay && (wtx.IsCoinBase() || wtx.tx->IsCoinStake())) {
+                if (!IsTxLockedByInstantSend(wtx)) {
+                    WalletLogPrintf("Abandoning tx %s\n", txid.ToString());
+                    AbandonTransaction(txid);
+                }
+                continue;
+            }
 
             // Attempt to rebroadcast all txes more than 5 minutes older than
             // the last block, or all txs if forcing.

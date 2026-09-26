@@ -9,6 +9,7 @@
 //   1. GetBlocksToMaturity() counts coinstake as needing maturity
 //   2. IsImmatureCoinBase() returns true for immature coinstake
 //   3. Wallet submission excludes unconfirmed coinstake
+//      Orphaned coinstake handling is covered in src/test/pos_staking_tests.cpp
 //   4. Coinstake cannot be rebroadcast (CanBeResent)
 //   5. Wallet credit/balance calculations treat immature coinstake correctly
 //   6. Wallet state after reorg affecting coinstake
