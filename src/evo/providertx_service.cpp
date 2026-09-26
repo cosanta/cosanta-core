@@ -1288,7 +1288,7 @@ ProviderTxResult<ProviderTxSubmission> UpdateShare(node::NodeContext& node, Wall
     }
     if (!IsValidDestination(request.fee_source)) {
         return Error(ProviderTxErrorCode::INVALID_ADDRESS_OR_KEY,
-                     "Invalid Dash address: " + EncodeDestination(request.fee_source));
+                     "Invalid Cosanta address: " + EncodeDestination(request.fee_source));
     }
 
     CProUpShareTx payload;
@@ -1331,7 +1331,7 @@ ProviderTxResult<PreparedSharedConsent> PrepareSharedRegistrarUpdate(node::NodeC
     payload.keyIDVoting = request.voting_key.value_or(dmn->pdmnState->keyIDVoting);
     if (!IsValidDestination(request.fee_source)) {
         return Error(ProviderTxErrorCode::INVALID_ADDRESS_OR_KEY,
-                     "Invalid Dash address: " + EncodeDestination(request.fee_source));
+                     "Invalid Cosanta address: " + EncodeDestination(request.fee_source));
     }
 
     // make sure we get enough fees added: one signature per share
