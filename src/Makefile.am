@@ -55,7 +55,7 @@ LIBBITCOIN_CONSENSUS=libbitcoin_consensus.a
 LIBBITCOIN_CLI=libbitcoin_cli.a
 LIBBITCOIN_UTIL=libbitcoin_util.a
 LIBBITCOIN_CRYPTO_BASE=crypto/libbitcoin_crypto_base.la
-LIBBITCOINQT=qt/libbitcoinqt.a
+LIBBITCOINQT=qt/libcosantaqt.a
 LIBDASHBLS=dashbls/libdashbls.la
 LIBSECP256K1=secp256k1/libsecp256k1.la
 
@@ -63,10 +63,10 @@ if ENABLE_ZMQ
 LIBBITCOIN_ZMQ=libbitcoin_zmq.a
 endif
 if BUILD_BITCOIN_LIBS
-LIBBITCOINCONSENSUS=libdashconsensus.la
+LIBBITCOINCONSENSUS=libcosantaconsensus.la
 endif
 if BUILD_BITCOIN_KERNEL_LIB
-LIBBITCOINKERNEL=libdashkernel.la
+LIBBITCOINKERNEL=libcosantakernel.la
 endif
 if ENABLE_WALLET
 LIBBITCOIN_WALLET=libbitcoin_wallet.a
@@ -130,37 +130,37 @@ EXTRA_LIBRARIES += \
   $(LIBBITCOIN_ZMQ)
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += dashd
+  bin_PROGRAMS += cosantad
 endif
 
 if BUILD_BITCOIN_NODE
-  bin_PROGRAMS += dash-node
+  bin_PROGRAMS += cosanta-node
 endif
 
 if BUILD_BITCOIN_CLI
-  bin_PROGRAMS += dash-cli
+  bin_PROGRAMS += cosanta-cli
 endif
 
 if BUILD_BITCOIN_TX
-  bin_PROGRAMS += dash-tx
+  bin_PROGRAMS += cosanta-tx
 endif
 
 if ENABLE_WALLET
 if BUILD_BITCOIN_WALLET
-  bin_PROGRAMS += dash-wallet
+  bin_PROGRAMS += cosanta-wallet
 endif
 endif
 
 if BUILD_BITCOIN_UTIL
-  bin_PROGRAMS += dash-util
+  bin_PROGRAMS += cosanta-util
 endif
 
 if BUILD_BITCOIN_CHAINSTATE
-  bin_PROGRAMS += dash-chainstate
+  bin_PROGRAMS += cosanta-chainstate
 endif
 
 .PHONY: FORCE check-symbols check-security
-# dash core #
+# cosanta core #
 BITCOIN_CORE_H = \
   active/context.h \
   active/dkgsession.h \
@@ -1087,14 +1087,14 @@ libbitcoin_cli_a_SOURCES = \
 nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# dashd & dash-node binaries #
+# cosantad & cosanta-node binaries #
 bitcoin_daemon_sources = bitcoind.cpp
 bitcoin_bin_cppflags = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 bitcoin_bin_cxxflags = $(AM_CXXFLAGS) $(PIE_FLAGS)
 bitcoin_bin_ldflags = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-bitcoin_daemon_sources += dashd-res.rc
+bitcoin_daemon_sources += cosantad-res.rc
 endif
 
 bitcoin_bin_ldadd = \
@@ -1112,48 +1112,48 @@ bitcoin_bin_ldadd = \
 
 bitcoin_bin_ldadd += $(BACKTRACE_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(SQLITE_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(GMP_LIBS)
 
-dashd_SOURCES = $(bitcoin_daemon_sources) init/bitcoind.cpp
-dashd_CPPFLAGS = $(bitcoin_bin_cppflags)
-dashd_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dashd_LDFLAGS = $(bitcoin_bin_ldflags)
-dashd_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd)
+cosantad_SOURCES = $(bitcoin_daemon_sources) init/bitcoind.cpp
+cosantad_CPPFLAGS = $(bitcoin_bin_cppflags)
+cosantad_CXXFLAGS = $(bitcoin_bin_cxxflags)
+cosantad_LDFLAGS = $(bitcoin_bin_ldflags)
+cosantad_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd)
 
-dash_node_SOURCES = $(bitcoin_daemon_sources) init/bitcoin-node.cpp
-dash_node_CPPFLAGS = $(bitcoin_bin_cppflags)
-dash_node_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dash_node_LDFLAGS = $(bitcoin_bin_ldflags)
-dash_node_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd) $(LIBBITCOIN_IPC) $(LIBMULTIPROCESS_LIBS)
+cosanta_node_SOURCES = $(bitcoin_daemon_sources) init/bitcoin-node.cpp
+cosanta_node_CPPFLAGS = $(bitcoin_bin_cppflags)
+cosanta_node_CXXFLAGS = $(bitcoin_bin_cxxflags)
+cosanta_node_LDFLAGS = $(bitcoin_bin_ldflags)
+cosanta_node_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd) $(LIBBITCOIN_IPC) $(LIBMULTIPROCESS_LIBS)
 
-# dash-cli binary #
-dash_cli_SOURCES = bitcoin-cli.cpp
-dash_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-dash_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# cosanta-cli binary #
+cosanta_cli_SOURCES = bitcoin-cli.cpp
+cosanta_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+cosanta_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+cosanta_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_cli_SOURCES += dash-cli-res.rc
+cosanta_cli_SOURCES += cosanta-cli-res.rc
 endif
 
-dash_cli_LDADD = \
+cosanta_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
-dash_cli_LDADD += $(BACKTRACE_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
+cosanta_cli_LDADD += $(BACKTRACE_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
 #
 
-# dash-tx binary #
-dash_tx_SOURCES = bitcoin-tx.cpp
-dash_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-dash_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# cosanta-tx binary #
+cosanta_tx_SOURCES = bitcoin-tx.cpp
+cosanta_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+cosanta_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+cosanta_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_tx_SOURCES += dash-tx-res.rc
+cosanta_tx_SOURCES += cosanta-tx-res.rc
 endif
 
-dash_tx_LDADD = \
+cosanta_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -1162,16 +1162,16 @@ dash_tx_LDADD = \
   $(LIBDASHBLS) \
   $(LIBSECP256K1)
 
-dash_tx_LDADD += $(BACKTRACE_LIBS) $(GMP_LIBS)
+cosanta_tx_LDADD += $(BACKTRACE_LIBS) $(GMP_LIBS)
 #
 
-# dash-wallet binary #
-dash_wallet_SOURCES = bitcoin-wallet.cpp
-dash_wallet_SOURCES += init/bitcoin-wallet.cpp
-dash_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
-dash_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dash_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
-dash_wallet_LDADD = \
+# cosanta-wallet binary #
+cosanta_wallet_SOURCES = bitcoin-wallet.cpp
+cosanta_wallet_SOURCES += init/bitcoin-wallet.cpp
+cosanta_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
+cosanta_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
+cosanta_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
+cosanta_wallet_LDADD = \
   $(LIBBITCOIN_WALLET_TOOL) \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_COMMON) \
@@ -1188,21 +1188,21 @@ dash_wallet_LDADD = \
   $(GMP_LIBS)
 
 if TARGET_WINDOWS
-dash_wallet_SOURCES += dash-wallet-res.rc
+cosanta_wallet_SOURCES += cosanta-wallet-res.rc
 endif
 #
 
-# dash-util binary #
-dash_util_SOURCES = bitcoin-util.cpp
-dash_util_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-dash_util_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_util_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# cosanta-util binary #
+cosanta_util_SOURCES = bitcoin-util.cpp
+cosanta_util_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+cosanta_util_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+cosanta_util_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_util_SOURCES += bitcoin-util-res.rc
+cosanta_util_SOURCES += cosanta-util-res.rc
 endif
 
-dash_util_LDADD = \
+cosanta_util_LDADD = \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
   $(LIBUNIVALUE) \
@@ -1211,50 +1211,50 @@ dash_util_LDADD = \
   $(LIBSECP256K1) \
   $(BACKTRACE_LIBS)
 
-dash_util_LDADD += $(BOOST_LIBS)
+cosanta_util_LDADD += $(BOOST_LIBS)
 
-# dash-chainstate binary #
-dash_chainstate_SOURCES = bitcoin-chainstate.cpp
-dash_chainstate_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BOOST_CPPFLAGS)
-dash_chainstate_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+# cosanta-chainstate binary #
+cosanta_chainstate_SOURCES = bitcoin-chainstate.cpp
+cosanta_chainstate_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BOOST_CPPFLAGS)
+cosanta_chainstate_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 # $(LIBTOOL_APP_LDFLAGS) deliberately omitted here so that we can test linking
-# dash-chainstate against libdashkernel as a shared or static library by
+# cosanta-chainstate against libcosantakernel as a shared or static library by
 # setting --{en,dis}able-shared.
-dash_chainstate_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(PTHREAD_FLAGS)
-dash_chainstate_LDADD = $(LIBBITCOINKERNEL)
+cosanta_chainstate_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(PTHREAD_FLAGS)
+cosanta_chainstate_LDADD = $(LIBBITCOINKERNEL)
 #
 
-# dashkernel library #
+# cosantakernel library #
 if BUILD_BITCOIN_KERNEL_LIB
 lib_LTLIBRARIES += $(LIBBITCOINKERNEL)
 
-libdashkernel_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS) $(PTHREAD_FLAGS)
-libdashkernel_la_LIBADD = $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) $(LIBSECP256K1) $(LIBDASHBLS) $(GMP_LIBS)
-libdashkernel_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL -isystem$(srcdir)/dashbls/include -isystem$(srcdir)/dashbls/depends/relic/include -isystem$(srcdir)/dashbls/depends/minialloc/include -isystem$(srcdir)/immer $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) -I$(srcdir)/$(UNIVALUE_INCLUDE_DIR_INT)
+libcosantakernel_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS) $(PTHREAD_FLAGS)
+libcosantakernel_la_LIBADD = $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) $(LIBSECP256K1) $(LIBDASHBLS) $(GMP_LIBS)
+libcosantakernel_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL -isystem$(srcdir)/dashbls/include -isystem$(srcdir)/dashbls/depends/relic/include -isystem$(srcdir)/dashbls/depends/minialloc/include -isystem$(srcdir)/immer $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) -I$(srcdir)/$(UNIVALUE_INCLUDE_DIR_INT)
 
-# libdashkernel requires default symbol visibility, explicitly specify that
+# libcosantakernel requires default symbol visibility, explicitly specify that
 # here so that things still work even when user configures with
 #   --enable-reduce-exports
 #
 # Note this is a quick hack that will be removed as we incrementally define what
 # to export from the library.
-libdashkernel_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) -fvisibility=default
+libcosantakernel_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) -fvisibility=default
 
 # TODO: For now, Specify -static in both CXXFLAGS and LDFLAGS when building for
 #       windows targets so libtool will only build a static version of this
 #       library. There are unresolved problems when building dll's for mingw-w64
 #       and attempting to statically embed libstdc++, libpthread, etc.
 if TARGET_WINDOWS
-libdashkernel_la_LDFLAGS += -static
-libdashkernel_la_CXXFLAGS += -static
+libcosantakernel_la_LDFLAGS += -static
+libcosantakernel_la_CXXFLAGS += -static
 endif
 
-# TODO: libdashkernel is a work in progress consensus engine library, as more
+# TODO: libcosantakernel is a work in progress consensus engine library, as more
 #       and more modules are decoupled from the consensus engine, this list will
 #       shrink to only those which are absolutely necessary. For example, things
 #       like index/*.cpp will be removed.
-libdashkernel_la_SOURCES = \
+libcosantakernel_la_SOURCES = \
   kernel/bitcoinkernel.cpp \
   arith_uint256.cpp \
   base58.cpp \
@@ -1406,23 +1406,23 @@ libdashkernel_la_SOURCES = \
 
 # Required for obj/build.h to be generated first.
 # More details: https://www.gnu.org/software/automake/manual/html_node/Built-Sources-Example.html
-libdashkernel_la-clientversion.l$(OBJEXT): obj/build.h
+libcosantakernel_la-clientversion.l$(OBJEXT): obj/build.h
 endif # BUILD_BITCOIN_KERNEL_LIB
 #
 
-# dashconsensus library #
+# cosantaconsensus library #
 if BUILD_BITCOIN_LIBS
 lib_LTLIBRARIES += $(LIBBITCOINCONSENSUS)
 
 include_HEADERS = script/bitcoinconsensus.h
-libdashconsensus_la_SOURCES = support/cleanse.cpp $(crypto_libbitcoin_crypto_base_la_SOURCES) $(crypto_libbitcoin_crypto_sph_la_SOURCES) $(libbitcoin_consensus_a_SOURCES)
+libcosantaconsensus_la_SOURCES = support/cleanse.cpp $(crypto_libbitcoin_crypto_base_la_SOURCES) $(crypto_libbitcoin_crypto_sph_la_SOURCES) $(libbitcoin_consensus_a_SOURCES)
 
-libdashconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
-libdashconsensus_la_LIBADD = $(LIBDASHBLS) $(LIBSECP256K1) $(GMP_LIBS)
-libdashconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL -DDISABLE_OPTIMIZED_SHA256
-libdashconsensus_la_CPPFLAGS += -isystem$(srcdir)/dashbls/include -isystem$(srcdir)/dashbls/depends/relic/include -isystem$(srcdir)/dashbls/depends/minialloc/include
-libdashconsensus_la_CPPFLAGS += -isystem$(srcdir)/immer
-libdashconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcosantaconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
+libcosantaconsensus_la_LIBADD = $(LIBDASHBLS) $(LIBSECP256K1) $(GMP_LIBS)
+libcosantaconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL -DDISABLE_OPTIMIZED_SHA256
+libcosantaconsensus_la_CPPFLAGS += -isystem$(srcdir)/dashbls/include -isystem$(srcdir)/dashbls/depends/relic/include -isystem$(srcdir)/dashbls/depends/minialloc/include
+libcosantaconsensus_la_CPPFLAGS += -isystem$(srcdir)/immer
+libcosantaconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 endif
 #
@@ -1537,14 +1537,6 @@ nodist_libbitcoin_ipc_a_SOURCES = $(libbitcoin_ipc_mpgen_output)
 CLEANFILES += $(libbitcoin_ipc_mpgen_output)
 endif
 
-%.raw.h: %.raw
-	@$(MKDIR_P) $(@D)
-	$(AM_V_GEN) { \
-	 echo "static unsigned const char $(*F)_raw[] = {" && \
-	 $(HEXDUMP) -v -e '8/1 "0x%02x, "' -e '"\n"' $< | $(SED) -e 's/0x  ,//g' && \
-	 echo "};"; \
-	} > "$@.new" && mv -f "$@.new" "$@"
-
 include Makefile.minisketch.include
 
 include Makefile.crc32c.include
@@ -1568,3 +1560,12 @@ include Makefile.qttest.include
 endif
 
 include Makefile.univalue.include
+
+# GNU Make 3.81 needs the fallback after the data-specific rules.
+%.raw.h: %.raw
+	@$(MKDIR_P) $(@D)
+	$(AM_V_GEN) { \
+	 echo "static unsigned const char $(*F)_raw[] = {" && \
+	 $(HEXDUMP) -v -e '8/1 "0x%02x, "' -e '"\n"' $< | $(SED) -e 's/0x  ,//g' && \
+	 echo "};"; \
+	} > "$@.new" && mv -f "$@.new" "$@"
