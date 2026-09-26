@@ -19,7 +19,7 @@ def prepare_object(node, object_type, parent_hash, creation_time, revision, name
         "end_epoch": proposal_time + 24 * 60 * 60,
         "payment_amount": float(amount),
         "payment_address": payment_address,
-        "url": "https://dash.org"
+        "url": "https://cosa.is"
     }
     proposal_hex = ''.join(format(x, '02x') for x in json.dumps(proposal_template).encode())
     collateral_hash = node.gobject("prepare", parent_hash, proposal_rev, proposal_time, proposal_hex)
