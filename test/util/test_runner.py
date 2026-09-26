@@ -74,10 +74,10 @@ def bctest(testDir, testObj, buildenv):
     """
     # Get the exec names and arguments
     execprog = os.path.join(buildenv["BUILDDIR"], "src", testObj["exec"] + buildenv["EXEEXT"])
-    if testObj["exec"] == "./dash-util":
-        execprog = os.getenv("DASHUTIL", default=execprog)
-    elif testObj["exec"] == "./dash-tx":
-        execprog = os.getenv("DASHTX", default=execprog)
+    if testObj["exec"] == "./cosanta-util":
+        execprog = os.getenv("COSANTAUTIL", default=execprog)
+    elif testObj["exec"] == "./cosanta-tx":
+        execprog = os.getenv("COSANTATX", default=execprog)
 
     execargs = testObj['args']
     execrun = [execprog] + execargs
@@ -160,7 +160,7 @@ def bctest(testDir, testObj, buildenv):
         want_error = testObj["error_txt"]
         # Compare error text
         # TODO: ideally, we'd compare the strings exactly and also assert
-        # That stderr is empty if no errors are expected. However, dash-tx
+        # That stderr is empty if no errors are expected. However, cosanta-tx
         # emits DISPLAY errors when running as a windows application on
         # linux through wine. Just assert that the expected error text appears
         # somewhere in stderr.
