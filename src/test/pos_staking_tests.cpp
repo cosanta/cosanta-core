@@ -26,8 +26,10 @@
 #include <consensus/merkle.h>
 #include <consensus/validation.h>
 #include <governance/governance.h>
+#include <hash.h>
 #include <interfaces/chain.h>
 #include <key.h>
+#include <key_io.h>
 #include <chainlock/chainlock.h>
 #include <llmq/blockprocessor.h>
 #include <llmq/context.h>
@@ -54,6 +56,8 @@
 #include <validationinterface.h>
 #include <index/txindex.h>
 
+#include <memory>
+#include <optional>
 #include <thread>
 
 // ============================================================================
@@ -739,45 +743,46 @@ BOOST_AUTO_TEST_CASE(pos_instantsend_excludes_coinstake_from_processing)
     }
 }
 
-BOOST_AUTO_TEST_CASE(pos_coinstake_not_locked_by_instantsend)
+BOOST_AUTO_TEST_CASE(pos_coinstake_ignores_conflicting_instantsend_lock)
 {
-    // Verify that coinstake transactions cannot be "locked" by InstantSend.
-    // This is critical because staking UTXOs must remain free for block creation.
-
     CKey key;
     key.MakeNewKey(true);
 
-    CMutableTransaction mtxStake;
-    mtxStake.vin.resize(1);
-    mtxStake.vin[0].prevout = COutPoint(InsecureRand256(), 0);
-    mtxStake.vout.resize(2);
-    mtxStake.vout[0].nValue = 0; mtxStake.vout[0].scriptPubKey.clear();
-    mtxStake.vout[1].nValue = 50 * COIN;
-    mtxStake.vout[1].scriptPubKey = ScriptForKey(key);
+    // Regtest defaults to InstantSend being disabled. Exercise the conflict
+    // lookup with it enabled, so an empty/disabled manager cannot pass the test.
+    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(EncodeDestination(PKHash(key.GetPubKey()))));
+    BOOST_REQUIRE(m_node.sporkman->SetPrivKey(EncodeSecret(key)));
+    BOOST_REQUIRE(m_node.sporkman->UpdateSpork(SPORK_2_INSTANTSEND_ENABLED, 0).has_value());
+    BOOST_REQUIRE(m_node.isman);
+    auto& isman = *m_node.isman;
+    BOOST_REQUIRE(isman.IsInstantSendEnabled());
 
-    CTransaction txStake(mtxStake);
+    const COutPoint prevout(InsecureRand256(), 0);
+    const auto lockedStake = MakeTransactionRef(CreateStakeTx(prevout, key, 50 * COIN));
+    BOOST_REQUIRE(lockedStake->IsCoinStake());
 
-    // A coinstake should ALWAYS be identifiable
-    BOOST_CHECK(txStake.IsCoinStake());
+    // Store a legacy coinstake lock through the manager's public persistence API.
+    auto islock = std::make_shared<instantsend::InstantSendLock>();
+    islock->txid = lockedStake->GetHash();
+    islock->inputs = {prevout};
+    isman.WriteNewISLock(::SerializeHash(*islock), islock, /*minedHeight=*/std::nullopt);
+    BOOST_REQUIRE(isman.IsLocked(lockedStake->GetHash()));
 
-    // Verify that the same UTXO used in both a coinstake and a regular TX
-    // doesn't create a conflict from the coinstake side
-    CMutableTransaction mtxRegular;
-    mtxRegular.vin.resize(1);
-    mtxRegular.vin[0].prevout = mtxStake.vin[0].prevout; // Same input
-    mtxRegular.vout.resize(1);
-    mtxRegular.vout[0].nValue = 5 * COIN;
-    mtxRegular.vout[0].scriptPubKey = ScriptForKey(key);
+    const CTransaction txStake(CreateStakeTx(prevout, key, 51 * COIN));
+    BOOST_REQUIRE(txStake.IsCoinStake());
+    BOOST_REQUIRE(txStake.GetHash() != lockedStake->GetHash());
 
-    CTransaction txRegular(mtxRegular);
-    BOOST_CHECK(!txRegular.IsCoinStake());
+    CMutableTransaction mtxRegular(txStake);
+    mtxRegular.vout.erase(mtxRegular.vout.begin());
+    const CTransaction txRegular(mtxRegular);
+    BOOST_REQUIRE(!txRegular.IsCoinStake());
 
-    // The key invariant: coinstake should not conflict with IS locks
-    // while regular transactions can
-    if (m_node.isman) {
-        auto csConflict = m_node.isman->GetConflictingLock(txStake);
-        BOOST_CHECK(csConflict == nullptr);
-    }
+    // The same stored lock must still protect ordinary spends, while a new
+    // coinstake sharing its input must not stop block connection.
+    const auto conflict = isman.GetConflictingLock(txRegular);
+    BOOST_REQUIRE(conflict);
+    BOOST_CHECK(conflict->txid == lockedStake->GetHash());
+    BOOST_CHECK(isman.GetConflictingLock(txStake) == nullptr);
 }
 
 // ============================================================================
