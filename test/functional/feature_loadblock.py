@@ -17,6 +17,7 @@ import tempfile
 import urllib
 
 from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.messages import MAGIC_BYTES
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.util import assert_equal
 
@@ -52,7 +53,7 @@ class LoadblockTest(BitcoinTestFramework):
             cfg.write(f"host={node_url.hostname}\n")
             cfg.write(f"output_file={bootstrap_file}\n")
             cfg.write(f"max_height=100\n")
-            cfg.write(f"netmagic=fcc1b7dc\n")
+            cfg.write(f"netmagic={MAGIC_BYTES[self.chain].hex()}\n")
             cfg.write(f"input={blocks_dir}\n")
             cfg.write(f"genesis={genesis_block}\n")
             cfg.write(f"hashlist={hash_list.name}\n")
