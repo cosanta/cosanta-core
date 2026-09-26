@@ -1625,6 +1625,14 @@ public:
         return chainman().m_blockman.m_have_pruned;
     }
     bool p2pEnabled() override { return m_node.connman != nullptr; }
+    bool hasP2PConnections() override
+    {
+        return m_node.connman != nullptr && m_node.connman->GetNodeCount(ConnectionDirection::Both) > 0;
+    }
+    bool isMasternodeSynced() override
+    {
+        return m_node.mn_sync != nullptr && m_node.mn_sync->IsSynced();
+    }
     bool isReadyToBroadcast() override { return !chainman().m_blockman.LoadingBlocks() && !isInitialBlockDownload(); }
     bool isInitialBlockDownload() override
     {
