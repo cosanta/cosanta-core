@@ -1,4 +1,5 @@
 // Copyright (c) 2019-2025 The Dash Core developers
+// Copyright (c) 2026 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -425,6 +426,11 @@ bool CInstantSendManager::IsWaitingForTx(const uint256& txHash) const
 instantsend::InstantSendLockPtr CInstantSendManager::GetConflictingLock(const CTransaction& tx) const
 {
     if (!IsInstantSendEnabled()) {
+        return nullptr;
+    }
+
+    // Ignore InstantSend conflicts for coinstake transactions.
+    if (tx.IsCoinStake()) {
         return nullptr;
     }
 
