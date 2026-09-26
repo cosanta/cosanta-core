@@ -1,4 +1,5 @@
 // Copyright (c) 2019-2025 The Dash Core developers
+// Copyright (c) 2026 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -333,6 +334,12 @@ void InstantSendSigner::HandleNewInstantSendLockRecoveredSig(const llmq::CRecove
 
 void InstantSendSigner::ProcessTx(const CTransaction& tx, bool fRetroactive, const Consensus::Params& params)
 {
+    // Coinstake transactions are consensus-level staking operations and must not
+    // be constrained by InstantSend input locks.
+    if (tx.IsCoinStake()) {
+        return;
+    }
+
     if (!m_isman.IsInstantSendEnabled() || !m_mn_sync.IsBlockchainSynced()) {
         return;
     }
