@@ -463,7 +463,9 @@ TestChainSetup::TestChainSetup(
         const bool dash_dbs_in_memory)
     : TestingSetup{chain_name, extra_args, coins_db_in_memory, block_tree_db_in_memory, dash_dbs_in_memory}
 {
-    SetMockTime(1598887952);
+    // Keep mock time near the Cosanta genesis so generated blocks pass the
+    // future-time check while retaining deterministic MTP+1 timestamps.
+    SetMockTime(std::max<int64_t>(1598887952, Params().GenesisBlock().GetBlockTime() - 60));
     constexpr std::array<unsigned char, 32> vchKey = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}};
     coinbaseKey.Set(vchKey.begin(), vchKey.end(), true);
@@ -474,28 +476,35 @@ TestChainSetup::TestChainSetup(
     CCheckpointData checkpoints{
         {
             /*TestChainDATSetup=*/
-            {   98, uint256S("0x150e127929d578d8129b77a6cb7e2e343a1379aa3feaaa9cce59e0a645756a81") },
+            {   98, uint256S("0x3b5f67fa26da68346ac0d2cba05b25a01c2bb6b0bc3c26b1b4654e4046bcef53") },
             /*TestChain100Setup=*/
-            {  100, uint256S("0x6ffb83129c19ebdf1ae3771be6a67fe34b35f4c956326b9ba152fac1649f65ae") },
+            {  100, uint256S("0x7d9cf98ecb9eccba615f88f0509e7abad1a6660cb6b3a91366f4082c9373d2cd") },
             /*TestChainV19BeforeActivationSetup=*/
-            {  103, uint256S("0x13adad9565d0ca558f5675c50e3828f4354d26b64de044ebc88686056f30faab") },
+            {  103, uint256S("0x0df0615fb3a772f7bd0c20b9de70622ff93d009357361d20d8931b0300f01678") },
             /*TestChainDIP3BeforeActivationSetup=*/
-            {  107, uint256S("0x40233e79ab24bc7c3e5686ac2b63915e15e1b1deecc3d0919f7ec32a9433fdfb") },
+            {  107, uint256S("0x30ede188ad22010fbd7415f05c129388df9537ca5a22fda90b412d2b7967442b") },
             /*TestChainDIP3BeforeActivationSetup=*/
-            {  430, uint256S("0x0bcefaa33fec56cd84d05d0e76cd6a78badcc20f627d91903646de6a07930a14") },
+            {  430, uint256S("0x4b3e51086bd4d0726ec06b2f4152c6518460dd10fd9a30148ca4acf514fd7546") },
             /*TestChainV24SignalBeforeV19Setup=*/
-            {  494, uint256S("0x160b1ba2e583f9a99bd78ce2ba57da623ceab7ce7153bfad1df31089186602ac") },
+            {  494, uint256S("0x26ce36e89c0a6d736446f8977df426a03b2396c4fc452bd63afe4fa8475854e8") },
             /*TestChainBRRBeforeActivationSetup=*/
-            {  497, uint256S("0x0857a9b5db51835b1c828f019f4c664b5fe6c28ac44a6d868436930f832d31e5") },
+            {  497, uint256S("0x07c890abcc4ad255d58a0461dc8c76dca0f03bd7b796adf25a1d720061507b18") },
         }
     };
 
     {
         LOCK(::cs_main);
-        auto hash = checkpoints.mapCheckpoints.find(num_blocks);
-        assert(
-            hash != checkpoints.mapCheckpoints.end() &&
-            m_node.chainman->ActiveChain().Tip()->GetBlockHash() == hash->second);
+        const auto hash = checkpoints.mapCheckpoints.find(num_blocks);
+        if (hash == checkpoints.mapCheckpoints.end()) {
+            throw std::runtime_error(strprintf("TestChainSetup: no chain checkpoint defined for height %d", num_blocks));
+        }
+        const uint256 tip_hash = m_node.chainman->ActiveChain().Tip()->GetBlockHash();
+        if (tip_hash != hash->second) {
+            throw std::runtime_error(strprintf(
+                "TestChainSetup: deterministic chain checkpoint mismatch at height %d: got %s, expected %s "
+                "(update the checkpoint if the chain setup changed intentionally)",
+                num_blocks, tip_hash.ToString(), hash->second.ToString()));
+        }
     }
 }
 
