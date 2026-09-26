@@ -73,7 +73,7 @@ struct ChainTxData {
 
 /**
  * CChainParams defines various tweakable parameters of a given instance of the
- * Dash system.
+ * Cosanta system.
  */
 class CChainParams
 {
@@ -129,7 +129,7 @@ public:
     /** Return the list of hostnames to look up for DNS seeds */
     const std::vector<std::string>& DNSSeeds() const { return vSeeds; }
     const std::vector<unsigned char>& Base58Prefix(Base58Type type) const { return base58Prefixes[type]; }
-    /** DIP-18 Platform address bech32m HRP: "dash" on mainnet, "tdash" on test chains */
+    /** Platform address bech32m HRP: "cosa" on mainnet, "tcosa" on test chains */
     const std::string& Bech32PlatformHRP() const { return bech32_platform_hrp; }
     int ExtCoinType() const { return nExtCoinType; }
     const std::vector<uint8_t>& FixedSeeds() const { return vFixedSeeds; }
@@ -158,6 +158,10 @@ public:
     const std::string& SporkAddress() const { return strSporkAddress; }
     int CreditPoolPeriodBlocks() const { return nCreditPoolPeriodBlocks; }
     [[nodiscard]] std::optional<Consensus::LLMQParams> GetLLMQ(Consensus::LLMQType llmqType) const;
+    bool BIP9CheckMasternodesUpgraded() const { return fBIP9CheckMasternodesUpgraded; }
+    int64_t MinStakeAge() const { return nStakeMinAge; }
+    uint32_t FirstPoSv2Block() const { return nFirstPoSv2Block; }
+    bool HasLLMQ(Consensus::LLMQType llmqType) const;
 
 protected:
     CChainParams() {}
@@ -189,10 +193,14 @@ protected:
     int nPoolMaxParticipants;
     int nFulfilledRequestExpireTime;
     std::string strSporkAddress;
+    bool fBIP9CheckMasternodesUpgraded;
     uint16_t nDefaultPlatformP2PPort;
     uint16_t nDefaultPlatformHTTPPort;
     /// The number of blocks the credit pool tracks; 576 (one day) on mainnet, reduced on regtest
     int nCreditPoolPeriodBlocks;
+    int64_t nStakeMinAge;
+    // POS V2
+    uint32_t nFirstPoSv2Block;
 
     void AddLLMQ(Consensus::LLMQType llmqType);
 };

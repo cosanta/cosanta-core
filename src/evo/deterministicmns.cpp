@@ -826,7 +826,6 @@ void CDeterministicMNManager::UpdatedBlockTip(gsl::not_null<const CBlockIndex*> 
 
     tipIndex = pindex;
 }
-
 CDeterministicMNList CDeterministicMNManager::GetListForBlockInternal(gsl::not_null<const CBlockIndex*> pindex)
 {
     CDeterministicMNList snapshot;

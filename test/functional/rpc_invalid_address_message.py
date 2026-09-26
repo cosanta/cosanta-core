@@ -21,7 +21,7 @@ from test_framework.util import (
     assert_raises_rpc_error,
 )
 
-PLATFORM_HRP = 'tdash'
+PLATFORM_HRP = 'tcosa'
 PLATFORM_KEYHASH = bytes.fromhex('f7da0a2b5cbd4ff6bb2c4d89b67d2f3ffeec0525')
 PLATFORM_SCRIPTHASH = bytes.fromhex('43fa183cf3fb6e9e7dc62b692aeb4fc8d8045636')
 
@@ -30,10 +30,10 @@ def platform_address(encoding, type_byte, payload):
     return bech32_encode(encoding, PLATFORM_HRP, convertbits([type_byte] + list(payload), 8, 5))
 
 
-# DIP-18 Platform addresses (test vectors of DIP-0018): valid Bech32m, but never Dash Core addresses
-BECH32_VALID = 'tdash1krma5z3ttj75la4m93xcndna9ullamq9y5fzq2j7'
-BECH32_VALID_CAPITALS = 'TDASH1KRMA5Z3TTJ75LA4M93XCNDNA9ULLAMQ9Y5FZQ2J7'
-BECH32_VALID_P2SH = 'tdash1sppl5xpu70aka8nacc4kj2htflydspzkxc8jtru5'
+# DIP-18 test vector payloads encoded as Cosanta Platform Bech32m addresses
+BECH32_VALID = 'tcosa1krma5z3ttj75la4m93xcndna9ullamq9y55mf7z6'
+BECH32_VALID_CAPITALS = 'TCOSA1KRMA5Z3TTJ75LA4M93XCNDNA9ULLAMQ9Y55MF7Z6'
+BECH32_VALID_P2SH = 'tcosa1sppl5xpu70aka8nacc4kj2htflydspzkxc6tzhvs'
 
 # Well-formed Bech32(m) strings whose DIP-18 payload is invalid
 BECH32_INVALID_ENCODING = platform_address(Encoding.BECH32, DIP18_TYPE_P2PKH, PLATFORM_KEYHASH)
@@ -41,17 +41,17 @@ BECH32_INVALID_TYPE_BYTE = platform_address(Encoding.BECH32M, 0x00, PLATFORM_KEY
 BECH32_INVALID_SIZE = platform_address(Encoding.BECH32M, DIP18_TYPE_P2PKH, PLATFORM_KEYHASH[:-1])
 
 BECH32_INVALID_PREFIX = 'bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7k7grplx'
-BECH32_TOO_LONG = 'tdash1krma5z3ttj75la4m93xcndna9ullamq9y5fzq2j7krma5z3ttj75la4m93xcndna9ullamq9y5fzq2j7krma5z3ttj75la4m93xcndna9ullamq9y5fzq2j7'
-BECH32_ONE_ERROR = 'tdash1krma4z3ttj75la4m93xcndna9ullamq9y5fzq2j7'
-BECH32_ONE_ERROR_CAPITALS = 'TDASH1KRMA5Z3TTJ75LA4M93XCNDNA9ULLAMQ9Y4FZQ2J7'
-BECH32_TWO_ERRORS = 'tdash1krma4z3ttj75la4m93xcndna8ullamq9y5fzq2j7'  # should be tdash1krma5z3ttj75la4m93xcndna9ullamq9y5fzq2j7
-BECH32_P2SH_TWO_ERRORS = 'tdash1sppl5xpu70aka8nacd4kj2htflydspzkxc8jtrs5'  # should be tdash1sppl5xpu70aka8nacc4kj2htflydspzkxc8jtru5
-BECH32_NO_SEPARATOR = 'tdashkrma5z3ttj75la4m93xcndna9ullamq9y5fzq2j7'
-BECH32_INVALID_CHAR = 'tdash1krmo5z3ttj75la4m93xcndna9ullamq9y5fzq2j7'
+BECH32_TOO_LONG = 'tcosa1krma5z3ttj75la4m93xcndna9ullamq9y55mf7z6krma5z3ttj75la4m93xcndna9ullamq9y55mf7z6krma5z3ttj75la4m93xcndna9ullamq9y55mf7z6'
+BECH32_ONE_ERROR = 'tcosa1krma4z3ttj75la4m93xcndna9ullamq9y55mf7z6'
+BECH32_ONE_ERROR_CAPITALS = 'TCOSA1KRMA5Z3TTJ75LA4M93XCNDNA9ULLAMQ9Y45MF7Z6'
+BECH32_TWO_ERRORS = 'tcosa1krma4z3ttj75la4m93xcndna8ullamq9y55mf7z6'  # should be tcosa1krma5z3ttj75la4m93xcndna9ullamq9y55mf7z6
+BECH32_P2SH_TWO_ERRORS = 'tcosa1sppl5xpu70aka8nacd4kj2htflydspzkxc6tzhss'  # should be tcosa1sppl5xpu70aka8nacc4kj2htflydspzkxc6tzhvs
+BECH32_NO_SEPARATOR = 'tcosakrma5z3ttj75la4m93xcndna9ullamq9y55mf7z6'
+BECH32_INVALID_CHAR = 'tcosa1krmo5z3ttj75la4m93xcndna9ullamq9y55mf7z6'
 
-BASE58_VALID = 'yjQ5gLvGRtmq1cwc4kePLCrzQ8GVCh9Gaz'
+BASE58_VALID = 'shL2uiSwnBpgk7rJhTec4KnBxZQLXZbE2V'
 BASE58_INVALID_PREFIX = 'XpG61qAVhdyN7AqVZQsHfJL7AEk4dPVinc'
-BASE58_INVALID_CHECKSUM = 'yjQ5gLvGRtmq1cwc4kePLCrzQ8GVCh9Gaa'
+BASE58_INVALID_CHECKSUM = 'shL2uiSwnBpgk7rJhTec4KnBxZQLXZbE2W'
 BASE58_INVALID_LENGTH = '2VKf7XKMrp4bVNVmuRbyCewkP8FhGLP2E54LHDPakr9Sq5mtU2'
 
 INVALID_ADDRESS = 'asfah14i8fajz0123f'

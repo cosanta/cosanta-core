@@ -108,3 +108,9 @@ src/wallet/platformkeys.*
 src/wallet/platformtypes.h
 src/wallet/test/platformkeys_tests.cpp
 src/hash_x11.h
+src/pos_kernel.cpp
+src/pos_kernel.h
+src/test/pos_header_serialization_tests.cpp
+src/test/pos_staking_tests.cpp
+src/wallet/coinstake.cpp
+src/wallet/test/coinstake_wallet_tests.cpp

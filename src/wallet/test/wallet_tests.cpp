@@ -7,8 +7,10 @@
 #include <algorithm>
 #include <future>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 #include <bls/bls.h>
@@ -16,6 +18,7 @@
 #include <coinjoin/coinjoin.h>
 #include <evo/deterministicmns.h>
 #include <evo/dmn_types.h>
+#include <init.h>
 #include <interfaces/chain.h>
 #include <interfaces/coinjoin.h>
 #include <key_io.h>
@@ -177,6 +180,130 @@ static void TestUnloadWallet(WalletContext& context, std::shared_ptr<CWallet>&& 
     wallet->m_chain_notifications_handler.reset();
     RemoveWallet(context, wallet, /*load_on_start=*/std::nullopt, warnings);
     UnloadWallet(std::move(wallet));
+}
+
+static constexpr const char* STAKING_ARG_NAMES[] = {
+    "stakesplitthreshold",
+    "stakemaxsplit",
+    "stakeautocombine",
+    "inputstakeprotect",
+    "poshashinterval",
+};
+
+static void ClearStakingArgs(ArgsManager& args)
+{
+    for (const char* arg : STAKING_ARG_NAMES) {
+        args.ForceRemoveArg(arg);
+    }
+}
+
+static void SetStakingArg(ArgsManager& args, const std::string& arg, const std::string& value)
+{
+    args.ForceSetArg("-" + arg, value);
+}
+
+struct ScopedStakingArgsCleanup {
+    ArgsManager& args;
+    ~ScopedStakingArgsCleanup()
+    {
+        ClearStakingArgs(args);
+    }
+};
+
+static void CheckInvalidStakingArg(ArgsManager& args, const std::string& arg, const std::string& value, const std::string& expected_error)
+{
+    const ScopedStakingArgsCleanup cleanup{args};
+    SetStakingArg(args, arg, value);
+    {
+        BOOST_TEST_INFO("arg=-" << arg << " value=" << value);
+        ASSERT_DEBUG_LOG(expected_error);
+        BOOST_CHECK(!AppInitParameterInteraction(args));
+    }
+}
+
+BOOST_AUTO_TEST_CASE(wallet_constructor_reads_staking_args)
+{
+    const ScopedStakingArgsCleanup cleanup{m_args};
+    SetStakingArg(m_args, "stakesplitthreshold", "123");
+    SetStakingArg(m_args, "stakemaxsplit", "45");
+    SetStakingArg(m_args, "stakeautocombine", "2");
+    SetStakingArg(m_args, "inputstakeprotect", "0");
+    SetStakingArg(m_args, "poshashinterval", "7");
+
+    const bool params_valid = AppInitParameterInteraction(m_args);
+    WalletContext context;
+    context.args = &m_args;
+    context.chain = m_node.chain.get();
+    context.coinjoin_loader = m_coinjoin_loader.get();
+    auto wallet = TestLoadWallet(context);
+    const bool loaded = wallet != nullptr;
+    size_t stake_split_threshold = 0;
+    int stake_max_split = 0;
+    int stake_autocombine = 0;
+    bool input_stake_protect = true;
+    unsigned int pos_hash_interval = 0;
+    if (loaded) {
+        stake_split_threshold = wallet->nStakeSplitThreshold;
+        stake_max_split = wallet->nStakeMaxSplit;
+        stake_autocombine = wallet->fAutocombine;
+        input_stake_protect = wallet->inputStakeProtect;
+        pos_hash_interval = wallet->nHashInterval;
+        TestUnloadWallet(context, std::move(wallet));
+    }
+
+    BOOST_REQUIRE(params_valid);
+    BOOST_REQUIRE(loaded);
+    BOOST_CHECK_EQUAL(stake_split_threshold, 123U);
+    BOOST_CHECK_EQUAL(stake_max_split, 45);
+    BOOST_CHECK_EQUAL(stake_autocombine, AUTOCOMBINE_ANY);
+    BOOST_CHECK(!input_stake_protect);
+    BOOST_CHECK_EQUAL(pos_hash_interval, 7U);
+}
+
+BOOST_AUTO_TEST_CASE(wallet_accepts_boundary_staking_args)
+{
+    const ScopedStakingArgsCleanup cleanup{m_args};
+    SetStakingArg(m_args, "stakesplitthreshold", "1");
+    SetStakingArg(m_args, "stakemaxsplit", "0");
+    SetStakingArg(m_args, "poshashinterval", std::to_string(MAX_POS_HASH_INTERVAL));
+
+    BOOST_REQUIRE(AppInitParameterInteraction(m_args));
+    WalletContext context;
+    context.args = &m_args;
+    context.chain = m_node.chain.get();
+    context.coinjoin_loader = m_coinjoin_loader.get();
+    auto wallet = TestLoadWallet(context);
+    BOOST_REQUIRE(wallet != nullptr);
+
+    BOOST_CHECK_EQUAL(wallet->nStakeSplitThreshold, 1U);
+    BOOST_CHECK_EQUAL(wallet->nStakeMaxSplit, 0);
+    BOOST_CHECK_EQUAL(wallet->nHashInterval, MAX_POS_HASH_INTERVAL);
+
+    TestUnloadWallet(context, std::move(wallet));
+
+    ClearStakingArgs(m_args);
+    SetStakingArg(m_args, "stakesplitthreshold", std::to_string(MAX_STAKE_SPLIT_THRESHOLD));
+
+    BOOST_REQUIRE(AppInitParameterInteraction(m_args));
+    wallet = TestLoadWallet(context);
+    BOOST_REQUIRE(wallet != nullptr);
+
+    BOOST_CHECK_EQUAL(wallet->nStakeSplitThreshold, static_cast<size_t>(MAX_STAKE_SPLIT_THRESHOLD));
+
+    TestUnloadWallet(context, std::move(wallet));
+}
+
+BOOST_AUTO_TEST_CASE(wallet_rejects_invalid_staking_args)
+{
+    CheckInvalidStakingArg(m_args, "stakesplitthreshold", "0", "-stakesplitthreshold must be between 1 and");
+    CheckInvalidStakingArg(m_args, "stakesplitthreshold", "-1", "-stakesplitthreshold must be between 1 and");
+    CheckInvalidStakingArg(m_args, "stakesplitthreshold", "1000001", "-stakesplitthreshold must be between 1 and 1000000");
+    CheckInvalidStakingArg(m_args, "stakemaxsplit", "-1", "-stakemaxsplit must be between 0 and");
+    CheckInvalidStakingArg(m_args, "stakeautocombine", "-1", "-stakeautocombine must be between 0 and 2");
+    CheckInvalidStakingArg(m_args, "stakeautocombine", "3", "-stakeautocombine must be between 0 and 2");
+    CheckInvalidStakingArg(m_args, "poshashinterval", "0", "-poshashinterval must be between 1 and");
+    CheckInvalidStakingArg(m_args, "poshashinterval", "-1", "-poshashinterval must be between 1 and");
+    CheckInvalidStakingArg(m_args, "poshashinterval", "86401", "-poshashinterval must be between 1 and 86400");
 }
 
 static CMutableTransaction TestSimpleSpend(const CTransaction& from, uint32_t index, const CKey& key, const CScript& pubkey)
@@ -377,7 +504,7 @@ BOOST_FIXTURE_TEST_CASE(importmulti_rescan, TestChain100Setup)
                       "timestamp %d. There was an error reading a block from time %d, which is after or within %d "
                       "seconds of key creation, and could contain transactions pertaining to the key. As a result, "
                       "transactions and coins using this key may not appear in the wallet. This error could be caused "
-                      "by pruning or data corruption (see dashd log for details) and could be dealt with by "
+                      "by pruning or data corruption (see cosantad log for details) and could be dealt with by "
                       "downloading and rescanning the relevant blocks (see -reindex option and rescanblockchain "
                       "RPC).\"}},{\"success\":true}]",
                               0, oldTip->GetBlockTimeMax(), TIMESTAMP_WINDOW));

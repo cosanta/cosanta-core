@@ -299,6 +299,7 @@ node::ChainstateLoadOptions ChainTestingSetup::ChainstateLoadOptionsForTest()
     options.isman = Assert(m_node.isman.get());
     options.chainlocks = Assert(m_node.chainlocks.get());
     options.mn_sync = Assert(m_node.mn_sync.get());
+    options.sporkman = m_node.sporkman.get();
     options.data_dir = Assert(m_node.args)->GetDataDirNet();
     options.block_tree_db_in_memory = m_block_tree_db_in_memory;
     options.coins_db_in_memory = m_coins_db_in_memory;
@@ -565,7 +566,7 @@ CBlock TestChainSetup::CreateBlock(
     const CScript& scriptPubKey,
     Chainstate& chainstate)
 {
-    CBlock block = BlockAssembler(chainstate, m_node, nullptr).CreateNewBlock(scriptPubKey)->block;
+    CBlock block = *BlockAssembler(chainstate, m_node, nullptr).CreateNewBlock(scriptPubKey)->block;
 
     std::vector<CTransactionRef> llmqCommitments;
     for (const auto& tx : block.vtx) {

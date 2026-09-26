@@ -148,10 +148,10 @@ void MinerTestingSetup::TestPackageSelection(const CScript& scriptPubKey, const 
     // Age transaction for InstantSend
     m_node.clhandler->UpdateTxFirstSeenMap({hashParentTx, hashMediumFeeTx, hashHighFeeTx}, std::chrono::duration_cast<std::chrono::seconds>(Now<NodeSeconds>().time_since_epoch()).count() - WAIT_FOR_ISLOCK_TIMEOUT);
     std::unique_ptr<CBlockTemplate> pblocktemplate = AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey);
-    BOOST_REQUIRE_EQUAL(pblocktemplate->block.vtx.size(), 4U);
-    BOOST_CHECK(pblocktemplate->block.vtx[1]->GetHash() == hashParentTx);
-    BOOST_CHECK(pblocktemplate->block.vtx[2]->GetHash() == hashHighFeeTx);
-    BOOST_CHECK(pblocktemplate->block.vtx[3]->GetHash() == hashMediumFeeTx);
+    BOOST_REQUIRE_EQUAL(pblocktemplate->block->vtx.size(), 4U);
+    BOOST_CHECK(pblocktemplate->block->vtx[1]->GetHash() == hashParentTx);
+    BOOST_CHECK(pblocktemplate->block->vtx[2]->GetHash() == hashHighFeeTx);
+    BOOST_CHECK(pblocktemplate->block->vtx[3]->GetHash() == hashMediumFeeTx);
 
     // Test that a package below the block min tx fee doesn't get included
     tx.vin[0].prevout.hash = hashHighFeeTx;
@@ -172,9 +172,9 @@ void MinerTestingSetup::TestPackageSelection(const CScript& scriptPubKey, const 
     tx_mempool.addUnchecked(entry.Fee(feeToUse).FromTx(tx));
     pblocktemplate = AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey);
     // Verify that the free tx and the low fee tx didn't get selected
-    for (size_t i=0; i<pblocktemplate->block.vtx.size(); ++i) {
-        BOOST_CHECK(pblocktemplate->block.vtx[i]->GetHash() != hashFreeTx);
-        BOOST_CHECK(pblocktemplate->block.vtx[i]->GetHash() != hashLowFeeTx);
+    for (size_t i=0; i<pblocktemplate->block->vtx.size(); ++i) {
+        BOOST_CHECK(pblocktemplate->block->vtx[i]->GetHash() != hashFreeTx);
+        BOOST_CHECK(pblocktemplate->block->vtx[i]->GetHash() != hashLowFeeTx);
     }
 
     // Test that packages above the min relay fee do get included, even if one
@@ -187,9 +187,9 @@ void MinerTestingSetup::TestPackageSelection(const CScript& scriptPubKey, const 
     // Age transaction for InstantSend
     m_node.clhandler->UpdateTxFirstSeenMap({hashLowFeeTx}, std::chrono::duration_cast<std::chrono::seconds>(Now<NodeSeconds>().time_since_epoch()).count() - WAIT_FOR_ISLOCK_TIMEOUT);
     pblocktemplate = AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey);
-    BOOST_REQUIRE_EQUAL(pblocktemplate->block.vtx.size(), 6U);
-    BOOST_CHECK(pblocktemplate->block.vtx[4]->GetHash() == hashFreeTx);
-    BOOST_CHECK(pblocktemplate->block.vtx[5]->GetHash() == hashLowFeeTx);
+    BOOST_REQUIRE_EQUAL(pblocktemplate->block->vtx.size(), 6U);
+    BOOST_CHECK(pblocktemplate->block->vtx[4]->GetHash() == hashFreeTx);
+    BOOST_CHECK(pblocktemplate->block->vtx[5]->GetHash() == hashLowFeeTx);
 
     // Test that transaction selection properly updates ancestor fee
     // calculations as ancestor transactions get included in a block.
@@ -215,9 +215,9 @@ void MinerTestingSetup::TestPackageSelection(const CScript& scriptPubKey, const 
     pblocktemplate = AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey);
 
     // Verify that this tx isn't selected.
-    for (size_t i=0; i<pblocktemplate->block.vtx.size(); ++i) {
-        BOOST_CHECK(pblocktemplate->block.vtx[i]->GetHash() != hashFreeTx2);
-        BOOST_CHECK(pblocktemplate->block.vtx[i]->GetHash() != hashLowFeeTx2);
+    for (size_t i=0; i<pblocktemplate->block->vtx.size(); ++i) {
+        BOOST_CHECK(pblocktemplate->block->vtx[i]->GetHash() != hashFreeTx2);
+        BOOST_CHECK(pblocktemplate->block->vtx[i]->GetHash() != hashLowFeeTx2);
     }
 
     // This tx will be mineable, and should cause hashLowFeeTx2 to be selected
@@ -228,8 +228,8 @@ void MinerTestingSetup::TestPackageSelection(const CScript& scriptPubKey, const 
     // Age transaction for InstantSend
     m_node.clhandler->UpdateTxFirstSeenMap({tx.GetHash()}, std::chrono::duration_cast<std::chrono::seconds>(Now<NodeSeconds>().time_since_epoch()).count() - WAIT_FOR_ISLOCK_TIMEOUT);
     pblocktemplate = AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey);
-    BOOST_REQUIRE_EQUAL(pblocktemplate->block.vtx.size(), 9U);
-    BOOST_CHECK(pblocktemplate->block.vtx[8]->GetHash() == hashLowFeeTx2);
+    BOOST_REQUIRE_EQUAL(pblocktemplate->block->vtx.size(), 9U);
+    BOOST_CHECK(pblocktemplate->block->vtx[8]->GetHash() == hashLowFeeTx2);
 }
 
 void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::vector<CTransactionRef>& txFirst, int baseheight)
@@ -265,7 +265,7 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
             tx.vout[0].nValue -= LOWFEE;
             hash = tx.GetHash();
             // Age transaction for InstantSend
-            m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block.nTime - WAIT_FOR_ISLOCK_TIMEOUT);
+            m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block->nTime - WAIT_FOR_ISLOCK_TIMEOUT);
             bool spendsCoinbase = i == 0; // only first tx spends coinbase
             // If we don't set the # of sig ops in the CTxMemPoolEntry, template creation fails
             tx_mempool.addUnchecked(entry.Fee(LOWFEE).Time(Now<NodeSeconds>()).SpendsCoinbase(spendsCoinbase).FromTx(tx));
@@ -290,7 +290,7 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
             bool spendsCoinbase = i == 0; // only first tx spends coinbase
             // If we do set the # of sig ops in the CTxMemPoolEntry, template creation passes
             // Age transaction for InstantSend
-            m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block.nTime - WAIT_FOR_ISLOCK_TIMEOUT);
+            m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block->nTime - WAIT_FOR_ISLOCK_TIMEOUT);
             tx_mempool.addUnchecked(entry.Fee(LOWFEE).Time(Now<NodeSeconds>()).SpendsCoinbase(spendsCoinbase).SigOps(20).FromTx(tx));
             tx.vin[0].prevout.hash = hash;
         }
@@ -332,7 +332,7 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
         hash = tx.GetHash();
         tx_mempool.addUnchecked(entry.Fee(LOWFEE).Time(Now<NodeSeconds>()).FromTx(tx));
         // Age transaction for InstantSend
-        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block.nTime - WAIT_FOR_ISLOCK_TIMEOUT);
+        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block->nTime - WAIT_FOR_ISLOCK_TIMEOUT);
         BOOST_CHECK_EXCEPTION(AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey), std::runtime_error, HasReason("bad-txns-inputs-missingorspent"));
     }
 
@@ -374,7 +374,7 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
         tx.vout[0].nValue = 0;
         hash = tx.GetHash();
         // Age transaction for InstantSend
-        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block.nTime - WAIT_FOR_ISLOCK_TIMEOUT);
+        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block->nTime - WAIT_FOR_ISLOCK_TIMEOUT);
         // give it a fee so it'll get mined
         tx_mempool.addUnchecked(entry.Fee(LOWFEE).Time(Now<NodeSeconds>()).SpendsCoinbase(false).FromTx(tx));
         // Should throw bad-cb-multiple
@@ -448,14 +448,14 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
         tx.vout[0].scriptPubKey = GetScriptForDestination(ScriptHash(script));
         hash = tx.GetHash();
         // Age transaction for InstantSend
-        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block.nTime - WAIT_FOR_ISLOCK_TIMEOUT);
+        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block->nTime - WAIT_FOR_ISLOCK_TIMEOUT);
         tx_mempool.addUnchecked(entry.Fee(LOWFEE).Time(Now<NodeSeconds>()).SpendsCoinbase(true).FromTx(tx));
         tx.vin[0].prevout.hash = hash;
         tx.vin[0].scriptSig = CScript() << std::vector<unsigned char>(script.begin(), script.end());
         tx.vout[0].nValue -= LOWFEE;
         hash = tx.GetHash();
         // Age transaction for InstantSend
-        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block.nTime - WAIT_FOR_ISLOCK_TIMEOUT);
+        m_node.clhandler->UpdateTxFirstSeenMap({hash}, pblocktemplate->block->nTime - WAIT_FOR_ISLOCK_TIMEOUT);
         tx_mempool.addUnchecked(entry.Fee(LOWFEE).Time(Now<NodeSeconds>()).SpendsCoinbase(false).FromTx(tx));
         // Should throw block-validation-failed
         BOOST_CHECK_EXCEPTION(AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey), std::runtime_error, HasReason("block-validation-failed"));
@@ -579,7 +579,7 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
     // it into the template because we still check IsFinalTx in CreateNewBlock,
     // but relative locked txs will if inconsistently added to mempool.
     // For now these will still generate a valid template until BIP68 soft fork
-    BOOST_CHECK_EQUAL(pblocktemplate->block.vtx.size(), 3U);
+    BOOST_CHECK_EQUAL(pblocktemplate->block->vtx.size(), 3U);
     // However if we advance height by 1 and time by SEQUENCE_LOCK_TIME, all of them should be mined
     for (int i = 0; i < CBlockIndex::nMedianTimeSpan; ++i) {
         CBlockIndex* ancestor{Assert(m_node.chainman->ActiveChain().Tip()->GetAncestor(m_node.chainman->ActiveChain().Tip()->nHeight - i))};
@@ -589,7 +589,7 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
     SetMockTime(m_node.chainman->ActiveChain().Tip()->GetMedianTimePast() + 1);
 
     BOOST_CHECK(pblocktemplate = AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey));
-    BOOST_CHECK_EQUAL(pblocktemplate->block.vtx.size(), 5U);
+    BOOST_CHECK_EQUAL(pblocktemplate->block->vtx.size(), 5U);
 }
 
 void MinerTestingSetup::TestPrioritisedMining(const CScript& scriptPubKey, const std::vector<CTransactionRef>& txFirst)
@@ -658,17 +658,17 @@ void MinerTestingSetup::TestPrioritisedMining(const CScript& scriptPubKey, const
     // Age transaction for InstantSend
     m_node.clhandler->UpdateTxFirstSeenMap({hashMediumFeeTx, hashPrioritsedChild, hashParentTx, hashFreeParent, hashFreeChild, hashFreeGrandchild, hashFreePrioritisedTx}, std::chrono::duration_cast<std::chrono::seconds>(Now<NodeSeconds>().time_since_epoch()).count() - WAIT_FOR_ISLOCK_TIMEOUT);
     auto pblocktemplate = AssemblerForTest(tx_mempool).CreateNewBlock(scriptPubKey);
-    BOOST_REQUIRE_EQUAL(pblocktemplate->block.vtx.size(), 6U);
-    BOOST_CHECK(pblocktemplate->block.vtx[1]->GetHash() == hashFreeParent);
-    BOOST_CHECK(pblocktemplate->block.vtx[2]->GetHash() == hashFreePrioritisedTx);
-    BOOST_CHECK(pblocktemplate->block.vtx[3]->GetHash() == hashParentTx);
-    BOOST_CHECK(pblocktemplate->block.vtx[4]->GetHash() == hashPrioritsedChild);
-    BOOST_CHECK(pblocktemplate->block.vtx[5]->GetHash() == hashFreeChild);
-    for (size_t i=0; i<pblocktemplate->block.vtx.size(); ++i) {
+    BOOST_REQUIRE_EQUAL(pblocktemplate->block->vtx.size(), 6U);
+    BOOST_CHECK(pblocktemplate->block->vtx[1]->GetHash() == hashFreeParent);
+    BOOST_CHECK(pblocktemplate->block->vtx[2]->GetHash() == hashFreePrioritisedTx);
+    BOOST_CHECK(pblocktemplate->block->vtx[3]->GetHash() == hashParentTx);
+    BOOST_CHECK(pblocktemplate->block->vtx[4]->GetHash() == hashPrioritsedChild);
+    BOOST_CHECK(pblocktemplate->block->vtx[5]->GetHash() == hashFreeChild);
+    for (size_t i=0; i<pblocktemplate->block->vtx.size(); ++i) {
         // The FreeParent and FreeChild's prioritisations should not impact the child.
-        BOOST_CHECK(pblocktemplate->block.vtx[i]->GetHash() != hashFreeGrandchild);
+        BOOST_CHECK(pblocktemplate->block->vtx[i]->GetHash() != hashFreeGrandchild);
         // De-prioritised transaction should not be included.
-        BOOST_CHECK(pblocktemplate->block.vtx[i]->GetHash() != hashMediumFeeTx);
+        BOOST_CHECK(pblocktemplate->block->vtx[i]->GetHash() != hashMediumFeeTx);
     }
 }
 
@@ -688,7 +688,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     int baseheight = 0;
     std::vector<CTransactionRef> txFirst;
     for (const auto& bi : BLOCKINFO) {
-        CBlock *pblock = &pblocktemplate->block; // pointer for convenience
+        CBlock* pblock = pblocktemplate->block.get(); // pointer for convenience
         {
             LOCK(cs_main);
             pblock->nVersion = VERSIONBITS_TOP_BITS;

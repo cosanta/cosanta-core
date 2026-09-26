@@ -2361,7 +2361,7 @@ void FuncEvoNodeRegistrarRaiseNotMined(TestChainV24SignalBeforeV19Setup& setup)
     const auto block_template = node::BlockAssembler{chainman.ActiveChainstate(), setup.m_node, &mempool}.CreateNewBlock(
         setup.coinbase_pk);
     BOOST_REQUIRE(block_template != nullptr);
-    for (const auto& block_tx : block_template->block.vtx) {
+    for (const auto& block_tx : block_template->block->vtx) {
         BOOST_CHECK(block_tx->GetHash() != tx.GetHash());
     }
     BOOST_CHECK_EQUAL(dmnman.GetListAtChainTip().GetMN(proTxHash)->pdmnState->nVersion, ProTxVersion::BasicBLS);
@@ -2653,7 +2653,7 @@ void FuncPreV24CrossSchemePairCannotBecomeResident(TestChainV24SignalBeforeV19Se
     BOOST_CHECK_NO_THROW(make_template());
     BOOST_REQUIRE_MESSAGE(tmpl != nullptr, "no template could be built with a pre-v24 cross-scheme pair resident");
     bool selected_tx_a{false};
-    for (const auto& tx : tmpl->block.vtx) {
+    for (const auto& tx : tmpl->block->vtx) {
         selected_tx_a |= tx->GetHash() == tx_a.GetHash();
     }
     BOOST_CHECK_MESSAGE(selected_tx_a, "the valid surviving special transaction was not selected into the template");
@@ -3222,7 +3222,7 @@ void FuncStaleSpecialTxDoesNotPoisonTemplate(TestChainV24SignalBeforeV19Setup& s
     auto block_template = node::BlockAssembler{chainman.ActiveChainstate(), setup.m_node, &mempool}
                               .CreateNewBlock(coinbase_pk);
     BOOST_REQUIRE_MESSAGE(block_template != nullptr, "no template built while a stale special tx was resident");
-    for (const auto& tx : block_template->block.vtx) {
+    for (const auto& tx : block_template->block->vtx) {
         BOOST_CHECK_MESSAGE(tx->GetHash() != stale_hash,
                             "a stale special tx was selected into the block template");
     }

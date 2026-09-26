@@ -67,7 +67,7 @@ static void DashChainstateSetup(ChainstateManager& chainman,
     node.chain_helper.reset();
     node.chain_helper = std::make_unique<CChainstateHelper>(*node.evodb, *node.dmnman, *Assert(node.mn_sync), *Assert(node.isman), *(node.llmq_ctx->quorum_block_processor),
                                                             *(node.llmq_ctx->qsnapman), chainman, chainman.m_blockman, chainman.GetConsensus(),
-                                                            *Assert(node.chainlocks), *(node.llmq_ctx->qman));
+                                                            *Assert(node.sporkman), *Assert(node.chainlocks), *(node.llmq_ctx->qman));
 }
 
 static void DashChainstateSetupClose(node::NodeContext& node)
