@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/icons">
-        <file alias="dash">res/icons/dash.png</file>
+        <file alias="dash">res/icons/cosanta.png</file>
         <file alias="dash_macos_devnet">res/icons/dash_macos_devnet.png</file>
         <file alias="dash_macos_mainnet">res/icons/dash_macos_mainnet.png</file>
         <file alias="dash_macos_regtest">res/icons/dash_macos_regtest.png</file>
@@ -107,8 +107,8 @@
         <file alias="checkbox_partly_checked_light">res/images/checkbox_partly_checked_light.png</file>
         <file alias="checkbox_partly_checked_hover_light">res/images/checkbox_partly_checked_hover_light.png</file>
         <file alias="checkbox_partly_checked_disabled_light">res/images/checkbox_partly_checked_disabled_dark.png</file>
-        <file alias="dash_logo_toolbar">res/images/dash_logo_toolbar.png</file>
-        <file alias="dash_logo_toolbar_blue">res/images/dash_logo_toolbar_blue.png</file>
+        <file alias="dash_logo_toolbar">res/images/cosanta_logo_toolbar.png</file>
+        <file alias="dash_logo_toolbar_blue">res/images/cosanta_logo_toolbar_blue.png</file>
         <file alias="radio_normal_dark">res/images/radio_normal_dark.png</file>
         <file alias="radio_normal_hover_dark">res/images/radio_normal_hover_dark.png</file>
         <file alias="radio_checked_dark">res/images/radio_checked_dark.png</file>
