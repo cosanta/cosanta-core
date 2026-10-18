@@ -23,6 +23,7 @@
 #include <interfaces/coinjoin.h>
 #include <key_io.h>
 #include <node/blockstorage.h>
+#include <node/miner.h>
 #include <policy/policy.h>
 #include <policy/settings.h>
 #include <rpc/rawtransaction_util.h>
@@ -186,6 +187,7 @@ static constexpr const char* STAKING_ARG_NAMES[] = {
     "stakesplitthreshold",
     "stakemaxsplit",
     "stakeautocombine",
+    "stakecombinemax",
     "inputstakeprotect",
     "poshashinterval",
 };
@@ -227,6 +229,7 @@ BOOST_AUTO_TEST_CASE(wallet_constructor_reads_staking_args)
     SetStakingArg(m_args, "stakesplitthreshold", "123");
     SetStakingArg(m_args, "stakemaxsplit", "45");
     SetStakingArg(m_args, "stakeautocombine", "2");
+    SetStakingArg(m_args, "stakecombinemax", "77");
     SetStakingArg(m_args, "inputstakeprotect", "0");
     SetStakingArg(m_args, "poshashinterval", "7");
 
@@ -240,12 +243,14 @@ BOOST_AUTO_TEST_CASE(wallet_constructor_reads_staking_args)
     size_t stake_split_threshold = 0;
     int stake_max_split = 0;
     int stake_autocombine = 0;
+    int64_t stake_combine_max = 0;
     bool input_stake_protect = true;
     unsigned int pos_hash_interval = 0;
     if (loaded) {
         stake_split_threshold = wallet->nStakeSplitThreshold;
         stake_max_split = wallet->nStakeMaxSplit;
         stake_autocombine = wallet->fAutocombine;
+        stake_combine_max = wallet->nStakeCombineMax;
         input_stake_protect = wallet->inputStakeProtect;
         pos_hash_interval = wallet->nHashInterval;
         TestUnloadWallet(context, std::move(wallet));
@@ -256,6 +261,7 @@ BOOST_AUTO_TEST_CASE(wallet_constructor_reads_staking_args)
     BOOST_CHECK_EQUAL(stake_split_threshold, 123U);
     BOOST_CHECK_EQUAL(stake_max_split, 45);
     BOOST_CHECK_EQUAL(stake_autocombine, AUTOCOMBINE_ANY);
+    BOOST_CHECK_EQUAL(stake_combine_max, 77);
     BOOST_CHECK(!input_stake_protect);
     BOOST_CHECK_EQUAL(pos_hash_interval, 7U);
 }
@@ -293,6 +299,49 @@ BOOST_AUTO_TEST_CASE(wallet_accepts_boundary_staking_args)
     TestUnloadWallet(context, std::move(wallet));
 }
 
+BOOST_AUTO_TEST_CASE(wallet_clamps_stakecombinemax_to_split_threshold)
+{
+    const ScopedStakingArgsCleanup cleanup{m_args};
+    SetStakingArg(m_args, "stakesplitthreshold", "50");
+    SetStakingArg(m_args, "stakecombinemax", "100");
+
+    BOOST_REQUIRE(AppInitParameterInteraction(m_args));
+    WalletContext context;
+    context.args = &m_args;
+    context.chain = m_node.chain.get();
+    context.coinjoin_loader = m_coinjoin_loader.get();
+    auto wallet = TestLoadWallet(context);
+    BOOST_REQUIRE(wallet != nullptr);
+
+    BOOST_CHECK_EQUAL(wallet->nStakeCombineMax, 49);
+
+    TestUnloadWallet(context, std::move(wallet));
+}
+
+BOOST_AUTO_TEST_CASE(pos_block_assembler_reuse_keeps_block_max_size)
+{
+    WalletContext context;
+    context.args = &m_args;
+    context.chain = m_node.chain.get();
+    context.coinjoin_loader = m_coinjoin_loader.get();
+    auto wallet = TestLoadWallet(context);
+    BOOST_REQUIRE(wallet != nullptr);
+
+    node::BlockAssembler::Options options;
+    options.nBlockMaxSize = 10000;
+    node::BlockAssembler assembler(m_node.chainman->ActiveChainstate(), m_node, m_node.mempool.get(), options);
+    const CScript script_pub_key = CScript() << OP_TRUE;
+
+    for (int i = 0; i < 3; ++i) {
+        assembler.CreateNewBlock(script_pub_key, wallet, GetTime(), /*isPos=*/true);
+        // The working limit must be recomputed from the configured value on
+        // every call: 10000 minus the coinstake reserve, with no cumulative drift
+        BOOST_CHECK_EQUAL(assembler.GetBlockMaxSize(), 9000U);
+    }
+
+    TestUnloadWallet(context, std::move(wallet));
+}
+
 BOOST_AUTO_TEST_CASE(wallet_rejects_invalid_staking_args)
 {
     CheckInvalidStakingArg(m_args, "stakesplitthreshold", "0", "-stakesplitthreshold must be between 1 and");
@@ -301,6 +350,8 @@ BOOST_AUTO_TEST_CASE(wallet_rejects_invalid_staking_args)
     CheckInvalidStakingArg(m_args, "stakemaxsplit", "-1", "-stakemaxsplit must be between 0 and");
     CheckInvalidStakingArg(m_args, "stakeautocombine", "-1", "-stakeautocombine must be between 0 and 2");
     CheckInvalidStakingArg(m_args, "stakeautocombine", "3", "-stakeautocombine must be between 0 and 2");
+    CheckInvalidStakingArg(m_args, "stakecombinemax", "-1", "-stakecombinemax must be between 0 and");
+    CheckInvalidStakingArg(m_args, "stakecombinemax", "1000001", "-stakecombinemax must be between 0 and 1000000");
     CheckInvalidStakingArg(m_args, "poshashinterval", "0", "-poshashinterval must be between 1 and");
     CheckInvalidStakingArg(m_args, "poshashinterval", "-1", "-poshashinterval must be between 1 and");
     CheckInvalidStakingArg(m_args, "poshashinterval", "86401", "-poshashinterval must be between 1 and 86400");
