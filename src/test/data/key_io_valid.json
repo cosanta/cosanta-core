@@ -422,5 +422,40 @@
             "chain": "main",
             "isPrivkey": false
         }
+    ],
+    [
+        "shK9du4KrbP791FoNx6r3YYC82Wbk5b7MJ",
+        "76a914fd00802f8b61ccf0c1bb1c7969c832673ed546a988ac",
+        {
+            "isPrivkey": false,
+            "chain": "regtest"
+        }
+    ],
+    [
+        "9213qJab2HNEpMpYNBa7wHGFKKbkDn24jpANDs2huN3yi4J11ko",
+        "36cb93b9ab1bdabf7fb9f2c04f1b9cc879933530ae7842398eef5a63a56800c2",
+        {
+            "isCompressed": false,
+            "isPrivkey": true,
+            "chain": "regtest"
+        }
+    ],
+    [
+        "cNddBPFJ6PbCX2BJVR6up2p8PjtFyUy7zpbkAgRGhMmrPbCe8Fvf",
+        "1f5750a1f5703e8b1a273964c7b7fce1871cc7a43f303ec7d33ac724fdb59eca",
+        {
+            "isCompressed": true,
+            "isPrivkey": true,
+            "chain": "regtest"
+        }
+    ],
+    [
+        "92xFEve1Z9N8Z641KQQS7ByCSb8kGjsDzw6fAmjHN1LZGKQXyMq",
+        "b4204389cef18bbe2b353623cbf93e8678fbc92a475b664ae98ed594e6cf0856",
+        {
+            "isCompressed": false,
+            "isPrivkey": true,
+            "chain": "regtest"
+        }
     ]
 ]

@@ -10,8 +10,11 @@
 #include <config/bitcoin-config.h>
 #endif
 
+#include <context.h>
 #include <core_io.h>
 #include <httpserver.h>
+#include <masternode/sync.h>
+#include <node/context.h>
 #include <policy/policy.h>
 #include <rpc/blockchain.h>
 #include <rpc/rawtransaction_util.h>
@@ -19,6 +22,7 @@
 #include <rpc/util.h>
 #include <util/bip32.h>
 #include <util/fees.h>
+#include <util/system.h>
 #include <util/translation.h>
 #include <util/vector.h>
 #include <wallet/context.h>
@@ -242,6 +246,67 @@ static RPCHelpMan getwalletinfo()
     obj.pushKV("external_signer", pwallet->IsWalletFlagSet(WALLET_FLAG_EXTERNAL_SIGNER));
 
     AppendLastProcessedBlock(obj, *pwallet);
+    return obj;
+},
+    };
+}
+
+static RPCHelpMan getstakingstatus()
+{
+    return RPCHelpMan{"getstakingstatus",
+        "\nReturns an object containing various staking information.\n",
+        {},
+        RPCResult{
+            RPCResult::Type::OBJ, "", "",
+            {
+                {RPCResult::Type::BOOL, "staking_status", "whether the wallet is staking or not"},
+                {RPCResult::Type::BOOL, "staking_enabled", "whether staking is enabled/disabled in cosanta.conf"},
+                {RPCResult::Type::BOOL, "haveconnections", "whether network connections are present"},
+                {RPCResult::Type::BOOL, "mnsync", "whether the required masternode/spork data is synced"},
+                {RPCResult::Type::BOOL, "walletunlocked", "whether the wallet is unlocked"},
+                {RPCResult::Type::BOOL, "mintable_coins", "whether there are coins eligible for staking"},
+                {RPCResult::Type::BOOL, "above_reserve_balance", "whether the wallet balance is above the reserve balance"},
+                {RPCResult::Type::NUM, "stakesplitthreshold", "value of the current threshold for stake split"},
+                {RPCResult::Type::NUM, "stakemaxsplit", "the number of max inputs & outputs of a stake"},
+                {RPCResult::Type::NUM, "stakeautocombine", "autocombine feature: 0 - disable, 1 - same account, 2 - any account"},
+                {RPCResult::Type::BOOL, "inputstakeprotect", "whether masternode collateral is excluded from staking"},
+                {RPCResult::Type::NUM, "poshashinterval", "number of seconds between stake hash attempts"},
+            },
+        },
+        RPCExamples{
+            HelpExampleCli("getstakingstatus", "")
+            + HelpExampleRpc("getstakingstatus", "")
+        },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+{
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!wallet) return UniValue::VNULL;
+    CWallet* const pwallet = wallet.get();
+
+    pwallet->BlockUntilSyncedToCurrentChain();
+
+    LOCK(pwallet->cs_wallet);
+
+    const bool fHaveConnections = pwallet->chain().p2pEnabled();
+    const bool fMintableCoins = pwallet->MintableCoins();
+    const bool fLessReserveBalance = pwallet->nReserveBalance >= GetBalance(*pwallet).m_mine_trusted;
+    const node::NodeContext* const node_context = GetContext<node::NodeContext>(request.context);
+    const bool fMnSynced = node_context != nullptr && node_context->mn_sync != nullptr && node_context->mn_sync->IsSynced();
+    const bool fStatus = !(pwallet->IsLocked(true) || !fMintableCoins || fLessReserveBalance || !fMnSynced || !fHaveConnections);
+
+    UniValue obj(UniValue::VOBJ);
+    obj.pushKV("staking_status", fStatus);
+    obj.pushKV("staking_enabled", gArgs.GetBoolArg("-staking", true));
+    obj.pushKV("haveconnections", fHaveConnections);
+    obj.pushKV("mnsync", fMnSynced);
+    obj.pushKV("walletunlocked", !pwallet->IsLocked(true));
+    obj.pushKV("mintable_coins", fMintableCoins);
+    obj.pushKV("above_reserve_balance", !fLessReserveBalance);
+    obj.pushKV("stakesplitthreshold", static_cast<uint64_t>(pwallet->nStakeSplitThreshold));
+    obj.pushKV("stakemaxsplit", pwallet->nStakeMaxSplit);
+    obj.pushKV("stakeautocombine", pwallet->fAutocombine);
+    obj.pushKV("inputstakeprotect", pwallet->inputStakeProtect);
+    obj.pushKV("poshashinterval", static_cast<uint64_t>(pwallet->nHashInterval));
     return obj;
 },
     };
@@ -474,7 +539,7 @@ static RPCHelpMan loadwallet()
 {
     return RPCHelpMan{"loadwallet",
                 "\nLoads a wallet from a wallet file or directory."
-                "\nNote that all wallet command-line options used when starting dashd will be"
+                "\nNote that all wallet command-line options used when starting cosantad will be"
                 "\napplied to the new wallet.\n",
                 {
                     {"filename", RPCArg::Type::STR, RPCArg::Optional::NO, "The wallet directory or .dat file."},
@@ -665,7 +730,7 @@ static RPCHelpMan createwallet()
     const bool descriptors_given{!request.params[5].isNull()};
     const bool load_on_startup_given{!request.params[6].isNull()};
     if (descriptors_given && !load_on_startup_given) {
-        throw JSONRPCError(RPC_INVALID_PARAMETER, "The createwallet RPC requires specifying the 'load_on_startup' flag when param 'descriptors' is specified. Dash Core v21 introduced this requirement due to breaking changes in the createwallet RPC.");
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "The createwallet RPC requires specifying the 'load_on_startup' flag when param 'descriptors' is specified. Cosanta Core v21 introduced this requirement due to breaking changes in the createwallet RPC.");
     }
     if (request.params[5].isNull() || request.params[5].get_bool()) {
 #ifndef USE_SQLITE
@@ -1273,6 +1338,7 @@ Span<const CRPCCommand> GetWalletRPCCommands()
         {"wallet", &gettransaction},
         {"wallet", &getunconfirmedbalance},
         {"wallet", &getbalances},
+        {"wallet", &getstakingstatus},
         {"wallet", &getwalletinfo},
         {"wallet", &importaddress},
         {"wallet", &importelectrumwallet},

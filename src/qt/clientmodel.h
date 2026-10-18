@@ -54,7 +54,7 @@ enum NumConnections {
 
 class CGovernanceObject;
 
-/** Model for Dash network client. */
+/** Model for Cosanta network client. */
 class ClientModel : public QObject
 {
     Q_OBJECT

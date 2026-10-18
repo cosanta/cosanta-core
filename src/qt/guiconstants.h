@@ -20,10 +20,10 @@ static constexpr auto SHUTDOWN_POLLING_DELAY{200ms};
 /* AskPassphraseDialog -- Maximum passphrase length */
 static const int MAX_PASSPHRASE_SIZE = 1024;
 
-/* DashGUI -- Size of icons in status bar */
+/* CosantaGUI -- Size of icons in status bar */
 static const int STATUSBAR_ICONSIZE = 18;
 
-/* DashGUI -- Size of button icons e.g. in SendCoinEntry or SignVerifyMessageDialog */
+/* CosantaGUI -- Size of button icons e.g. in SendCoinEntry or SignVerifyMessageDialog */
 static const int BUTTON_ICONSIZE = 23;
 
 static const bool DEFAULT_SPLASHSCREEN = true;
@@ -44,12 +44,12 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 /* Duration of one full status-bar icon animation cycle in milliseconds. */
 static constexpr int STATUSBAR_ICON_CYCLE_MS{3600};
 
-#define QAPP_ORG_NAME "Dash"
-#define QAPP_ORG_DOMAIN "dash.org"
-#define QAPP_APP_NAME_DEFAULT "Dash-Qt"
-#define QAPP_APP_NAME_TESTNET "Dash-Qt-testnet"
-#define QAPP_APP_NAME_DEVNET "Dash-Qt-%s"
-#define QAPP_APP_NAME_REGTEST "Dash-Qt-regtest"
+#define QAPP_ORG_NAME "Cosanta"
+#define QAPP_ORG_DOMAIN "cosa.is"
+#define QAPP_APP_NAME_DEFAULT "Cosanta-Qt"
+#define QAPP_APP_NAME_TESTNET "Cosanta-Qt-testnet"
+#define QAPP_APP_NAME_DEVNET "Cosanta-Qt-%s"
+#define QAPP_APP_NAME_REGTEST "Cosanta-Qt-regtest"
 
 /* One gigabyte (GB) in bytes */
 static constexpr uint64_t GB_BYTES{1000000000};
