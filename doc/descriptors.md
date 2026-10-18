@@ -1,6 +1,6 @@
-# Support for Output Descriptors in Dash Core
+# Support for Output Descriptors in Cosanta Core
 
-Since Dash Core v0.17, there is support for Output Descriptors. This is a
+Cosanta Core inherits support for Output Descriptors from Dash Core v0.17. This is a
 simple language which can be used to describe collections of output scripts.
 Supporting RPCs are:
 - `scantxoutset` takes as input descriptors to scan for, and also reports
@@ -42,7 +42,7 @@ Output descriptors currently support:
 ## Examples
 
 - `pk(0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798)` describes a P2PK output with the specified public key.
-- `combo(0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798)` describes any P2PK, P2PKH with the specified public key.
+- `combo(0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798)` describes P2PK, P2PKH, and P2SH-P2PKH outputs with the specified compressed public key.
 - `multi(1,022f8bde4d1a07209355b4a7250a5c5128e88b84bddc619ab7cba8d569b240efe4,025cbdf0646e5db4eaa398f365f2ea7a0e3d419b7e0330e39ce92bddedcac4f9bc)` describes a bare *1-of-2* multisig with the specified public key.
 - `sortedmulti(1,022f8bde4d1a07209355b4a7250a5c5128e88b84bddc619ab7cba8d569b240efe4,025cbdf0646e5db4eaa398f365f2ea7a0e3d419b7e0330e39ce92bddedcac4f9bc)` describes a bare *1-of-2* multisig with keys sorted lexicographically in the resulting redeemScript.
 - `pkh(xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw/1/2)` describes a P2PKH output with child key *1/2* of the specified xpub.
@@ -56,7 +56,7 @@ Descriptors consist of several types of expressions. The top level expression is
 - `pk(KEY)` (anywhere): P2PK output for the given public key.
 - `pkh(KEY)` (anywhere): P2PKH output for the given public key (use `addr` if you only know the pubkey hash).
 - `sh(SCRIPT)` (top level only): P2SH embed the argument.
-- `combo(KEY)` (top level only): an alias for the collection of `pk(KEY)` and `pkh(KEY)`.
+- `combo(KEY)` (top level only): `pk(KEY)`, plus `pkh(KEY)` and `sh(pkh(KEY))` for compressed keys.
 - `multi(k,KEY_1,KEY_2,...,KEY_n)` (anywhere): k-of-n multisig script.
 - `sortedmulti(k,KEY_1,KEY_2,...,KEY_n)` (anywhere): k-of-n multisig script with keys sorted lexicographically in the resulting script.
 - `addr(ADDR)` (top level only): the script which ADDR expands to.
@@ -79,8 +79,8 @@ Descriptors consist of several types of expressions. The top level expression is
 (Anywhere a `'` suffix is permitted to denote hardened derivation, the suffix `h` can be used instead.)
 
 `ADDR` expressions are any type of supported address:
-- P2PKH addresses (base58, of the form `X...`). Note that P2PKH addresses in descriptors cannot be used for P2PK outputs (use the `pk` function instead).
-- P2SH addresses (base58, of the form `7...`, defined in [BIP 13](https://github.com/bitcoin/bips/blob/master/bip-0013.mediawiki)).
+- P2PKH addresses (base58, of the form `C...` on mainnet). Note that P2PKH addresses in descriptors cannot be used for P2PK outputs (use the `pk` function instead).
+- P2SH addresses (base58, of the form `6...` on mainnet, defined in [BIP 13](https://github.com/bitcoin/bips/blob/master/bip-0013.mediawiki)).
 
 ## Explanation
 
@@ -128,7 +128,7 @@ wallets and PSBTs, as well as a signing flow, see [this functional test](/test/f
 Disclaimers: It is important to note that this example serves as a quick-start and is kept basic for readability. A downside of the approach
 outlined here is that each participant must maintain (and backup) two separate wallets: a signer and the corresponding multisig.
 It should also be noted that privacy best-practices are not "by default" here - participants should take care to only use the signer to sign
-transactions related to the multisig. Lastly, it is not recommended to use anything other than a Bitcoin Core descriptor wallet to serve as your
+transactions related to the multisig. Lastly, it is not recommended to use anything other than a Cosanta Core descriptor wallet to serve as your
 signer(s). Other wallets, whether hardware or software, likely impose additional checks and safeguards to prevent users from signing transactions that
 could lead to loss of funds, or are deemed security hazards. Conforming to various 3rd-party checks and verifications is not in the scope of this example.
 
@@ -139,7 +139,7 @@ The basic steps are:
      corresponding multisig we are about to create. Hint: extract the wallet's xpubs using `listdescriptors` and pick the one from the
      `pkh` descriptor since it's least likely to be accidentally reused (legacy addresses)
   2. Create a watch-only descriptor wallet (blank, private keys disabled). Now the multisig is created by importing the two descriptors:
-     `wsh(sortedmulti(<M>,XPUB1/0/*,XPUB2/0/*,…,XPUBN/0/*))` and `wsh(sortedmulti(<M>,XPUB1/1/*,XPUB2/1/*,…,XPUBN/1/*))`
+     `sh(sortedmulti(<M>,XPUB1/0/*,XPUB2/0/*,…,XPUBN/0/*))` and `sh(sortedmulti(<M>,XPUB1/1/*,XPUB2/1/*,…,XPUBN/1/*))`
      (one descriptor w/ `0` for receiving addresses and another w/ `1` for change). Every participant does this
   3. A receiving address is generated for the multisig. As a check to ensure step 2 was done correctly, every participant
      should verify they get the same addresses
@@ -226,9 +226,9 @@ while the other two are public keys.
 ### Compatibility with old wallets
 
 In order to easily represent the sets of scripts currently supported by
-existing Dash Core wallets, a convenience function `combo` is
-provided, which takes as input a public key, and describes a set of P2PK and
-P2PKH scripts for that key.
+existing Cosanta Core wallets, a convenience function `combo` is
+provided, which takes as input a public key and describes its P2PK script.
+For compressed keys, it also includes P2PKH and P2SH-P2PKH scripts.
 
 ### Checksums
 
@@ -242,7 +242,7 @@ be detected in descriptors up to 501 characters, and up to 3 errors in longer
 ones. For larger numbers of errors, or other types of errors, there is a
 roughly 1 in a trillion chance of not detecting the errors.
 
-All RPCs in Dash Core will include the checksum in their output. Only
+All RPCs in Cosanta Core will include the checksum in their output. Only
 certain RPCs require checksums on input, including `deriveaddresses` and
 `importmulti`. The checksum for a descriptor without one can be computed
 using the `getdescriptorinfo` RPC.
