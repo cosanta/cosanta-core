@@ -74,7 +74,7 @@ namespace {
 //! no addresses and no funding yet
 MnShareSession InvitationSession()
 {
-    return MasternodeTestUtil::MakeInvitation({{"alice", 400 * COIN}, {"bob", 350 * COIN}, {"carol", 250 * COIN}});
+    return MasternodeTestUtil::MakeInvitation({{"alice", 4000 * COIN}, {"bob", 3500 * COIN}, {"carol", 2500 * COIN}});
 }
 
 //! `draft` locked the way shared_register_prepare would lock it, with every
@@ -440,7 +440,7 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
     m_node.setContext(&test.m_node);
     WalletContext& context{*m_node.walletLoader().context()};
 
-    // bob's wallet funds its 350 DASH share with one 450 DASH coin, so 100 DASH
+    // bob's wallet funds its 3500 COSA share with one 3600 COSA coin, so 100 COSA
     // of change has to come back to it
     CKey victim_key;
     victim_key.MakeNewKey(/*fCompressed=*/true);
@@ -450,7 +450,7 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
 
     CMutableTransaction coin;
     coin.vin.emplace_back(COutPoint(uint256::ONE, 0));
-    coin.vout.emplace_back(450 * COIN, GetScriptForDestination(PKHash(victim_key.GetPubKey())));
+    coin.vout.emplace_back(3600 * COIN, GetScriptForDestination(PKHash(victim_key.GetPubKey())));
     const QString coin_txid{QString::fromStdString(coin.GetHash().ToString())};
     QVERIFY(wallet->AddToWallet(MakeTransactionRef(coin), wallet::TxStateInactive{}) != nullptr);
     const QString own_address{QString::fromStdString(EncodeDestination(PKHash(victim_key.GetPubKey())))};
@@ -498,7 +498,7 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
         QCOMPARE(dialog.myShareIndex(), 1);
         QCOMPARE(int(dialog.currentPage()), int(SharedMnCreateDialog::PageSignatures));
         const QString refusal{dialog.m_funding_refusal};
-        QVERIFY2(refusal.contains(QStringLiteral("spends %1").arg(amount(450 * COIN))), qPrintable(refusal));
+        QVERIFY2(refusal.contains(QStringLiteral("spends %1").arg(amount(3600 * COIN))), qPrintable(refusal));
         QVERIFY2(refusal.contains(QStringLiteral("returns only %1").arg(amount(returned))), qPrintable(refusal));
         QVERIFY(!dialog.m_next_button->isEnabled());
         bool complete{true};

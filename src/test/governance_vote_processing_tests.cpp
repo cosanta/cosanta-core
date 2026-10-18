@@ -98,7 +98,7 @@ struct GovernanceVoteSetup : public TestChainSetup {
         BOOST_REQUIRE(g_txindex->Start());
         IndexWaitSynced(*g_txindex);
 
-        utxos = BuildSimpleUtxoMap(m_coinbase_txns);
+        utxos = FundMasternodeTestChain(*this);
 
         // Activate DIP3, then register the masternode that votes in these tests.
         MineBlocks(1);

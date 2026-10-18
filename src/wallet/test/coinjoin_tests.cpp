@@ -147,7 +147,7 @@ public:
         context.args = &m_args;
         context.chain = m_node.chain.get();
         context.coinjoin_loader = m_node.coinjoin_loader.get();
-        CreateAndProcessBlock({}, GetScriptForRawPubKey(coinbaseKey.GetPubKey()));
+        mineBlocks(50);
         wallet->SetupLegacyScriptPubKeyMan();
         wallet->LoadWallet();
         AddWallet(context, wallet);

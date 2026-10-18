@@ -219,10 +219,10 @@ void FuncDIP3Activation(TestChainSetup& setup)
     auto tip_hash     = [&] { return WITH_LOCK(::cs_main, return chainman.ActiveChain().Tip()->GetBlockHash()); };
     auto sync_dmn_tip = [&] { dmnman.UpdatedBlockTip(tip_index()); };
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     CKey ownerKey;
     CBLSSecretKey operatorKey;
-    CTxDestination payoutDest = DecodeDestination("yRq1Ky1AfFmf597rnotj7QRxsDUKePVWNF");
+    CTxDestination payoutDest = DecodeDestination("sPkxZLXr1YpWoe2ZRWtwqXMARecAyFQSLF");
     auto tx = CreateProRegTx(chainman, utxos, 1, GetScriptForDestination(payoutDest), setup.coinbaseKey, ownerKey, operatorKey);
     std::vector<CMutableTransaction> txns = {tx};
 
@@ -259,7 +259,7 @@ void FuncV19Activation(TestChainSetup& setup)
     BOOST_REQUIRE(!DeploymentActiveAfter(tip_index(), chainman.GetConsensus(), Consensus::DEPLOYMENT_V19));
 
     // create
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     CKey owner_key;
     CBLSSecretKey operator_key;
     CKey collateral_key;
@@ -393,7 +393,7 @@ void FuncProUpRegTxVersionHandlingBeforeV24(TestChainSetup& setup)
     BOOST_REQUIRE(!DeploymentActiveAfter(tip_index(), chainman.GetConsensus(), Consensus::DEPLOYMENT_V19));
     BOOST_REQUIRE(bls::bls_legacy_scheme.load());
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     CKey owner_key;
     CBLSSecretKey operator_key;
     auto tx_reg = CreateProRegTx(chainman, utxos, 1, GenerateRandomAddress(),
@@ -492,7 +492,7 @@ void FuncProUpRegTxV3OnLegacyValid(TestChainSetup& setup)
     BOOST_REQUIRE(!DeploymentActiveAfter(tip_index(), chainman.GetConsensus(), Consensus::DEPLOYMENT_V19));
     BOOST_REQUIRE(!DeploymentActiveAfter(tip_index(), chainman, Consensus::DEPLOYMENT_V24));
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     CKey owner_key;
     CBLSSecretKey operator_key;
     // The update below carries this address into ExtNetInfo, so it must be one ExtNetInfo accepts
@@ -562,7 +562,7 @@ void FuncProUpRegTxV2CannotBypassV3PayoutCollateralReuse(TestChainSetup& setup)
     BOOST_REQUIRE(DeploymentActiveAfter(tip_index(), chainman, Consensus::DEPLOYMENT_V24));
     BOOST_REQUIRE(!bls::bls_legacy_scheme.load());
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     CKey owner_key;
     CKey collateral_key;
     CBLSSecretKey operator_key;
@@ -653,7 +653,7 @@ void FuncMNPaymentMultiplicityV24Boundary(TestChainSetup& setup)
     BOOST_REQUIRE(!DeploymentActiveAfter(tip_index(), chainman, Consensus::DEPLOYMENT_V24));
     BOOST_REQUIRE(!bls::bls_legacy_scheme.load());
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
 
     // A single script that BOTH an owner payout and the operator payout will point at.
     CKey payout_key;
@@ -928,7 +928,7 @@ void FuncDIP3Protx(TestChainSetup& setup)
     auto tip_height   = [&] { return WITH_LOCK(::cs_main, return chainman.ActiveChain().Height()); };
     auto sync_dmn_tip = [&] { dmnman.UpdatedBlockTip(tip_index()); };
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     // Snapshot kept for signature checks below, since FundTransaction() consumes utxos.
     const SimpleUTXOMap coins{utxos};
 
@@ -1128,7 +1128,7 @@ void FuncProUpServInvalidNType(TestChainSetup& setup)
     auto tip_index = [&] { return WITH_LOCK(::cs_main, return chainman.ActiveChain().Tip()); };
     auto sync_dmn_tip = [&] { dmnman.UpdatedBlockTip(tip_index()); };
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     const CScript coinbase_pk = GetScriptForRawPubKey(setup.coinbaseKey.GetPubKey());
 
     CKey ownerKey;
@@ -1276,7 +1276,7 @@ void FuncTestMempoolReorg(TestChainSetup& setup)
 
     const CScript coinbase_pk = GetScriptForRawPubKey(setup.coinbaseKey.GetPubKey());
     int nHeight = tip_height();
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     // Snapshot kept to sign the double-spend below, since FundTransaction() consumes utxos.
     const SimpleUTXOMap coins{utxos};
 
@@ -1340,7 +1340,7 @@ void FuncTestMempoolProTxKeyChangedConflictChain(TestChainSetup& setup)
 {
     auto& chainman = *Assert(setup.m_node.chainman.get());
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     const CScript scriptPayout = GetScriptForDestination(PKHash(setup.coinbaseKey.GetPubKey()));
 
     CKey ownerKey;
@@ -1407,7 +1407,7 @@ void FuncTestMempoolDualProregtx(TestChainSetup& setup)
 {
     auto& chainman = *Assert(setup.m_node.chainman.get());
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
 
     // Create a MN
     CKey ownerKey1;
@@ -1454,7 +1454,7 @@ void FuncTestMempoolProRegReplacementUpdateConflict(TestChainSetup& setup)
 
     const CScript coinbase_pk = GetScriptForRawPubKey(setup.coinbaseKey.GetPubKey());
     int nHeight = tip_height();
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
 
     CKey ownerKey;
     CKey payoutKey;
@@ -1594,7 +1594,7 @@ void FuncVerifyDB(TestChainSetup& setup)
 
     const CScript coinbase_pk = GetScriptForRawPubKey(setup.coinbaseKey.GetPubKey());
     int nHeight = tip_height();
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
 
     CKey ownerKey;
     CKey payoutKey;
@@ -1789,7 +1789,7 @@ struct TestMNChainSetup : public TestChainSetup {
                        /*coins_db_in_memory=*/true, /*block_tree_db_in_memory=*/true),
         chainman(*Assert(m_node.chainman)),
         dmnman(*Assert(m_node.dmnman)),
-        utxos(BuildSimpleUtxoMap(m_coinbase_txns)),
+        utxos(FundMasternodeTestChain(*this)),
         coinbase_pk(GetScriptForRawPubKey(coinbaseKey.GetPubKey()))
     {
     }
@@ -2400,7 +2400,7 @@ void FuncEvoNodeRegistrarRaiseNotMined(TestChainV24SignalBeforeV19Setup& setup)
     const auto block_template = node::BlockAssembler{chainman.ActiveChainstate(), setup.m_node, &mempool}.CreateNewBlock(
         setup.coinbase_pk);
     BOOST_REQUIRE(block_template != nullptr);
-    for (const auto& block_tx : block_template->block.vtx) {
+    for (const auto& block_tx : block_template->block->vtx) {
         BOOST_CHECK(block_tx->GetHash() != tx.GetHash());
     }
     BOOST_CHECK_EQUAL(dmnman.GetListAtChainTip().GetMN(proTxHash)->pdmnState->nVersion, ProTxVersion::BasicBLS);
@@ -2837,7 +2837,7 @@ void FuncPreV24CrossSchemePairCannotBecomeResident(TestChainV24SignalBeforeV19Se
     BOOST_CHECK_NO_THROW(make_template());
     BOOST_REQUIRE_MESSAGE(tmpl != nullptr, "no template could be built with a pre-v24 cross-scheme pair resident");
     bool selected_tx_a{false};
-    for (const auto& tx : tmpl->block.vtx) {
+    for (const auto& tx : tmpl->block->vtx) {
         selected_tx_a |= tx->GetHash() == tx_a.GetHash();
     }
     BOOST_CHECK_MESSAGE(selected_tx_a, "the valid surviving special transaction was not selected into the template");
@@ -3227,7 +3227,7 @@ void FuncHasOperatorKeyUnderAnyScheme(TestChainSetup& setup)
     const CScript coinbase_pk = GetScriptForRawPubKey(setup.coinbaseKey.GetPubKey());
 
     BOOST_REQUIRE(bls::bls_legacy_scheme.load());
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     CKey owner_key;
     CBLSSecretKey operator_key;
     auto tx_reg = CreateProRegTx(chainman, utxos, 19999, GenerateRandomAddress(), setup.coinbaseKey, owner_key,
@@ -3270,7 +3270,7 @@ void FuncPreV24BehaviourUnchanged(TestChainSetup& setup)
     BOOST_REQUIRE(!DeploymentActiveAfter(tip_index(), chainman.GetConsensus(), Consensus::DEPLOYMENT_V19));
     BOOST_REQUIRE(bls::bls_legacy_scheme.load());
 
-    auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
+    auto utxos = FundMasternodeTestChain(setup);
     CKey owner_key;
     CBLSSecretKey operator_key;
     auto tx_reg = CreateProRegTx(chainman, utxos, 19999, GenerateRandomAddress(), setup.coinbaseKey, owner_key,
@@ -3406,7 +3406,7 @@ void FuncStaleSpecialTxDoesNotPoisonTemplate(TestChainV24SignalBeforeV19Setup& s
     auto block_template = node::BlockAssembler{chainman.ActiveChainstate(), setup.m_node, &mempool}
                               .CreateNewBlock(coinbase_pk);
     BOOST_REQUIRE_MESSAGE(block_template != nullptr, "no template built while a stale special tx was resident");
-    for (const auto& tx : block_template->block.vtx) {
+    for (const auto& tx : block_template->block->vtx) {
         BOOST_CHECK_MESSAGE(tx->GetHash() != stale_hash,
                             "a stale special tx was selected into the block template");
     }
@@ -3614,6 +3614,14 @@ BOOST_AUTO_TEST_CASE(proregtx_rejects_invalid_deserialized_extnetinfo)
 BOOST_AUTO_TEST_CASE(mn_payment_multiplicity_v24_boundary)
 {
     TestChainV24PendingSetup setup;
+    // Exercise payee enforcement after Cosanta's historical budget bypass.
+    auto& start = const_cast<Consensus::Params&>(Params().GetConsensus()).nSuperblockStartBlock;
+    struct RestoreHeight {
+        int& height;
+        const int saved{height};
+        ~RestoreHeight() { height = saved; }
+    } restore{start};
+    start = setup.Tip()->nHeight + 1;
     FuncMNPaymentMultiplicityV24Boundary(setup);
 }
 

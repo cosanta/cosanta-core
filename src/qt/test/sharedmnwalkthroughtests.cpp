@@ -32,6 +32,7 @@
 #include <rpc/register.h>
 #include <script/standard.h>
 #include <test/util/setup_common.h>
+#include <test/util/masternode.h>
 #include <univalue.h>
 #include <util/system.h>
 #include <util/translation.h>
@@ -333,8 +334,8 @@ void SharedMnWalkthroughTests::walkthrough()
 {
     // A ten-block window with an eight-block threshold and no EHF: the blocks
     // mined below signal the started deployment, so v24 locks in and activates
-    // around height 30, well before the wallets are funded.
-    RegTestingSetup test{{"-vbparams=v24:0:999999999999:0:10:8:6:5:0"}};
+    // around height 30, well before the shared registration.
+    TestChainSetup test{0, CBaseChainParams::REGTEST, {"-vbparams=v24:0:999999999999:0:10:8:6:5:0"}};
     m_node.setContext(&test.m_node);
     WalletContext& context{*m_node.walletLoader().context()};
     ModalPilot pilot;
@@ -359,16 +360,25 @@ void SharedMnWalkthroughTests::walkthrough()
         wallets.keep(wallet);
     }
 
+    // Seed the UTXO fixture, then confirm real signed payments to each wallet:
+    // early Cosanta block rewards cannot fund a 10000 COSA collateral.
+    auto utxos{FundMasternodeTestChain(test)};
+    CMutableTransaction funding;
+    const CScript change_script{GetScriptForRawPubKey(test.coinbaseKey.GetPubKey())};
+    const auto inputs{FundTransaction(*test.m_node.chainman, funding, utxos, change_script, 21000 * COIN)};
+    funding.vout.erase(funding.vout.begin());
     for (const auto& wallet : {coord_wallet, alice_wallet, bob_wallet}) {
-        const auto dest{wallet->GetNewDestination("mining")};
+        const auto dest{wallet->GetNewDestination("funding")};
         QVERIFY(dest);
-        QVERIFY2(MineTo(m_node, *dest, 12).isEmpty(), "generatetoaddress must succeed");
+        funding.vout.emplace_back(7000 * COIN, GetScriptForDestination(*dest));
     }
+    SignTransaction(funding, inputs, test.coinbaseKey);
+    test.CreateAndProcessBlock({funding}, change_script);
+    QCOMPARE(ChainHeight(m_node), 1);
     // Past the regtest DIP3 enforcement height (500): below DIP3 activation
     // (432) a special transaction is rejected outright, and between activation
     // and enforcement a ProRegTx must reuse the owner key as the voting key,
-    // which a shared registration never does. The same blocks bring the
-    // wallets' coinbases to maturity.
+    // which a shared registration never does.
     CKey sink_key;
     sink_key.MakeNewKey(/*fCompressed=*/true);
     QVERIFY2(MineTo(m_node, PKHash(sink_key.GetPubKey()), 500).isEmpty(), "maturity blocks must be mined");
@@ -380,8 +390,8 @@ void SharedMnWalkthroughTests::walkthrough()
     for (const auto& wallet : {coord_wallet, alice_wallet, bob_wallet}) {
         SyncWallet(m_node, *wallet);
         const CAmount balance{wallet::GetBalance(*wallet).m_mine_trusted};
-        QVERIFY2(balance >= 700 * COIN,
-                 qPrintable(QStringLiteral("wallet %1 only has %2 duffs")
+        QVERIFY2(balance >= 7000 * COIN,
+                 qPrintable(QStringLiteral("wallet %1 only has %2 units")
                                 .arg(QString::fromStdString(wallet->GetName()))
                                 .arg(balance)));
     }
@@ -439,9 +449,9 @@ void SharedMnWalkthroughTests::walkthrough()
 
     // Deliberately invalid roster first: a duplicate name and a share below the
     // 100 DASH minimum, to capture how the dialog reports them.
-    set_share_row(0, QStringLiteral("Coordinator"), 400 * COIN);
+    set_share_row(0, QStringLiteral("Coordinator"), 4000 * COIN);
     set_share_row(1, QStringLiteral("Coordinator"), 50 * COIN);
-    set_share_row(2, QStringLiteral("Bob"), 300 * COIN);
+    set_share_row(2, QStringLiteral("Bob"), 3000 * COIN);
     if (auto* const me = qobject_cast<QRadioButton*>(coord.m_me_group->button(0)); me != nullptr) me->setChecked(true);
     coord.m_next_button->click();
     QCOMPARE(int(coord.currentPage()), int(SharedMnCreateDialog::PageParticipants));
@@ -449,15 +459,15 @@ void SharedMnWalkthroughTests::walkthrough()
     Shots().capture(&coord, "coord", "03-participants-invalid",
                     "Participants page refusing a duplicate name and a 50 DASH share (below the 100 DASH minimum)");
 
-    set_share_row(1, QStringLiteral("Alice"), 300 * COIN);
-    set_share_row(2, QStringLiteral("Bob"), 300 * COIN);
+    set_share_row(1, QStringLiteral("Alice"), 3000 * COIN);
+    set_share_row(2, QStringLiteral("Bob"), 3000 * COIN);
     Shots().capture(&coord, "coord", "04-participants",
-                    "Participants page with a valid roster: 400 / 300 / 300 and the sum meter at 1000 of 1000");
+                    "Participants page with a valid roster: 4000 / 3000 / 3000 and the sum meter at 10000 of 10000");
 
     coord.m_next_button->click();
     QCOMPARE(int(coord.currentPage()), int(SharedMnCreateDialog::PageSettings));
     QCOMPARE(coord.m_session.shares().size(), size_t{3});
-    QCOMPARE(coord.m_session.shares()[0].amount, 400 * COIN);
+    QCOMPARE(coord.m_session.shares()[0].amount, 4000 * COIN);
 
     // --- masternode settings ------------------------------------------------
     coord.m_service_edit->setText(QStringLiteral("127.0.0.1:19999"));

@@ -19,6 +19,7 @@ class CMasternodeSync;
 class CMNHFManager;
 class CMNPaymentsProcessor;
 class CSpecialTxProcessor;
+class CSporkManager;
 class CTransaction;
 class uint256;
 struct CCreditPool;
@@ -50,6 +51,7 @@ private:
 public:
     const std::unique_ptr<CCreditPoolManager> credit_pool_manager;
     const chainlock::Chainlocks& m_chainlocks;
+    const CSporkManager& sporkman;
     const std::unique_ptr<CMNHFManager> ehf_manager;
     const std::unique_ptr<governance::SuperblockManager> superblocks;
     const std::unique_ptr<CMNPaymentsProcessor> mn_payments;
@@ -63,7 +65,8 @@ public:
                                llmq::CInstantSendManager& isman, llmq::CQuorumBlockProcessor& qblockman,
                                llmq::CQuorumSnapshotManager& qsnapman, const ChainstateManager& chainman,
                                const node::BlockManager& blockman, const Consensus::Params& consensus_params,
-                               const chainlock::Chainlocks& chainlocks, const llmq::CQuorumManager& qman);
+                               const CSporkManager& sporkman, const chainlock::Chainlocks& chainlocks,
+                               const llmq::CQuorumManager& qman);
     ~CChainstateHelper();
 
     bool IsSuperblockValidationRequired(const CBlockIndex* const pindex);

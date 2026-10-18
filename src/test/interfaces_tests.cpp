@@ -375,7 +375,7 @@ BOOST_AUTO_TEST_CASE(getInstantSendLock)
     BOOST_CHECK(node->llmq().getInstantSendLock(islock->txid).empty());
 
     // The fixture builds a bare CSporkManager, so wire up the regtest signer before setting the spork.
-    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(Params().SporkAddress()));
+    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress("sh51P9Y9dPi5SRzzXCEJDUeEGsbRpSZmoL"));
     BOOST_REQUIRE(m_node.sporkman->SetPrivKey(REGTEST_SPORK_PRIVKEY));
     BOOST_REQUIRE(m_node.sporkman->UpdateSpork(SPORK_2_INSTANTSEND_ENABLED, 0).has_value());
 

@@ -277,6 +277,7 @@ BITCOIN_CORE_H = \
   instantsend/lock.h \
   instantsend/net_instantsend.h \
   instantsend/signing.h \
+  pos_kernel.h \
   interfaces/chain.h \
   interfaces/coinjoin.h \
   interfaces/echo.h \
@@ -651,6 +652,7 @@ libbitcoin_node_a_SOURCES = \
   policy/packages.cpp \
   policy/policy.cpp \
   policy/settings.cpp \
+  pos_kernel.cpp \
   pow.cpp \
   rest.cpp \
   rpc/blockchain.cpp \
@@ -721,6 +723,7 @@ libbitcoin_wallet_a_SOURCES = \
   wallet/coincontrol.cpp \
   wallet/coinjoin.cpp \
   wallet/coinselection.cpp \
+  wallet/coinstake.cpp \
   wallet/context.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \
@@ -1378,6 +1381,7 @@ libcosantakernel_la_SOURCES = \
   policy/packages.cpp \
   policy/policy.cpp \
   policy/settings.cpp \
+  pos_kernel.cpp \
   pow.cpp \
   primitives/block.cpp \
   primitives/transaction.cpp \

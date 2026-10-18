@@ -396,7 +396,7 @@ constexpr const char* REGTEST_SPORK_PRIVKEY{"cP4EKFyJsHT39LDqgdcB43Y3YXjNyjb5Fua
 
 BOOST_FIXTURE_TEST_CASE(coinbase_chainlock_processing, RegTestingSetup)
 {
-    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(Params().SporkAddress()));
+    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress("sh51P9Y9dPi5SRzzXCEJDUeEGsbRpSZmoL"));
     BOOST_REQUIRE(m_node.sporkman->SetPrivKey(REGTEST_SPORK_PRIVKEY));
     BOOST_REQUIRE(m_node.sporkman->UpdateSpork(SPORK_19_CHAINLOCKS_ENABLED, 0).has_value());
     m_node.mn_sync->SwitchToNextAsset();
@@ -497,7 +497,7 @@ BOOST_FIXTURE_TEST_CASE(unrequested_clsig_is_dropped_and_scored, TestChain100Set
 
     // The CLSIG branch in net_processing is gated on spork 19. The test fixture builds a bare
     // CSporkManager, so wire up the regtest signer before setting the spork.
-    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(Params().SporkAddress()));
+    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress("sh51P9Y9dPi5SRzzXCEJDUeEGsbRpSZmoL"));
     BOOST_REQUIRE(m_node.sporkman->SetPrivKey(REGTEST_SPORK_PRIVKEY));
     BOOST_REQUIRE(m_node.sporkman->UpdateSpork(SPORK_19_CHAINLOCKS_ENABLED, 0).has_value());
     BOOST_REQUIRE(m_node.chainlocks->IsEnabled());

@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE(rotation_bitset_larger_than_quorum_roundtrips)
 BOOST_FIXTURE_TEST_CASE(populated_v3_golden_value, BasicTestingSetup)
 {
     BOOST_CHECK_EQUAL(GetEvoSnapshotHash(SyntheticSnapshot()).ToString(),
-                      "5b5d496a66d93775a6a6d1badf2ea2d5bbb25b58031fe0dd2c3c670674c6908d");
+                      "981afae37847823e5e34de0094eb7ee663c0bed5d5ad3fe660348e712413f804");
 }
 
 BOOST_FIXTURE_TEST_CASE(canonical_mn_reader_rejects_order_and_counter, BasicTestingSetup)
