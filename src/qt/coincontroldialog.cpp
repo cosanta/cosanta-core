@@ -545,7 +545,7 @@ void CoinControlDialog::updateLabels(CCoinControl& m_coin_control, WalletModel *
     }
 
     // actually update labels
-    BitcoinUnit nDisplayUnit = BitcoinUnit::DASH;
+    BitcoinUnit nDisplayUnit = BitcoinUnit::COSA;
     if (model->getOptionsModel())
         nDisplayUnit = model->getOptionsModel()->getDisplayUnit();
 
@@ -707,7 +707,7 @@ void CoinControlDialog::updateView()
             if (ExtractDestination(out.txout.scriptPubKey, outputAddress)) {
                 sAddress = QString::fromStdString(EncodeDestination(outputAddress));
 
-                // if listMode or change => show dash address. In tree mode, address is not shown again for direct wallet address outputs
+                // if listMode or change => show Cosanta address. In tree mode, address is not shown again for direct wallet address outputs
                 if (!treeMode || (!(sAddress == sWalletAddress))) {
                     itemOutput->setText(COLUMN_ADDRESS, sAddress);
                 }
