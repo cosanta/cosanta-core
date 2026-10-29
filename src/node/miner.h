@@ -160,6 +160,7 @@ private:
 
     // Configuration parameters for the block size
     unsigned int nBlockMaxSize;
+    unsigned int nBlockMaxSizeConfigured;
     unsigned int nBlockMaxSigOps;
     CFeeRate blockMinFeeRate;
 
@@ -196,6 +197,8 @@ public:
     explicit BlockAssembler(CChainState& chainstate, const node::NodeContext& node, const CTxMemPool* mempool, const CChainParams& params);
     explicit BlockAssembler(CChainState& chainstate, const node::NodeContext& node, const CTxMemPool* mempool, const CChainParams& params,
                             const Options& options);
+
+    unsigned int GetBlockMaxSize() const { return nBlockMaxSize; }
 
     /** Construct a new block template with coinbase to scriptPubKeyIn */
     std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, std::shared_ptr<wallet::CWallet> pwallet = nullptr, int64_t block_time=0, bool isPos = false);

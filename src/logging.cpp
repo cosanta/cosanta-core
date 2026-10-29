@@ -330,6 +330,10 @@ std::string LogCategoryToStr(BCLog::LogFlags category)
     case BCLog::LogFlags::NET_NETCONN:
         return "net|netconn";
     /* End Dash */
+    /* Start Cosanta */
+    case BCLog::LogFlags::STAKING:
+        return "stake";
+    /* End Cosanta */
     case BCLog::LogFlags::ALL:
         return "all";
     }
