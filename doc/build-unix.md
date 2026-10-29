@@ -1,6 +1,6 @@
 UNIX BUILD NOTES
 ====================
-Some notes on how to build Dash Core in Unix.
+Some notes on how to build Cosanta Core in Unix.
 
 (For BSD specific instructions, see `build-*bsd.md` in this directory.)
 
@@ -21,7 +21,7 @@ distributions](#linux-distribution-specific-instructions), or the
 ## Memory Requirements
 
 C++ compilers are memory-hungry. It is recommended to have at least 1.5 GB of
-memory available when compiling Dash Core. On systems with less, gcc can be
+memory available when compiling Cosanta Core. On systems with less, gcc can be
 tuned to conserve memory with additional CXXFLAGS:
 
 
@@ -62,7 +62,7 @@ but these will install Berkeley DB 5.1 or later. This will break binary wallet c
 executables, which are based on BerkeleyDB 4.8. If you do not care about wallet compatibility, pass
 `--with-incompatible-bdb` to configure. Otherwise, you can build Berkeley DB [yourself](#berkeley-db).
 
-To build Dash Core without wallet, see [*Disable-wallet mode*](#disable-wallet-mode)
+To build Cosanta Core without wallet, see [*Disable-wallet mode*](#disable-wallet-mode)
 
 Optional port mapping libraries (see: `--with-miniupnpc` and `--with-natpmp`):
 
@@ -90,7 +90,7 @@ sudo apt install systemtap-sdt-dev
 
 GUI dependencies:
 
-If you want to build dash-qt, make sure that the required packages for Qt development
+If you want to build cosanta-qt, make sure that the required packages for Qt development
 are installed. Qt 5 is necessary to build the GUI.
 To build without GUI pass `--without-gui`.
 
@@ -112,7 +112,7 @@ libqrencode (optional) can be installed with:
 sudo apt-get install libqrencode-dev
 ```
 
-Once these are installed, they will be found by configure and a dash-qt executable will be
+Once these are installed, they will be found by configure and a cosanta-qt executable will be
 built by default.
 
 
@@ -132,7 +132,7 @@ Now, you can either build from self-compiled [depends](#dependencies) or install
 sudo dnf install libevent-devel boost-devel
 ```
 
-Note: Fedora repositories do not include libbacktrace. To build Dash Core without stack trace support, configure with `--disable-stacktraces`.
+Note: Fedora repositories do not include libbacktrace. To build Cosanta Core without stack trace support, configure with `--disable-stacktraces`.
 
 SQLite is required for the descriptor wallet:
 
@@ -151,7 +151,7 @@ Berkeley DB 5.3 or later. This will break binary wallet compatibility with the d
 are based on Berkeley DB 4.8. If you do not care about wallet compatibility,
 pass `--with-incompatible-bdb` to configure. Otherwise, you can build Berkeley DB [yourself](#berkeley-db).
 
-To build Dash Core without wallet, see [*Disable-wallet mode*](#disable-wallet-mode)
+To build Cosanta Core without wallet, see [*Disable-wallet mode*](#disable-wallet-mode)
 
 Optional port mapping libraries (see: `--with-miniupnpc` and `--with-natpmp`):
 
@@ -179,7 +179,7 @@ sudo dnf install systemtap-sdt-devel
 
 GUI dependencies:
 
-If you want to build dash-qt, make sure that the required packages for Qt development
+If you want to build cosanta-qt, make sure that the required packages for Qt development
 are installed. Qt 5 is necessary to build the GUI.
 To build without GUI pass `--without-gui`.
 
@@ -201,7 +201,7 @@ libqrencode (optional) can be installed with:
 sudo dnf install qrencode-devel
 ```
 
-Once these are installed, they will be found by configure and a dash-qt executable will be
+Once these are installed, they will be found by configure and a cosanta-qt executable will be
 built by default.
 
 ## Dependencies
@@ -218,11 +218,11 @@ want to use any other libraries built in depends, you can do:
 ```bash
 make -C depends NO_BOOST=1 NO_LIBEVENT=1 NO_QT=1 NO_SQLITE=1 NO_NATPMP=1 NO_UPNP=1 NO_ZMQ=1 NO_USDT=1
 ...
-to: /path/to/dash/depends/x86_64-pc-linux-gnu
+to: /path/to/cosanta/depends/x86_64-pc-linux-gnu
 ```
 and configure using the following:
 ```bash
-export BDB_PREFIX="/path/to/dash/depends/x86_64-pc-linux-gnu"
+export BDB_PREFIX="/path/to/cosanta/depends/x86_64-pc-linux-gnu"
 
 ./configure \
     BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
@@ -235,7 +235,7 @@ export BDB_PREFIX="/path/to/dash/depends/x86_64-pc-linux-gnu"
 
 Disable-wallet mode
 --------------------
-When the intention is to only run a P2P node, without a wallet, Dash Core can
+When the intention is to only run a P2P node, without a wallet, Cosanta Core can
 be compiled in disable-wallet mode with:
 
     ./configure --disable-wallet
@@ -259,12 +259,12 @@ This example lists the steps necessary to setup and build a command line only di
 
 ```sh
 pacman --sync --needed autoconf automake boost gcc git libbacktrace libevent libtool make pkgconf python sqlite
-git clone https://github.com/dashpay/dash.git
-cd dash/
+git clone https://github.com/cosanta/cosanta-core.git
+cd cosanta-core/
 ./autogen.sh
 ./configure
 make check
-./src/dashd
+./src/cosantad
 ```
 
 If you intend to work with legacy Berkeley DB wallets, see [Berkeley DB](#berkeley-db) section.

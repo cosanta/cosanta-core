@@ -2,7 +2,7 @@
 
 **Updated for macOS [11](https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_0_1-release-notes/)**
 
-This guide describes how to build dashd, command-line utilities, and GUI on macOS.
+This guide describes how to build cosantad, command-line utilities, and GUI on macOS.
 
 ## Preparation
 
@@ -16,7 +16,7 @@ macOS comes with a built-in Terminal located in:
 ### 1. Xcode Command Line Tools
 
 The Xcode Command Line Tools are a collection of build tools for macOS.
-These tools must be installed in order to build Dash Core from source.
+These tools must be installed in order to build Cosanta Core from source.
 
 To install, run the following command from your terminal:
 
@@ -64,21 +64,21 @@ CC=$(brew --prefix llvm)/bin/clang CXX=$(brew --prefix llvm)/bin/clang++
 
 Try `llvm@17` if compilation fails with the default version of llvm.
 
-### 4. Clone Dash repository
+### 4. Clone Cosanta repository
 
 `git` should already be installed by default on your system.
-Now that all the required dependencies are installed, let's clone the Dash Core repository to a directory.
+Now that all the required dependencies are installed, let's clone the Cosanta Core repository to a directory.
 All build scripts and commands will run from this directory.
 
 ``` bash
-git clone https://github.com/dashpay/dash.git
+git clone https://github.com/cosanta/cosanta-core.git
 ```
 
 ### 5. Install Optional Dependencies
 
 #### Wallet Dependencies
 
-It is not necessary to build wallet functionality to run `dashd` or  `dash-qt`.
+It is not necessary to build wallet functionality to run `cosantad` or  `cosanta-qt`.
 
 ###### Descriptor Wallet Support
 
@@ -101,7 +101,7 @@ brew install berkeley-db@4
 
 ###### Qt
 
-Dash Core includes a GUI built with the cross-platform Qt Framework.
+Cosanta Core includes a GUI built with the cross-platform Qt Framework.
 To compile the GUI, we need to install `qt@5`.
 Skip if you don't intend to use the GUI.
 
@@ -110,7 +110,7 @@ brew install qt@5
 ```
 
 Note: Building with Qt binaries downloaded from the Qt website is not officially supported.
-See the notes in [#7714](https://github.com/dashpay/dash/issues/7714).
+See the notes in [#7714](https://github.com/cosanta/cosanta-core/issues/7714).
 
 ###### qrencode
 
@@ -176,14 +176,14 @@ brew install python
 
 #### Deploy Dependencies
 
-You can deploy a `.zip` containing the Dash Core application using `make deploy`.
+You can deploy a `.zip` containing the Cosanta Core application using `make deploy`.
 It is required that you have `python` installed.
 
-## Building Dash Core
+## Building Cosanta Core
 
 ### 1. Configuration
 
-There are many ways to configure Dash Core, here are a few common examples:
+There are many ways to configure Cosanta Core, here are a few common examples:
 
 ##### Wallet (BDB + SQlite) Support, No GUI:
 
@@ -226,7 +226,7 @@ Examine the output of the following command for a full list of configuration opt
 ### 2. Compile
 
 After configuration, you are ready to compile.
-Run the following in your terminal to compile Dash Core:
+Run the following in your terminal to compile Cosanta Core:
 
 ``` bash
 make        # use "-j N" here for N parallel jobs
@@ -241,41 +241,41 @@ You can also create a  `.zip` containing the `.app` bundle by running the follow
 make deploy
 ```
 
-## Running Dash Core
+## Running Cosanta Core
 
-Dash Core should now be available at `./src/dashd`.
-If you compiled support for the GUI, it should be available at `./src/qt/dash-qt`.
+Cosanta Core should now be available at `./src/cosantad`.
+If you compiled support for the GUI, it should be available at `./src/qt/cosanta-qt`.
 
-The first time you run `dashd` or `dash-qt`, it will start downloading the blockchain.
+The first time you run `cosantad` or `cosanta-qt`, it will start downloading the blockchain.
 This process could take many hours, or even days on slower than average systems.
 
 By default, blockchain and wallet data files will be stored in:
 
 ``` bash
-/Users/${USER}/Library/Application Support/Dash/
+/Users/${USER}/Library/Application Support/CosantaCore/
 ```
 
 Before running, you may create an empty configuration file:
 
 ```shell
-mkdir -p "/Users/${USER}/Library/Application Support/DashCore"
+mkdir -p "/Users/${USER}/Library/Application Support/CosantaCore"
 
-touch "/Users/${USER}/Library/Application Support/DashCore/dash.conf"
+touch "/Users/${USER}/Library/Application Support/CosantaCore/cosanta.conf"
 
-chmod 600 "/Users/${USER}/Library/Application Support/DashCore/dash.conf"
+chmod 600 "/Users/${USER}/Library/Application Support/CosantaCore/cosanta.conf"
 ```
 
 You can monitor the download process by looking at the debug.log file:
 
 ```shell
-tail -f $HOME/Library/Application\ Support/DashCore/debug.log
+tail -f $HOME/Library/Application\ Support/CosantaCore/debug.log
 ```
 
 ## Other commands:
 
 ```shell
-./src/dashd -daemon      # Starts the dashd daemon.
-./src/dash-cli --help    # Outputs a list of command-line options.
-./src/dash-cli help      # Outputs a list of RPC commands when the daemon is running.
-./src/qt/dash-qt -server # Starts the dash-qt server mode, allows dash-cli control
+./src/cosantad -daemon      # Starts the cosantad daemon.
+./src/cosanta-cli --help    # Outputs a list of command-line options.
+./src/cosanta-cli help      # Outputs a list of RPC commands when the daemon is running.
+./src/qt/cosanta-qt -server # Starts the cosanta-qt server mode, allows cosanta-cli control
 ```

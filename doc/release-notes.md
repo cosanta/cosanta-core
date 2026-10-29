@@ -1,4 +1,4 @@
-# Dash Core version v23.1.9
+# Cosanta Core version v23.1.9
 
 This is a new patch version release. It fixes a consensus-affecting
 transaction-encoding bug, several remotely reachable crashes and
@@ -10,7 +10,7 @@ masternodes.
 
 Please report bugs using the issue tracker at GitHub:
 
-  <https://github.com/dashpay/dash/issues>
+  <https://github.com/cosanta/cosanta-core/issues>
 
 # Upgrading and downgrading
 
@@ -18,8 +18,8 @@ Please report bugs using the issue tracker at GitHub:
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over /Applications/Dash-Qt (on Mac) or
-dashd/dash-qt (on Linux).
+installer (on Windows) or just copy over /Applications/Cosanta-Qt (on Mac) or
+cosantad/cosanta-qt (on Linux).
 
 ## Downgrade warning
 
@@ -114,7 +114,7 @@ These issues do not affect consensus and do not put funds at risk.
   wallet is relocked if an HD upgrade fails after it was unlocked, and a wallet
   unlock deadline can no longer be extended without re-authenticating.
 
-# v23.1.9 Change log
+# Dash Core v23.1.9 Change log
 
 See detailed [set of changes][set-of-changes].
 
@@ -130,7 +130,7 @@ Thanks to everyone who directly contributed to this release:
 As well as everyone that submitted issues, reviewed pull requests and helped
 debug the release candidates.
 
-# Older releases
+# Older Dash Core releases
 
 These releases are considered obsolete. Old release notes can be found here:
 
