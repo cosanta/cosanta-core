@@ -60,7 +60,7 @@ static const char* SettingName(OptionsModel::OptionID option)
     case OptionsModel::ProxyPortTor: return "onion";
     case OptionsModel::ProxyUseTor: return "onion";
     case OptionsModel::Language: return "lang";
-    //! Dash
+    //! Cosanta
     case OptionsModel::CoinJoinAmount: return "coinjoinamount";
     case OptionsModel::CoinJoinDenomsGoal: return "coinjoindenomsgoal";
     case OptionsModel::CoinJoinDenomsHardCap: return "coinjoindenomshardcap";
@@ -254,13 +254,13 @@ bool OptionsModel::Init(bilingual_str& error)
 
     // Display
     if (!settings.contains("DisplayDashUnit")) {
-        settings.setValue("DisplayDashUnit", QVariant::fromValue(BitcoinUnit::DASH));
+        settings.setValue("DisplayDashUnit", QVariant::fromValue(BitcoinUnit::COSA));
     }
     QVariant unit = settings.value("DisplayDashUnit");
     if (unit.canConvert<BitcoinUnit>()) {
         m_display_bitcoin_unit = unit.value<BitcoinUnit>();
     } else {
-        m_display_bitcoin_unit = BitcoinUnit::DASH;
+        m_display_bitcoin_unit = BitcoinUnit::COSA;
         settings.setValue("DisplayDashUnit", QVariant::fromValue(m_display_bitcoin_unit));
     }
 
@@ -1199,7 +1199,7 @@ void OptionsModel::checkAndMigrate()
     migrate_setting(ProxyUseTor, "fUseSeparateProxyTor");
     migrate_setting(Language, "language");
 
-    //! Dash
+    //! Cosanta
     if (GUIUtil::fontsLoaded()) {
         migrate_setting(FontFamily, "fontFamily");
         migrate_setting(FontScale, "fontScale");
