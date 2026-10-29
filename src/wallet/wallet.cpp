@@ -682,7 +682,8 @@ bool CWallet::IsSpent(const COutPoint& outpoint) const
 void CWallet::AddToSpends(const COutPoint& outpoint, const uint256& wtxid, WalletBatch* batch)
 {
     mapTxSpends.insert(std::make_pair(outpoint, wtxid));
-    setWalletUTXO.erase(outpoint);
+    // Disabled by PirateCash (fix orphans)
+    // setWalletUTXO.erase(outpoint);
 
     if (batch) {
         UnlockCoin(outpoint, batch);
@@ -1448,6 +1449,31 @@ void CWallet::blockDisconnected(const CBlock& block, int height)
         }
     }
 
+    for (const CTransactionRef& ptx : block.vtx) {
+        if (!ptx->IsCoinStake()) continue;
+        const uint256 tx_hash = ptx->GetHash();
+        if (!mapWallet.count(tx_hash)) continue;
+
+        WalletLogPrintf("Abandoning staking tx %s\n", tx_hash.ToString());
+        AbandonTransaction(tx_hash);
+
+        for (const auto& it : mapWallet) {
+            const uint256& wtxid = it.first;
+            const CWalletTx& wtx = it.second;
+            if (wtx.isAbandoned()) continue;
+            if (GetTxDepthInMainChain(wtx) != 0) continue;
+            if (!wtx.tx || wtx.tx->vin.empty()) continue;
+
+            for (const CTxIn& txin : wtx.tx->vin) {
+                if (txin.prevout.hash == tx_hash) {
+                    WalletLogPrintf("Abandoning orphan tx %s\n", wtx.GetHash().ToString());
+                    AbandonTransaction(wtxid);
+                    break;
+                }
+            }
+        }
+    }
+
     // reset cache to make sure no longer mature coins are excluded
     fAnonymizableTallyCached = false;
     fAnonymizableTallyCachedNonDenom = false;
@@ -1971,7 +1997,9 @@ void CWallet::ReacceptWalletTransactions()
 
         int nDepth = GetTxDepthInMainChain(wtx);
 
-        if (!wtx.IsCoinBase() && !wtx.tx->IsCoinStake() && (nDepth == 0 && !IsTxLockedByInstantSend(wtx) && !wtx.isAbandoned())) {
+        if ((wtx.IsCoinBase() || wtx.tx->IsCoinStake()) && (nDepth == 0 && !IsTxLockedByInstantSend(wtx) && !wtx.isAbandoned())) {
+            AbandonTransaction(wtxid);
+        } else if (nDepth == 0 && !IsTxLockedByInstantSend(wtx) && !wtx.isAbandoned()) {
             mapSorted.insert(std::make_pair(wtx.nOrderPos, &wtx));
         }
     }
