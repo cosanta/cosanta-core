@@ -429,7 +429,15 @@ TestChain100Setup::TestChain100Setup(const std::string& chain_name, const std::v
 TestChainSetup::TestChainSetup(int num_blocks, const std::string& chain_name, const std::vector<const char*>& extra_args)
     : TestingSetup{chain_name, extra_args}
 {
-    SetMockTime(1598887952);
+    // The inherited mock timestamp predates the Cosanta regtest genesis
+    // (nTime = 1618221600) by months, so mining fails time-too-new. Keep the
+    // mock clock one minute behind the genesis instead: blocks then take the
+    // canonical MTP+1 timestamps, and the ~1 minute drift stays within
+    // MAX_POS_BLOCK_AHEAD_TIME (180s). The PoS allowance applies even to
+    // these PoW blocks: on regtest the TESTDUMMY deployment signals version
+    // bit 28, which collides with CBlockHeader::POS_BIT (0x10000000), so
+    // ContextualCheckBlockHeader() classifies the templates as proof-of-stake
+    SetMockTime(std::max<int64_t>(1598887952, Params().GenesisBlock().GetBlockTime() - 60));
     constexpr std::array<unsigned char, 32> vchKey = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}};
     coinbaseKey.Set(vchKey.begin(), vchKey.end(), true);
@@ -437,7 +445,39 @@ TestChainSetup::TestChainSetup(int num_blocks, const std::string& chain_name, co
     // Generate a num_blocks length chain:
     this->mineBlocks(num_blocks);
 
+    CCheckpointData checkpoints{
+        {
+            /*TestChainDATSetup=*/
+            {   98, uint256S("0x3b5f67fa26da68346ac0d2cba05b25a01c2bb6b0bc3c26b1b4654e4046bcef53") },
+            /*TestChain100Setup=*/
+            {  100, uint256S("0x7d9cf98ecb9eccba615f88f0509e7abad1a6660cb6b3a91366f4082c9373d2cd") },
+            /*TestChainDIP3BeforeActivationSetup=*/
+            {  430, uint256S("0x4b3e51086bd4d0726ec06b2f4152c6518460dd10fd9a30148ca4acf514fd7546") },
+            /*TestChainBRRBeforeActivationSetup=*/
+            {  497, uint256S("0x07c890abcc4ad255d58a0461dc8c76dca0f03bd7b796adf25a1d720061507b18") },
+            /*TestChainV19BeforeActivationSetup=*/
+            {  494, uint256S("0x637640e17e8d63949fc325c5b5134514f51f64151f58a4ce74d36e2cb2fdb283") },
+        }
+    };
+
+    {
+        LOCK(::cs_main);
+        const auto hash = checkpoints.mapCheckpoints.find(num_blocks);
+        if (hash == checkpoints.mapCheckpoints.end()) {
+            throw std::runtime_error(strprintf("TestChainSetup: no chain checkpoint defined for height %d", num_blocks));
+        }
+        const uint256 tip_hash = m_node.chainman->ActiveChain().Tip()->GetBlockHash();
+        if (tip_hash != hash->second) {
+            throw std::runtime_error(strprintf(
+                "TestChainSetup: deterministic chain checkpoint mismatch at height %d: got %s, expected %s "
+                "(update the checkpoint if the chain setup changed intentionally)",
+                num_blocks, tip_hash.ToString(), hash->second.ToString()));
+        }
+    }
+
     // Initialize transaction index *after* chain has been constructed
+    // (and after the checkpoint verification: a throw must not leak a
+    // running global index into the next test case)
     g_txindex = std::make_unique<TxIndex>(1 << 20, true);
     assert(!g_txindex->BlockUntilSyncedToCurrentChain());
     if (!g_txindex->Start(m_node.chainman->ActiveChainstate())) {
@@ -445,28 +485,6 @@ TestChainSetup::TestChainSetup(int num_blocks, const std::string& chain_name, co
     }
     IndexWaitSynced(*g_txindex);
 
-    CCheckpointData checkpoints{
-        {
-            /*TestChainDATSetup=*/
-            {   98, uint256S("0x150e127929d578d8129b77a6cb7e2e343a1379aa3feaaa9cce59e0a645756a81") },
-            /*TestChain100Setup=*/
-            {  100, uint256S("0x6ffb83129c19ebdf1ae3771be6a67fe34b35f4c956326b9ba152fac1649f65ae") },
-            /*TestChainDIP3BeforeActivationSetup=*/
-            {  430, uint256S("0x0bcefaa33fec56cd84d05d0e76cd6a78badcc20f627d91903646de6a07930a14") },
-            /*TestChainBRRBeforeActivationSetup=*/
-            {  497, uint256S("0x0857a9b5db51835b1c828f019f4c664b5fe6c28ac44a6d868436930f832d31e5") },
-            /*TestChainV19BeforeActivationSetup=*/
-            {  494, uint256S("0x44ee5c8a5e5cbd4437d63c54ddc1d40329be811b25c492fa901e11cdf408f905") },
-        }
-    };
-
-    {
-        LOCK(::cs_main);
-        auto hash = checkpoints.mapCheckpoints.find(num_blocks);
-        assert(
-            hash != checkpoints.mapCheckpoints.end() &&
-            m_node.chainman->ActiveChain().Tip()->GetBlockHash() == hash->second);
-    }
 }
 
 void TestChainSetup::mineBlocks(int num_blocks)
