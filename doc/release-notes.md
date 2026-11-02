@@ -1,4 +1,4 @@
-# Dash Core version v23.1.10
+# Cosanta Core version v23.1.10
 
 This is a new patch version release. It fixes a governance issue that could
 stop a superblock from paying any proposals, and hardens DKG and BLS signature
@@ -9,7 +9,7 @@ masternodes.
 
 Please report bugs using the issue tracker at GitHub:
 
-  <https://github.com/dashpay/dash/issues>
+  <https://github.com/cosanta/cosanta-core/issues>
 
 # Upgrading and downgrading
 
@@ -17,8 +17,8 @@ Please report bugs using the issue tracker at GitHub:
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over /Applications/Dash-Qt (on Mac) or
-dashd/dash-qt (on Linux).
+installer (on Windows) or just copy over /Applications/Cosanta-Qt (on Mac) or
+cosantad/cosanta-qt (on Linux).
 
 ## Downgrade warning
 
@@ -32,7 +32,7 @@ require a reindex.
 ## Governance
 
 - Masternodes no longer vote NO-FUNDING on a superblock trigger before that
-  superblock's maturity window opens (about 3 days before the superblock on
+  superblock's maturity window opens (100 blocks before the superblock on
   mainnet), when they have no candidate of their own to compare it against.
   These early votes could keep a trigger with the correct payments from
   reaching the funding threshold, so the superblock paid no proposals.
@@ -76,7 +76,7 @@ Like the governance fix, the DKG fixes protect a quorum once enough of its
 members run this version. Weighted batch verification does more work per
 message, so masternodes may see higher CPU use during DKG and signing.
 
-# v23.1.10 Change log
+# Dash Core v23.1.10 Change log
 
 See detailed [set of changes][set-of-changes].
 
@@ -90,7 +90,7 @@ Thanks to everyone who directly contributed to this release:
 As well as everyone that submitted issues, reviewed pull requests and helped
 debug the release candidates.
 
-# Older releases
+# Older Dash Core releases
 
 These releases are considered obsolete. Old release notes can be found here:
 

@@ -1,9 +1,9 @@
-Dash Core version v18.0.1
+Cosanta Core version v18.0.1
 =========================
 
 Release is now available from:
 
-  <https://www.dash.org/downloads/#wallets>
+  <https://cosa.is/downloads/>
 
 This is a new major version release, bringing new features, various bugfixes
 and other improvements.
@@ -12,7 +12,7 @@ This release is mandatory for all nodes.
 
 Please report bugs using the issue tracker at github:
 
-  <https://github.com/dashpay/dash/issues>
+  <https://github.com/cosanta/cosanta-core/issues>
 
 
 Upgrading and downgrading
@@ -23,14 +23,14 @@ How to Upgrade
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over /Applications/Dash-Qt (on Mac) or
-dashd/dash-qt (on Linux). If you upgrade after DIP0003 activation and you were
+installer (on Windows) or just copy over /Applications/Cosanta-Qt (on Mac) or
+cosantad/cosanta-qt (on Linux). If you upgrade after DIP0003 activation and you were
 using version < 0.13 you will have to reindex (start with -reindex-chainstate
 or -reindex) to make sure your wallet has all the new data synced. Upgrading
 from version 0.13 should not require any additional actions.
 
 When upgrading from a version prior to 18.0.1, the
-first startup of Dash Core will run a migration process which can take anywhere
+first startup of Cosanta Core will run a migration process which can take anywhere
 from a few minutes to thirty minutes to finish. After the migration, a
 downgrade to an older version is only possible with a reindex
 (or reindex-chainstate).
@@ -67,7 +67,7 @@ that time will diverge from the rest of the network.
 Deterministic InstantSend
 -------------------------
 Deterministically verifying InstantSend locks at any point in the future has
-been added to support Dash Platform. This update introduces versioning to
+been added to support Cosanta Platform. This update introduces versioning to
 InstantSend messages and adds quorum information to them. While the previous
 design was sufficient for core chain payments, the platform chain will benefit
 from this enhanced verification capability. Details about deterministic
@@ -77,8 +77,8 @@ Deterministic InstantSend will be activated with the DIP0024 hard fork.
 
 Governance
 ----------
-Several improvements have been made to Dash’s DAO governance system.
-The governance proposal fee has been reduced from 5 Dash to 1 Dash following
+Several improvements have been made to Cosanta’s DAO governance system.
+The governance proposal fee has been reduced from 5 Cosanta to 1 Cosanta following
 a vote by masternode owners to do so. For improved security and flexibility,
 proposal payouts to pay-to-script-hash (P2SH) addresses are now supported.
 
@@ -116,7 +116,7 @@ are:
 - Added support for empty, encrypted-on-creation and watch-only wallets.
 - Wallets can now be created, opened and closed via a GUI menu.
 - No more `salvagewallet` option in cmd-line and Repair tab in GUI. Check the
-`salvage` command in the `dash-wallet` tool.
+`salvage` command in the `cosanta-wallet` tool.
 
 Indexes
 -------
@@ -129,7 +129,7 @@ downgrade to a pre-v18.0.1 version.
 Remote Procedure Call (RPC) Changes
 -----------------------------------
 Most changes here were introduced through Bitcoin backports mostly related to
-the deprecation of wallet accounts in DashCore v0.17 and introduction of PSBT
+the deprecation of wallet accounts in CosantaCore v0.17 and introduction of PSBT
 format.
 
 The new RPCs are:
@@ -166,7 +166,7 @@ The removed RPCs are:
 - `signrawtransaction`
 
 Changes in existing RPCs introduced through bitcoin backports:
-- The `testnet` field in `dash-cli -getinfo` has been renamed to `chain` and
+- The `testnet` field in `cosanta-cli -getinfo` has been renamed to `chain` and
 now returns the current network name as defined in BIP70 (main, test, regtest).
 - Added `window_final_block_height` in `getchaintxstats`
 - Added `feerate_percentiles` object with feerates at the 10th, 25th, 50th,
@@ -175,7 +175,7 @@ now returns the current network name as defined in BIP70 (main, test, regtest).
 - In `getmempoolancestors`, `getmempooldescendants`, `getmempoolentry` and
 `getrawmempool` RPCs, to be consistent with the returned value and other RPCs
 such as `getrawtransaction`, `vsize` has been added and `size` is now
-deprecated. `size` will only be returned if `dashd` is started with
+deprecated. `size` will only be returned if `cosantad` is started with
 `-deprecatedrpc=size`.
 - Added `loaded` in mempool related RPCs indicates whether the mempool is fully
 loaded or not
@@ -188,7 +188,7 @@ existing `localservices` hex string)
 - Added `solvable`, `desc`, `ischange` and `hdmasterfingerprint` in `getaddressinfo`
 - Added `desc` in `listunspent`
 
-Dash-specific changes in existing RPCs:
+Cosanta-specific changes in existing RPCs:
 - Added `quorumIndex` in `quorum getinfo` and `quorum memberof`
 - In rpc `masternodelist` with parameters `full`, `info` and `json` the PoS penalty score of the MN will be returned. For `json` parameter, the field `pospenaltyscore` was added.
 
@@ -244,12 +244,12 @@ Removed cmd-line options:
 
 Changes in existing cmd-line options:
 
-Please check `Help -> Command-line options` in Qt wallet or `dashd --help` for
+Please check `Help -> Command-line options` in Qt wallet or `cosantad --help` for
 more information.
 
 Backports from Bitcoin Core
 ---------------------------
-This release introduces over 1000 updates from Bitcoin v0.18/v0.19/v0.20 as well as numerous updates from Bitcoin v0.21 and more recent versions. This includes multi-wallet support in the GUI, support for partially signed transactions (PSBT), Tor version 3 support, and a number of other updates that will benefit Dash users. Bitcoin changes that do not align with Dash’s product needs, such as SegWit and RBF, are excluded from our backporting. For additional detail on what’s included in Bitcoin, please refer to their release notes – v0.18, v0.19, v0.20.
+This release introduces over 1000 updates from Bitcoin v0.18/v0.19/v0.20 as well as numerous updates from Bitcoin v0.21 and more recent versions. This includes multi-wallet support in the GUI, support for partially signed transactions (PSBT), Tor version 3 support, and a number of other updates that will benefit Cosanta users. Bitcoin changes that do not align with Cosanta’s product needs, such as SegWit and RBF, are excluded from our backporting. For additional detail on what’s included in Bitcoin, please refer to their release notes – v0.18, v0.19, v0.20.
 
 Miscellaneous
 -------------
@@ -258,10 +258,10 @@ A lot of refactoring, code cleanups and other small fixes were done in this rele
 v18.0.1 Change log
 ==================
 
-See detailed [set of changes](https://github.com/dashpay/dash/compare/v0.17.0.3...dashpay:v18.0.1).
+See detailed [set of changes](https://github.com/cosanta/cosanta-core/compare/v0.17.0.3...cosanta:v18.0.1).
 
 Credits
-=======
+========
 
 Thanks to everyone who directly contributed to this release:
 
@@ -270,7 +270,7 @@ Thanks to everyone who directly contributed to this release:
 - dustinface (xdustinface)
 - gabriel-bjg
 - Holger Schinzel (schinzelh)
-- humbleDasher
+- humbleCosantaer
 - Kittywhiskers Van Gogh (kittywhiskers)
 - Konstantin Akimov (knst)
 - ktechmidas
@@ -298,53 +298,4 @@ As well as everyone that submitted issues, reviewed pull requests, helped debug 
 Older releases
 ==============
 
-Dash was previously known as Darkcoin.
-
-Darkcoin tree 0.8.x was a fork of Litecoin tree 0.8, original name was XCoin
-which was first released on Jan/18/2014.
-
-Darkcoin tree 0.9.x was the open source implementation of masternodes based on
-the 0.8.x tree and was first released on Mar/13/2014.
-
-Darkcoin tree 0.10.x used to be the closed source implementation of Darksend
-which was released open source on Sep/25/2014.
-
-Dash Core tree 0.11.x was a fork of Bitcoin Core tree 0.9,
-Darkcoin was rebranded to Dash.
-
-Dash Core tree 0.12.0.x was a fork of Bitcoin Core tree 0.10.
-
-Dash Core tree 0.12.1.x was a fork of Bitcoin Core tree 0.12.
-
-These release are considered obsolete. Old release notes can be found here:
-
-- [v0.17.0.3](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.17.0.3.md) released June/07/2021
-- [v0.17.0.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.17.0.2.md) released May/19/2021
-- [v0.16.1.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.16.1.1.md) released November/17/2020
-- [v0.16.1.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.16.1.0.md) released November/14/2020
-- [v0.16.0.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.16.0.1.md) released September/30/2020
-- [v0.15.0.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.15.0.0.md) released Febrary/18/2020
-- [v0.14.0.5](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.5.md) released December/08/2019
-- [v0.14.0.4](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.4.md) released November/22/2019
-- [v0.14.0.3](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.3.md) released August/15/2019
-- [v0.14.0.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.2.md) released July/4/2019
-- [v0.14.0.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.1.md) released May/31/2019
-- [v0.14.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.md) released May/22/2019
-- [v0.13.3](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.13.3.md) released Apr/04/2019
-- [v0.13.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.13.2.md) released Mar/15/2019
-- [v0.13.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.13.1.md) released Feb/9/2019
-- [v0.13.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.13.0.md) released Jan/14/2019
-- [v0.12.3.4](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.3.4.md) released Dec/14/2018
-- [v0.12.3.3](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.3.3.md) released Sep/19/2018
-- [v0.12.3.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.3.2.md) released Jul/09/2018
-- [v0.12.3.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.3.1.md) released Jul/03/2018
-- [v0.12.2.3](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.2.3.md) released Jan/12/2018
-- [v0.12.2.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.2.2.md) released Dec/17/2017
-- [v0.12.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.2.md) released Nov/08/2017
-- [v0.12.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.1.md) released Feb/06/2017
-- [v0.12.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.12.0.md) released Aug/15/2015
-- [v0.11.2](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.11.2.md) released Mar/04/2015
-- [v0.11.1](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.11.1.md) released Feb/10/2015
-- [v0.11.0](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.11.0.md) released Jan/15/2015
-- [v0.10.x](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.10.0.md) released Sep/25/2014
-- [v0.9.x](https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.9.0.md) released Mar/13/2014
+Cosanta was forked from Dash Core after the v0.15 release.
