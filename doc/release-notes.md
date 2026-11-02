@@ -4,6 +4,8 @@ This is a new patch version release. It fixes a governance issue that could
 stop a superblock from paying any proposals, and hardens DKG and BLS signature
 verification against misbehaving quorum members and peers.
 
+Cosanta-specific changes include Proof-of-Stake, wallet and networking fixes.
+
 Upgrading is **strongly recommended** for all nodes, and required for
 masternodes.
 
@@ -46,6 +48,13 @@ Masternodes running older versions still cast the early NO votes, so this
 protection becomes effective as masternodes upgrade. Masternode operators
 should upgrade before the next superblock.
 
+## Crash fixes
+
+- Fixed a crash during Proof-of-Stake header validation when a crafted header
+  referenced a real staking transaction but supplied an out-of-range output
+  index. The peer-controlled index is now checked before transaction outputs
+  are accessed, and malformed headers are rejected.
+
 ## Security and denial-of-service hardening
 
 These issues do not affect consensus and do not put funds at risk.
@@ -76,6 +85,27 @@ Like the governance fix, the DKG fixes protect a quorum once enough of its
 members run this version. Weighted batch verification does more work per
 message, so masternodes may see higher CPU use during DKG and signing.
 
+## Proof of Stake and Wallet
+
+- Header-only fork validation now advances through every unvalidated
+  Proof-of-Stake header when checking for reuse of a stake UTXO. The previous
+  frozen walk could miss reuse in intermediate headers; the corrected walk also
+  stops safely at genesis.
+- Stake input auto-combining now sweeps inputs of up to `-stakecombinemax` COSA
+  (100 by default) into kernels that have already reached the split threshold,
+  so small staking rewards do not accumulate indefinitely. Candidate selection
+  respects `-reservebalance` and `-inputstakeprotect`, requires confirmed and
+  mature UTXOs, and observes the block's remaining size and signature-operation
+  budgets.
+- Fixed a lock-order inversion while signing Proof-of-Stake blocks with an
+  encrypted wallet that could deadlock staking after prolonged operation.
+
+## Networking
+
+- Parallel block fetching during initial block download now respects each
+  peer's advertised starting height and does not request blocks the peer has not
+  claimed to possess.
+
 # Dash Core v23.1.10 Change log
 
 See detailed [set of changes][set-of-changes].
@@ -84,6 +114,7 @@ See detailed [set of changes][set-of-changes].
 
 Thanks to everyone who directly contributed to this release:
 
+- Dmitriy Korniychuk
 - PastaPastaPasta
 - UdjinM6
 
