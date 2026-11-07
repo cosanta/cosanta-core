@@ -1,4 +1,7 @@
-# Dash Core version v24.0.0
+# Cosanta Core version v24.0.0
+
+Based on Dash Core v24.0.0. Pull request references below refer to the upstream
+Dash repository.
 
 This is a new major version release, bringing new features, various bugfixes and other improvements.
 
@@ -8,7 +11,7 @@ hard fork activates. See [Network upgrade](#network-upgrade) below.
 
 Please report bugs using the issue tracker at GitHub:
 
-  <https://github.com/dashpay/dash/issues>
+  <https://github.com/cosanta/cosanta-core/issues>
 
 # Upgrading and downgrading
 
@@ -16,8 +19,8 @@ Please report bugs using the issue tracker at GitHub:
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over /Applications/Dash-Qt (on Mac) or
-dashd/dash-qt (on Linux).
+installer (on Windows) or just copy over /Applications/Cosanta-Qt (on Mac) or
+cosantad/cosanta-qt (on Linux).
 
 On the first start after upgrading, a node that has `-addressindex`,
 `-spentindex` or `-timestampindex` enabled migrates that index to its own
@@ -103,8 +106,8 @@ caveats:
 - v24.0.0 does not upgrade the wallet file format. Wallet records added by
   v24.0.0 that older versions do not know about (such as the new CoinJoin
   pending-observation record) are ignored by them.
-- Dash-Qt moves the dust attack protection setting into the settings it shares
-  with `dashd` (see `-dustprotectionthreshold` under
+- Cosanta-Qt moves the dust attack protection setting into the settings it shares
+  with `cosantad` (see `-dustprotectionthreshold` under
   [New options](#new-options)). Older versions don't read it there, so after a
   downgrade dust protection is disabled and has to be enabled again in the
   options dialog.
@@ -116,7 +119,7 @@ require a reindex.
 
 ## Compatibility
 
-- Dash Core binaries now require macOS 14 (Sonoma) or later. Dash Core v23.1.x
+- Cosanta Core binaries now require macOS 14 (Sonoma) or later. Cosanta Core v23.1.x
   binaries supported macOS 11 (Big Sur) or later. Because v24.0.0 is mandatory,
   users on macOS 13 or older must upgrade macOS, or move their node or wallet
   to a supported system, before the `v24` hard fork activates. Windows 10 or
@@ -160,19 +163,12 @@ Activation proceeds as follows:
 3. If the threshold is reached within a window, the hard fork locks in, and it
    activates one window later.
 
-Mainnet is expected to be near block 2,569,500 on November 9, 2026, so the
-first window boundary after the signal is block 2,572,416 (around November 14).
-If that window reaches the threshold, `v24` locks in at block 2,576,448 and
-activates at block 2,580,480, around November 28, 2026. That is the earliest
-possible activation; every window that misses the threshold delays it by about
-one week. The dates are estimates based on 2.5-minute blocks.
-
 All masternodes must upgrade before the start date. All other nodes must
 upgrade before activation, or they will follow an invalid chain.
 
 v24.0.0 does **not** sign the `evo_shares` signal. Until `evo_shares` activates,
 EvoNodes cannot use shared collateral or more than one owner payout (see
-[EvoNode restrictions](#evonode-restrictions)). A later release (v24.1) is
+[EvoNode restrictions](#evonode-restrictions)). A later Dash Core release (v24.1) is
 expected to sign it once Dash Platform supports EvoNode shares and payouts.
 Both deployments carry identical parameters so that the later release can
 activate `evo_shares` without another mainnet parameter change.
@@ -238,7 +234,7 @@ Before activation there is no behavior change. (#7437, #7340)
     signature (unilateral, penalized during the configured early period) or one
     per share (unanimous, penalty-free). Validity is monotone: a ProDisTx that
     is valid at some height is valid at every later height, which makes offline
-    "standby dissolutions" safe. The transaction fee is capped at 1000000 duffs
+    "standby dissolutions" safe. The transaction fee is capped at 1000000 units
     and a unilateral dissolution may not pay bonuses beyond the configured
     early penalty, bounding what a stolen share owner key can drain from its
     own share.
@@ -398,7 +394,7 @@ moves to extended addresses with a version 3 provider transaction (see
   Regtest follows mainnet unless `-testactivationheight=ipv4_optional@<height>`
   is set. (#8018)
 - On mainnet, the first entry of each address list must also use that list's
-  standard port: 9999 for `coreP2PAddrs`, 26656 for `platformP2PAddrs` and 443
+  standard port: 60606 for `coreP2PAddrs`, 26656 for `platformP2PAddrs` and 443
   for `platformHTTPSAddrs`, as legacy ProTx versions already require there.
   Additional entries may use any otherwise valid port. Violations are rejected
   with `bad-protx-netinfo-port`. (#8018)
@@ -453,10 +449,10 @@ longer penalized. (#7639, #7744)
 ## Relative asset unlock limit
 
 - The asset unlock limit that applies once the `v24` hard fork activates is now
-  a relative net rule on the credit pool balance instead of a flat 4000 DASH cap
+  a relative net rule on the credit pool balance instead of a flat 4000 COSA cap
   on gross unlocks per window (576 blocks on mainnet and testnet). Asset unlocks
   may not leave the credit pool below its balance one window earlier minus an
-  allowed drop of 20% of that balance, never less than 2000 DASH and with no
+  allowed drop of 20% of that balance, never less than 2000 COSA and with no
   upper bound.
 - Deposits and the per-block Platform reward inside the window raise the
   balance and are withdrawable again, so a deposit followed by its withdrawal
@@ -475,7 +471,7 @@ longer penalized. (#7639, #7744)
   extends the allowed `creditOutputs[].scriptPubKey` forms from P2PKH only to
   P2PKH and P2SH. All other Asset Lock rules are unchanged. See DIP-27.
 - `validateaddress` and `getaddressinfo` now accept DIP-18 Dash Platform
-  addresses (`dash1k…`/`dash1s…` on mainnet, `tdash1k…`/`tdash1s…` on the test
+  addresses (`cosa1k…`/`cosa1s…` on mainnet, `tcosa1k…`/`tcosa1s…` on the test
   chains) and report them with a new `isplatform` field. `getaddressinfo`
   describes such an address against the credit output script an Asset Lock would
   carry for it, so `ismine` and `solvable` answer whether this wallet holds the
@@ -504,7 +500,7 @@ does not accept that option. (#7294, #7285, #7577)
 
 ## Masternode operator keys and BLS schemes
 
-- Dash Core will no longer permit the registration of new legacy BLS scheme
+- Cosanta Core will no longer permit the registration of new legacy BLS scheme
   masternodes after the `v24` hard fork activates. Existing basic scheme
   masternodes will also be prohibited from downgrading to the legacy scheme
   after activation. (#6729)
@@ -581,8 +577,8 @@ proofs. (#7107, #7727)
     in `masternode list` (and its alias, `masternodelist`).
   - The same gate applies to `getcoinjoininfo`, `protx info`,
     `protx list detailed` and `quorum info`.
-  - `dash-tx -json` output omits these keys as well and offers no way to restore
-    them, since `dash-tx` does not accept `-deprecatedrpc`.
+  - `cosanta-tx -json` output omits these keys as well and offers no way to restore
+    them, since `cosanta-tx` does not accept `-deprecatedrpc`.
 - Information on soft fork status has been moved from `getblockchaininfo` to the
   new `getdeploymentinfo` RPC, which allows querying soft fork status at any
   block, rather than just at the chain tip. Inclusion of soft fork status in
@@ -592,7 +588,7 @@ proofs. (#7107, #7727)
   block rather than the next block. A new `/rest/deploymentinfo` REST endpoint
   provides the same information. (#6888)
 
-### Note for masternode operators running Dash Platform
+### Upstream note for masternode operators running Dash Platform
 
 Dash Platform reads the `service` field from Dash Core, and Platform versions
 before v5.0.0 also read the `getblockchaininfo` `softforks` field. EvoNode
@@ -623,10 +619,10 @@ since v21 this applied only to `descriptors=true`. To create a legacy wallet,
 pass both, for example:
 
 ```
-dash-cli -named createwallet wallet_name=mywallet descriptors=false load_on_startup=true
+cosanta-cli -named createwallet wallet_name=mywallet descriptors=false load_on_startup=true
 ```
 
-`dash-wallet create` also creates a descriptor wallet by default. Pass the new
+`cosanta-wallet create` also creates a descriptor wallet by default. Pass the new
 `-legacy` option to create a legacy wallet instead. (#7204)
 
 An experimental RPC `migratewallet` has been added to migrate legacy
@@ -636,7 +632,7 @@ migration process is available in the
 (#7275)
 
 Failure handling in `migratewallet`, `restorewallet` and
-`dash-wallet createfromdump` was fixed with backports from Bitcoin Core 28.x. A
+`cosanta-wallet createfromdump` was fixed with backports from Bitcoin Core 28.x. A
 failed migration restores the original wallet and leaves the rest of the
 wallet directory as it was. After a migration, the migrated wallet and the
 watch-only and solvables wallets it created are reloaded from disk, and if one
@@ -748,7 +744,7 @@ failing. Both receive the usual PoSe penalty for failed DKG participation.
 ## Bitcoin Core backports
 
 This release continues the backporting of Bitcoin Core, adding well over 200
-pull requests from the v25 and v26 release cycles alone. Dash Core now
+pull requests from the v25 and v26 release cycles alone. Cosanta Core now
 includes essentially all of Bitcoin Core v0.17 through v24, about 90% of v25,
 about 70% of v26, over half of v27 and about a third of v28, along with
 selected fixes from later releases. User-visible changes from these backports
@@ -786,7 +782,7 @@ and RPC parameters.
   wait for a ChainLock or for confirmations instead. (#7858)
 - Network-adjusted time is no longer used to validate block timestamps or to
   build block templates; both use the system clock. Keep the system clock
-  accurate. `-maxtimeadjustment` now only affects Dash subsystems that still use
+  accurate. `-maxtimeadjustment` now only affects Cosanta subsystems that still use
   network-adjusted time, such as governance, sporks and CoinJoin. (#7430)
 - Hardware-accelerated SHA-256 (SHA-NI, AVX2/SSE4.1 on x86 and the ARMv8 SHA2
   extensions), which had been unintentionally disabled since v23.0.0, is
@@ -816,14 +812,14 @@ and RPC parameters.
 - Version 2 Asset Unlock transactions are relayed by instance hash using the new
   inventory type `MSG_ASSET_UNLOCK` (protocol version 70242). (#7639)
 - Startup now fails if any configured `-bind` (including `-bind=...=onion`) or
-  `-whitebind` cannot be set up. Dash Core v23 and earlier started as long as
+  `-whitebind` cannot be set up. Cosanta Core v23 and earlier started as long as
   at least one bind succeeded. The implicit Tor onion-service bind
-  (`127.0.0.1:9996` by default) is still best effort, as in v23, unless
+  (`127.0.0.1:9604` by default) is still best effort, as in v23, unless
   `-listenonion=1` is set explicitly. (#7300, #8003)
 - The automatic Tor onion service (`-listenonion`) only forwards to a
   dedicated, non-wildcard onion listener that the node actually bound, so peers
   arriving through Tor are always recognized as onion peers. Without a
-  `-bind=<addr:port>=onion`, Dash Core adds the default onion bind as v23 did,
+  `-bind=<addr:port>=onion`, Cosanta Core adds the default onion bind as v23 did,
   also when `-bind` is given; with `-bind` and `-listenonion=0` it no longer
   does. If the default onion bind fails, for example because another instance
   on the same host holds it, the node logs a warning and creates no onion
@@ -836,7 +832,7 @@ and RPC parameters.
 - A wildcard onion bind such as `-bind=0.0.0.0:<port>=onion` is a startup error
   unless `-listenonion=0` is set, also with the default `-listenonion`. The node
   can't tell which connections to a wildcard listener came through Tor, so Tor
-  peers would be treated as clearnet peers. Dash Core v23 accepted it. Use a
+  peers would be treated as clearnet peers. Cosanta Core v23 accepted it. Use a
   specific address such as `-bind=127.0.0.1:<port>=onion` instead. (#7786,
   #8003)
 - `getqrinfo` requests now carry at most 4096 `baseBlockHashes`. A request with
@@ -901,7 +897,7 @@ and RPC parameters.
 
 ## Updated RPCs
 
-- Dash RPCs will no longer permit submitting strings to boolean input fields in
+- Cosanta RPCs will no longer permit submitting strings to boolean input fields in
   line with validation enforced on upstream RPCs, where this is already the
   case. Requests must now use unquoted `true` or `false`.
   - The following RPCs are affected: `bls generate`, `bls fromsecret`,
@@ -913,9 +909,9 @@ and RPC parameters.
     `protx update_service_evo`, `quorum info`, `quorum platformsign`,
     `quorum rotationinfo`, `quorum sign`.
   - This restriction can be relaxed by setting `-deprecatedrpc=permissive_bool`
-    at runtime but is liable to be removed in future versions of Dash Core.
+    at runtime but is liable to be removed in future versions of Cosanta Core.
     (#7099)
-- Numeric arguments of the Dash-specific RPCs (`quorum`, `protx`, `gobject`,
+- Numeric arguments of the Cosanta-specific RPCs (`quorum`, `protx`, `gobject`,
   `masternode` and their sub-commands) must now be passed as JSON numbers.
   Strings containing a number, which earlier versions accepted, are rejected
   with a type error (code -3). The only exception is the `baseBlock` and `block`
@@ -977,7 +973,7 @@ and RPC parameters.
 - `getcoinjoininfo` gained a `pending_inputs` field, reporting how many
   successfully mixed inputs are currently kept locked while waiting for the
   finalized mixing transaction spending them to be observed. (#7480)
-- `gettxoutsetinfo` no longer returns `block_info.unspendables.bip30`. Dash
+- `gettxoutsetinfo` no longer returns `block_info.unspendables.bip30`. Cosanta
   never had transactions overridden by duplicates, so the value was always
   zero. (#7335)
 - The `-deprecatedrpc=fees` configuration option has been removed. The top-level
@@ -1046,13 +1042,13 @@ and RPC parameters.
 
 - If the `-checkblocks` or `-checklevel` options are explicitly provided by the
   user, but the verification checks cannot be completed due to an insufficient
-  dbcache, Dash Core will now return an error at startup. (#7710)
-- `dashd` and `dash-qt` will now raise an error on startup if a datadir that is
-  being used contains a dash.conf file that will be ignored, which can happen
-  when a datadir= line is used in a dash.conf file. The error message is just a
+  dbcache, Cosanta Core will now return an error at startup. (#7710)
+- `cosantad` and `cosanta-qt` will now raise an error on startup if a datadir that is
+  being used contains a cosanta.conf file that will be ignored, which can happen
+  when a datadir= line is used in a cosanta.conf file. The error message is just a
   diagnostic intended to prevent accidental misconfiguration, and it can be
   disabled (`-allowignoredconf`) to restore the previous behavior of using the
-  datadir while ignoring the dash.conf contained in it. (#7710)
+  datadir while ignoring the cosanta.conf contained in it. (#7710)
 - Passing an invalid `-debug`, `-debugexclude`, or `-loglevel` logging
   configuration option now raises an error, rather than logging an easily missed
   warning. (#7710)
@@ -1074,8 +1070,8 @@ and RPC parameters.
 - Fee estimates are now saved hourly, and `fee_estimates.dat` is ignored at
   startup if it is more than 60 hours old, so a node that was offline for longer
   than that rebuilds its estimates. (#7711)
-- `dashd` no longer creates an empty `dash.conf` when none exists, matching
-  Bitcoin Core. `dash-qt`'s "Open Configuration File" still creates it on
+- `cosantad` no longer creates an empty `cosanta.conf` when none exists, matching
+  Bitcoin Core. `cosanta-qt`'s "Open Configuration File" still creates it on
   demand. (#8029)
 
 ## Pruning
@@ -1095,8 +1091,8 @@ and RPC parameters.
 ### New options
 
 - The dust attack protection introduced in v23.1.0 as a GUI option is now
-  available to `dashd` as well through `-dustprotectionthreshold=<n>`: UTXOs
-  received from external transactions whose value is at or below `<n>` duffs
+  available to `cosantad` as well through `-dustprotectionthreshold=<n>`: UTXOs
+  received from external transactions whose value is at or below `<n>` units
   are locked automatically by the wallet, so they are not spent together with
   other coins. It is disabled by default (`0`). The GUI option and the
   command-line option control the same setting. Locks persist across restarts
@@ -1230,7 +1226,7 @@ and RPC parameters.
   returns a JSON array of strings to better handle multiple warning messages and
   for consistency with other wallet RPCs. The "warning" field will be fully
   removed from these RPCs in v25. It can be temporarily re-enabled during the
-  deprecation period by launching dashd with the configuration option
+  deprecation period by launching cosantad with the configuration option
   `-deprecatedrpc=walletwarningfield`. (#7711)
 - Some wallet RPC error messages changed with upstream backports, which
   matters for software that matches on them:
@@ -1245,7 +1241,7 @@ and RPC parameters.
 
 ## GUI changes
 
-- Dash-Qt can now register and maintain regular masternodes and EvoNodes from
+- Cosanta-Qt can now register and maintain regular masternodes and EvoNodes from
   the Masternodes tab. The registration wizard supports wallet-funded,
   wallet-owned, and externally held collateral, while row actions provide
   Update Service, Update Registrar, and Revoke workflows. Generated operator
@@ -1253,7 +1249,7 @@ and RPC parameters.
   operator keys are not required. (#7618)
 - Shared masternodes can be registered and maintained from the Masternodes tab
   (see [Decentralized masternode shares and multi-party payouts](#decentralized-masternode-shares-and-multi-party-payouts)). (#7701)
-- Dash-Qt now labels masternode registration and update transactions in the
+- Cosanta-Qt now labels masternode registration and update transactions in the
   transaction history as **Masternode Registration** and **Masternode Update**
   instead of generic "Payment to yourself" rows. A new **Masternode** filter
   shows only these operations. The amount shown is the transaction's net effect
@@ -1281,12 +1277,15 @@ and RPC parameters.
 
 ## Library
 
-- `libdashconsensus` is deprecated and will be removed in a future release. It
-  has existed for nearly 10 years with very little known uptake or impact, and
-  has become a maintenance burden. The underlying functionality does not change
+- `libcosantaconsensus` is deprecated and will be removed in a future release.
+  The upstream `libdashconsensus` library has existed for nearly 10 years with
+  very little known uptake or impact, and has become a maintenance burden.
+  The underlying functionality does not change
   between versions, so any users of the library can continue to use the final
   release indefinitely, with the understanding that it will not receive future
   consensus updates. (#7378)
+
+# Dash Core v24.0.0 Change log
 
 See detailed [set of changes][set-of-changes].
 
@@ -1305,7 +1304,7 @@ Thanks to everyone who directly contributed to this release:
 As well as everyone that submitted issues, reviewed pull requests and helped
 debug the release candidates.
 
-# Older releases
+# Older Dash Core releases
 
 These releases are considered obsolete. Old release notes can be found here:
 
