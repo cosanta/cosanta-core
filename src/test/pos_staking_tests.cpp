@@ -1443,19 +1443,20 @@ BOOST_AUTO_TEST_CASE(pos_wallet_abandoned_spend_returns_input)
     const CScript spk = WalletScript(coinbaseKey);
     const CBlockIndex* tip = WITH_LOCK(::cs_main, return m_node.chainman->ActiveChain().Tip());
 
+    const int inputs_before{w->CountInputsWithAmount(50 * COIN)};
     const COutPoint coin = AddConfirmedWalletCoin(*w, tip, spk);
     BOOST_REQUIRE(IsAvailable(*w, coin));
-    BOOST_CHECK_EQUAL(w->CountInputsWithAmount(50 * COIN), 1);
+    BOOST_CHECK_EQUAL(w->CountInputsWithAmount(50 * COIN), inputs_before + 1);
 
     const auto spend = MakeWalletTx(coin, spk, 49 * COIN, /*coinstake=*/false);
     WITH_LOCK(w->cs_wallet, w->AddToWallet(spend, wallet::TxStateInactive{}));
     BOOST_REQUIRE(!IsAvailable(*w, coin));
-    BOOST_CHECK_EQUAL(w->CountInputsWithAmount(50 * COIN), 0);
+    BOOST_CHECK_EQUAL(w->CountInputsWithAmount(50 * COIN), inputs_before);
 
     BOOST_REQUIRE(w->AbandonTransaction(spend->GetHash()));
     BOOST_CHECK_MESSAGE(IsAvailable(*w, coin),
         "abandoned spend left its input hidden: wallet UTXO reconciliation must restore it");
-    BOOST_CHECK_EQUAL(w->CountInputsWithAmount(50 * COIN), 1);
+    BOOST_CHECK_EQUAL(w->CountInputsWithAmount(50 * COIN), inputs_before + 1);
 }
 
 BOOST_AUTO_TEST_CASE(pos_wallet_orphaned_coinstake_released_on_disconnect)
