@@ -393,21 +393,21 @@ BOOST_AUTO_TEST_CASE(coinstake_with_null_prevout_is_coinbase)
 }
 
 // ============================================================================
-// 9. WALLET TX COINSTAKE ACCESS
+// 9. WALLET TX IsCoinStake() DELEGATION
 // ============================================================================
 
 BOOST_AUTO_TEST_CASE(wallet_tx_delegates_is_coinstake)
 {
-    // CWalletTx should expose the underlying transaction for coinstake checks.
+    // CWalletTx::IsCoinStake() should delegate to the underlying CTransaction
     CKey key;
     key.MakeNewKey(true);
     CScript spk = GetScriptForDestination(PKHash(key.GetPubKey()));
 
     auto txStake = MakeCoinstakeTx(COutPoint(InsecureRand256(), 0), spk, 10 * COIN);
-    CWalletTx wtx{txStake, TxStateInactive{}};
+    CWalletTx wtx(txStake, TxStateInactive{});
 
-    BOOST_CHECK(wtx.tx->IsCoinStake());
-    BOOST_CHECK_EQUAL(wtx.tx->IsCoinStake(), txStake->IsCoinStake());
+    BOOST_CHECK(wtx.IsCoinStake());
+    BOOST_CHECK_EQUAL(wtx.IsCoinStake(), txStake->IsCoinStake());
 }
 
 // ============================================================================
