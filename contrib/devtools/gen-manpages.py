@@ -8,12 +8,12 @@ import sys
 import tempfile
 
 BINARIES = [
-'src/dashd',
-'src/dash-cli',
-'src/dash-tx',
-'src/dash-wallet',
-'src/dash-util',
-'src/qt/dash-qt',
+'src/cosantad',
+'src/cosanta-cli',
+'src/cosanta-tx',
+'src/cosanta-wallet',
+'src/cosanta-util',
+'src/qt/cosanta-qt',
 ]
 
 # Paths to external utilities.

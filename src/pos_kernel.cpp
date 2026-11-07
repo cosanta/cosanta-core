@@ -403,7 +403,8 @@ bool CheckStakeKernelHash(
     // Guard against an out-of-range stake output index before dereferencing
     // txPrev.vout[prevout.n] (prevout.n is attacker-controlled via the header).
     if (prevout.n >= txPrev.vout.size()) {
-        return error("CheckStakeKernelHash() : stake prevout index %u out of range (vout size %u)", prevout.n, (unsigned int)txPrev.vout.size());
+        LogError("CheckStakeKernelHash() : stake prevout index %u out of range (vout size %u)\n", prevout.n, (unsigned int)txPrev.vout.size());
+        return false;
     }
 
     //assign new variables to make it easier to read
