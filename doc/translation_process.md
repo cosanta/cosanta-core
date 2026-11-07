@@ -8,8 +8,6 @@ Transifex is setup to monitor the GitHub repo for updates, and when code contain
 
 Multiple language support is critical in assisting Cosanta's global adoption and growth. One of Cosanta's greatest strengths is cross-border money transfers, and any help making that easier is greatly appreciated.
 
-See the [Transifex Cosanta project](https://www.transifex.com/projects/p/cosanta/) to assist in translations. You should also join the translation mailing list for announcements - see details below.
-
 ### Writing code with translations
 We use automated scripts to help extract translations in both Qt, and non-Qt source files. It is rarely necessary to manually edit the files in `src/qt/locale/`. The translation source files must adhere to the following format:
 `cosanta_xx_YY.ts or cosanta_xx.ts`
@@ -43,8 +41,6 @@ git commit
 
 ### Creating a Transifex account
 Visit the [Transifex Signup](https://app.transifex.com/signup/) page to create an account. Take note of your username and password, as they will be required to configure the command-line tool.
-
-You can find the Cosanta translation project at [https://www.transifex.com/projects/p/cosanta/](https://www.transifex.com/projects/p/cosanta/).
 
 ### Installing the Transifex client command-line tool
 The client is used to fetch updated translations. Please check installation instructions and any other details at <https://developers.transifex.com/docs/cli>.

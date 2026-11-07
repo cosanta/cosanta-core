@@ -26,7 +26,7 @@ The data directory is the default location where the Cosanta Core files are stor
 
 Platform | Data directory path
 ---------|--------------------
-Linux    | `$HOME/.cosantacore/`
+Linux    | `$HOME/.cosanta/`
 macOS    | `$HOME/Library/Application Support/CosantaCore/`
 Windows  | `%APPDATA%\CosantaCore\` <sup>[\[1\]](#note1)</sup>
 

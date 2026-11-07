@@ -130,7 +130,7 @@ setting the COSANTAD_BIN and COSANTAD_OPTS environment variables in the file
 
 ### macOS
 
-Copy `contrib/init/org.dash.dashd.plist` to
+Copy `contrib/init/org.cosanta.cosantad.plist` to
 `~/Library/LaunchAgents/org.cosanta.cosantad.plist`. In the copy, set `Label` to
 `org.cosanta.cosantad` and the executable in `ProgramArguments` to
 `/usr/local/bin/cosantad`. Load the launch agent by running

@@ -1119,8 +1119,8 @@
         <translation>(%1 zamknutých)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Môže sa pohybovať +/- %1 duff(y) pre vstup.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Môže sa pohybovať +/- %1 unit(y) pre vstup.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ Počas migrácie sa pred jej začiatkom vytvorí záloha peňaženky. Tento zál
         <translation>Transakcie s výstupmi rovnými alebo nižšími ako táto suma budú považované za prach pri prijatí z externých zdrojov.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffov</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ Počas migrácie sa pred jej začiatkom vytvorí záloha peňaženky. Tento zál
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Zobrazuje či je poskytované predvolené SOCKS5 proxy používané pre získavanie peerov cez tento typ siete.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Chýba jazyk alebo je preklad neúplný? Pomôžte s prekladom tu:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ Pre viac informácií o používaní tejto konzoly zadajte %6.
         <translation>Uložte si ho teraz — registrácia sa nemôže začať, kým ho nepotvrdíte.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Pridajte tento riadok do dash.conf na serveri vášho masternódu:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Pridajte tento riadok do cosanta.conf na serveri vášho masternódu:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Pre viac informácií o používaní tejto konzoly zadajte %6.
         <translation>Je zaznamenaná v tejto peňaženke a zobrazuje sa v časti Transakcie. Zábezpeka zostáva v peňaženke, ale je uzamknutá, kým je masternód zaregistrovaný.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Nastavte server svojho masternódu pomocou uloženého tajného kľúča operátora a potom na ňom reštartujte dashd.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Nastavte server svojho masternódu pomocou uloženého tajného kľúča operátora a potom na ňom reštartujte cosantad.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,8 +6980,8 @@ Pre viac informácií o používaní tejto konzoly zadajte %6.
         <translation>Transakčný poplatok</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>Keď je objem transakcií menší ako priestor v blokoch, ťažiari a preposielajúce uzly môžu vynucovať minimálny poplatok. Platenie iba tohto minimálneho poplatku je v poriadku, ale uvedomte si, že to môže viesť k nikdy nepotvrdenej transakcii, ak bude väčší dopyt po dash transakciách, než sieť dokáže spracovať.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>Keď je objem transakcií menší ako priestor v blokoch, ťažiari a preposielajúce uzly môžu vynucovať minimálny poplatok. Platenie iba tohto minimálneho poplatku je v poriadku, ale uvedomte si, že to môže viesť k nikdy nepotvrdenej transakcii, ak bude väčší dopyt po Cosanta transakciách, než sieť dokáže spracovať.</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ Pre viac informácií o používaní tejto konzoly zadajte %6.
         <translation>Cieľový čas potvrdenia:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Ak je vlastný poplatok nastavený na 1000 duffov a transakcia je len 250 bytov, v tom prípade sa "za kilobajt" zaplatí  na poplatkoch iba 250 duffov, &lt;br /&gt;zatiaľ čo "pri najmenšom" zaplatí 1000 duffov. Pre transakcie väčšie ako jeden kilobajt, obe zaplatia rovnako za kilobajt. </translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Ak je vlastný poplatok nastavený na 1000 unit a transakcia je len 250 bytov, v tom prípade sa "za kilobajt" zaplatí  na poplatkoch iba 250 unit, &lt;br /&gt;zatiaľ čo "pri najmenšom" zaplatí 1000 unit. Pre transakcie väčšie ako jeden kilobajt, obe zaplatia rovnako za kilobajt. </translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ Pre viac informácií o používaní tejto konzoly zadajte %6.
         <translation>Kopírovať</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Pridajte tento riadok do dash.conf na serveri masternódu:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Pridajte tento riadok do cosanta.conf na serveri masternódu:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Pre viac informácií o používaní tejto konzoly zadajte %6.
         <translation>ten, kto uzol prevádzkuje</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Nastavte server masternódu pomocou tajného kľúča operátora a potom na ňom reštartujte dashd.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Nastavte server masternódu pomocou tajného kľúča operátora a potom na ňom reštartujte cosantad.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

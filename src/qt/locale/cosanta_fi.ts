@@ -1119,8 +1119,8 @@
         <translation>(%1 lukittu)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Voi vaihdella +/- %1 duffs per syöte.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Voi vaihdella +/- %1 units per syöte.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ Siirtoprosessi luo lompakosta varmuuskopion ennen siirtämistä. Varmuuskopiotie
         <translation>Tapahtumat, joiden tulosteet ovat tämän summan suuruisia tai pienempiä, katsotaan pölyksi ulkoisista lähteistä vastaanotettaessa.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffia</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ Siirtoprosessi luo lompakosta varmuuskopion ennen siirtämistä. Varmuuskopiotie
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Näyttää onko oletus SOCKS5 proxy käytössä peers:ien tavoittamiseen tämän verkkotyypin kautta.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Kieli puuttuu tai käännös on keskeneräinen? Auta käännösten tekemisessä täällä:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ Lisätietoja tämän konsolin käytöstä saat kirjoittamalla %6.
         <translation>Tallenna se nyt: rekisteröintiä ei voi aloittaa, ennen kuin vahvistat sen.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Lisää tämä rivi masternode-palvelimesi dash.conf-tiedostoon:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Lisää tämä rivi masternode-palvelimesi cosanta.conf-tiedostoon:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Lisätietoja tämän konsolin käytöstä saat kirjoittamalla %6.
         <translation>Se on tallennettu tähän lompakkoon ja näkyy Siirtotapahtumat-välilehdellä. Vakuus pysyy lompakossa, mutta on lukittu niin kauan kuin masternode on rekisteröity.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Määritä masternode-palvelimesi tallentamallasi operaattorin salaisella avaimella ja käynnistä dashd siellä uudelleen.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Määritä masternode-palvelimesi tallentamallasi operaattorin salaisella avaimella ja käynnistä cosantad siellä uudelleen.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,8 +6980,8 @@ Lisätietoja tämän konsolin käytöstä saat kirjoittamalla %6.
         <translation>Siirtomaksu:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>Kun siirtotapahtumien määrä on pienempi kuin lohkoissa oleva tila, louhijat ja välittävät solmut voivat pakottaa vähimmäismaksun. Vain tämän vähimmäismaksun maksaminen on ihan hyvä, mutta huomaa että tämä voi johtaa tapahtumaan jota ei koskaan vahvisteta, kun dash-tapahtumien kysyntä ylittää verkon kapasiteetin.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>Kun siirtotapahtumien määrä on pienempi kuin lohkoissa oleva tila, louhijat ja välittävät solmut voivat pakottaa vähimmäismaksun. Vain tämän vähimmäismaksun maksaminen on ihan hyvä, mutta huomaa että tämä voi johtaa tapahtumaan jota ei koskaan vahvisteta, kun Cosanta-tapahtumien kysyntä ylittää verkon kapasiteetin.</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ Lisätietoja tämän konsolin käytöstä saat kirjoittamalla %6.
         <translation>Vahvistusajan tavoite:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Jos mukautettu siirtomaksu on asetettu 1000 duff ja siirtotapahtuma on vain 250 tavua,&lt;br /&gt;tällöin "per kilotavu" maksaa vain 250 duffs siirtomaksun, kun taas "vähintään" maksaa 1000 duffs.&lt;br /&gt;Siirtotapahtumat jotka ovat isompia kuin kilotavu, molemmat maksaa "per kilotavu".</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Jos mukautettu siirtomaksu on asetettu 1000 unit ja siirtotapahtuma on vain 250 tavua,&lt;br /&gt;tällöin "per kilotavu" maksaa vain 250 units siirtomaksun, kun taas "vähintään" maksaa 1000 units.&lt;br /&gt;Siirtotapahtumat jotka ovat isompia kuin kilotavu, molemmat maksaa "per kilotavu".</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ Lisätietoja tämän konsolin käytöstä saat kirjoittamalla %6.
         <translation>Kopioi</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Lisää tämä rivi masternode-palvelimen dash.conf-tiedostoon:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Lisää tämä rivi masternode-palvelimen cosanta.conf-tiedostoon:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Lisätietoja tämän konsolin käytöstä saat kirjoittamalla %6.
         <translation>solmun ylläpitäjä</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Määritä masternode-palvelimelle operaattorin salainen avain ja käynnistä dashd siellä uudelleen.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Määritä masternode-palvelimelle operaattorin salainen avain ja käynnistä cosantad siellä uudelleen.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>
