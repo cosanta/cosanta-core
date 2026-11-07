@@ -282,6 +282,11 @@ void WalletView::showOutOfSyncWarning(bool fShow)
     overviewPage->showOutOfSyncWarning(fShow);
 }
 
+void WalletView::requestedSyncWarningInfo()
+{
+    Q_EMIT outOfSyncWarningClicked();
+}
+
 void WalletView::encryptWallet()
 {
     auto dlg = new AskPassphraseDialog(AskPassphraseDialog::Encrypt, this);

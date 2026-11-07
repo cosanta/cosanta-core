@@ -135,8 +135,8 @@ Intro::Intro(QWidget *parent, int64_t blockchain_size_gb, int64_t chain_state_si
     ui->lblExplanation1->setText(ui->lblExplanation1->text()
         .arg(PACKAGE_NAME)
         .arg(m_blockchain_size_gb)
-        .arg(2014)
-        .arg("Dash")
+        .arg(2021)
+        .arg("Cosanta")
     );
     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));
 
@@ -267,7 +267,7 @@ bool Intro::showIfNeeded(bool& did_show_intro, int64_t& prune_MiB)
     }
     /* Only override -datadir if different from the default, to make it possible to
      * override -datadir in the dash.conf file in the default data directory
-     * (to be consistent with dashd behavior)
+     * (to be consistent with cosantad behavior)
      */
     if(dataDir != GUIUtil::getDefaultDataDirectory()) {
         gArgs.SoftSetArg("-datadir", fs::PathToString(GUIUtil::QStringToPath(dataDir))); // use OS locale for path setting
@@ -396,7 +396,7 @@ void Intro::UpdatePruneLabels(bool prune_checked)
         //: Explanatory text on the capability of the current prune target.
         tr("(sufficient to restore backups %n day(s) old)", "", expected_backup_days));
     ui->sizeWarningLabel->setText(
-        tr("%1 will download and store a copy of the Dash block chain.").arg(PACKAGE_NAME) + " " +
+        tr("%1 will download and store a copy of the Cosanta block chain.").arg(PACKAGE_NAME) + " " +
         storageRequiresMsg.arg(m_required_space_gb) + " " +
         tr("The wallet will also be stored in this directory.")
     );
