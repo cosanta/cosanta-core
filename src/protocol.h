@@ -255,7 +255,7 @@ extern const char* CFCHECKPT;
  */
 extern const char* SENDTXRCNCL;
 
-// Dash message types
+// Cosanta message types
 // NOTE: do NOT declare non-implmented here, we don't want them to be exposed to the outside
 // TODO: add description
 extern const char* SPORK;
@@ -313,7 +313,7 @@ enum ServiceFlags : uint64_t {
     // Nothing
     NODE_NONE = 0,
     // NODE_NETWORK means that the node is capable of serving the complete block chain. It is currently
-    // set by all Dash Core non pruned nodes, and is unset by SPV clients or other light clients.
+    // set by all Cosanta Core non pruned nodes, and is unset by SPV clients or other light clients.
     NODE_NETWORK = (1 << 0),
     // NODE_BLOOM means the node is capable and willing to handle bloom-filtered connections.
     NODE_BLOOM = (1 << 2),
@@ -498,12 +498,12 @@ enum GetDataMsg : uint32_t {
     MSG_BLOCK = 2,
     // The following can only occur in getdata. Invs always use TX or BLOCK.
     MSG_FILTERED_BLOCK = 3,                           //!< Defined in BIP37
-    // Dash message types
+    // Cosanta message types
     // NOTE: we must keep this enum consistent and backwards compatible
     /* MSG_LEGACY_TXLOCK_REQUEST = 4, */              // Legacy InstantSend and not used anymore
     /* MSG_TXLOCK_VOTE = 5, */                        // Legacy InstantSend and not used anymore
     MSG_SPORK = 6,
-    /* 7 - 15 were used in old Dash versions and were mainly budget and MN broadcast/ping related*/
+    /* 7 - 15 were used in old Cosanta versions and were mainly budget and MN broadcast/ping related*/
     MSG_DSTX = 16,
     MSG_GOVERNANCE_OBJECT = 17,
     MSG_GOVERNANCE_OBJECT_VOTE = 18,
