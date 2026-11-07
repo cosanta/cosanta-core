@@ -3,16 +3,18 @@
 # linearize-data.py: Construct a linear, no-fork version of the chain.
 #
 # Copyright (c) 2013-2022 The Bitcoin Core developers
+# Copyright (c) 2026 The Cosanta Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #
 
 import struct
+import hashlib
 import re
 import os
 import os.path
 import sys
-import dash_hash
+import cosanta_hash
 import datetime
 import time
 import glob
@@ -20,8 +22,30 @@ from collections import namedtuple
 
 settings = {}
 
+def is_proof_of_stake(blk_hdr):
+    return struct.unpack_from("<I", blk_hdr)[0] & 0x10000000 != 0
+
+def read_block_header(block_file, block_size):
+    if block_size < 80:
+        raise ValueError("Block is shorter than its header")
+    blk_hdr = block_file.read(80)
+    if len(blk_hdr) != 80:
+        raise ValueError("Truncated block header")
+    if is_proof_of_stake(blk_hdr):
+        # The PoS hash includes the stake outpoint but excludes the signature.
+        # Leave the signature vector in the payload to copy it unchanged.
+        if block_size < 116:
+            raise ValueError("PoS block is shorter than its stake outpoint")
+        blk_hdr += block_file.read(36)
+        if len(blk_hdr) != 116:
+            raise ValueError("Truncated PoS stake outpoint")
+    return blk_hdr
+
 def calc_hash_str(blk_hdr):
-    blk_hdr_hash = dash_hash.getPoWHash(blk_hdr)
+    if is_proof_of_stake(blk_hdr):
+        blk_hdr_hash = hashlib.sha256(hashlib.sha256(blk_hdr).digest()).digest()
+    else:
+        blk_hdr_hash = cosanta_hash.getPoWHash(blk_hdr)
     return blk_hdr_hash[::-1].hex()
 
 def get_blk_dt(blk_hdr):
@@ -206,8 +230,8 @@ class BlockDataCopier:
                 continue
             inLenLE = inhdr[4:]
             su = struct.unpack("<I", inLenLE)
-            inLen = su[0] - 80 # length without header
-            blk_hdr = self.inF.read(80)
+            blk_hdr = read_block_header(self.inF, su[0])
+            inLen = su[0] - len(blk_hdr)
             inExtent = BlockExtent(self.inFn, self.inF.tell(), inhdr, blk_hdr, inLen)
 
             self.hash_str = calc_hash_str(blk_hdr)
@@ -269,9 +293,9 @@ if __name__ == '__main__':
     settings['rev_hash_bytes'] = settings['rev_hash_bytes'].lower()
 
     if 'netmagic' not in settings:
-        settings['netmagic'] = 'bf0c6bbd'
+        settings['netmagic'] = '436f7361'
     if 'genesis' not in settings:
-        settings['genesis'] = '00000ffd590b1485b3caadc19b22e6379c733355108f107a430458cdf3407ab6'
+        settings['genesis'] = '00000216af2a362c1833a0a608408bcdc69d23b276e47d7510a776e3b0bb1fce'
     if 'input' not in settings:
         settings['input'] = 'input'
     if 'hashlist' not in settings:
