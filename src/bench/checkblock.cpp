@@ -51,7 +51,7 @@ static void DeserializeAndCheckBlockTest(benchmark::Bench& bench)
         assert(rewound);
 
         BlockValidationState validationState;
-        bool checked = CheckBlock(block, validationState, chainParams->GetConsensus(), block.GetBlockTime());
+        bool checked = CheckBlock(block, validationState, chainParams->GetConsensus());
         assert(checked);
     });
 }

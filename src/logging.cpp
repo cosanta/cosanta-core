@@ -197,8 +197,12 @@ const CLogCategoryDesc LogCategories[] =
     {BCLog::NETCONN, "netconn"},
     {BCLog::CREDITPOOL, "creditpool"},
     {BCLog::EHF, "ehf"},
-    {BCLog::DASH, "dash"},
+    {BCLog::DASH, "cosanta"},
     //End Dash
+
+    //Start Cosanta
+    {BCLog::STAKING, "stake"},
+    //End Cosanta
 };
 
 bool GetLogCategory(BCLog::LogFlags& flag, const std::string& str)
@@ -297,6 +301,8 @@ std::string LogCategoryToStr(BCLog::LogFlags category)
         return "txreconciliation";
     case BCLog::LogFlags::SCAN:
         return "scan";
+    case BCLog::LogFlags::STAKING:
+        return "stake";
     /* Start Dash */
     case BCLog::LogFlags::CHAINLOCKS:
         return "chainlocks";

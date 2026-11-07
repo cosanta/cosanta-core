@@ -104,14 +104,14 @@ BOOST_AUTO_TEST_CASE(share_list_validation)
     const CKeyID voting_id = voting_key.GetPubKey().GetID();
 
     CKey refund_keys[8], owner_keys[8];
-    CollateralShares two_shares{NewShare(600 * COIN, refund_keys[0], owner_keys[0]),
-                                NewShare(400 * COIN, refund_keys[1], owner_keys[1])};
+    CollateralShares two_shares{NewShare(6000 * COIN, refund_keys[0], owner_keys[0]),
+                                NewShare(4000 * COIN, refund_keys[1], owner_keys[1])};
     CheckShares(two_shares, 0, 0, voting_id, std::nullopt);
-    CheckShares(two_shares, CProRegTx::MAX_EARLY_PERIOD_BLOCKS, 399 * COIN, voting_id, std::nullopt);
+    CheckShares(two_shares, CProRegTx::MAX_EARLY_PERIOD_BLOCKS, 3990 * COIN, voting_id, std::nullopt);
 
     CollateralShares eight_shares;
     for (size_t i = 0; i < 8; i++) {
-        eight_shares.push_back(NewShare(125 * COIN, refund_keys[i], owner_keys[i]));
+        eight_shares.push_back(NewShare(1250 * COIN, refund_keys[i], owner_keys[i]));
     }
     CheckShares(eight_shares, 100, 100 * COIN, voting_id, std::nullopt);
 
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(share_list_validation)
     {
         CollateralShares nine_shares{eight_shares};
         CKey k1, k2;
-        nine_shares.push_back(NewShare(125 * COIN, k1, k2));
+        nine_shares.push_back(NewShare(1250 * COIN, k1, k2));
         CheckShares(nine_shares, 0, 0, voting_id, "bad-protx-shares-count");
     }
 
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(share_list_validation)
     CheckShares(two_shares, CProRegTx::MAX_EARLY_PERIOD_BLOCKS + 1, 0, voting_id, "bad-protx-shares-early-period");
     CheckShares(two_shares, 100, -1, voting_id, "bad-protx-shares-penalty");
     // earlyPenalty must be strictly below the smallest share amount
-    CheckShares(two_shares, 100, 400 * COIN, voting_id, "bad-protx-shares-penalty");
+    CheckShares(two_shares, 100, 4000 * COIN, voting_id, "bad-protx-shares-penalty");
     // A penalty without an early period is never required, but it would still set the unilateral
     // bonus ceiling, leaving that much of the actor's share extractable by a stolen owner key
     CheckShares(two_shares, 0, 1, voting_id, "bad-protx-shares-penalty");
@@ -140,9 +140,9 @@ BOOST_AUTO_TEST_CASE(share_list_validation)
         CollateralShares shares{two_shares};
         shares[0].amount = 99 * COIN;
         CheckShares(shares, 0, 0, voting_id, "bad-protx-shares-amount");
-        shares[0].amount = 599 * COIN;
+        shares[0].amount = 5990 * COIN;
         CheckShares(shares, 0, 0, voting_id, "bad-protx-shares-amount-sum");
-        shares[0].amount = 601 * COIN;
+        shares[0].amount = 6010 * COIN;
         CheckShares(shares, 0, 0, voting_id, "bad-protx-shares-amount-sum");
     }
 

@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(descriptor_test)
     // p2pk script with hybrid key must infer as raw()
     CheckInferDescriptor("41069228de6902abb4f541791f6d7f925b10e2078ccb1298856e5ea5cc5fd667f930eac37a00cc07f9a91ef3c2d17bf7a17db04552ff90ac312a5b8b4caca6c97aa4ac", "raw(41069228de6902abb4f541791f6d7f925b10e2078ccb1298856e5ea5cc5fd667f930eac37a00cc07f9a91ef3c2d17bf7a17db04552ff90ac312a5b8b4caca6c97aa4ac)", {}, {{"069228de6902abb4f541791f6d7f925b10e2078ccb1298856e5ea5cc5fd667f930eac37a00cc07f9a91ef3c2d17bf7a17db04552ff90ac312a5b8b4caca6c97aa4", ""}});
     // p2pkh script with hybrid key must infer as addr()
-    CheckInferDescriptor("76a91445ff7c2327866472639d507334a9a00119dfd32688ac", "addr(Xh4xWtizCjdCnEZYH4tFEWgZV4qNfYYL82)", {}, {{"069228de6902abb4f541791f6d7f925b10e2078ccb1298856e5ea5cc5fd667f930eac37a00cc07f9a91ef3c2d17bf7a17db04552ff90ac312a5b8b4caca6c97aa4", ""}});
+    CheckInferDescriptor("76a91445ff7c2327866472639d507334a9a00119dfd32688ac", "addr(CNr1FgRA85P9XRsP6vtwxVcoGrU6YtceNo)", {}, {{"069228de6902abb4f541791f6d7f925b10e2078ccb1298856e5ea5cc5fd667f930eac37a00cc07f9a91ef3c2d17bf7a17db04552ff90ac312a5b8b4caca6c97aa4", ""}});
     // Infer pkh() from p2pkh with uncompressed key
     CheckInferDescriptor("76a914a31725c74421fadc50d35520ab8751ed120af80588ac", "pkh(04c56fe4a92d401bcbf1b3dfbe4ac3dac5602ca155a3681497f02c1b9a733b92d704e2da6ec4162e4846af9236ef4171069ac8b7f8234a8405b6cadd96f34f5a31)", {}, {{"04c56fe4a92d401bcbf1b3dfbe4ac3dac5602ca155a3681497f02c1b9a733b92d704e2da6ec4162e4846af9236ef4171069ac8b7f8234a8405b6cadd96f34f5a31", ""}});
     // Infer pk() from p2pk with uncompressed key

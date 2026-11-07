@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(isvalid_duplicate_payments_require_distinct_outputs)
     key.MakeNewKey(/*fCompressed=*/true);
     const CTxDestination dest{PKHash(key.GetPubKey())};
     const CScript scriptPayee = GetScriptForDestination(dest);
-    const CAmount nPayAmount = 1 * COIN;
+    const CAmount nPayAmount = 1000;
 
     // Two identical expected payments (same script, same amount).
     std::vector<CGovernancePayment> payments;

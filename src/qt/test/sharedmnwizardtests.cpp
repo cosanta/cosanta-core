@@ -85,7 +85,7 @@ namespace {
 //! no addresses and no funding yet
 MnShareSession InvitationSession()
 {
-    return MasternodeTestUtil::MakeInvitation({{"alice", 400 * COIN}, {"bob", 350 * COIN}, {"carol", 250 * COIN}});
+    return MasternodeTestUtil::MakeInvitation({{"alice", 4000 * COIN}, {"bob", 3500 * COIN}, {"carol", 2500 * COIN}});
 }
 
 //! `draft` locked the way shared_register_prepare would lock it, with every
@@ -111,15 +111,15 @@ MnShareSession FrozenSession(const MnShareSession& draft, const std::vector<CKey
 }
 
 //! Answer the next message box with its button labelled `answer`, recording
-//! the box's title in `title`, which stays empty if no box opens before the
+//! the box's text in `text`, which stays empty if no box opens before the
 //! caller processes events
-void AnswerMessageBox(const QString& answer, QString& title)
+void AnswerMessageBox(const QString& answer, QString& text)
 {
-    title.clear();
-    QTimer::singleShot(0, [answer, &title] {
+    text.clear();
+    QTimer::singleShot(0, [answer, &text] {
         auto* const box{qobject_cast<QMessageBox*>(QApplication::activeModalWidget())};
         if (box == nullptr) return;
-        title = box->windowTitle();
+        text = box->text();
         for (QAbstractButton* const button : box->buttons()) {
             if (button->text() == answer) {
                 button->click();
@@ -472,8 +472,8 @@ void SharedMnWizardTests::signedSessionReservation()
     CKey alice_coin_key;
     CMutableTransaction earlier;
     earlier.vin.emplace_back(COutPoint(uint256::ONE, 0));
-    earlier.vout.emplace_back(350 * COIN, GetScriptForDestination(PKHash(bob_key.GetPubKey())));
-    earlier.vout.emplace_back(400 * COIN, GetScriptForDestination(
+    earlier.vout.emplace_back(3500 * COIN, GetScriptForDestination(PKHash(bob_key.GetPubKey())));
+    earlier.vout.emplace_back(4000 * COIN, GetScriptForDestination(
                                               DecodeDestination(FreshP2PKHAddress(&alice_coin_key).toStdString())));
     QVERIFY(wallet->AddToWallet(MakeTransactionRef(earlier), wallet::TxStateInactive{}) != nullptr);
     const QString earlier_txid{QString::fromStdString(earlier.GetHash().ToString())};
@@ -564,7 +564,8 @@ void SharedMnWizardTests::signedSessionReservation()
             return button->text() == QStringLiteral("Release my coins") && !button->isHidden();
         });
     };
-    const QString keep_prompt{QStringLiteral("Keep this session for later?")};
+    const QString keep_prompt{QStringLiteral("Saving keeps your coins reserved so you can carry on where you left off. Discarding releases "
+                                             "them; if the others are still waiting for you, they have to start over.")};
     QString prompt;
     {
         // Nothing was changed since the session was opened, but its coins stay
@@ -614,7 +615,7 @@ void SharedMnWizardTests::signedSessionReservation()
         AnswerMessageBox(QStringLiteral("Release"), prompt);
         dialog.releaseReservedCoins();
         QCoreApplication::processEvents();
-        QCOMPARE(prompt, QStringLiteral("Release your coins?"));
+        QCOMPARE(prompt, QStringLiteral("The coins you reserved for Session %1 become spendable again.").arg(received.sessionCode()));
         QVERIFY(!wallet_model.wallet().isLockedCoin(bob_coin));
         QVERIFY(dialog.m_status_label->text().startsWith(QStringLiteral("Released")));
 
@@ -765,7 +766,7 @@ void SharedMnWizardTests::signedSessionReservation()
     QVERIFY(wallet->AbandonTransaction(registration.GetHash()));
     CMutableTransaction spend;
     spend.vin.emplace_back(bob_coin);
-    spend.vout.emplace_back(349 * COIN, GetScriptForDestination(PKHash(bob_key.GetPubKey())));
+    spend.vout.emplace_back(3499 * COIN, GetScriptForDestination(PKHash(bob_key.GetPubKey())));
     QVERIFY(wallet->AddToWallet(MakeTransactionRef(spend), wallet::TxStateInactive{}) != nullptr);
     SharedMnCreateDialog dialog(m_node, &wallet_model, /*parent=*/nullptr);
     dialog.handleImportedText(received.toJsonString());
@@ -925,7 +926,7 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
     m_node.setContext(&test.m_node);
     WalletContext& context{*m_node.walletLoader().context()};
 
-    // bob's wallet funds its 350 DASH share with one 450 DASH coin, so 100 DASH
+    // bob's wallet funds its 3500 COSA share with one 3600 COSA coin, so 100 COSA
     // of change has to come back to it
     CKey victim_key;
     victim_key.MakeNewKey(/*fCompressed=*/true);
@@ -935,7 +936,7 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
 
     CMutableTransaction coin;
     coin.vin.emplace_back(COutPoint(uint256::ONE, 0));
-    coin.vout.emplace_back(450 * COIN, GetScriptForDestination(PKHash(victim_key.GetPubKey())));
+    coin.vout.emplace_back(3600 * COIN, GetScriptForDestination(PKHash(victim_key.GetPubKey())));
     const QString coin_txid{QString::fromStdString(coin.GetHash().ToString())};
     QVERIFY(wallet->AddToWallet(MakeTransactionRef(coin), wallet::TxStateInactive{}) != nullptr);
     const QString own_address{QString::fromStdString(EncodeDestination(PKHash(victim_key.GetPubKey())))};
@@ -990,7 +991,7 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
         QCOMPARE(dialog.myShareIndex(), 1);
         QCOMPARE(int(dialog.currentPage()), int(SharedMnCreateDialog::PageSignatures));
         const QString refusal{dialog.m_funding_refusal};
-        QVERIFY2(refusal.contains(QStringLiteral("spends %1").arg(amount(450 * COIN))), qPrintable(refusal));
+        QVERIFY2(refusal.contains(QStringLiteral("spends %1").arg(amount(3600 * COIN))), qPrintable(refusal));
         QVERIFY2(refusal.contains(QStringLiteral("returns only %1").arg(amount(returned))), qPrintable(refusal));
         QVERIFY(!dialog.m_next_button->isEnabled());
         bool complete{true};
@@ -998,7 +999,7 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
         QVERIFY(!dialog.signOwnFundingInputs(complete, sign_error));
         QCOMPARE(sign_error, refusal);
         // The sheet already warned before signing was ever tried
-        QCOMPARE(dialog.ownFunding().spent, 450 * COIN);
+        QCOMPARE(dialog.ownFunding().spent, 3600 * COIN);
         QCOMPARE(dialog.ownFunding().change, returned);
         QVERIFY2(dialog.m_signatures_terms->text().contains(QStringLiteral("⚠")),
                  qPrintable(dialog.m_signatures_terms->text()));
@@ -1013,11 +1014,11 @@ void SharedMnWizardTests::refusesToSignShortChangedOwnContribution()
         dialog.handleImportedText(honest.toJsonString());
         QVERIFY2(dialog.m_funding_refusal.isEmpty(), qPrintable(dialog.m_funding_refusal));
         QVERIFY2(dialog.m_next_button->isEnabled(), qPrintable(dialog.m_next_button->toolTip()));
-        // 450 in, 100 back: exactly the 350 share, with nothing to warn about
-        QCOMPARE(dialog.ownFunding().spent, 450 * COIN);
+        // 3600 in, 100 back: exactly the 3500 share, with nothing to warn about
+        QCOMPARE(dialog.ownFunding().spent, 3600 * COIN);
         QCOMPARE(dialog.ownFunding().change, 100 * COIN);
         const QString sheet{dialog.m_signatures_terms->text()};
-        QVERIFY2(sheet.contains(QStringLiteral("Your contribution: %1").arg(amount(350 * COIN))), qPrintable(sheet));
+        QVERIFY2(sheet.contains(QStringLiteral("Your contribution: %1").arg(amount(3500 * COIN))), qPrintable(sheet));
         QVERIFY(!sheet.contains(QStringLiteral("⚠")));
     }
     // Honest coordinator paying a 0.05 DASH fee, above the usual cap, out of its
@@ -1100,11 +1101,11 @@ void SharedMnWizardTests::newerRevisionKeepsOwnShare()
         // coins. The coin it came from is spent, which only this wallet can see.
         CMutableTransaction parent_tx;
         parent_tx.vin.emplace_back(COutPoint(uint256::ONE, 0));
-        parent_tx.vout.emplace_back(401 * COIN, GetScriptForDestination(PKHash(own_key.GetPubKey())));
+        parent_tx.vout.emplace_back(3551 * COIN, GetScriptForDestination(PKHash(own_key.GetPubKey())));
         QVERIFY(wallet->AddToWallet(MakeTransactionRef(parent_tx), wallet::TxStateInactive{}) != nullptr);
         CMutableTransaction coin_tx;
         coin_tx.vin.emplace_back(COutPoint(parent_tx.GetHash(), 0));
-        coin_tx.vout.emplace_back(400 * COIN, GetScriptForDestination(PKHash(own_key.GetPubKey())));
+        coin_tx.vout.emplace_back(3550 * COIN, GetScriptForDestination(PKHash(own_key.GetPubKey())));
         QVERIFY(wallet->AddToWallet(MakeTransactionRef(coin_tx), wallet::TxStateInactive{}) != nullptr);
         const COutPoint coin{coin_tx.GetHash(), 0};
 

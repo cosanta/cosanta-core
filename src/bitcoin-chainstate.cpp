@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
     options.isman = &isman;
     options.chainlocks = &chainlocks;
     options.mn_sync = &mn_sync;
+    options.sporkman = &sporkman;
     options.data_dir = gArgs.GetDataDirNet();
     options.check_interrupt = [] { return false; };
     options.coins_error_cb = [] {};

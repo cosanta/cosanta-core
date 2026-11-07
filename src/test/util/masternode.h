@@ -14,8 +14,12 @@
 class CBLSSecretKey;
 class ChainstateManager;
 class CKey;
+struct TestChainSetup;
 
 using SimpleUTXOMap = std::map<COutPoint, Coin>;
+
+//! Seed an isolated masternode fixture with collateral funds through the UTXO view.
+SimpleUTXOMap FundMasternodeTestChain(TestChainSetup& setup);
 
 SimpleUTXOMap BuildSimpleUtxoMap(const std::vector<CTransactionRef>& txs);
 SimpleUTXOMap FundTransaction(const ChainstateManager& chainman, CMutableTransaction& tx, SimpleUTXOMap& utxos,

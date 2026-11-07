@@ -25,6 +25,7 @@
 #include <streams.h>
 #include <sync.h>
 #include <unordered_lru_cache.h>
+#include <util/system.h>
 #include <validation.h>
 
 namespace llmq {
@@ -381,12 +382,13 @@ QuorumProofChain QuorumProofChain::Decode(const std::vector<unsigned char>& byte
 
 ProofState QuorumProofChain::Verify(const ProofState& trusted) const
 {
-    Require(anchor == trusted && anchor.height >= (anchor.network == 0 ? 1987776U : 905100U) &&
+    Require(anchor.network <= 1, "unsupported proof network");
+    const auto chain_params = CreateChainParams(ArgsManager{}, anchor.network == 0 ? CBaseChainParams::MAIN : CBaseChainParams::TESTNET);
+    Require(anchor == trusted && anchor.height >= uint32_t(chain_params->GetConsensus().V20Height) &&
                 anchor.height <= INT32_MAX && !anchor.blockHash.IsNull() && !anchor.quorumRoot.IsNull(),
             "untrusted snapshot");
     // The application fixes the network and initial roots; the relay cannot choose them.
-    Require(anchor.network <= 1, "unsupported proof network");
-    const auto kind = anchor.network == 0 ? Consensus::LLMQType::LLMQ_400_60 : Consensus::LLMQType::LLMQ_50_60;
+    const auto kind = chain_params->GetConsensus().llmqTypeChainLocks;
     auto signer = ParseCommitment(seed, kind);
     Require(seedPath.Verify(Hash(seed), anchor.quorumRoot), "seed membership");
     Require(links.size() < MAX_PROOF_CERTIFICATES, "certificate limit");

@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(extreme_end_epoch_is_not_expired)
     UniValue proposal{UniValue::VOBJ};
     proposal.pushKV("end_epoch", std::numeric_limits<int64_t>::max());
     proposal.pushKV("name", "extreme-end-epoch");
-    proposal.pushKV("payment_address", "XpG61qAVhdyN7AqVZQsHfJL7AEk4dPVinc");
+    proposal.pushKV("payment_address", "CW38kcrfcyjJrN9LPGszPHGLx2Nnay8GU5");
     proposal.pushKV("payment_amount", 1.0);
     proposal.pushKV("start_epoch", std::numeric_limits<int64_t>::max() - 1);
     proposal.pushKV("type", 1);
