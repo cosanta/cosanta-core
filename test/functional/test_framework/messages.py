@@ -76,9 +76,9 @@ MAX_OP_RETURN_RELAY = 83
 DEFAULT_MEMPOOL_EXPIRY_HOURS = 336  # hours
 
 MAGIC_BYTES = {
-    "mainnet": b"\xbf\x0c\x6b\xbd",   # mainnet
-    "testnet3": b"\xce\xe2\xca\xff",  # testnet3
-    "regtest": b"\xfc\xc1\xb7\xdc",   # regtest
+    "mainnet": b"\x43\x6f\x73\x61",   # mainnet
+    "testnet3": b"\x43\x6f\x73\x54",  # testnet3
+    "regtest": b"\xff\x01\x02\x03",   # regtest
     "devnet": b"\xe2\xca\xff\xce",    # devnet
 }
 

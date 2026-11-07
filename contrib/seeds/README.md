@@ -6,7 +6,8 @@ Utility to generate the seeds.txt list that is compiled into the client
 The seeds compiled into the release are created from the current protx list, like this:
 
 ```bash
-dash-cli protx list valid true 2563000 > protx_list.json
+BLOCK_HEIGHT=$(cosanta-cli getblockcount)
+cosanta-cli protx list valid true "$BLOCK_HEIGHT" > protx_list.json
 
 # Make sure the onion seeds still work!
 while IFS= read -r line
@@ -20,8 +21,8 @@ python3 makeseeds.py protx_list.json onion_seeds.txt > nodes_main.txt
 python3 generate-seeds.py . > ../../src/chainparamsseeds.h
 ```
 
-Make sure to use a recent block height in the "protx list" call. After updating, create a PR and
-specify which block height you used so that reviewers can re-run the same commands and verify
+Make sure to use a recent Cosanta block height in the "protx list" call. After updating, create a PR and
+specify the value of `BLOCK_HEIGHT` you used so that reviewers can re-run the same commands and verify
 that the list is as expected.
 
 ## Dependencies
