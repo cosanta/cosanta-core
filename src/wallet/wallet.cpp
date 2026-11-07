@@ -1637,10 +1637,11 @@ void CWallet::blockDisconnected(const interfaces::BlockInfo& block)
     for (const CTransactionRef& ptx : Assert(block.data)->vtx) {
         if (!ptx->IsCoinStake() || !mapWallet.count(ptx->GetHash())) continue;
 
+        // Also abandons wallet transactions spending its outputs
         WalletLogPrintf("Abandoning staking tx %s\n", ptx->GetHash().ToString());
         AbandonTransaction(ptx->GetHash());
 
-        // Deep scan other orphans
+        // Deep scan other orphans, e.g. coinstakes of blocks that never connected
         for (const auto& [wtxid, wtx] : mapWallet) {
             if (wtx.tx->IsCoinStake() && GetTxDepthInMainChain(wtx) == 0 && !IsTxLockedByInstantSend(wtx) && !wtx.isAbandoned()) {
                 WalletLogPrintf("Abandoning orphan tx %s\n", wtxid.ToString());
@@ -2192,10 +2193,11 @@ bool CWallet::CanTxBeResent(const CWalletTx& wtx) const
         GetBroadcastTransactions() &&
         // Don't relay abandoned transactions
         !wtx.isAbandoned() &&
-        // Don't try to submit coinbase or coinstake transactions. These would fail anyway but would
+        // Don't try to submit coinbase transactions. These would fail anyway but would
         // cause log spam.
         !wtx.IsCoinBase() &&
-        !wtx.tx->IsCoinStake() &&
+        // Don't try to submit coinstake transactions.
+        !wtx.IsCoinStake() &&
         // Don't try to submit conflicted or confirmed transactions.
         GetTxDepthInMainChain(wtx) == 0 &&
         // Don't try to submit transactions locked via InstantSend.
@@ -2298,7 +2300,7 @@ void CWallet::ResubmitWalletTransactions(bool relay, bool force)
 
             // On startup/import, release inputs of generated transactions that
             // lost their block. They cannot be submitted to the mempool again.
-            if (force && !relay && (wtx.IsCoinBase() || wtx.tx->IsCoinStake())) {
+            if (force && !relay && (wtx.IsCoinBase() || wtx.IsCoinStake())) {
                 if (!IsTxLockedByInstantSend(wtx)) {
                     WalletLogPrintf("Abandoning tx %s\n", txid.ToString());
                     AbandonTransaction(txid);
