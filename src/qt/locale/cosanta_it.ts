@@ -55,11 +55,11 @@
     </message>
     <message>
         <source>Choose the address to send coins to</source>
-        <translation>Scegli l'indirizzo a cui inviare i dash</translation>
+        <translation>Scegli l'indirizzo a cui inviare i Cosanta</translation>
     </message>
     <message>
         <source>Choose the address to receive coins with</source>
-        <translation>Scegli l'indirizzo con cui ricevere dash</translation>
+        <translation>Scegli l'indirizzo con cui ricevere Cosanta</translation>
     </message>
     <message>
         <source>C&amp;hoose</source>
@@ -67,7 +67,7 @@
     </message>
     <message>
         <source>These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Questi sono i tuoi indirizzi Cosanta per inviare i pagamenti. Controlla sempre l'ammontare e l'indirizzo di destinazione prima di inviare i dash.</translation>
+        <translation>Questi sono i tuoi indirizzi Cosanta per inviare i pagamenti. Controlla sempre l'ammontare e l'indirizzo di destinazione prima di inviare i Cosanta.</translation>
     </message>
     <message>
         <source>These are your Cosanta addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Send coins to a Cosanta address</source>
-        <translation>Spedire dash ad un indirizzo Cosanta</translation>
+        <translation>Spedire Cosanta ad un indirizzo Cosanta</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
@@ -1119,8 +1119,8 @@
         <translation>(%1 bloccato)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Può variare di +/- %1 duff per input.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Può variare di +/- %1 unit per input.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ Il processo di migrazione creerà un backup del portafoglio prima di migrare. Qu
         <translation>Le transazioni con output pari o inferiori a questo importo saranno considerate dust quando ricevute da fonti esterne.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ Il processo di migrazione creerà un backup del portafoglio prima di migrare. Qu
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Mostra se il proxy SOCKS5 di default è utilizzato per raggiungere i peer tramite questo tipo di network.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Lingua mancante o traduzione incompleta? Aiutaci a contribuire alle traduzioni qui:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
         <translation>Salvala ora: la registrazione non può iniziare finché non lo confermi.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Aggiungi questa riga a dash.conf sul server del tuo masternode:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Aggiungi questa riga a cosanta.conf sul server del tuo masternode:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
         <translation>È registrata in questo portafoglio e compare in Transazioni. Il collaterale resta nel portafoglio ma è bloccato finché il masternode è registrato.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Configura il server del tuo masternode con la chiave segreta dell'operatore che hai salvato, poi riavvia lì dashd.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Configura il server del tuo masternode con la chiave segreta dell'operatore che hai salvato, poi riavvia lì cosantad.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6931,7 +6925,7 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
-        <translation>Invia dash</translation>
+        <translation>Invia Cosanta</translation>
     </message>
     <message>
         <source>Coin Control Features</source>
@@ -6986,7 +6980,7 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
         <translation>Commissione della transazione:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>Quando il volume delle transazioni è inferiore allo spazio nei blocchi, i miner e i nodi di inoltro possono applicare una commissione minima. Pagare solo questa tariffa minima va bene, ma tieni presente che ciò può comportare una transazione mai confermata una volta che c'è più richiesta di transazioni precipitose di quanto la rete possa elaborare.</translation>
     </message>
     <message>
@@ -7002,8 +6996,8 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
         <translation>Obiettivo del tempo di conferma:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Se la tariffa personalizzata è impostata su 1000 duff e la transazione è di soli 250 byte, paga solo 250 duff "per kilobyte" di Fee, &lt;br /&gt;mentre paga "almeno"  1000 duff. Per le transazioni più grandi di un kilobyte pagate entrambi per kilobyte.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Se la tariffa personalizzata è impostata su 1000 unit e la transazione è di soli 250 byte, paga solo 250 unit "per kilobyte" di Fee, &lt;br /&gt;mentre paga "almeno"  1000 unit. Per le transazioni più grandi di un kilobyte pagate entrambi per kilobyte.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7180,7 +7174,7 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
     </message>
     <message>
         <source>Confirm send coins</source>
-        <translation>Conferma l'invio di dash</translation>
+        <translation>Conferma l'invio di Cosanta</translation>
     </message>
     <message>
         <source>Save Transaction Data</source>
@@ -7393,7 +7387,7 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
     </message>
     <message>
         <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
-        <translation>Un messaggio allegato con l'URI dash che verrà memorizzato nella transazione per il tuo referente. Nota: questo messaggio non verrà inviato attraverso il network Cosanta.</translation>
+        <translation>Un messaggio allegato con l'URI Cosanta che verrà memorizzato nella transazione per il tuo referente. Nota: questo messaggio non verrà inviato attraverso il network Cosanta.</translation>
     </message>
 </context>
 <context>
@@ -7730,8 +7724,8 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
         <translation>Copia</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Aggiungi questa riga a dash.conf sul server del masternode:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Aggiungi questa riga a cosanta.conf sul server del masternode:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Per ulteriori informazioni sull'utilizzo di questa console, digitare %6.
         <translation>chi gestisce il nodo</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Configura il server del masternode con la chiave segreta dell'operatore e riavvia lì dashd.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Configura il server del masternode con la chiave segreta dell'operatore e riavvia lì cosantad.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

@@ -1247,7 +1247,7 @@
         <context-group purpose="location"><context context-type="linenumber">434</context></context-group>
       </trans-unit>
       <trans-unit id="_msg288">
-        <source xml:space="preserve">Can vary +/- %1 duff(s) per input.</source>
+        <source xml:space="preserve">Can vary +/- %1 unit(s) per input.</source>
         <context-group purpose="location"><context context-type="linenumber">589</context></context-group>
       </trans-unit>
       <trans-unit id="_msg289">
@@ -4265,7 +4265,7 @@ Network rejection: %1</source>
         <context-group purpose="location"><context context-type="linenumber">1008</context></context-group>
       </trans-unit>
       <trans-unit id="_msg984">
-        <source xml:space="preserve">Add this line to dash.conf on the masternode server:</source>
+        <source xml:space="preserve">Add this line to cosanta.conf on the masternode server:</source>
         <context-group purpose="location"><context context-type="linenumber">808</context></context-group>
       </trans-unit>
       <trans-unit id="_msg985">
@@ -4704,7 +4704,7 @@ Network rejection: %1</source>
         <context-group purpose="location"><context context-type="linenumber">1990</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1087">
-        <source xml:space="preserve">Configure the masternode server with the operator secret key and restart dashd there.</source>
+        <source xml:space="preserve">Configure the masternode server with the operator secret key and restart cosantad there.</source>
         <context-group purpose="location"><context context-type="linenumber">1994</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1088">
@@ -5734,7 +5734,7 @@ Network rejection: %1</source>
         <context-group purpose="location"><context context-type="linenumber">412</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1319">
-        <source xml:space="preserve">duffs</source>
+        <source xml:space="preserve">unit</source>
         <context-group purpose="location"><context context-type="linenumber">428</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1320">
@@ -5854,11 +5854,6 @@ Network rejection: %1</source>
         <context-group purpose="location"><context context-type="linenumber">857</context></context-group>
         <context-group purpose="location"><context context-type="linenumber">870</context></context-group>
         <context-group purpose="location"><context context-type="linenumber">883</context></context-group>
-      </trans-unit>
-      <trans-unit id="_msg1349">
-        <source xml:space="preserve">Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <context-group purpose="location"><context context-type="linenumber">1052</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1350">
         <source xml:space="preserve">Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -8664,7 +8659,7 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">605</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1950">
-        <source xml:space="preserve">Add this line to dash.conf on your masternode server:</source>
+        <source xml:space="preserve">Add this line to cosanta.conf on your masternode server:</source>
         <context-group purpose="location"><context context-type="linenumber">612</context></context-group>
       </trans-unit>
       <trans-unit id="_msg1951">
@@ -9069,7 +9064,7 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">1641</context></context-group>
       </trans-unit>
       <trans-unit id="_msg2046">
-        <source xml:space="preserve">Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
+        <source xml:space="preserve">Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
         <context-group purpose="location"><context context-type="linenumber">1648</context></context-group>
       </trans-unit>
       <trans-unit id="_msg2047">
@@ -9166,7 +9161,7 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">641</context></context-group>
       </trans-unit>
       <trans-unit id="_msg2069">
-        <source xml:space="preserve">When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source xml:space="preserve">When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <context-group purpose="location"><context context-type="linenumber">805</context></context-group>
       </trans-unit>
       <trans-unit id="_msg2070">
@@ -9182,7 +9177,7 @@ For more information on using this console, type %6.
         <context-group purpose="location"><context context-type="linenumber">951</context></context-group>
       </trans-unit>
       <trans-unit id="_msg2073">
-        <source xml:space="preserve">If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 duffs in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <source xml:space="preserve">If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 unit in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
         <context-group purpose="location"><context context-type="linenumber">772</context></context-group>
       </trans-unit>
       <trans-unit id="_msg2074">

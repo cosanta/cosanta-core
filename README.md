@@ -185,9 +185,6 @@ not straightforward.
 Translations
 ------------
 
-Changes to translations as well as new translations can be submitted to
-[Cosanta Core's Transifex page](https://www.transifex.com/projects/p/cosanta/).
-
 Translations are periodically pulled from Transifex and merged into the git repository. See the
 [translation process](doc/translation_process.md) for details on how this works.
 

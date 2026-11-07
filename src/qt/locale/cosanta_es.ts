@@ -1119,8 +1119,8 @@
         <translation>(%1 bloqueadas)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Puede variar +/- %1 duff(s) por entrada.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Puede variar +/- %1 unit(s) por entrada.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ El proceso de migración creará una copia de seguridad de la billetera antes de
         <translation>Las transacciones con salidas iguales o inferiores a esta cantidad se considerarán polvo cuando se reciban de fuentes externas.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ El proceso de migración creará una copia de seguridad de la billetera antes de
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Mostrar si el proxy SOCKS5 predeterminado suministrado se utiliza para llegar a los pares a través de este tipo de red.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>¿Falta el idioma o la traducción está incompleta? Ayuda a contribuir con traducciones aquí:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -3563,7 +3557,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
-        <translation>Elegir la subdivisión predeterminada para mostrar las cuantías en la interfaz y cuando se envían dashs.</translation>
+        <translation>Elegir la subdivisión predeterminada para mostrar las cuantías en la interfaz y cuando se envían Cosanta.</translation>
     </message>
     <message>
         <source>Decimal digits</source>
@@ -6290,8 +6284,8 @@ Para obtener más información sobre el uso de esta consola, escribe %6.
         <translation>Guárdala ahora: el registro no puede comenzar hasta que lo confirmes.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Agrega esta línea a dash.conf en el servidor de tu masternodo:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Agrega esta línea a cosanta.conf en el servidor de tu masternodo:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Para obtener más información sobre el uso de esta consola, escribe %6.
         <translation>Queda registrada en esta billetera y aparece en Transacciones. El colateral permanece en la billetera pero está bloqueado mientras el masternodo esté registrado.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Configura el servidor de tu masternodo con la clave secreta del operador que guardaste y reinicia allí dashd.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Configura el servidor de tu masternodo con la clave secreta del operador que guardaste y reinicia allí cosantad.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,7 +6980,7 @@ Para obtener más información sobre el uso de esta consola, escribe %6.
         <translation>Comisión por Transacción:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>Cuando el volumen de transacciones es menor que el espacio disponible en los bloques, los mineros y los nodos de retransmisión pueden imponer una comisión mínima. Pagar solo esta tarifa mínima está bien, pero ten en cuenta que esto puede provocar que la transacción nunca se confirme una vez que haya más demanda de transacciones de Cosanta de las que la red puede procesar.</translation>
     </message>
     <message>
@@ -7002,8 +6996,8 @@ Para obtener más información sobre el uso de esta consola, escribe %6.
         <translation>Objetivo de tiempo de confirmación</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Si la comisión personalizada se establece en 1000 duffs y la transacción sólo ocupa 250 bytes, entonces "por kilobyte" sólo se pagan 250 duffs de comisión,&lt;br /&gt;mientras que "como mínimo" paga 1000 duffs. Para transacciones mayores de un kilobyte ambas pagan por kilobyte.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Si la comisión personalizada se establece en 1000 units y la transacción sólo ocupa 250 bytes, entonces "por kilobyte" sólo se pagan 250 units de comisión,&lt;br /&gt;mientras que "como mínimo" paga 1000 units. Para transacciones mayores de un kilobyte ambas pagan por kilobyte.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ Para obtener más información sobre el uso de esta consola, escribe %6.
         <translation>Copiar</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Agrega esta línea a dash.conf en el servidor del masternodo:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Agrega esta línea a cosanta.conf en el servidor del masternodo:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Para obtener más información sobre el uso de esta consola, escribe %6.
         <translation>quien ejecuta el nodo</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Configura el servidor del masternodo con la clave secreta del operador y reinicia allí dashd.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Configura el servidor del masternodo con la clave secreta del operador y reinicia allí cosantad.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

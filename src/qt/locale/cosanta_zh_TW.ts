@@ -67,11 +67,11 @@
     </message>
     <message>
         <source>These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>這些是你要付款過去的達世幣位址。在付錢之前，務必要檢查金額和收款位址是否正確。</translation>
+        <translation>這些是你要付款過去的Cosanta位址。在付錢之前，務必要檢查金額和收款位址是否正確。</translation>
     </message>
     <message>
         <source>These are your Cosanta addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
-        <translation>這些是給您用於接收付款的達世幣位址。 使用接收選項卡中的“創建新接收位址”按鈕來創建新位址。</translation>
+        <translation>這些是給您用於接收付款的Cosanta位址。 使用接收選項卡中的“創建新接收位址”按鈕來創建新位址。</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -226,7 +226,7 @@
     </message>
     <message>
         <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
-        <translation>警告: 如果把錢包加密後又忘記密碼，你就會從此&lt;b&gt;失去其中所有的達世幣了&lt;/b&gt;！</translation>
+        <translation>警告: 如果把錢包加密後又忘記密碼，你就會從此&lt;b&gt;失去其中所有的Cosanta了&lt;/b&gt;！</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Send coins to a Cosanta address</source>
-        <translation>付錢給一個達世幣位址</translation>
+        <translation>付錢給一個Cosanta位址</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
@@ -374,7 +374,7 @@
     </message>
     <message>
         <source>Request payments (generates QR codes and cosanta: URIs)</source>
-        <translation>要求付款(產生 QR Code 和達世幣付款協議的 URI)</translation>
+        <translation>要求付款(產生 QR Code 和Cosanta付款協議的 URI)</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
@@ -490,7 +490,7 @@
     </message>
     <message>
         <source>Send %1 funds to a Cosanta address</source>
-        <translation>發送 %1 的款項到一個達世幣位址</translation>
+        <translation>發送 %1 的款項到一個Cosanta位址</translation>
     </message>
     <message>
         <source>Modify configuration options for %1</source>
@@ -526,11 +526,11 @@
     </message>
     <message>
         <source>Sign messages with your Cosanta addresses to prove you own them</source>
-        <translation>用達世幣位址簽署訊息來證明位址是你的</translation>
+        <translation>用Cosanta位址簽署訊息來證明位址是你的</translation>
     </message>
     <message>
         <source>Verify messages to ensure they were signed with specified Cosanta addresses</source>
-        <translation>驗證訊息是用來確定訊息是用指定的達世幣位址簽署的</translation>
+        <translation>驗證訊息是用來確定訊息是用指定的Cosanta位址簽署的</translation>
     </message>
     <message>
         <source>&amp;Information</source>
@@ -644,7 +644,7 @@
     </message>
     <message>
         <source>Open a cosanta: URI</source>
-        <translation>打開達世幣: URI</translation>
+        <translation>打開Cosanta: URI</translation>
     </message>
     <message>
         <source>Create a new wallet</source>
@@ -735,7 +735,7 @@
     <message numerus="yes">
         <source>%n active connection(s) to Cosanta network</source>
         <extracomment>A substring of the tooltip.</extracomment>
-        <translation><numerusform>%n 個運作中的達世幣網路連線</numerusform></translation>
+        <translation><numerusform>%n 個運作中的Cosanta網路連線</numerusform></translation>
     </message>
     <message>
         <source>Network activity disabled</source>
@@ -1119,8 +1119,8 @@
         <translation>(%1 鎖定)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>每組輸入可能有 +/- %1 個 duff(s) 的誤差。</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>每組輸入可能有 +/- %1 個 unit(s) 的誤差。</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -1483,7 +1483,7 @@
     </message>
     <message>
         <source>Cosanta shared masternode — standby dissolution</source>
-        <translation>達世幣共享主節點：備用解散交易</translation>
+        <translation>Cosanta共享主節點：備用解散交易</translation>
     </message>
     <message>
         <source>Masternode: %1</source>
@@ -1550,7 +1550,7 @@
     </message>
     <message>
         <source>The entered address "%1" is not a valid Cosanta address.</source>
-        <translation>輸入的位址 %1 並不是有效的達世幣位址。</translation>
+        <translation>輸入的位址 %1 並不是有效的Cosanta位址。</translation>
     </message>
     <message>
         <source>Address "%1" already exists as a receiving address with label "%2" and so cannot be added as a sending address.</source>
@@ -1612,7 +1612,7 @@
     </message>
     <message>
         <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different "inputs" which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called "masternodes." These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know "who" you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users' wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it's called a "round." Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these "change addresses." Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style="%2" href="%3"&gt;%1 documentation&lt;/a&gt;.</source>
-        <translation>&lt;h3&gt;%1 基礎知識&lt;/h3&gt; %1 通過隱藏您的資金來源為您提供真正的財務隱私。您的錢包中所有的達世幣都由不同的“輸入”組成，您可以將其視為分開的離散硬幣。&lt;br&gt; %1 使用創新的方法將您的輸入與其他兩個人的輸入相結合，而過程中不會讓您的達世幣離開您的錢包。每時每刻，您仍然控制著您的錢。&lt;hr&gt; &lt;b&gt; %1 的運作原理如下:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 首先將您的交易分柝成多個標準面額的交易。這些標準面額分別為 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA 和 10 COSA -- 有點像您每天使用的紙幣。&lt;/li&gt; &lt;li&gt;您的錢包然後發送請求到網絡上有專門配置的軟件節點，稱為“主節點”。這些主節點會收到您希望混合一些資金的通知。沒有可識別的信息發送到主節點，所以他們永遠不會知道你是"誰"。&lt;/li&gt; &lt;li&gt;當另外兩個人發送類似的消息時，表示希望混合相同的面額的話，混合會話就會開始。相關的主節點會混合這些輸入，並指示所有三個用戶的錢包將已經轉換了輸入的交易支付給自己。你的錢包直接支付給自己，但是付給不同的位址 (稱之為找零位址)。&lt;/li&gt; &lt;li&gt;為了完全掩蓋您的資金來源，您的錢包必須以每個面額來重複此過程數次。每次這個過程完成後，都稱之為一個 "循環"。每個循環的 %1 都會令確定您的資金來源的工作倍加困難。&lt;/li&gt; &lt;li&gt;這種混合過程在後台進行，而不需要您進行任何操作。當您想進行交易時，您的資金將已被匿名處理。不需再花額外的時間等待。&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;重要:&lt;/b&gt; 您的錢包只能擁有1000個"找零位址。" 每次混合事件發生時，最多會使用9個找零位址。這意味著這1000個位址可以容許100次的混合事件。當其的中900個已經被使用後，您的錢包必須創建更多的位址。如果您啟用了自動備份，則只能夠這樣做。&lt;br&gt; 因此，禁用備份的用戶也將禁用 %1。&lt;hr&gt;如欲了解更多信息，請參閱 &lt;a style="%2" href="%3"&gt;%1 的文檔&lt;/a&gt;.</translation>
+        <translation>&lt;h3&gt;%1 基礎知識&lt;/h3&gt; %1 通過隱藏您的資金來源為您提供真正的財務隱私。您的錢包中所有的Cosanta都由不同的“輸入”組成，您可以將其視為分開的離散硬幣。&lt;br&gt; %1 使用創新的方法將您的輸入與其他兩個人的輸入相結合，而過程中不會讓您的Cosanta離開您的錢包。每時每刻，您仍然控制著您的錢。&lt;hr&gt; &lt;b&gt; %1 的運作原理如下:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 首先將您的交易分柝成多個標準面額的交易。這些標準面額分別為 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA 和 10 COSA -- 有點像您每天使用的紙幣。&lt;/li&gt; &lt;li&gt;您的錢包然後發送請求到網絡上有專門配置的軟件節點，稱為“主節點”。這些主節點會收到您希望混合一些資金的通知。沒有可識別的信息發送到主節點，所以他們永遠不會知道你是"誰"。&lt;/li&gt; &lt;li&gt;當另外兩個人發送類似的消息時，表示希望混合相同的面額的話，混合會話就會開始。相關的主節點會混合這些輸入，並指示所有三個用戶的錢包將已經轉換了輸入的交易支付給自己。你的錢包直接支付給自己，但是付給不同的位址 (稱之為找零位址)。&lt;/li&gt; &lt;li&gt;為了完全掩蓋您的資金來源，您的錢包必須以每個面額來重複此過程數次。每次這個過程完成後，都稱之為一個 "循環"。每個循環的 %1 都會令確定您的資金來源的工作倍加困難。&lt;/li&gt; &lt;li&gt;這種混合過程在後台進行，而不需要您進行任何操作。當您想進行交易時，您的資金將已被匿名處理。不需再花額外的時間等待。&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;重要:&lt;/b&gt; 您的錢包只能擁有1000個"找零位址。" 每次混合事件發生時，最多會使用9個找零位址。這意味著這1000個位址可以容許100次的混合事件。當其的中900個已經被使用後，您的錢包必須創建更多的位址。如果您啟用了自動備份，則只能夠這樣做。&lt;br&gt; 因此，禁用備份的用戶也將禁用 %1。&lt;hr&gt;如欲了解更多信息，請參閱 &lt;a style="%2" href="%3"&gt;%1 的文檔&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -1671,7 +1671,7 @@
     </message>
     <message>
         <source>Network addresses that your Cosanta node is currently using to communicate with other nodes.</source>
-        <translation>您的達世幣節點目前用來與其他節點通訊的網路位址。</translation>
+        <translation>您的Cosanta節點目前用來與其他節點通訊的網路位址。</translation>
     </message>
     <message>
         <source>Block chain</source>
@@ -2386,7 +2386,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>The session file uses an unsupported format version. Update Cosanta Core to open it.</source>
-        <translation>此會話檔使用了不支援的格式版本。請更新達世幣核心後再開啟。</translation>
+        <translation>此會話檔使用了不支援的格式版本。請更新Cosanta Core後再開啟。</translation>
     </message>
     <message>
         <source>The session file is for the "%1" network but this node runs "%2". It cannot be used here.</source>
@@ -2410,7 +2410,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>The session file is at the unknown stage "%1". It was probably created by a newer Cosanta Core.</source>
-        <translation>會話檔處於未知階段「%1」。它可能是由較新版本的達世幣核心建立的。</translation>
+        <translation>會話檔處於未知階段「%1」。它可能是由較新版本的Cosanta Core建立的。</translation>
     </message>
     <message>
         <source>The session file lists %1 shares; a shared masternode can have at most %2.</source>
@@ -2928,7 +2928,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</source>
-        <translation>最近的交易可能尚未顯示，因此您的錢包的餘額可能不正確。 一旦你的錢包完成與達世幣網絡的同步，這個信息將是正確的，如下所述。</translation>
+        <translation>最近的交易可能尚未顯示，因此您的錢包的餘額可能不正確。 一旦你的錢包完成與Cosanta網絡的同步，這個信息將是正確的，如下所述。</translation>
     </message>
     <message>
         <source>Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
@@ -3316,8 +3316,8 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>從外部來源收到的輸出等於或低於此金額的交易將被視為粉塵。</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3409,7 +3409,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>自動在路由器上開放達世幣核心客戶端的通訊埠。只有在你的路由器支援且開啓「通用即插即用」協定(UPnP)時才有作用。</translation>
+        <translation>自動在路由器上開放Cosanta Core客戶端的通訊埠。只有在你的路由器支援且開啓「通用即插即用」協定(UPnP)時才有作用。</translation>
     </message>
     <message>
         <source>Map port using NA&amp;T-PMP</source>
@@ -3425,7 +3425,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Connect to the Cosanta network through a SOCKS5 proxy.</source>
-        <translation>透過 SOCKS5 代理伺服器來連線到達世幣網路。</translation>
+        <translation>透過 SOCKS5 代理伺服器來連線到Cosanta網路。</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -3434,12 +3434,6 @@ The migration process will create a backup of the wallet before migrating. This 
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>如果是使用提供的預設 SOCKS5 代理來連接到對等用戶群就加以顯示。</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>語言缺失或翻譯不完整? 在這裡幫助貢獻翻譯:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -3491,7 +3485,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
-        <translation>自動開啟路由器上的達世幣核心用戶端連接埠。只有當您的路由器支援 NAT-PMP 並且已啟用時，此功能才有效。外部連接埠可以是隨機的。</translation>
+        <translation>自動開啟路由器上的Cosanta Core用戶端連接埠。只有當您的路由器支援 NAT-PMP 並且已啟用時，此功能才有效。外部連接埠可以是隨機的。</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -3543,7 +3537,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Connect to the Cosanta network through a separate SOCKS5 proxy for Tor onion services.</source>
-        <translation>透過 Tor 洋蔥服務的單獨 SOCKS5 代理連接到達世幣網路。</translation>
+        <translation>透過 Tor 洋蔥服務的單獨 SOCKS5 代理連接到Cosanta網路。</translation>
     </message>
     <message>
         <source>Use separate SOCKS&amp;5 proxy to reach peers via Tor onion services:</source>
@@ -3646,7 +3640,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</source>
-        <translation>顯示的資訊可能是過期的。跟達世幣網路的連線建立後，你的錢包會自動和網路同步，但是這個步驟還沒完成。</translation>
+        <translation>顯示的資訊可能是過期的。跟Cosanta網路的連線建立後，你的錢包會自動和網路同步，但是這個步驟還沒完成。</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -3726,7 +3720,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>0 COSA / 0 Rounds</source>
-        <translation>0 達世幣 / 0 循環次數</translation>
+        <translation>0 COSA / 0 循環次數</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -4013,7 +4007,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Cannot start cosanta: click-to-pay handler</source>
-        <translation>無法啟動達世幣 : 點擊支付處理程序</translation>
+        <translation>無法啟動Cosanta : 點擊支付處理程序</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -4031,7 +4025,7 @@ Due to discontinued support, you should request the merchant to provide you with
     </message>
     <message>
         <source>URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
-        <translation>沒辦法解析 URI 位址！可能是因為達世幣位址無效，或是 URI 參數格式錯誤。</translation>
+        <translation>沒辦法解析 URI 位址！可能是因為Cosanta位址無效，或是 URI 參數格式錯誤。</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -4825,7 +4819,7 @@ Do you wish to continue?</source>
     </message>
     <message>
         <source>Enter a Cosanta address (e.g. %1)</source>
-        <translation>輸入達世幣位址 (例如 %1)</translation>
+        <translation>輸入Cosanta位址 (例如 %1)</translation>
     </message>
     <message>
         <source>Appearance Setup</source>
@@ -5273,7 +5267,7 @@ Do you wish to continue?</source>
     </message>
     <message>
         <source>Invalid Cosanta address: %1</source>
-        <translation>無效的達世幣位址：%1</translation>
+        <translation>無效的Cosanta位址：%1</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -5846,7 +5840,7 @@ For more information on using this console, type %6.
     <name>ReceiveCoinsDialog</name>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</source>
-        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。注意: 這個訊息不會隨著付款送到達世幣網路上。</translation>
+        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。注意: 這個訊息不會隨著付款送到Cosanta網路上。</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -5858,7 +5852,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</source>
-        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。&lt;br&gt;注意: 這個訊息不會隨著付款送到達世幣網路上。</translation>
+        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。&lt;br&gt;注意: 這個訊息不會隨著付款送到Cosanta網路上。</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address (used by you to identify an invoice).  It is also attached to the payment request.</source>
@@ -6071,7 +6065,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Additionally hosts Cosanta Platform, has four times the voting weight and earns a larger share of rewards. Requires a Platform node ID and extra services.</source>
-        <translation>另外託管達世幣平台，擁有四倍投票權重，並獲得更大份額的獎勵。需要平台節點 ID 和額外的服務。</translation>
+        <translation>另外託管Cosanta平台，擁有四倍投票權重，並獲得更大份額的獎勵。需要平台節點 ID 和額外的服務。</translation>
     </message>
     <message>
         <source>Register EvoNode</source>
@@ -6290,8 +6284,8 @@ For more information on using this console, type %6.
         <translation>請立即儲存，確認之前無法開始註冊。</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>將下面這一行加入您主節點伺服器上的 dash.conf：</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>將下面這一行加入您主節點伺服器上的 cosanta.conf：</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ For more information on using this console, type %6.
         <translation>它已記錄在此錢包中，並顯示於「交易」下。抵押品會留在錢包中，但在主節點註冊期間會被鎖定。</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>請使用您儲存的運營者私密金鑰設定主節點伺服器，然後在該處重新啟動 dashd。</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>請使用您儲存的運營者私密金鑰設定主節點伺服器，然後在該處重新啟動 cosantad。</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6691,7 +6685,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Provision the Cosanta Platform services (Tenderdash and Drive) with the Platform node key matching the node ID you registered.</source>
-        <translation>請使用與您所註冊節點 ID 相符的平台節點金鑰，部署達世幣平台服務（Tenderdash 和 Drive）。</translation>
+        <translation>請使用與您所註冊節點 ID 相符的平台節點金鑰，部署Cosanta平台服務（Tenderdash 和 Drive）。</translation>
     </message>
     <message>
         <source>The EvoNode becomes active once the registration is confirmed and the first update is signed by the operator.</source>
@@ -6986,8 +6980,8 @@ For more information on using this console, type %6.
         <translation>交易手續費:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>當交易量小於區塊中的空間時，礦工和中繼節點可能會強制執行最低費用。只支付最低費用就可以了，但請注意，一旦對達世幣交易的需求超過網路處理能力，這可能會導致交易永遠無法確認。</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>當交易量小於區塊中的空間時，礦工和中繼節點可能會強制執行最低費用。只支付最低費用就可以了，但請注意，一旦對Cosanta交易的需求超過網路處理能力，這可能會導致交易永遠無法確認。</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ For more information on using this console, type %6.
         <translation>目標確認時間:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>如果自訂手續費設定為 1000 duffs ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 duffs 的手續費，&lt;br /&gt;而「至少」會支付 1000 duffs。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>如果自訂手續費設定為 1000 units ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 units 的手續費，&lt;br /&gt;而「至少」會支付 1000 units。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7310,7 +7304,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Warning: Invalid Cosanta address</source>
-        <translation>警告: 無效的達世幣位址</translation>
+        <translation>警告: 無效的Cosanta位址</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -7337,7 +7331,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The Cosanta address to send the payment to</source>
-        <translation>接收付款的達世幣位址</translation>
+        <translation>接收付款的Cosanta位址</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -7377,7 +7371,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Cosanta than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>手續費將從發送金額中扣除。接收者將收到的達世幣金額將會比您在金額字段中輸入的金額為少。 如果選擇了多個收款人，該費用將會被平均攤分。</translation>
+        <translation>手續費將從發送金額中扣除。接收者將收到的Cosanta金額將會比您在金額字段中輸入的金額為少。 如果選擇了多個收款人，該費用將會被平均攤分。</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -7393,7 +7387,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
-        <translation>附加在達世幣付款協議 URI 中的訊息，會和交易內容一起存起來，給你自己做參考。注意: 這個訊息不會送到達世幣網路上。</translation>
+        <translation>附加在Cosanta付款協議 URI 中的訊息，會和交易內容一起存起來，給你自己做參考。注意: 這個訊息不會送到Cosanta網路上。</translation>
     </message>
 </context>
 <context>
@@ -7730,8 +7724,8 @@ For more information on using this console, type %6.
         <translation>複製</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>將下面這一行加入主節點伺服器上的 dash.conf：</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>將下面這一行加入主節點伺服器上的 cosanta.conf：</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ For more information on using this console, type %6.
         <translation>運行節點的人</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>請使用運營者私密金鑰設定主節點伺服器，然後在該處重新啟動 dashd。</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>請使用運營者私密金鑰設定主節點伺服器，然後在該處重新啟動 cosantad。</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>
@@ -8869,7 +8863,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The Cosanta address to sign the message with</source>
-        <translation>用來簽署訊息的達世幣位址</translation>
+        <translation>用來簽署訊息的Cosanta位址</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -8901,7 +8895,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Sign the message to prove you own this Cosanta address</source>
-        <translation>簽署這個訊息來證明這個達世幣位址是你的</translation>
+        <translation>簽署這個訊息來證明這個Cosanta位址是你的</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -8925,7 +8919,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The Cosanta address the message was signed with</source>
-        <translation>簽署這個訊息的達世幣位址</translation>
+        <translation>簽署這個訊息的Cosanta位址</translation>
     </message>
     <message>
         <source>The signed message to verify</source>
@@ -8937,7 +8931,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Verify the message to ensure it was signed with the specified Cosanta address</source>
-        <translation>驗證這個訊息來確定是用指定的達世幣位址簽署的</translation>
+        <translation>驗證這個訊息來確定是用指定的Cosanta位址簽署的</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -9361,7 +9355,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Locks funds for use on Cosanta Platform. The amount is this wallet's net balance change, including the network fee.</source>
-        <translation>鎖定資金以用於達世幣平台。金額為此錢包的淨餘額變動，包含網路手續費。</translation>
+        <translation>鎖定資金以用於Cosanta平台。金額為此錢包的淨餘額變動，包含網路手續費。</translation>
     </message>
     <message>
         <source>(no label)</source>
@@ -9802,7 +9796,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Enter a valid Cosanta address.</source>
-        <translation>請輸入有效的達世幣位址。</translation>
+        <translation>請輸入有效的Cosanta位址。</translation>
     </message>
     <message>
         <source>The reward address must differ from the voting address and every owner address.</source>

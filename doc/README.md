@@ -26,7 +26,7 @@ Drag Cosanta Core to your applications folder, and then run Cosanta Core.
 
 * See the [Cosanta documentation](https://docs.cosa.is)
 for help and more information.
-* Ask for help on [Cosanta Discord](http://staydashy.com)
+* Ask for help on [upstream Dash Discord](http://staydashy.com)
 * Ask for help on the [Cosanta Forum](https://cosa.is/forum)
 
 Building
@@ -61,10 +61,10 @@ The Cosanta Core repo's [root README](/README.md) contains relevant information 
 - [Internal Design Docs](design/)
 
 ### Resources
-* See the [Cosanta Developer Documentation](https://dashcore.readme.io/)
+* See the [upstream Dash Developer Documentation](https://dashcore.readme.io/)
   for technical specifications and implementation details.
 * Discuss on the [Cosanta Forum](https://cosa.is/forum), in the Development & Technical Discussion board.
-* Discuss on [Cosanta Discord](http://staydashy.com)
+* Discuss on [upstream Dash Discord](http://staydashy.com)
 * Discuss on [Cosanta Developers Discord](http://chat.cosantadevs.org/)
 
 ### Miscellaneous

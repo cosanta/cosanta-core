@@ -1119,8 +1119,8 @@
         <translation>(%1 blocat)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Poate varia +/- %1 duff(i) per intrare.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Poate varia +/- %1 unit(i) per intrare.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ Procesul de migrare va crea o copie de rezervă a portofelului înainte de migra
         <translation>Tranzacțiile cu ieșiri egale sau sub această sumă vor fi considerate praf când sunt primite din surse externe.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ Procesul de migrare va crea o copie de rezervă a portofelului înainte de migra
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Afișează dacă proxy-ul implicit SOCKS5 furnizat este utilizat pentru a ajunge la peers prin intermediul acestui tip de rețea.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Limba lipsește sau traducerea este incompletă? Ajutați contribuind la traduceri aici:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Salvați-o acum — înregistrarea nu poate începe până nu o confirmați.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Adăugați această linie în dash.conf pe serverul masternode-ului dvs.:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Adăugați această linie în cosanta.conf pe serverul masternode-ului dvs.:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Este înregistrată în acest portofel și apare la Tranzacții. Garanția rămâne în portofel, dar este blocată cât timp masternode-ul este înregistrat.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Configurați serverul masternode cu cheia secretă de operator pe care ați salvat-o, apoi reporniți acolo dashd.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Configurați serverul masternode cu cheia secretă de operator pe care ați salvat-o, apoi reporniți acolo cosantad.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,8 +6980,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Taxă tranzacţie:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>Când există mai puțin volum de tranzacții decât spațiu în blocuri, minerii precum și nodurile de relay pot impune o taxă minimă. Plata doar a acestei taxe minime este perfect în regulă, dar fiți conștienți că acest lucru poate duce la o tranzacție care nu se va confirma niciodată odată ce există mai multă cerere de tranzacții dash decât poate procesa rețeaua.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>Când există mai puțin volum de tranzacții decât spațiu în blocuri, minerii precum și nodurile de relay pot impune o taxă minimă. Plata doar a acestei taxe minime este perfect în regulă, dar fiți conștienți că acest lucru poate duce la o tranzacție care nu se va confirma niciodată odată ce există mai multă cerere de tranzacții Cosanta decât poate procesa rețeaua.</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Timp confirmare tinta:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Dacă taxa vamală este stabilită la 1000 de duffi și tranzacția are doar 250 de octeți, atunci "per kilobyte" plătește doar 250 de duffi în taxă,&lt;br /&gt;în timp ce "cel puțin" plătește 1000 de duffi. Pentru tranzacțiile mai mari decât un kilobyte, ambele plătesc cu kilobyte.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Dacă taxa vamală este stabilită la 1000 de unit și tranzacția are doar 250 de octeți, atunci "per kilobyte" plătește doar 250 de unit în taxă,&lt;br /&gt;în timp ce "cel puțin" plătește 1000 de unit. Pentru tranzacțiile mai mari decât un kilobyte, ambele plătesc cu kilobyte.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>Copiază</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Adăugați această linie în dash.conf pe serverul masternode-ului:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Adăugați această linie în cosanta.conf pe serverul masternode-ului:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Pentru mai multe informații despre utilizarea acestei console, tastați %6.
         <translation>cel care rulează nodul</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Configurați serverul masternode cu cheia secretă de operator și reporniți acolo dashd.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Configurați serverul masternode cu cheia secretă de operator și reporniți acolo cosantad.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

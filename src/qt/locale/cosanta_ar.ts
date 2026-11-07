@@ -67,11 +67,11 @@
     </message>
     <message>
         <source>These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>هذه هي عناوين داش التابعة لك من أجل إرسال الدفعات. تحقق دائما من المبلغ و عنوان المرسل المستقبل قبل إرسال العملات </translation>
+        <translation>هذه هي عناوين Cosanta التابعة لك من أجل إرسال الدفعات. تحقق دائما من المبلغ و عنوان المرسل المستقبل قبل إرسال العملات </translation>
     </message>
     <message>
         <source>These are your Cosanta addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
-        <translation>هذه هي عناوين داش الخاصة بك لتلقي المدفوعات. استخدم الزر "إنشاء عنوان استلام جديد" في علامة تبويب الاستلام لإنشاء عناوين جديدة.</translation>
+        <translation>هذه هي عناوين Cosanta الخاصة بك لتلقي المدفوعات. استخدم الزر "إنشاء عنوان استلام جديد" في علامة تبويب الاستلام لإنشاء عناوين جديدة.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -226,7 +226,7 @@
     </message>
     <message>
         <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
-        <translation>تحذير: إذا قمت بتشفير محفظتك وفقدت كلمة المرور الخاص بك, ستفقد كل عملات داش الخاصة بك</translation>
+        <translation>تحذير: إذا قمت بتشفير محفظتك وفقدت كلمة المرور الخاص بك, ستفقد كل عملات Cosanta الخاصة بك</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Send coins to a Cosanta address</source>
-        <translation>إرسال عملات الى عنوان داش</translation>
+        <translation>إرسال عملات الى عنوان Cosanta</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
@@ -490,7 +490,7 @@
     </message>
     <message>
         <source>Send %1 funds to a Cosanta address</source>
-        <translation>إرسال %1 عملات الى عنوان داش</translation>
+        <translation>إرسال %1 عملات الى عنوان Cosanta</translation>
     </message>
     <message>
         <source>Modify configuration options for %1</source>
@@ -526,11 +526,11 @@
     </message>
     <message>
         <source>Sign messages with your Cosanta addresses to prove you own them</source>
-        <translation>وقَع الرسائل بواسطة اداش الخاص بك لإثبات امتلاكك لهم</translation>
+        <translation>وقَع الرسائل بواسطة Cosanta الخاص بك لإثبات امتلاكك لهم</translation>
     </message>
     <message>
         <source>Verify messages to ensure they were signed with specified Cosanta addresses</source>
-        <translation>تحقق من الرسائل للتأكد من أنَها وُقعت برسائل داش محدَدة</translation>
+        <translation>تحقق من الرسائل للتأكد من أنَها وُقعت برسائل Cosanta محدَدة</translation>
     </message>
     <message>
         <source>&amp;Information</source>
@@ -594,7 +594,7 @@
     </message>
     <message>
         <source>Show the %1 help message to get a list with possible Cosanta command-line options</source>
-        <translation>عرض رسالة مساعدة %1 للحصول على قائمة مع خيارات سطر أوامر داش المحتملة</translation>
+        <translation>عرض رسالة مساعدة %1 للحصول على قائمة مع خيارات سطر أوامر Cosanta المحتملة</translation>
     </message>
     <message>
         <source>default wallet</source>
@@ -735,7 +735,7 @@
     <message numerus="yes">
         <source>%n active connection(s) to Cosanta network</source>
         <extracomment>A substring of the tooltip.</extracomment>
-        <translation><numerusform>%n اتصالات نشطة بشبكة داش</numerusform><numerusform>%n اتصالات نشطة بشبكة داش</numerusform><numerusform>%n اتصالات نشطة بشبكة داش</numerusform><numerusform>%n اتصالات نشطة بشبكة داش</numerusform><numerusform>%n اتصالات نشطة بشبكة داش</numerusform><numerusform>%n اتصالات نشطة بشبكة داش</numerusform></translation>
+        <translation><numerusform>%n اتصالات نشطة بشبكة Cosanta</numerusform><numerusform>%n اتصالات نشطة بشبكة Cosanta</numerusform><numerusform>%n اتصالات نشطة بشبكة Cosanta</numerusform><numerusform>%n اتصالات نشطة بشبكة Cosanta</numerusform><numerusform>%n اتصالات نشطة بشبكة Cosanta</numerusform><numerusform>%n اتصالات نشطة بشبكة Cosanta</numerusform></translation>
     </message>
     <message>
         <source>Network activity disabled</source>
@@ -1119,8 +1119,8 @@
         <translation>(%1 مقفل)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>يمكن أن تختلف +/-%1 داف (ق) لكل مدخلات.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>يمكن أن تختلف +/-%1 unit لكل مدخلات.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -1483,7 +1483,7 @@
     </message>
     <message>
         <source>Cosanta shared masternode — standby dissolution</source>
-        <translation>ماسترنود مشترك في داش، الحل الاحتياطي</translation>
+        <translation>ماسترنود مشترك في Cosanta، الحل الاحتياطي</translation>
     </message>
     <message>
         <source>Masternode: %1</source>
@@ -1550,7 +1550,7 @@
     </message>
     <message>
         <source>The entered address "%1" is not a valid Cosanta address.</source>
-        <translation>العنوان الذي تم إدخاله "%1" ليس عنوانًا صالحًا لداش.</translation>
+        <translation>العنوان الذي تم إدخاله "%1" ليس عنوانًا صالحًا لCosanta.</translation>
     </message>
     <message>
         <source>Address "%1" already exists as a receiving address with label "%2" and so cannot be added as a sending address.</source>
@@ -1612,7 +1612,7 @@
     </message>
     <message>
         <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different "inputs" which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called "masternodes." These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know "who" you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users' wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it's called a "round." Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these "change addresses." Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style="%2" href="%3"&gt;%1 documentation&lt;/a&gt;.</source>
-        <translation>%1 يمنحك   &lt;h3&gt;%1 أساسيات&lt;/h3&gt; خصوصية مالية حقيقية من خلال حجب أصول أموالك. تتكون كل الداش في محفظتك من "مدخلات" مختلفة يمكنك التفكير فيها على أنها عملات معدنية منفصلة ومنفصلة.&lt;br&gt;  %1 يستخدم عملية مبتكرة لخلط مدخلاتك مع مدخلات شخصين آخرين أو أكثر ، دون أن تترك عملاتك محفظتك. أنت تحتفظ بالسيطرة على أموالك في جميع الأوقات.&lt;hr&gt;&lt;b&gt; تعمل  %1 عملية على النحو التالي:&lt;/b&gt;&lt;ol type="1"&gt;&lt;li&gt; يبدأ بتقسيم إدخالات معاملتك إلى فئات قياسية. هذه الفئات هي 0.001 داش و 0.01 داش و 0.1 داش و 1 داش و 10 داش - نوع من النقود الورقية التي تستخدمها كل يوم.&lt;/li&gt;&lt;li&gt; ثم ترسل محفظتك طلبات إلى عقد البرامج التي تم تكوينها خصيصًا على الشبكة ، والتي تسمى "العقد الرئيسية". يتم إبلاغ هذه الرموز الرئيسية بعد ذلك أنك مهتم بخلط فئة معينة. لا يتم إرسال أي معلومات يمكن التعرف عليها إلى رموز ماسترنود ، لذلك فهم لا يعرفون أبدًا "من أنت".&lt;/li&gt;&lt;li&gt; عندما يرسل شخصان آخران أو أكثر رسائل متشابهة ، للإشارة إلى رغبتهم في مزج نفس الفئة ، تبدأ جلسة خلط. يخلط الرمز الرئيسي بين المدخلات ويوجه جميع محافظ المستخدمين الثلاثة لدفع المدخلات التي تم تحويلها الآن لأنفسهم. تدفع محفظتك تلك الفئة مباشرة لنفسها ، ولكن في عنوان مختلف (يسمى تغيير العنوان). &lt;/li&gt;&lt;li&gt;من أجل إخفاء أموالك بالكامل ، يجب أن تكرر محفظتك هذه العملية عدة مرات مع كل فئة. في كل مرة يتم فيها الانتهاء من العملية ، يطلق عليها "جولة". كل جولة  %1 تجعل تحديد مصدر أموالك أكثر صعوبة.&lt;/li&gt;&lt;li&gt; تحدث عملية الخلط هذه في الخلفية دون أي تدخل من جانبك. عندما ترغب في إجراء معاملة ، ستكون أموالك مختلطة بالفعل. لا حاجة إلى انتظار إضافي.&lt;/li&gt;&lt;/ol&gt;&lt;hr&gt;&lt;b&gt; هام: &lt;/b&gt;تحتوي محفظتك فقط على 1000 من "عناوين التغيير" هذه. في كل مرة يحدث فيها اختلاط ، يتم استخدام ما يصل إلى 9 عناوين. هذا يعني أن تلك العناوين الـ 1000 تدوم لحوالي 100 حدث خلط. عندما يتم استخدام 900 منهم ، يجب أن تنشئ محفظتك المزيد من العناوين. لا يمكنه القيام بذلك إلا إذا تم تمكين النسخ الاحتياطية التلقائية. &lt;br&gt;وبالتالي ، فإن المستخدمين الذين تم تعطيل النسخ الاحتياطية لديهم  %1 سيتم أيضًا تعطيل.&lt;hr&gt; لمزيد من المعلومات ، &lt;a style="%2" href="%3"&gt; %1 راجع وثائق&lt;/a&gt;.</translation>
+        <translation>%1 يمنحك   &lt;h3&gt;%1 أساسيات&lt;/h3&gt; خصوصية مالية حقيقية من خلال حجب أصول أموالك. تتكون كل Cosanta في محفظتك من "مدخلات" مختلفة يمكنك التفكير فيها على أنها عملات معدنية منفصلة ومنفصلة.&lt;br&gt;  %1 يستخدم عملية مبتكرة لخلط مدخلاتك مع مدخلات شخصين آخرين أو أكثر ، دون أن تترك عملاتك محفظتك. أنت تحتفظ بالسيطرة على أموالك في جميع الأوقات.&lt;hr&gt;&lt;b&gt; تعمل  %1 عملية على النحو التالي:&lt;/b&gt;&lt;ol type="1"&gt;&lt;li&gt; يبدأ بتقسيم إدخالات معاملتك إلى فئات قياسية. هذه الفئات هي 0.001 Cosanta و 0.01 Cosanta و 0.1 Cosanta و 1 Cosanta و 10 Cosanta - نوع من النقود الورقية التي تستخدمها كل يوم.&lt;/li&gt;&lt;li&gt; ثم ترسل محفظتك طلبات إلى عقد البرامج التي تم تكوينها خصيصًا على الشبكة ، والتي تسمى "العقد الرئيسية". يتم إبلاغ هذه الرموز الرئيسية بعد ذلك أنك مهتم بخلط فئة معينة. لا يتم إرسال أي معلومات يمكن التعرف عليها إلى رموز ماسترنود ، لذلك فهم لا يعرفون أبدًا "من أنت".&lt;/li&gt;&lt;li&gt; عندما يرسل شخصان آخران أو أكثر رسائل متشابهة ، للإشارة إلى رغبتهم في مزج نفس الفئة ، تبدأ جلسة خلط. يخلط الرمز الرئيسي بين المدخلات ويوجه جميع محافظ المستخدمين الثلاثة لدفع المدخلات التي تم تحويلها الآن لأنفسهم. تدفع محفظتك تلك الفئة مباشرة لنفسها ، ولكن في عنوان مختلف (يسمى تغيير العنوان). &lt;/li&gt;&lt;li&gt;من أجل إخفاء أموالك بالكامل ، يجب أن تكرر محفظتك هذه العملية عدة مرات مع كل فئة. في كل مرة يتم فيها الانتهاء من العملية ، يطلق عليها "جولة". كل جولة  %1 تجعل تحديد مصدر أموالك أكثر صعوبة.&lt;/li&gt;&lt;li&gt; تحدث عملية الخلط هذه في الخلفية دون أي تدخل من جانبك. عندما ترغب في إجراء معاملة ، ستكون أموالك مختلطة بالفعل. لا حاجة إلى انتظار إضافي.&lt;/li&gt;&lt;/ol&gt;&lt;hr&gt;&lt;b&gt; هام: &lt;/b&gt;تحتوي محفظتك فقط على 1000 من "عناوين التغيير" هذه. في كل مرة يحدث فيها اختلاط ، يتم استخدام ما يصل إلى 9 عناوين. هذا يعني أن تلك العناوين الـ 1000 تدوم لحوالي 100 حدث خلط. عندما يتم استخدام 900 منهم ، يجب أن تنشئ محفظتك المزيد من العناوين. لا يمكنه القيام بذلك إلا إذا تم تمكين النسخ الاحتياطية التلقائية. &lt;br&gt;وبالتالي ، فإن المستخدمين الذين تم تعطيل النسخ الاحتياطية لديهم  %1 سيتم أيضًا تعطيل.&lt;hr&gt; لمزيد من المعلومات ، &lt;a style="%2" href="%3"&gt; %1 راجع وثائق&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -1671,7 +1671,7 @@
     </message>
     <message>
         <source>Network addresses that your Cosanta node is currently using to communicate with other nodes.</source>
-        <translation>عناوين الشبكة التي تستخدمها عقدة داش الخاصة بك حالياً للتواصل مع العقد الأخرى.</translation>
+        <translation>عناوين الشبكة التي تستخدمها عقدة Cosanta الخاصة بك حالياً للتواصل مع العقد الأخرى.</translation>
     </message>
     <message>
         <source>Block chain</source>
@@ -2386,7 +2386,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>The session file uses an unsupported format version. Update Cosanta Core to open it.</source>
-        <translation>ملف الجلسة يستخدم إصدار صيغة غير مدعوم. حدّث داش كور لفتحه.</translation>
+        <translation>ملف الجلسة يستخدم إصدار صيغة غير مدعوم. حدّث Cosanta Core لفتحه.</translation>
     </message>
     <message>
         <source>The session file is for the "%1" network but this node runs "%2". It cannot be used here.</source>
@@ -2410,7 +2410,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>The session file is at the unknown stage "%1". It was probably created by a newer Cosanta Core.</source>
-        <translation>ملف الجلسة في مرحلة غير معروفة "%1". من المرجح أنه أُنشئ بإصدار أحدث من داش كور.</translation>
+        <translation>ملف الجلسة في مرحلة غير معروفة "%1". من المرجح أنه أُنشئ بإصدار أحدث من Cosanta Core.</translation>
     </message>
     <message>
         <source>The session file lists %1 shares; a shared masternode can have at most %2.</source>
@@ -2928,11 +2928,11 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</source>
-        <translation>قد لا تكون المعاملات الأخيرة مرئية بعد ، وبالتالي قد يكون رصيد محفظتك غير صحيح. ستكون هذه المعلومات صحيحة بمجرد انتهاء محفظتك من المزامنة مع شبكة داش ، كما هو مفصل أدناه.</translation>
+        <translation>قد لا تكون المعاملات الأخيرة مرئية بعد ، وبالتالي قد يكون رصيد محفظتك غير صحيح. ستكون هذه المعلومات صحيحة بمجرد انتهاء محفظتك من المزامنة مع شبكة Cosanta ، كما هو مفصل أدناه.</translation>
     </message>
     <message>
         <source>Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
-        <translation>لن تقبل الشبكة محاولة إنفاق داش المتأثرة بالمعاملات التي لم يتم عرضها بعد.</translation>
+        <translation>لن تقبل الشبكة محاولة إنفاق Cosanta المتأثرة بالمعاملات التي لم يتم عرضها بعد.</translation>
     </message>
     <message>
         <source>Number of blocks left</source>
@@ -3316,8 +3316,8 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>المعاملات ذات المخرجات المساوية أو الأقل من هذا المبلغ ستُعتبر غباراً عند استلامها من مصادر خارجية.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>دافز</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3409,7 +3409,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>فتح منفذ عميل داش كور تلقائيًا على جهاز التوجيه. هذا يعمل فقط عندما يدعم جهاز التوجيه الخاص بك UPnP وتمكينه.</translation>
+        <translation>فتح منفذ عميل Cosanta Core تلقائيًا على جهاز التوجيه. هذا يعمل فقط عندما يدعم جهاز التوجيه الخاص بك UPnP وتمكينه.</translation>
     </message>
     <message>
         <source>Map port using NA&amp;T-PMP</source>
@@ -3425,7 +3425,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Connect to the Cosanta network through a SOCKS5 proxy.</source>
-        <translation>الاتصال بشبكة داش من خلال وكيل SOCKS5.</translation>
+        <translation>الاتصال بشبكة Cosanta من خلال وكيل SOCKS5.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -3434,12 +3434,6 @@ The migration process will create a backup of the wallet before migrating. This 
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>يظهر ما إذا كان وكيل SOCKS5 الافتراضي المقدم مستخدمًا للوصول إلى الأقران عبر هذا النوع من الشبكة.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>اللغة مفقودة أو الترجمة غير مكتملة؟ ساعد في المساهمة في الترجمات هنا:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -3646,7 +3640,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</source>
-        <translation>قد تكون المعلومات المعروضة قديمة. تتزامن محفظتك تلقائيًا مع شبكة داش بعد إنشاء الاتصال ، ولكن هذه العملية لم تكتمل بعد.</translation>
+        <translation>قد تكون المعلومات المعروضة قديمة. تتزامن محفظتك تلقائيًا مع شبكة Cosanta بعد إنشاء الاتصال ، ولكن هذه العملية لم تكتمل بعد.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -3726,7 +3720,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>0 COSA / 0 Rounds</source>
-        <translation>0 داش / 0 جولات</translation>
+        <translation>0 COSA / 0 جولات</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -4013,7 +4007,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Cannot start cosanta: click-to-pay handler</source>
-        <translation>لا يمكن بدء داش: معالج الدفع مقابل الدفع</translation>
+        <translation>لا يمكن بدء Cosanta: معالج الدفع مقابل الدفع</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -4031,7 +4025,7 @@ Due to discontinued support, you should request the merchant to provide you with
     </message>
     <message>
         <source>URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
-        <translation>لا يمكن تحليل العنوان! يمكن أن يكون ذلك بسبب عنوان داش غير صالح أو معلمات العنوان غير صحيحة.</translation>
+        <translation>لا يمكن تحليل العنوان! يمكن أن يكون ذلك بسبب عنوان Cosanta غير صالح أو معلمات العنوان غير صحيحة.</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -4825,7 +4819,7 @@ Do you wish to continue?</source>
     </message>
     <message>
         <source>Enter a Cosanta address (e.g. %1)</source>
-        <translation>أدخل عنوان داش (على سبيل المثال %1)</translation>
+        <translation>أدخل عنوان Cosanta (على سبيل المثال %1)</translation>
     </message>
     <message>
         <source>Appearance Setup</source>
@@ -5273,7 +5267,7 @@ Do you wish to continue?</source>
     </message>
     <message>
         <source>Invalid Cosanta address: %1</source>
-        <translation>عنوان داش غير صالح: %1</translation>
+        <translation>عنوان Cosanta غير صالح: %1</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -5846,7 +5840,7 @@ For more information on using this console, type %6.
     <name>ReceiveCoinsDialog</name>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</source>
-        <translation>رسالة اختيارية لإرفاقها بطلب الدفع ، والتي سيتم عرضها عند فتح الطلب. ملاحظة: لن يتم إرسال الرسالة مع الدفع عبر شبكة داش.</translation>
+        <translation>رسالة اختيارية لإرفاقها بطلب الدفع ، والتي سيتم عرضها عند فتح الطلب. ملاحظة: لن يتم إرسال الرسالة مع الدفع عبر شبكة Cosanta.</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -5858,7 +5852,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</source>
-        <translation>رسالة اختيارية لإرفاقها بطلب الدفع ، والتي سيتم عرضها عند فتح الطلب.&lt;br&gt; ملاحظة: لن يتم إرسال الرسالة مع الدفع عبر شبكة داش.</translation>
+        <translation>رسالة اختيارية لإرفاقها بطلب الدفع ، والتي سيتم عرضها عند فتح الطلب.&lt;br&gt; ملاحظة: لن يتم إرسال الرسالة مع الدفع عبر شبكة Cosanta.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address (used by you to identify an invoice).  It is also attached to the payment request.</source>
@@ -6071,7 +6065,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Additionally hosts Cosanta Platform, has four times the voting weight and earns a larger share of rewards. Requires a Platform node ID and extra services.</source>
-        <translation>يستضيف بالإضافة إلى ذلك منصة داش، وله وزن تصويت أكبر بأربع مرات ويكسب حصة أكبر من المكافآت. يتطلب معرّف عقدة المنصة وخدمات إضافية.</translation>
+        <translation>يستضيف بالإضافة إلى ذلك منصة Cosanta، وله وزن تصويت أكبر بأربع مرات ويكسب حصة أكبر من المكافآت. يتطلب معرّف عقدة المنصة وخدمات إضافية.</translation>
     </message>
     <message>
         <source>Register EvoNode</source>
@@ -6290,8 +6284,8 @@ For more information on using this console, type %6.
         <translation>احفظه الآن، فلا يمكن بدء التسجيل حتى تؤكد ذلك.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>أضف هذا السطر إلى dash.conf على خادم الماسترنود لديك:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>أضف هذا السطر إلى cosanta.conf على خادم الماسترنود لديك:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ For more information on using this console, type %6.
         <translation>هي مسجّلة في هذه المحفظة وتظهر ضمن المعاملات. يبقى الضمان في المحفظة لكنه مقفل ما دام الماسترنود مسجّلاً.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>اضبط خادم الماسترنود لديك بالمفتاح السري للمشغل الذي حفظته، ثم أعد تشغيل dashd هناك.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>اضبط خادم الماسترنود لديك بالمفتاح السري للمشغل الذي حفظته، ثم أعد تشغيل cosantad هناك.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6691,7 +6685,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Provision the Cosanta Platform services (Tenderdash and Drive) with the Platform node key matching the node ID you registered.</source>
-        <translation>جهّز خدمات منصة داش (Tenderdash وDrive) بمفتاح عقدة المنصة المطابق لمعرّف العقدة الذي سجّلته.</translation>
+        <translation>جهّز خدمات منصة Cosanta (Tenderdash وDrive) بمفتاح عقدة المنصة المطابق لمعرّف العقدة الذي سجّلته.</translation>
     </message>
     <message>
         <source>The EvoNode becomes active once the registration is confirmed and the first update is signed by the operator.</source>
@@ -6986,7 +6980,7 @@ For more information on using this console, type %6.
         <translation>رسوم المعاملة:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>عندما يكون حجم المعاملات أقل من المساحة في الكتل، قد يفرض المعدنون وكذلك العقد المرحلة حداً أدنى من الرسوم. دفع هذا الحد الأدنى من الرسوم فقط أمر جيد، ولكن كن على دراية بأن هذا قد يؤدي إلى معاملة لن يتم تأكيدها أبداً بمجرد أن يكون هناك طلب أكبر على معاملات Cosanta مما يمكن للشبكة معالجته.</translation>
     </message>
     <message>
@@ -7002,8 +6996,8 @@ For more information on using this console, type %6.
         <translation>هدف وقت التأكيد:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>إذا تم تعيين الرسوم الجمركية على 1000 دافع وكانت المعاملة 250 بايتًا فقط ، فإن "كل كيلوبايت" يدفع 250 جنيهًا فقط رسومًا ،&lt;br /&gt; بينما "على الأقل" يدفع 1000 دفين. لمعاملات أكبر من كيلوبايت تدفع كل من كيلوبايت.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>إذا تم تعيين الرسوم الجمركية على 1000 unit وكانت المعاملة 250 بايتًا فقط ، فإن "كل كيلوبايت" يدفع 250 unit فقط رسومًا ،&lt;br /&gt; بينما "على الأقل" يدفع 1000 unit. لمعاملات أكبر من كيلوبايت تدفع كل من كيلوبايت.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7310,7 +7304,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Warning: Invalid Cosanta address</source>
-        <translation>تحذير: عنوان داش غير صالح</translation>
+        <translation>تحذير: عنوان Cosanta غير صالح</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -7337,7 +7331,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The Cosanta address to send the payment to</source>
-        <translation>عنوان داش لإرسال الدفعة إلى</translation>
+        <translation>عنوان Cosanta لإرسال الدفعة إلى</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -7393,7 +7387,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
-        <translation>رسالة تم إرفاقها بخط العطف: عنوان الذي سيتم تخزينه مع المعاملة كمرجع لك. ملاحظة: لن يتم إرسال هذه الرسالة عبر شبكة داش.</translation>
+        <translation>رسالة تم إرفاقها بخط العطف: عنوان الذي سيتم تخزينه مع المعاملة كمرجع لك. ملاحظة: لن يتم إرسال هذه الرسالة عبر شبكة Cosanta.</translation>
     </message>
 </context>
 <context>
@@ -7730,8 +7724,8 @@ For more information on using this console, type %6.
         <translation>نسخ</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>أضف هذا السطر إلى dash.conf على خادم الماسترنود:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>أضف هذا السطر إلى cosanta.conf على خادم الماسترنود:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ For more information on using this console, type %6.
         <translation>من يشغّل العقدة</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>اضبط خادم الماسترنود بالمفتاح السري للمشغل وأعد تشغيل dashd هناك.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>اضبط خادم الماسترنود بالمفتاح السري للمشغل وأعد تشغيل cosantad هناك.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>
@@ -8865,11 +8859,11 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>You can sign messages/agreements with your addresses to prove you can receive Cosanta sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>يمكنك توقيع الرسائل / الاتفاقيات مع العناوين الخاصة بك لإثبات أنك يمكن أن تتلقى داش المرسلة إليهم. احرص على عدم التوقيع على أي شيء غامض أو عشوائي ، حيث إن هجمات التصيد الاحتيالي قد تحاول خداعك لتوقيع هويتك عليها. توقيع فقط عبارات تفصيلية كاملة توافق على.</translation>
+        <translation>يمكنك توقيع الرسائل / الاتفاقيات مع العناوين الخاصة بك لإثبات أنك يمكن أن تتلقى Cosanta المرسلة إليهم. احرص على عدم التوقيع على أي شيء غامض أو عشوائي ، حيث إن هجمات التصيد الاحتيالي قد تحاول خداعك لتوقيع هويتك عليها. توقيع فقط عبارات تفصيلية كاملة توافق على.</translation>
     </message>
     <message>
         <source>The Cosanta address to sign the message with</source>
-        <translation>عنوان داش للتوقيع على الرسالة</translation>
+        <translation>عنوان Cosanta للتوقيع على الرسالة</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -8901,7 +8895,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Sign the message to prove you own this Cosanta address</source>
-        <translation>وقع على الرسالة لإثبات أنك تملك عنوان داش هذا</translation>
+        <translation>وقع على الرسالة لإثبات أنك تملك عنوان Cosanta هذا</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -8925,7 +8919,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The Cosanta address the message was signed with</source>
-        <translation>عنوان داش الذي تم توقيع الرسالة به</translation>
+        <translation>عنوان Cosanta الذي تم توقيع الرسالة به</translation>
     </message>
     <message>
         <source>The signed message to verify</source>
@@ -8937,7 +8931,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Verify the message to ensure it was signed with the specified Cosanta address</source>
-        <translation>تحقق من الرسالة للتأكد من توقيعها باستخدام عنوان داش المحدد</translation>
+        <translation>تحقق من الرسالة للتأكد من توقيعها باستخدام عنوان Cosanta المحدد</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -9361,7 +9355,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Locks funds for use on Cosanta Platform. The amount is this wallet's net balance change, including the network fee.</source>
-        <translation>يقفل أموالاً لاستخدامها على منصة داش. المبلغ هو صافي التغيير في رصيد هذه المحفظة، شاملاً رسوم الشبكة.</translation>
+        <translation>يقفل أموالاً لاستخدامها على منصة Cosanta. المبلغ هو صافي التغيير في رصيد هذه المحفظة، شاملاً رسوم الشبكة.</translation>
     </message>
     <message>
         <source>(no label)</source>
@@ -9802,7 +9796,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Enter a valid Cosanta address.</source>
-        <translation>أدخل عنوان داش صالحاً.</translation>
+        <translation>أدخل عنوان Cosanta صالحاً.</translation>
     </message>
     <message>
         <source>The reward address must differ from the voting address and every owner address.</source>

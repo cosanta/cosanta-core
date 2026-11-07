@@ -643,7 +643,7 @@
     </message>
     <message>
         <source>Open a cosanta: URI</source>
-        <translation>dashを開く: URI</translation>
+        <translation>cosantaを開く: URI</translation>
     </message>
     <message>
         <source>Create a new wallet</source>
@@ -1118,8 +1118,8 @@
         <translation>(%1 がロック中)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>インプットごとに +/- %1 duff(s) が変更可能 </translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>インプットごとに +/- %1 unit(s) が変更可能 </translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>外部ソースから受信した場合、この金額以下の出力を持つトランザクションはダストとみなされます。</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ The migration process will create a backup of the wallet before migrating. This 
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>指定されたデフォルトのSOCKS5プロキシを使用して、このネットワークタイプ経由でピアに到達するかどうかを表示。</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>言語が抜けていたり、翻訳が不十分である場合、以下のリンクから翻訳の作成にご協力ください。
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ For more information on using this console, type %6.
         <translation>今すぐ保存してください。確認するまで登録を開始できません。</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>マスターノードのサーバーの dash.conf に、次の行を追加してください：</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>マスターノードのサーバーの cosanta.conf に、次の行を追加してください：</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ For more information on using this console, type %6.
         <translation>このウォレットに記録され、「トランザクション」に表示されます。担保はウォレット内に残りますが、マスターノードが登録されている間はロックされます。</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>保存したオペレーター秘密鍵でマスターノードのサーバーを設定し、そこで dashd を再起動してください。</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>保存したオペレーター秘密鍵でマスターノードのサーバーを設定し、そこで cosantad を再起動してください。</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,7 +6980,7 @@ For more information on using this console, type %6.
         <translation>トランザクション手数料：</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>取引量がブロックの空き容量よりも少ない場合、マイナーや リレーするノードは最低手数料を強制することがあります。この最低手数料のみを支払うことは全く問題ありませんが、ネットワークが処理できる量よりもCosantaの取引の需要が多くなると、確認されない取引になる可能性があることに留意してください。</translation>
     </message>
     <message>
@@ -7002,8 +6996,8 @@ For more information on using this console, type %6.
         <translation>検証時間ターゲット:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>カスタマイズされた手数料が1000duffsに設定され、トランザクションが250 bytesしかなかった場合、キロバイトあたりでは250 duffsしか手数料を支払いませんが&lt;br /&gt;最低でも1000 duffs支払います。1キロバイト以上のトランザクションに対しては、1キロバイトあたり1000duffs支払います。</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>カスタマイズされた手数料が1000unitsに設定され、トランザクションが250 bytesしかなかった場合、キロバイトあたりでは250 unitsしか手数料を支払いませんが&lt;br /&gt;最低でも1000 units支払います。1キロバイト以上のトランザクションに対しては、1キロバイトあたり1000units支払います。</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ For more information on using this console, type %6.
         <translation>コピー</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>マスターノードのサーバーの dash.conf に、次の行を追加してください：</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>マスターノードのサーバーの cosanta.conf に、次の行を追加してください：</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ For more information on using this console, type %6.
         <translation>ノードの運用者</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>マスターノードのサーバーにオペレーター秘密鍵を設定し、そこで dashd を再起動してください。</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>マスターノードのサーバーにオペレーター秘密鍵を設定し、そこで cosantad を再起動してください。</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

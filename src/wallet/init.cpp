@@ -73,7 +73,7 @@ void WalletInit::AddWalletOptions(ArgsManager& argsman) const
 #endif
     argsman.AddArg("-spendzeroconfchange", strprintf("Spend unconfirmed change when sending transactions (default: %u)", DEFAULT_SPEND_ZEROCONF_CHANGE), ArgsManager::ALLOW_ANY, OptionsCategory::WALLET);
     argsman.AddArg("-dustprotectionthreshold=<n>",
-        strprintf("Automatically lock UTXOs from incoming external transactions at or below <n> duffs "
+        strprintf("Automatically lock UTXOs from incoming external transactions at or below <n> units "
                   "to protect against dust attacks. Locked UTXOs persist across restarts and are not "
                   "automatically unlocked when threshold changes; use lockunspent RPC to unlock manually "
                   "(0 = disabled, default: %d, max: %d)", DEFAULT_DUST_PROTECTION_THRESHOLD, MAX_DUST_PROTECTION_THRESHOLD),

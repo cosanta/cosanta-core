@@ -425,7 +425,7 @@
            <item>
             <widget class="QLabel" name="dustProtectionThresholdUnitLabel">
              <property name="text">
-              <string>duffs</string>
+              <string>unit</string>
              </property>
              <property name="textFormat">
               <enum>Qt::PlainText</enum>
@@ -1033,35 +1033,6 @@
           </widget>
          </item>
         </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="toolTip">
-          <string notr="true"/>
-         </property>
-         <property name="statusTip">
-          <string notr="true"/>
-         </property>
-         <property name="whatsThis">
-          <string notr="true"/>
-         </property>
-         <property name="accessibleName">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/dash/dash/</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextBrowserInteraction</set>
-         </property>
-        </widget>
        </item>
        <item>
         <widget class="Line" name="line">

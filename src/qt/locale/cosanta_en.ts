@@ -1409,8 +1409,8 @@
     </message>
     <message>
         <location line="+155"/>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Can vary +/- %1 duff(s) per input.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Can vary +/- %1 unit(s) per input.</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -4190,8 +4190,8 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <location line="+16"/>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -4341,14 +4341,7 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</translation>
     </message>
     <message>
-        <location line="+169"/>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</translation>
-    </message>
-    <message>
-        <location line="+117"/>
+        <location line="+286"/>
         <location line="+13"/>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
         <translation>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</translation>
@@ -8012,7 +8005,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <location line="+7"/>
-        <source>Add this line to dash.conf on your masternode server:</source>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8513,7 +8506,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <location line="+7"/>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8901,8 +8894,8 @@ For more information on using this console, type %6.
     </message>
     <message>
         <location line="+164"/>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8921,8 +8914,8 @@ For more information on using this console, type %6.
     </message>
     <message>
         <location line="-179"/>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 duffs in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 duffs in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 unit in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>If the custom fee is set to 1000 units and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 units in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 units. For transactions bigger than a kilobyte both pay by kilobyte.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9840,7 +9833,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <location line="-200"/>
-        <source>Add this line to dash.conf on the masternode server:</source>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10382,7 +10375,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <location line="+4"/>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

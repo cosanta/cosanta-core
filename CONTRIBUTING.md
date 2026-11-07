@@ -228,7 +228,7 @@ pull request to pull request.
 
 When a pull request conflicts with the target branch, you may be asked to rebase it on top of the current target branch.
 
-    git fetch https://github.com/dashpay/dash <target-branch>  # Fetch the latest upstream commit
+    git fetch https://github.com/cosanta/cosanta-core <target-branch>  # Fetch the latest upstream commit
     git rebase FETCH_HEAD  # Rebuild commits on top of the new base
 
 Avoid rebasing a non-conflicting pull request on top of the updated target
@@ -264,7 +264,7 @@ feature that will require maintenance, please consider if you are willing to
 maintain it (including bug fixing). If features get orphaned with no maintainer
 in the future, they may be removed by the Repository Maintainer. Features
 might be rejected due to design or scope issues. If a feature is based on a lot
-of dependencies, consider first building the system outside of Dash Core, if
+of dependencies, consider first building the system outside of Cosanta Core, if
 possible.
 
 

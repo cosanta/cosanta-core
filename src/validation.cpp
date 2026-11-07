@@ -5397,7 +5397,7 @@ bool Chainstate::ReplayBlocks()
         assert(pindexFork != nullptr);
         const bool fDIP0003Active = DeploymentActiveAt(*pindexOld, m_chainman.GetConsensus(), Consensus::DEPLOYMENT_DIP0003);
         if (fDIP0003Active && !m_evoDb.VerifyBestBlock(EvoDbIdentity(), pindexOld->GetBlockHash())) {
-            LogError("ReplayBlocks(DASH): %s\n", EvoDbInconsistencyMessage());
+            LogError("ReplayBlocks(COSA): %s\n", EvoDbInconsistencyMessage());
             return false;
         }
     }

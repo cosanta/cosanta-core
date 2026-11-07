@@ -1119,8 +1119,8 @@
         <translation>(%1 заключен)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Може да варира +/- %1 duff(s) за вход.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Може да варира +/- %1 unit(s) за вход.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>Транзакции с изходи, равни на или по-малки от тази сума, ще се считат за прах при получаване от външни източници.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ The migration process will create a backup of the wallet before migrating. This 
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Показва ако зададеното по подразбиране SOCKS5 proxy се използва за намиране на пиъри чрез тази мрежа.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Липсва език или преводът е непълен? Помогнете с принос за преводи тук:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ For more information on using this console, type %6.
         <translation>Запазете го сега — регистрацията не може да започне, докато не го потвърдите.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Добавете този ред в dash.conf на сървъра на Вашия masternode:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Добавете този ред в cosanta.conf на сървъра на Вашия masternode:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ For more information on using this console, type %6.
         <translation>Тя е записана в този портфейл и се показва в „Транзакции“. Обезпечението остава в портфейла, но е заключено, докато masternode е регистриран.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Настройте сървъра на Вашия masternode със запазения таен ключ на оператора, след което рестартирайте dashd там.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Настройте сървъра на Вашия masternode със запазения таен ключ на оператора, след което рестартирайте cosantad там.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,8 +6980,8 @@ For more information on using this console, type %6.
         <translation>Такса транзакция:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>Когато има по-малък обем транзакции от пространството в блоковете, майнърите както и препращащите възли могат да наложат минимална такса. Плащането само на тази минимална такса е напълно добре, но имайте предвид, че това може да доведе до никога непотвърдена транзакция, щом има повече търсене на dash транзакции, отколкото мрежата може да обработи.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>Когато има по-малък обем транзакции от пространството в блоковете, майнърите както и препращащите възли могат да наложат минимална такса. Плащането само на тази минимална такса е напълно добре, но имайте предвид, че това може да доведе до никога непотвърдена транзакция, щом има повече търсене на Cosanta транзакции, отколкото мрежата може да обработи.</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ For more information on using this console, type %6.
         <translation>Целево време за потвърждение:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Ако променената такса е 1000 duffs и транзакцията е само 250 байта, тогава "за килобайт" само плаща такса 250 duffs,,&lt;br /&gt; тогава"за последно" заплаща 1000 duffs. За транзакции по-големи от килобайт едновременно се заплащат от килобайт.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Ако променената такса е 1000 units и транзакцията е само 250 байта, тогава "за килобайт" само плаща такса 250 units,,&lt;br /&gt; тогава"за последно" заплаща 1000 units. За транзакции по-големи от килобайт едновременно се заплащат от килобайт.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ For more information on using this console, type %6.
         <translation>Копирай</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Добавете този ред в dash.conf на сървъра на masternode:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Добавете този ред в cosanta.conf на сървъра на masternode:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ For more information on using this console, type %6.
         <translation>този, който управлява възела</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Настройте сървъра на masternode с тайния ключ на оператора и рестартирайте dashd там.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Настройте сървъра на masternode с тайния ключ на оператора и рестартирайте cosantad там.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

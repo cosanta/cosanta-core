@@ -67,11 +67,11 @@
     </message>
     <message>
         <source>These are your Cosanta addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>송금을 위한 대시 주소입니다. 코인을 보내기 전에 항상 금액과 받는 주소를 확인하세요.</translation>
+        <translation>송금을 위한 Cosanta 주소입니다. 코인을 보내기 전에 항상 금액과 받는 주소를 확인하세요.</translation>
     </message>
     <message>
         <source>These are your Cosanta addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.</source>
-        <translation>이것은 지불을 받는 데 사용되는 당신의 대시 주소입니다. 새로운 주소를 생성하기 위해서는 수신 탭의 '새로운 받기 주소 생성하기' 버튼을 클릭하세요.</translation>
+        <translation>이것은 지불을 받는 데 사용되는 당신의 Cosanta 주소입니다. 새로운 주소를 생성하기 위해서는 수신 탭의 '새로운 받기 주소 생성하기' 버튼을 클릭하세요.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -226,7 +226,7 @@
     </message>
     <message>
         <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR COSA&lt;/b&gt;!</source>
-        <translation>경고: 지갑을 암호화하고 암호문을 잃어버리는 경우 당신은 &lt;b&gt;모든 대시를 잃게 됩니다&lt;/b&gt;!</translation>
+        <translation>경고: 지갑을 암호화하고 암호문을 잃어버리는 경우 당신은 &lt;b&gt;모든 Cosanta를 잃게 됩니다&lt;/b&gt;!</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Send coins to a Cosanta address</source>
-        <translation>대시 주소로 코인 전송</translation>
+        <translation>Cosanta 주소로 코인 전송</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
@@ -374,7 +374,7 @@
     </message>
     <message>
         <source>Request payments (generates QR codes and cosanta: URIs)</source>
-        <translation>지불 요청하기 (QR코드와 대시 URI가 생성됩니다.)</translation>
+        <translation>지불 요청하기 (QR코드와 Cosanta URI가 생성됩니다.)</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
@@ -490,7 +490,7 @@
     </message>
     <message>
         <source>Send %1 funds to a Cosanta address</source>
-        <translation>%1 금액을 대시 주소로 전송</translation>
+        <translation>%1 금액을 Cosanta 주소로 전송</translation>
     </message>
     <message>
         <source>Modify configuration options for %1</source>
@@ -526,11 +526,11 @@
     </message>
     <message>
         <source>Sign messages with your Cosanta addresses to prove you own them</source>
-        <translation>본인의 대시 주소임을 증명하기 위하여 메시지에 서명합니다.</translation>
+        <translation>본인의 Cosanta 주소임을 증명하기 위하여 메시지에 서명합니다.</translation>
     </message>
     <message>
         <source>Verify messages to ensure they were signed with specified Cosanta addresses</source>
-        <translation>특정 대시 주소에 서명된 것인지 확인하기 위하여 메시지를 검증합니다.</translation>
+        <translation>특정 Cosanta 주소에 서명된 것인지 확인하기 위하여 메시지를 검증합니다.</translation>
     </message>
     <message>
         <source>&amp;Information</source>
@@ -594,7 +594,7 @@
     </message>
     <message>
         <source>Show the %1 help message to get a list with possible Cosanta command-line options</source>
-        <translation>사용 가능한 대시 명령줄 옵션 목록을 가져오기 위해 %1 도움말 메시지를 표시합니다.</translation>
+        <translation>사용 가능한 Cosanta 명령줄 옵션 목록을 가져오기 위해 %1 도움말 메시지를 표시합니다.</translation>
     </message>
     <message>
         <source>default wallet</source>
@@ -644,7 +644,7 @@
     </message>
     <message>
         <source>Open a cosanta: URI</source>
-        <translation>대시: URI 열기</translation>
+        <translation>Cosanta: URI 열기</translation>
     </message>
     <message>
         <source>Create a new wallet</source>
@@ -735,7 +735,7 @@
     <message numerus="yes">
         <source>%n active connection(s) to Cosanta network</source>
         <extracomment>A substring of the tooltip.</extracomment>
-        <translation><numerusform>대시 네트워크의 활성 연결 수는 %n 입니다.</numerusform></translation>
+        <translation><numerusform>Cosanta 네트워크의 활성 연결 수는 %n 입니다.</numerusform></translation>
     </message>
     <message>
         <source>Network activity disabled</source>
@@ -1119,8 +1119,8 @@
         <translation>(%1 잠금)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>입력당 +/- %1 더프가 달라질 수 있습니다.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>입력당 +/- %1 unit가 달라질 수 있습니다.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -1483,7 +1483,7 @@
     </message>
     <message>
         <source>Cosanta shared masternode — standby dissolution</source>
-        <translation>대시 공유 마스터노드 — 예비 해체</translation>
+        <translation>Cosanta 공유 마스터노드 — 예비 해체</translation>
     </message>
     <message>
         <source>Masternode: %1</source>
@@ -1550,7 +1550,7 @@
     </message>
     <message>
         <source>The entered address "%1" is not a valid Cosanta address.</source>
-        <translation>입력한 주소 "%1" 는 올바른 대시 주소가 아닙니다.</translation>
+        <translation>입력한 주소 "%1" 는 올바른 Cosanta 주소가 아닙니다.</translation>
     </message>
     <message>
         <source>Address "%1" already exists as a receiving address with label "%2" and so cannot be added as a sending address.</source>
@@ -1612,7 +1612,7 @@
     </message>
     <message>
         <source>&lt;h3&gt;%1 Basics&lt;/h3&gt; %1 gives you true financial privacy by obscuring the origins of your funds. All the Cosanta in your wallet is comprised of different "inputs" which you can think of as separate, discrete coins.&lt;br&gt; %1 uses an innovative process to mix your inputs with the inputs of two or more other people, without having your coins ever leave your wallet. You retain control of your money at all times.&lt;hr&gt; &lt;b&gt;The %1 process works like this:&lt;/b&gt;&lt;ol type="1"&gt; &lt;li&gt;%1 begins by breaking your transaction inputs down into standard denominations. These denominations are 0.001 COSA, 0.01 COSA, 0.1 COSA, 1 COSA and 10 COSA -- sort of like the paper money you use every day.&lt;/li&gt; &lt;li&gt;Your wallet then sends requests to specially configured software nodes on the network, called "masternodes." These masternodes are informed then that you are interested in mixing a certain denomination. No identifiable information is sent to the masternodes, so they never know "who" you are.&lt;/li&gt; &lt;li&gt;When two or more other people send similar messages, indicating that they wish to mix the same denomination, a mixing session begins. The masternode mixes up the inputs and instructs all three users' wallets to pay the now-transformed input back to themselves. Your wallet pays that denomination directly to itself, but in a different address (called a change address).&lt;/li&gt; &lt;li&gt;In order to fully obscure your funds, your wallet must repeat this process a number of times with each denomination. Each time the process is completed, it's called a "round." Each round of %1 makes it exponentially more difficult to determine where your funds originated.&lt;/li&gt; &lt;li&gt;This mixing process happens in the background without any intervention on your part. When you wish to make a transaction, your funds will already be mixed. No additional waiting is required.&lt;/li&gt; &lt;/ol&gt; &lt;hr&gt;&lt;b&gt;IMPORTANT:&lt;/b&gt; Your wallet only contains 1000 of these "change addresses." Every time a mixing event happens, up to 9 of your addresses are used up. This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. It can only do this, however, if you have automatic backups enabled.&lt;br&gt; Consequently, users who have backups disabled will also have %1 disabled. &lt;hr&gt;For more information, see the &lt;a style="%2" href="%3"&gt;%1 documentation&lt;/a&gt;.</source>
-        <translation>&lt;h3&gt;%1 기본 정보&lt;/h3&gt; %1은 당신의 자금 출처를 가려 진정한 재정적 프라이버시를 보장합니다. 당신의 지갑에 보관된 모든 대시는 각기 다른 "입력값"으로 구성되어 있습니다. 쉽게 생각하면 별도의 분리된 동전으로 구성되어 있다고 볼 수 있습니다.&lt;br&gt;  %1은 당신의 코인이 지갑을 떠나지 않고도 그 입력값을 다른 두 사람의 입력값과 섞는 혁신적인 방식을 사용합니다. 이로써 당신의 자금은 언제나 당신의 통제 하에 있습니다.&lt;hr&gt;&lt;b&gt; %1은 다음과 같은 방식으로 작동합니다.&lt;/b&gt;&lt;ol type="1"&gt;&lt;li&gt; %1은 당신의 거래 입력값을 표준 단위로 쪼개는 것으로 시작합니다. 이렇게 분할하는 단위는 0.001대시, 0.01대시, 0.1대시, 1대시 혹은 10대시 입니다 - 귀하가 일상적으로 사용하는 지폐와 비슷하다고 생각하셔도 좋습니다. &lt;/li&gt;&lt;li&gt;이후 당신의 지갑은 "마스터노드"라고 불리는 네트워크의 특수 구성 소프트웨어 노드에 요청을 전송합니다. 이로써 이들 마스터노드는 당신이 특정 금액을 믹싱하고자 한다는 정보를 수신합니다. 마스터노드에는 당신의 개인 정보를 식별할 수 있는 어떤 내용도 전송되지 않습니다. 즉 당신이 "누구"인지 알 수 있는 방법은 없습니다.&lt;/li&gt;&lt;li&gt; 두 명의 다른 사람이 비슷한 메시지를 보내어 그들 역시 같은 단위의 금액을 믹싱하고 싶다는 정보를 나타내면 믹싱 세션이 시작됩니다. 마스터노드는 이들 입력값을 믹싱하여 세 사용자의 지갑에 변환된 입력을 지불하도록 지시합니다. 당신의 지갑은 해당 입력값을 곧바로 스스로에게 지불하지만, 지불되는 주소는 '변경 주소'라고 불리는 다른 주소로 보내집니다.&lt;/li&gt;&lt;li&gt; 당신의 자금을 완전히 가리기 위해서, 당신의 지갑은 이 과정을 각 대시 분할 단위만큼 여러번 반복합니다. 이러한 반복을 ‘라운드’라고 부릅니다. 프라이빗샌드의 각 라운드가 진행됨에 따라 당신이 송금하고자 하는 자금의 출처는 기하급수적으로 높은 수준으로 가려집니다.&lt;/li&gt;&lt;li&gt; 이 믹싱 과정은 당신이 개입할 필요 없이 백그라운드에서 진행됩니다. 당신이 거래를 원하는 경우, 당신의 자금은 이미 믹싱을 거친 것입니다. 추가적으로 대기할 필요 역시 없습니다. &lt;/li&gt;&lt;/ol&gt;&lt;hr&gt;&lt;b&gt;중요:&lt;/b&gt; 당신의 지갑은 1,000개의 ‘변경 주소’만을 가지고 있습니다. 믹싱을 실행할 때마다 최대 9개의 주소가 사용됩니다. 이는 곧 이들 1000개의 주소가 약 100개의 믹싱 작업을 위해 사용될 수 있다는 것을 의미합니다. 전체 1,000개의 주소 중 900개가 사용된 경우 당신의 지갑은 더 많은 주소를 만들어야 합니다. 그러나 이 작업은 당신이 자동 백업을 설정한 경우에만 수행됩니다. &lt;br&gt;따라서 백업이 비활성화된 사용자는 %1 역시 비활성화 됩니다. &lt;hr&gt;더 많은 정보를 위해서는 &lt;a style="%2" href="%3"&gt;%1 문서&lt;/a&gt;를 참조하세요.</translation>
+        <translation>&lt;h3&gt;%1 기본 정보&lt;/h3&gt; %1은 당신의 자금 출처를 가려 진정한 재정적 프라이버시를 보장합니다. 당신의 지갑에 보관된 모든 Cosanta는 각기 다른 "입력값"으로 구성되어 있습니다. 쉽게 생각하면 별도의 분리된 동전으로 구성되어 있다고 볼 수 있습니다.&lt;br&gt;  %1은 당신의 코인이 지갑을 떠나지 않고도 그 입력값을 다른 두 사람의 입력값과 섞는 혁신적인 방식을 사용합니다. 이로써 당신의 자금은 언제나 당신의 통제 하에 있습니다.&lt;hr&gt;&lt;b&gt; %1은 다음과 같은 방식으로 작동합니다.&lt;/b&gt;&lt;ol type="1"&gt;&lt;li&gt; %1은 당신의 거래 입력값을 표준 단위로 쪼개는 것으로 시작합니다. 이렇게 분할하는 단위는 0.001Cosanta, 0.01Cosanta, 0.1Cosanta, 1Cosanta 혹은 10Cosanta 입니다 - 귀하가 일상적으로 사용하는 지폐와 비슷하다고 생각하셔도 좋습니다. &lt;/li&gt;&lt;li&gt;이후 당신의 지갑은 "마스터노드"라고 불리는 네트워크의 특수 구성 소프트웨어 노드에 요청을 전송합니다. 이로써 이들 마스터노드는 당신이 특정 금액을 믹싱하고자 한다는 정보를 수신합니다. 마스터노드에는 당신의 개인 정보를 식별할 수 있는 어떤 내용도 전송되지 않습니다. 즉 당신이 "누구"인지 알 수 있는 방법은 없습니다.&lt;/li&gt;&lt;li&gt; 두 명의 다른 사람이 비슷한 메시지를 보내어 그들 역시 같은 단위의 금액을 믹싱하고 싶다는 정보를 나타내면 믹싱 세션이 시작됩니다. 마스터노드는 이들 입력값을 믹싱하여 세 사용자의 지갑에 변환된 입력을 지불하도록 지시합니다. 당신의 지갑은 해당 입력값을 곧바로 스스로에게 지불하지만, 지불되는 주소는 '변경 주소'라고 불리는 다른 주소로 보내집니다.&lt;/li&gt;&lt;li&gt; 당신의 자금을 완전히 가리기 위해서, 당신의 지갑은 이 과정을 각 Cosanta 분할 단위만큼 여러번 반복합니다. 이러한 반복을 ‘라운드’라고 부릅니다. 프라이빗샌드의 각 라운드가 진행됨에 따라 당신이 송금하고자 하는 자금의 출처는 기하급수적으로 높은 수준으로 가려집니다.&lt;/li&gt;&lt;li&gt; 이 믹싱 과정은 당신이 개입할 필요 없이 백그라운드에서 진행됩니다. 당신이 거래를 원하는 경우, 당신의 자금은 이미 믹싱을 거친 것입니다. 추가적으로 대기할 필요 역시 없습니다. &lt;/li&gt;&lt;/ol&gt;&lt;hr&gt;&lt;b&gt;중요:&lt;/b&gt; 당신의 지갑은 1,000개의 ‘변경 주소’만을 가지고 있습니다. 믹싱을 실행할 때마다 최대 9개의 주소가 사용됩니다. 이는 곧 이들 1000개의 주소가 약 100개의 믹싱 작업을 위해 사용될 수 있다는 것을 의미합니다. 전체 1,000개의 주소 중 900개가 사용된 경우 당신의 지갑은 더 많은 주소를 만들어야 합니다. 그러나 이 작업은 당신이 자동 백업을 설정한 경우에만 수행됩니다. &lt;br&gt;따라서 백업이 비활성화된 사용자는 %1 역시 비활성화 됩니다. &lt;hr&gt;더 많은 정보를 위해서는 &lt;a style="%2" href="%3"&gt;%1 문서&lt;/a&gt;를 참조하세요.</translation>
     </message>
 </context>
 <context>
@@ -1671,7 +1671,7 @@
     </message>
     <message>
         <source>Network addresses that your Cosanta node is currently using to communicate with other nodes.</source>
-        <translation>대시 노드가 다른 노드와 통신하기 위해 현재 사용 중인 네트워크 주소입니다.</translation>
+        <translation>Cosanta 노드가 다른 노드와 통신하기 위해 현재 사용 중인 네트워크 주소입니다.</translation>
     </message>
     <message>
         <source>Block chain</source>
@@ -2386,7 +2386,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>The session file uses an unsupported format version. Update Cosanta Core to open it.</source>
-        <translation>세션 파일이 지원되지 않는 형식 버전을 사용합니다. 열려면 대시 코어를 업데이트하세요.</translation>
+        <translation>세션 파일이 지원되지 않는 형식 버전을 사용합니다. 열려면 Cosanta Core를 업데이트하세요.</translation>
     </message>
     <message>
         <source>The session file is for the "%1" network but this node runs "%2". It cannot be used here.</source>
@@ -2410,7 +2410,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>The session file is at the unknown stage "%1". It was probably created by a newer Cosanta Core.</source>
-        <translation>세션 파일이 알 수 없는 단계 "%1"에 있습니다. 더 최신 버전의 대시 코어에서 생성되었을 가능성이 높습니다.</translation>
+        <translation>세션 파일이 알 수 없는 단계 "%1"에 있습니다. 더 최신 버전의 Cosanta Core에서 생성되었을 가능성이 높습니다.</translation>
     </message>
     <message>
         <source>The session file lists %1 shares; a shared masternode can have at most %2.</source>
@@ -2928,11 +2928,11 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the Cosanta network, as detailed below.</source>
-        <translation>최근 거래는 아직 표시되지 않을 수 있으며, 따라서 당신 지갑의 잔고 역시 실제와 다를 수 있습니다. 이는 당신의 지갑이 대시 네트워크와 동기화를 마치는대로 아래의 세부 내용과 같이 정확히 표시될 예정입니다.</translation>
+        <translation>최근 거래는 아직 표시되지 않을 수 있으며, 따라서 당신 지갑의 잔고 역시 실제와 다를 수 있습니다. 이는 당신의 지갑이 Cosanta 네트워크와 동기화를 마치는대로 아래의 세부 내용과 같이 정확히 표시될 예정입니다.</translation>
     </message>
     <message>
         <source>Attempting to spend Cosanta that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
-        <translation>'아직 표시 되지 않은 거래'의 영향을 받는 대시를 사용하시려는 경우, 네트워크에 의해 승인되지 않습니다.</translation>
+        <translation>'아직 표시 되지 않은 거래'의 영향을 받는 Cosanta를 사용하시려는 경우, 네트워크에 의해 승인되지 않습니다.</translation>
     </message>
     <message>
         <source>Number of blocks left</source>
@@ -3316,8 +3316,8 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>외부 출처에서 수신한 이 금액 이하의 출력이 있는 트랜잭션은 더스트로 간주됩니다.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3409,7 +3409,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>라우터에서 대시 코어 클라이언트를 자동으로 엽니다. 이 기능은 당신의 라우터가 UPnP를 지원하고 해당 기능이 작동하는 경우에만 가능합니다.</translation>
+        <translation>라우터에서 Cosanta Core 클라이언트를 자동으로 엽니다. 이 기능은 당신의 라우터가 UPnP를 지원하고 해당 기능이 작동하는 경우에만 가능합니다.</translation>
     </message>
     <message>
         <source>Map port using NA&amp;T-PMP</source>
@@ -3425,7 +3425,7 @@ The migration process will create a backup of the wallet before migrating. This 
     </message>
     <message>
         <source>Connect to the Cosanta network through a SOCKS5 proxy.</source>
-        <translation>SOCKS5 프록시를 통해 대시 네트워크 연결</translation>
+        <translation>SOCKS5 프록시를 통해 Cosanta 네트워크 연결</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -3434,12 +3434,6 @@ The migration process will create a backup of the wallet before migrating. This 
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>선택된 기본 SOCKS5 프록시가 이 네트워크 유형을 통해 피어에 연결하는 경우에 보여주기</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>언어가 지원되지 않거나 번역이 불완전한가요? 이곳에서 번역에 참여하세요:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -3491,7 +3485,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Automatically open the Cosanta Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</source>
-        <translation>라우터에서 대시 코어 클라이언트 포트를 자동으로 엽니다. 이 기능은 당신의 라우터가 NAT-PMP를 지원하고 활성화되어 있는 경우에만 작동합니다. 이 외부 포트는 무작위일 수 있습니다.</translation>
+        <translation>라우터에서 Cosanta Core 클라이언트 포트를 자동으로 엽니다. 이 기능은 당신의 라우터가 NAT-PMP를 지원하고 활성화되어 있는 경우에만 작동합니다. 이 외부 포트는 무작위일 수 있습니다.</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -3543,7 +3537,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Connect to the Cosanta network through a separate SOCKS5 proxy for Tor onion services.</source>
-        <translation>Tor 어니언 서비스를 위한 별도의 SOCKS5 프록시를 통해 대시 네트워크에 연결합니다</translation>
+        <translation>Tor 어니언 서비스를 위한 별도의 SOCKS5 프록시를 통해 Cosanta 네트워크에 연결합니다</translation>
     </message>
     <message>
         <source>Use separate SOCKS&amp;5 proxy to reach peers via Tor onion services:</source>
@@ -3646,7 +3640,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Cosanta network after a connection is established, but this process has not completed yet.</source>
-        <translation>표시된 정보가 오래된 것으로 보입니다. 당신의 지갑은 대시 네트워크에 연결되는 대로 동기화 될 예정입니다. 이 과정은 아직 종료되지 않았습니다.</translation>
+        <translation>표시된 정보가 오래된 것으로 보입니다. 당신의 지갑은 Cosanta 네트워크에 연결되는 대로 동기화 될 예정입니다. 이 과정은 아직 종료되지 않았습니다.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -3726,7 +3720,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>0 COSA / 0 Rounds</source>
-        <translation>0 대시 / 0 라운드</translation>
+        <translation>0 COSA / 0 라운드</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -4013,7 +4007,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Cannot start cosanta: click-to-pay handler</source>
-        <translation>대시를 시작할 수 없습니다: 원클릭 지불 핸들러</translation>
+        <translation>Cosanta를 시작할 수 없습니다: 원클릭 지불 핸들러</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -4031,7 +4025,7 @@ Due to discontinued support, you should request the merchant to provide you with
     </message>
     <message>
         <source>URI cannot be parsed! This can be caused by an invalid Cosanta address or malformed URI parameters.</source>
-        <translation>URI를 분석할 수 없습니다! 대시 주소가 유효하지 않거나 URI 파라미터 구성에 오류가 존재할 수 있습니다.</translation>
+        <translation>URI를 분석할 수 없습니다! Cosanta 주소가 유효하지 않거나 URI 파라미터 구성에 오류가 존재할 수 있습니다.</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -4825,7 +4819,7 @@ Do you wish to continue?</source>
     </message>
     <message>
         <source>Enter a Cosanta address (e.g. %1)</source>
-        <translation>대시 주소 입력 (예: %1)</translation>
+        <translation>Cosanta 주소 입력 (예: %1)</translation>
     </message>
     <message>
         <source>Appearance Setup</source>
@@ -5273,7 +5267,7 @@ Do you wish to continue?</source>
     </message>
     <message>
         <source>Invalid Cosanta address: %1</source>
-        <translation>유효하지 않은 대시 주소: %1</translation>
+        <translation>유효하지 않은 Cosanta 주소: %1</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -5846,7 +5840,7 @@ For more information on using this console, type %6.
     <name>ReceiveCoinsDialog</name>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Cosanta network.</source>
-        <translation>지불 요청에 메시지를 첨부할 지 선택할 수 있습니다. 해당 메세지는 지불 요청이 열릴 때 표시될 것 입니다. 메모: 이 메시지는 대시 네트워크로 전송되지 않습니다.</translation>
+        <translation>지불 요청에 메시지를 첨부할 지 선택할 수 있습니다. 해당 메세지는 지불 요청이 열릴 때 표시될 것 입니다. 메모: 이 메시지는 Cosanta 네트워크로 전송되지 않습니다.</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -5858,7 +5852,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Cosanta network.</source>
-        <translation>지불 요청에 메시지를 첨부할 지 선택할 수 있습니다. 해당 메세지는 지불 요청이 열릴 때 표시될 것 입니다. 메모: 이 메시지는 대시 네트워크로 전송되지 않습니다.</translation>
+        <translation>지불 요청에 메시지를 첨부할 지 선택할 수 있습니다. 해당 메세지는 지불 요청이 열릴 때 표시될 것 입니다. 메모: 이 메시지는 Cosanta 네트워크로 전송되지 않습니다.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address (used by you to identify an invoice).  It is also attached to the payment request.</source>
@@ -6071,7 +6065,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Additionally hosts Cosanta Platform, has four times the voting weight and earns a larger share of rewards. Requires a Platform node ID and extra services.</source>
-        <translation>추가로 대시 플랫폼을 호스팅하며, 투표 가중치가 4배이고 더 큰 몫의 보상을 받습니다. 플랫폼 노드 ID와 추가 서비스가 필요합니다.</translation>
+        <translation>추가로 Cosanta 플랫폼을 호스팅하며, 투표 가중치가 4배이고 더 큰 몫의 보상을 받습니다. 플랫폼 노드 ID와 추가 서비스가 필요합니다.</translation>
     </message>
     <message>
         <source>Register EvoNode</source>
@@ -6290,8 +6284,8 @@ For more information on using this console, type %6.
         <translation>지금 저장하세요. 확인하기 전에는 등록을 시작할 수 없습니다.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>마스터노드 서버의 dash.conf에 다음 줄을 추가하세요:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>마스터노드 서버의 cosanta.conf에 다음 줄을 추가하세요:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ For more information on using this console, type %6.
         <translation>이 지갑에 기록되었으며 거래 탭에 표시됩니다. 담보는 지갑에 남아 있지만 마스터노드가 등록된 동안 잠깁니다.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>저장해 둔 운영자 비밀 키로 마스터노드 서버를 설정한 뒤, 그곳에서 dashd를 다시 시작하세요.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>저장해 둔 운영자 비밀 키로 마스터노드 서버를 설정한 뒤, 그곳에서 cosantad를 다시 시작하세요.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6691,7 +6685,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Provision the Cosanta Platform services (Tenderdash and Drive) with the Platform node key matching the node ID you registered.</source>
-        <translation>등록한 노드 ID와 일치하는 플랫폼 노드 키로 대시 플랫폼 서비스(Tenderdash 및 Drive)를 준비하세요.</translation>
+        <translation>등록한 노드 ID와 일치하는 플랫폼 노드 키로 Cosanta 플랫폼 서비스(Tenderdash 및 Drive)를 준비하세요.</translation>
     </message>
     <message>
         <source>The EvoNode becomes active once the registration is confirmed and the first update is signed by the operator.</source>
@@ -6986,8 +6980,8 @@ For more information on using this console, type %6.
         <translation>거래 수수료:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>거래량이 블록 내 공간보다 적은 경우, 채굴자 및 노드 중계자가 최소 수수료를 실시할 수 있습니다. 이 최소 수수료를 지불하는 것은 괜찮지만, 네트워크가 처리할 수 있는 것보다 대시 거래에 대한 수요가 많으면 거래가 확인되지 않을 수 있다는 점에 유의하시기 바랍니다.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>거래량이 블록 내 공간보다 적은 경우, 채굴자 및 노드 중계자가 최소 수수료를 실시할 수 있습니다. 이 최소 수수료를 지불하는 것은 괜찮지만, 네트워크가 처리할 수 있는 것보다 Cosanta 거래에 대한 수요가 많으면 거래가 확인되지 않을 수 있다는 점에 유의하시기 바랍니다.</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ For more information on using this console, type %6.
         <translation>승인 시간 목표:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>만일 사용자 지정 수수료가 1000 더프로 설정되어 있으나 거래는 250바이트에 불과한 경우, 'KB 당'은 오직 250 더프를 수수료로 지불하는 한편 &lt;br /&gt;'최소'는 1000더프를 지불합니다. 1 KB보다 큰 거래를 진행하는 경우 두 옵션 모두 KB 당으로 지불합니다.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>만일 사용자 지정 수수료가 1000 unit로 설정되어 있으나 거래는 250바이트에 불과한 경우, 'KB 당'은 오직 250 unit를 수수료로 지불하는 한편 &lt;br /&gt;'최소'는 1000unit를 지불합니다. 1 KB보다 큰 거래를 진행하는 경우 두 옵션 모두 KB 당으로 지불합니다.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7310,7 +7304,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Warning: Invalid Cosanta address</source>
-        <translation>경고: 잘못된 대시 주소입니다</translation>
+        <translation>경고: 잘못된 Cosanta 주소입니다</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -7337,7 +7331,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The Cosanta address to send the payment to</source>
-        <translation>이 대시 주소로 송금합니다.</translation>
+        <translation>이 Cosanta 주소로 송금합니다.</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -7393,7 +7387,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>A message that was attached to the cosanta: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Cosanta network.</source>
-        <translation>대시: URI에 첨부된 메시지는 거래와 함께 참고용으로 저장됩니다. 주의: 이 메시지는 대시 네트워크로 전송되지 않습니다.</translation>
+        <translation>Cosanta: URI에 첨부된 메시지는 거래와 함께 참고용으로 저장됩니다. 주의: 이 메시지는 Cosanta 네트워크로 전송되지 않습니다.</translation>
     </message>
 </context>
 <context>
@@ -7730,8 +7724,8 @@ For more information on using this console, type %6.
         <translation>복사</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>마스터노드 서버의 dash.conf에 다음 줄을 추가하세요:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>마스터노드 서버의 cosanta.conf에 다음 줄을 추가하세요:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ For more information on using this console, type %6.
         <translation>노드를 운영하는 사람</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>운영자 비밀 키로 마스터노드 서버를 설정하고 그곳에서 dashd를 다시 시작하세요.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>운영자 비밀 키로 마스터노드 서버를 설정하고 그곳에서 cosantad를 다시 시작하세요.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>
@@ -8865,11 +8859,11 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>You can sign messages/agreements with your addresses to prove you can receive Cosanta sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>당신의 주소로 대시를 받을 수 있다는 점을 증명하기 위하여 메시지/계약서에 서명할 수 있습니다. 내용이 분명하지 않거나 무작위인 경우 서명하지 않도록 주의하세요. 피싱 공격이 당신의 서명을 얻기 위해 유도하는 것일 수 있습니다. 오직 완전한 세부 내용을 갖추고 당신이 동의하는 내용에만 서명하세요.</translation>
+        <translation>당신의 주소로 Cosanta를 받을 수 있다는 점을 증명하기 위하여 메시지/계약서에 서명할 수 있습니다. 내용이 분명하지 않거나 무작위인 경우 서명하지 않도록 주의하세요. 피싱 공격이 당신의 서명을 얻기 위해 유도하는 것일 수 있습니다. 오직 완전한 세부 내용을 갖추고 당신이 동의하는 내용에만 서명하세요.</translation>
     </message>
     <message>
         <source>The Cosanta address to sign the message with</source>
-        <translation>메시지에 서명하기 위한 대시 주소</translation>
+        <translation>메시지에 서명하기 위한 Cosanta 주소</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -8901,7 +8895,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Sign the message to prove you own this Cosanta address</source>
-        <translation>이 대시 주소가 당신의 소유임을 증명하기 위해 메시지에 서명하세요.</translation>
+        <translation>이 Cosanta 주소가 당신의 소유임을 증명하기 위해 메시지에 서명하세요.</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -8925,7 +8919,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>The Cosanta address the message was signed with</source>
-        <translation>메시지에 서명된 대시 주소</translation>
+        <translation>메시지에 서명된 Cosanta 주소</translation>
     </message>
     <message>
         <source>The signed message to verify</source>
@@ -8937,7 +8931,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Verify the message to ensure it was signed with the specified Cosanta address</source>
-        <translation>특정 대시 주소에 서명된 것인지 확인하기 위하여 메시지를 검증합니다.</translation>
+        <translation>특정 Cosanta 주소에 서명된 것인지 확인하기 위하여 메시지를 검증합니다.</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -9361,7 +9355,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Locks funds for use on Cosanta Platform. The amount is this wallet's net balance change, including the network fee.</source>
-        <translation>대시 플랫폼에서 사용할 자금을 잠급니다. 금액은 네트워크 수수료를 포함한 이 지갑의 순잔액 변동입니다.</translation>
+        <translation>Cosanta 플랫폼에서 사용할 자금을 잠급니다. 금액은 네트워크 수수료를 포함한 이 지갑의 순잔액 변동입니다.</translation>
     </message>
     <message>
         <source>(no label)</source>
@@ -9802,7 +9796,7 @@ For more information on using this console, type %6.
     </message>
     <message>
         <source>Enter a valid Cosanta address.</source>
-        <translation>유효한 대시 주소를 입력하세요.</translation>
+        <translation>유효한 Cosanta 주소를 입력하세요.</translation>
     </message>
     <message>
         <source>The reward address must differ from the voting address and every owner address.</source>

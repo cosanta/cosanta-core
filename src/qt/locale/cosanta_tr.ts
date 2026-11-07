@@ -1119,8 +1119,8 @@
         <translation>(%1 kilitlendi)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Girdi başına +/- %1 duff değişebilir.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Girdi başına +/- %1 unit değişebilir.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ Taşıma işlemi, taşımadan önce cüzdanın bir yedeğini oluşturur. Bu yede
         <translation>Harici kaynaklardan alındığında bu tutara eşit veya altındaki çıktılara sahip işlemler toz olarak kabul edilecektir.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duff</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ Taşıma işlemi, taşımadan önce cüzdanın bir yedeğini oluşturur. Bu yede
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Bu ağ türünde eşlere ulaşmak için varsayılan SOCKS5 proxy'nin kullanılıp kullanılmadığını gösterir.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Dil eksik veya çeviri tamamlanmamış mı? Çevirilere katkıda bulunmak için buraya bakın:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ Bu konsolu kullanma hakkında daha fazla bilgi için %6 yazın.
         <translation>Şimdi kaydedin — onaylamadan kayıt başlayamaz.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Bu satırı masternode sunucunuzdaki dash.conf dosyasına ekleyin:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Bu satırı masternode sunucunuzdaki cosanta.conf dosyasına ekleyin:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Bu konsolu kullanma hakkında daha fazla bilgi için %6 yazın.
         <translation>Bu cüzdanda kayıtlıdır ve İşlemler altında görünür. Teminat cüzdanda kalır, ancak masternode kayıtlı olduğu sürece kilitlidir.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Masternode sunucunuzu kaydettiğiniz operatör gizli anahtarıyla yapılandırın, ardından orada dashd'yi yeniden başlatın.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Masternode sunucunuzu kaydettiğiniz operatör gizli anahtarıyla yapılandırın, ardından orada cosantad'yi yeniden başlatın.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,8 +6980,8 @@ Bu konsolu kullanma hakkında daha fazla bilgi için %6 yazın.
         <translation>İşlem ücreti:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>Blokların boşluğundan daha az işlem hacmi olduğunda, madenciler ve aktarıcı düğümler minimum bir ücret uygulayabilir. Sadece bu minimum ücreti ödemek sorun değildir, ancak ağın işleyebileceğinden daha fazla dash işlemi talebi olduğunda bunun asla onaylanmayan bir işlemle sonuçlanabileceğini unutmayın.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>Blokların boşluğundan daha az işlem hacmi olduğunda, madenciler ve aktarıcı düğümler minimum bir ücret uygulayabilir. Sadece bu minimum ücreti ödemek sorun değildir, ancak ağın işleyebileceğinden daha fazla Cosanta işlemi talebi olduğunda bunun asla onaylanmayan bir işlemle sonuçlanabileceğini unutmayın.</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ Bu konsolu kullanma hakkında daha fazla bilgi için %6 yazın.
         <translation>Doğrulama süresi hedefi:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Eğer özel ücret 1000 duff olarak belirlendiyse ve işlem sadece 250 bayt ise "kilobayt başına" ücret olarak sadece 250 duff ödersiniz,&lt;br /&gt;bu da "en az" 1000 duff öder. Bir kilobayttan büyük işlemler için ikisi de kilobayt başına ödeme yapar.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Eğer özel ücret 1000 unit olarak belirlendiyse ve işlem sadece 250 bayt ise "kilobayt başına" ücret olarak sadece 250 unit ödersiniz,&lt;br /&gt;bu da "en az" 1000 unit öder. Bir kilobayttan büyük işlemler için ikisi de kilobayt başına ödeme yapar.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ Bu konsolu kullanma hakkında daha fazla bilgi için %6 yazın.
         <translation>Kopyala</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Bu satırı masternode sunucusundaki dash.conf dosyasına ekleyin:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Bu satırı masternode sunucusundaki cosanta.conf dosyasına ekleyin:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Bu konsolu kullanma hakkında daha fazla bilgi için %6 yazın.
         <translation>düğümü çalıştıran kişi</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Masternode sunucusunu operatör gizli anahtarıyla yapılandırın ve orada dashd'yi yeniden başlatın.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Masternode sunucusunu operatör gizli anahtarıyla yapılandırın ve orada cosantad'yi yeniden başlatın.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

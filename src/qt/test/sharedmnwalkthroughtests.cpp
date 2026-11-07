@@ -468,7 +468,7 @@ void SharedMnWalkthroughTests::walkthrough()
     QCOMPARE(int(coord.currentPage()), int(SharedMnCreateDialog::PageParticipants));
     QVERIFY2(!coord.m_error_label->text().isEmpty(), "a duplicate name must be reported");
     Shots().capture(&coord, "coord", "03-participants-invalid",
-                    "Participants page refusing a duplicate name and a 50 DASH share (below the 100 DASH minimum)");
+                    "Participants page refusing a duplicate name and a 50 COSA share (below the 100 COSA minimum)");
 
     set_share_row(1, QStringLiteral("Alice"), 3000 * COIN);
     set_share_row(2, QStringLiteral("Bob"), 3000 * COIN);
@@ -496,7 +496,7 @@ void SharedMnWalkthroughTests::walkthrough()
     coord.m_early_period_spin->setValue(30);
     coord.m_early_penalty_field->setValue(5 * COIN);
     Shots().capture(&coord, "coord", "06-exit-terms",
-                    "Exit terms: a 30 block early period and a 5 DASH early-exit penalty, with the plain "
+                    "Exit terms: a 30 block early period and a 5 COSA early-exit penalty, with the plain "
                     "language preview");
 
     coord.m_next_button->click();
@@ -526,7 +526,7 @@ void SharedMnWalkthroughTests::walkthrough()
     coord.m_next_button->click();
     QCOMPARE(int(coord.currentPage()), int(SharedMnCreateDialog::PageSecret));
     Shots().capture(&coord, "coord", "09-save-operator-key",
-                    "Save operator key gate: the generated secret, the dash.conf line and the 4 character "
+                    "Save operator key gate: the generated secret, the cosanta.conf line and the 4 character "
                     "confirmation");
     const QString operator_secret{coord.m_operator_widget->secretHex()};
     QVERIFY(!operator_secret.isEmpty());
