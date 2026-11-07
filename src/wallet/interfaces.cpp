@@ -103,6 +103,7 @@ WalletTx MakeWalletTx(CWallet& wallet, const CWalletTx& wtx)
     result.value_map = wtx.mapValue;
     result.is_coinbase = wtx.IsCoinBase();
     result.is_platform_transfer = wtx.IsPlatformTransfer();
+    result.is_coinstake = wtx.tx->IsCoinStake();
     // The determination of is_denominate is based on simplified checks here because in this part of the code
     // we only want to know about mixing transactions belonging to this specific wallet.
     // Post-V24 a session may contain promotion (10 inputs to 1 output) and demotion (1 to 10)
@@ -135,6 +136,7 @@ WalletTxStatus MakeWalletTxStatus(const CWallet& wallet, const CWalletTx& wtx)
     result.is_trusted = CachedTxIsTrusted(wallet, wtx);
     result.is_abandoned = wtx.isAbandoned();
     result.is_coinbase = wtx.IsCoinBase();
+    result.is_coinstake = wtx.tx->IsCoinStake();
     result.is_in_main_chain = wallet.IsTxInMainChain(wtx);
     result.is_chainlocked = wallet.IsTxChainLocked(wtx);
     result.is_islocked = wallet.IsTxLockedByInstantSend(wtx);

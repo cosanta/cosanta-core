@@ -257,8 +257,12 @@ BOOST_AUTO_TEST_CASE(versionbits_test)
 }
 
 /** Check that ComputeBlockVersion will set the appropriate bit correctly */
-static void check_computeblockversion(VersionBitsCache& versionbitscache, const Consensus::Params& params, Consensus::DeploymentPos dep)
+static void check_computeblockversion(VersionBitsCache& versionbitscache, const Consensus::Params& chain_params, Consensus::DeploymentPos dep)
 {
+    // Exercise historical deployments on short chains, below the network's warning height optimization.
+    auto params = chain_params;
+    params.MinBIP9WarningHeight = 0;
+
     // Clear the cache everytime
     versionbitscache.Clear();
 

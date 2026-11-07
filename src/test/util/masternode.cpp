@@ -3,12 +3,14 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <test/util/masternode.h>
+#include <test/util/setup_common.h>
 
 #include <bls/bls.h>
 #include <evo/deterministicmns.h>
 #include <evo/providertx.h>
 #include <evo/specialtx.h>
 #include <key.h>
+#include <random.h>
 #include <script/interpreter.h>
 #include <script/sign.h>
 #include <script/signingprovider.h>
@@ -30,7 +32,7 @@ SimpleUTXOMap SelectUTXOs(const CChain& active_chain, SimpleUTXOMap& utxos, CAmo
     while (!utxos.empty()) {
         bool found{false};
         for (auto it = utxos.begin(); it != utxos.end(); ++it) {
-            if (active_chain.Height() - it->second.nHeight < 101) {
+            if ((it->second.IsCoinBase() || it->second.IsCoinStake()) && active_chain.Height() - it->second.nHeight < 101) {
                 continue;
             }
 
@@ -58,10 +60,25 @@ SimpleUTXOMap BuildSimpleUtxoMap(const std::vector<CTransactionRef>& txs)
     for (auto [i, tx] : std23::views::enumerate(txs)) {
         for (auto [j, output] : std23::views::enumerate(tx->vout)) {
             if (output.scriptPubKey.IsUnspendable()) continue;
-            utxos.try_emplace(COutPoint(tx->GetHash(), j), Coin(output, static_cast<int>(i) + 1, /*fCoinBaseIn=*/false));
+            utxos.try_emplace(COutPoint(tx->GetHash(), j), Coin(output, static_cast<int>(i) + 1, /*fCoinBaseIn=*/tx->IsCoinBase(), /*fCoinStakeIn=*/tx->IsCoinStake()));
         }
     }
     return utxos;
+}
+
+SimpleUTXOMap FundMasternodeTestChain(TestChainSetup& setup)
+{
+    // Early Cosanta coinbases cannot fund masternode collaterals. These tests
+    // exercise registration and payments against a funded UTXO set.
+    CMutableTransaction funding;
+    funding.vin.emplace_back(COutPoint{GetRandHash(), 0});
+    for (int i = 0; i < 1000; ++i) {
+        funding.vout.emplace_back(5000 * COIN, GetScriptForRawPubKey(setup.coinbaseKey.GetPubKey()));
+    }
+    const auto tx = MakeTransactionRef(funding);
+    LOCK(cs_main);
+    AddCoins(setup.m_node.chainman->ActiveChainstate().CoinsTip(), *tx, 1);
+    return BuildSimpleUtxoMap({tx});
 }
 
 SimpleUTXOMap FundTransaction(const ChainstateManager& chainman, CMutableTransaction& tx, SimpleUTXOMap& utxos,

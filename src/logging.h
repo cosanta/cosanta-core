@@ -70,6 +70,10 @@ namespace BCLog {
         TXRECONCILIATION = (1 << 27),
         SCAN        = (1 << 28),
 
+        //Start Cosanta
+        STAKING  = ((uint64_t)1 << 31),
+        //End Cosanta
+
         //Start Dash
         CHAINLOCKS  = ((uint64_t)1 << 32),
         GOBJECT     = ((uint64_t)1 << 33),

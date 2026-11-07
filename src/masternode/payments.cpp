@@ -61,22 +61,12 @@ CAmount PlatformShare(const CAmount reward)
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue, const Consensus::Params& consensus_params, MnRewardEra era)
 {
-    CAmount ret = blockValue/5; // start at 20%
-
-    const int nMNPIBlock = consensus_params.nMasternodePaymentsIncreaseBlock;
-    const int nMNPIPeriod = consensus_params.nMasternodePaymentsIncreasePeriod;
+    (void)era;
+    CAmount ret = 0;
     const int nReallocActivationHeight = consensus_params.BRRHeight;
-
-                                                                      // mainnet:
-    if(nHeight > nMNPIBlock)                  ret += blockValue / 20; // 158000 - 25.0% - 2014-10-24
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 1)) ret += blockValue / 20; // 175280 - 30.0% - 2014-11-25
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 2)) ret += blockValue / 20; // 192560 - 35.0% - 2014-12-26
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 3)) ret += blockValue / 40; // 209840 - 37.5% - 2015-01-26
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 4)) ret += blockValue / 40; // 227120 - 40.0% - 2015-02-27
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 5)) ret += blockValue / 40; // 244400 - 42.5% - 2015-03-30
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 6)) ret += blockValue / 40; // 261680 - 45.0% - 2015-05-01
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 7)) ret += blockValue / 40; // 278960 - 47.5% - 2015-06-01
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 9)) ret += blockValue / 40; // 313520 - 50.0% - 2015-08-03
+    if (nHeight >= consensus_params.nMasternodePaymentsStartBlock) {
+        ret = blockValue / 1000;
+    }
 
     if (nHeight < nReallocActivationHeight) {
         // Block Reward Realocation is not activated yet, nothing to do
@@ -92,37 +82,41 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, const Consensus::P
         return ret;
     }
 
-    if (era != MnRewardEra::Classic) {
-        // Once MNRewardReallocated activates, block reward is 80% of block subsidy (+ tx fees) since treasury is 20%
-        // Since the MN reward needs to be equal to 60% of the block subsidy (according to the proposal), MN reward is set to 75% of the block reward.
-        // Previous reallocation periods are dropped.
-        return blockValue * 3 / 4;
-    }
-
-    // Periods used to reallocate the masternode reward from 50% to 60%
-    static std::vector<int> vecPeriods{
-        513, // Period 1:  51.3%
-        526, // Period 2:  52.6%
-        533, // Period 3:  53.3%
-        540, // Period 4:  54%
-        546, // Period 5:  54.6%
-        552, // Period 6:  55.2%
-        557, // Period 7:  55.7%
-        562, // Period 8:  56.2%
-        567, // Period 9:  56.7%
-        572, // Period 10: 57.2%
-        577, // Period 11: 57.7%
-        582, // Period 12: 58.2%
-        585, // Period 13: 58.5%
-        588, // Period 14: 58.8%
-        591, // Period 15: 59.1%
-        594, // Period 16: 59.4%
-        597, // Period 17: 59.7%
-        599, // Period 18: 59.9%
-        600  // Period 19: 60%
+    // Periods used to reallocate the masternode reward from 0.1% to 60%
+    static const std::vector<int> vecPeriods{
+        2,   // Period 1:   0.2%
+        5,   // Period 2:   0.5%
+        7,   // Period 3:   0.7%
+        10,  // Period 4:   1.0%
+        50,  // Period 5:   5.0%
+        70,  // Period 6:   7.0%
+        100, // Period 7:  10.0%
+        150, // Period 8:  15.0%
+        200, // Period 9:  20.0%
+        250, // Period 10: 25.0%
+        300, // Period 11: 30.0%
+        350, // Period 12: 35.0%
+        370, // Period 13: 37.0%
+        390, // Period 14: 39.0%
+        400, // Period 15: 40.0%
+        410, // Period 16: 41.0%
+        425, // Period 17: 42.5%
+        440, // Period 18: 44.0%
+        455, // Period 19: 45.5%
+        470, // Period 20: 47.0%
+        485, // Period 21: 48.5%
+        500, // Period 22: 50.0%
+        515, // Period 23: 51.5%
+        530, // Period 24: 53.0%
+        545, // Period 25: 54.5%
+        560, // Period 26: 56.0%
+        575, // Period 27: 57.5%
+        590, // Period 28: 59.0%
+        595, // Period 29: 59.5%
+        600  // Period 30: 60.0%
     };
 
-    int nReallocCycle = nSuperblockCycle * 3;
+    int nReallocCycle = nSuperblockCycle * 4;
     int nCurrentPeriod = std::min<int>((nHeight - nReallocStart) / nReallocCycle, vecPeriods.size() - 1);
 
     return static_cast<CAmount>(blockValue * vecPeriods[nCurrentPeriod] / 1000);
@@ -393,6 +387,14 @@ bool CMNPaymentsProcessor::IsBlockPayeeValid(const CChain& active_chain, const C
 {
     const int nBlockHeight = pindexPrev  == nullptr ? 0 : pindexPrev->nHeight + 1;
 
+    if (nBlockHeight < m_consensus_params.nSuperblockStartBlock) {
+        // We are still using budgets, but we have no data about them anymore.
+        // These historical Cosanta blocks were accepted by v19 without exact payee
+        // verification, so keep that behavior while validating the old chain.
+        LogPrint(BCLog::GOBJECT, "CMNPaymentsProcessor::%s -- WARNING! Client synced but old budget system is disabled, accepting any payee\n", __func__);
+        return true; // not an error
+    }
+
     // Check for correct masternode payment
     if (IsTransactionValid(txNew, pindexPrev, blockSubsidy, feeReward, era, strict_multiplicity)) {
         LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- Valid masternode payment at height %d: %s", __func__, nBlockHeight, txNew.ToString()); /* Continued */
@@ -405,16 +407,6 @@ bool CMNPaymentsProcessor::IsBlockPayeeValid(const CChain& active_chain, const C
         // governance data is either incomplete or non-existent
         LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- WARNING! Not enough data, skipping superblock payee checks\n", __func__);
         return true;  // not an error
-    }
-
-    if (nBlockHeight < m_consensus_params.nSuperblockStartBlock) {
-        // We are still using budgets, but we have no data about them anymore,
-        // we can only check masternode payments.
-        // NOTE: old budget system is disabled since 12.1 and we should never enter this branch
-        // anymore when sync is finished (on mainnet). We have no old budget data but these blocks
-        // have tons of confirmations and can be safely accepted without payee verification
-        LogPrint(BCLog::GOBJECT, "CMNPaymentsProcessor::%s -- WARNING! Client synced but old budget system is disabled, accepting any payee\n", __func__);
-        return true; // not an error
     }
 
     // superblocks started

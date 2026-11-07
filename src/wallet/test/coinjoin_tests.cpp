@@ -152,7 +152,8 @@ public:
         context.args = &m_args;
         context.chain = m_node.chain.get();
         context.coinjoin_loader = m_node.coinjoin_loader.get();
-        CreateAndProcessBlock({}, GetScriptForRawPubKey(coinbaseKey.GetPubKey()));
+        // Cosanta's early rewards must fund all distinct denomination outputs.
+        mineBlocks(250);
         wallet->SetupLegacyScriptPubKeyMan();
         wallet->LoadWallet();
         AddWallet(context, wallet);
@@ -198,7 +199,8 @@ public:
         CompactTallyItem tallyItem;
         ReserveDestination reserveDest(wallet.get());
         int nChangePosRet{RANDOM_CHANGE_POSITION};
-        CCoinControl coinControl;
+        // Preserve denomination outputs prepared for earlier steps of a test.
+        CCoinControl coinControl(CoinType::ONLY_NONDENOMINATED);
         coinControl.m_feerate = CFeeRate(1000);
         {
             LOCK(wallet->cs_wallet);

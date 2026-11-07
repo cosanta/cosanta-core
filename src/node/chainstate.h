@@ -21,6 +21,7 @@ class CDeterministicMNManager;
 class CEvoDB;
 class ChainstateManager;
 class CMasternodeSync;
+class CSporkManager;
 class CTxMemPool;
 struct LLMQContext;
 
@@ -36,6 +37,7 @@ struct ChainstateLoadOptions {
     llmq::CInstantSendManager* isman{nullptr};
     chainlock::Chainlocks* chainlocks{nullptr};
     const CMasternodeSync* mn_sync{nullptr};
+    const CSporkManager* sporkman{nullptr};
     fs::path data_dir;
 
     bool block_tree_db_in_memory{false};
