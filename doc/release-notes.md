@@ -5,6 +5,8 @@ Dash repository.
 
 This is a new major version release, bringing new features, various bugfixes and other improvements.
 
+Cosanta-specific changes include Proof-of-Stake, wallet and networking fixes.
+
 This release introduces the `v24` network upgrade (hard fork) and is **mandatory** for all nodes.
 Masternodes must upgrade before the hard fork start date; all other nodes must upgrade before the
 hard fork activates. See [Network upgrade](#network-upgrade) below.
@@ -177,6 +179,28 @@ On testnet, both deployments start at `1790208000` (Thursday, September 24, 2026
 00:00:00 UTC).
 
 # Notable changes
+
+## Crash fixes
+
+- Fixed a crash during Proof-of-Stake header validation when a crafted header
+  referenced a real staking transaction but supplied an out-of-range output
+  index. The peer-controlled index is now checked before transaction outputs
+  are accessed, and malformed headers are rejected.
+
+## Proof of Stake and Wallet
+
+- Header-only fork validation now advances through every unvalidated
+  Proof-of-Stake header when checking for reuse of a stake UTXO. The previous
+  frozen walk could miss reuse in intermediate headers; the corrected walk also
+  stops safely at genesis.
+- Stake input auto-combining now sweeps inputs of up to `-stakecombinemax` COSA
+  (100 by default) into kernels that have already reached the split threshold,
+  so small staking rewards do not accumulate indefinitely. Candidate selection
+  respects `-reservebalance` and `-inputstakeprotect`, requires confirmed and
+  mature UTXOs, and observes the block's remaining size and signature-operation
+  budgets.
+- Fixed a lock-order inversion while signing Proof-of-Stake blocks with an
+  encrypted wallet that could deadlock staking after prolonged operation.
 
 ## Decentralized masternode shares and multi-party payouts
 
@@ -792,6 +816,9 @@ and RPC parameters.
 
 ## P2P and network changes
 
+- Parallel block fetching during initial block download now respects each
+  peer's advertised starting height and does not request blocks the peer has not
+  claimed to possess.
 - `PROTOCOL_VERSION` has been bumped to `70242`. Protocol version `70241`
   introduces CoinJoin promotion/demotion signaling and protocol version `70242`
   introduces relay of version 2 Asset Unlock transactions by instance hash.
@@ -1294,6 +1321,7 @@ See detailed [set of changes][set-of-changes].
 Thanks to everyone who directly contributed to this release:
 
 - Antonio Moratti
+- Dmitriy Korniychuk
 - Kittywhiskers Van Gogh
 - Konstantin Akimov
 - PastaPastaPasta
