@@ -473,7 +473,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1672444800; // December 31, 2022
 
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].bit = 13;
-        consensus.vDeployments[Consensus::DEPLOYMENT_V24].nStartTime = 1790208000;     // September 24, 2026 00:00:00 UTC
+        consensus.vDeployments[Consensus::DEPLOYMENT_V24].nStartTime = 1790208000;     // Thursday, September 24, 2026 0:00:00
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nWindowSize = 100;
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nThresholdStart = 80;       // 80% of 100
