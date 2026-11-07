@@ -100,7 +100,7 @@ static CMutableTransaction CreateProRegTxExternalCollateral(const ChainstateMana
 }
 
 static CMutableTransaction CreateProUpServTx(const ChainstateManager& chainman, SimpleUTXOMap& utxos, const uint256& proTxHash, const CBLSSecretKey& operatorKey, int port, const CScript& scriptOperatorPayout, const CKey& coinbaseKey,
-                                             uint16_t version = ProTxVersion::GetMax(!bls::bls_legacy_scheme, /*is_extended_addr=*/false), CAmount fee = 0)
+                                             uint16_t version = ProTxVersion::GetMax(!bls::bls_legacy_scheme, /*is_extended_addr=*/false), CAmount fee = 0, CAmount amount = COIN)
 {
     CProUpServTx proTx;
     proTx.nVersion = version;
@@ -113,7 +113,7 @@ static CMutableTransaction CreateProUpServTx(const ChainstateManager& chainman, 
     CMutableTransaction tx;
     tx.nVersion = 3;
     tx.nType = TRANSACTION_PROVIDER_UPDATE_SERVICE;
-    const auto spent = FundTransaction(chainman, tx, utxos, GetScriptForDestination(PKHash(coinbaseKey.GetPubKey())), 1 * COIN);
+    const auto spent = FundTransaction(chainman, tx, utxos, GetScriptForDestination(PKHash(coinbaseKey.GetPubKey())), amount);
     tx.vout.back().nValue -= fee;
     proTx.inputsHash = CalcTxInputsHash(CTransaction(tx));
     proTx.sig = operatorKey.Sign(::SerializeHash(proTx), bls::bls_legacy_scheme);
@@ -150,7 +150,7 @@ static CMutableTransaction CreateProUpRegTx(const ChainstateManager& chainman, S
 }
 
 static CMutableTransaction CreateProUpRevTx(const ChainstateManager& chainman, SimpleUTXOMap& utxos, const uint256& proTxHash, const CBLSSecretKey& operatorKey, const CKey& coinbaseKey,
-                                            CAmount fee = 0)
+                                            CAmount fee = 0, CAmount amount = COIN)
 {
     CProUpRevTx proTx;
     proTx.nVersion = ProTxVersion::GetMax(!bls::bls_legacy_scheme, /*is_extended_addr=*/false);
@@ -159,7 +159,7 @@ static CMutableTransaction CreateProUpRevTx(const ChainstateManager& chainman, S
     CMutableTransaction tx;
     tx.nVersion = 3;
     tx.nType = TRANSACTION_PROVIDER_UPDATE_REVOKE;
-    const auto spent = FundTransaction(chainman, tx, utxos, GetScriptForDestination(PKHash(coinbaseKey.GetPubKey())), 1 * COIN);
+    const auto spent = FundTransaction(chainman, tx, utxos, GetScriptForDestination(PKHash(coinbaseKey.GetPubKey())), amount);
     tx.vout.back().nValue -= fee;
     proTx.inputsHash = CalcTxInputsHash(CTransaction(tx));
     proTx.sig = operatorKey.Sign(::SerializeHash(proTx), bls::bls_legacy_scheme);
@@ -1361,8 +1361,11 @@ void FuncTestMempoolProTxKeyChangedConflictChain(TestChainSetup& setup)
     auto tx_reg = CreateProRegTx(chainman, utxos, 1, scriptPayout, setup.coinbaseKey, ownerKey, operatorKey);
     const uint256 proTxHash = tx_reg.GetHash();
 
+    const CAmount update_amount = setup.m_coinbase_txns.front()->vout[0].nValue;
+
     // Parent ProUpServ for that masternode.
-    auto tx_parent = CreateProUpServTx(chainman, utxos, proTxHash, operatorKey, 2, CScript(), setup.coinbaseKey);
+    auto tx_parent = CreateProUpServTx(chainman, utxos, proTxHash, operatorKey, 2, CScript(), setup.coinbaseKey,
+                                       ProTxVersion::GetMax(!bls::bls_legacy_scheme, /*is_extended_addr=*/false), /*fee=*/0, update_amount);
     BOOST_REQUIRE(!tx_parent.vout.empty());
 
     // Child ProUpServ for the same masternode, spending the parent's first output.
@@ -1398,7 +1401,7 @@ void FuncTestMempoolProTxKeyChangedConflictChain(TestChainSetup& setup)
     BOOST_REQUIRE(parent_sorts_first);
 
     // The revocation that invalidates both pending ProUpServ transactions.
-    auto tx_revoke = CreateProUpRevTx(chainman, utxos, proTxHash, operatorKey, setup.coinbaseKey);
+    auto tx_revoke = CreateProUpRevTx(chainman, utxos, proTxHash, operatorKey, setup.coinbaseKey, /*fee=*/0, update_amount);
 
     CTxMemPool testPool{MemPoolOptionsForTest(setup.m_node)};
     TestMemPoolEntryHelper entry;
