@@ -4640,7 +4640,7 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
                                  strprintf("rejected nVersion=0x%08x block", block.nVersion));
     }
 
-    if (fCheckProof && !CheckProof(state, block, consensusParams, &blockman, active_chain, known_hash)) {
+    if (fCheckProof && !CheckProof(state, block, consensusParams, &blockman, active_chain, known_hash, active_chain ? &chainman.ActiveChainstate().CoinsTip() : nullptr)) {
         return false;
     }
 
@@ -6069,7 +6069,7 @@ bool CheckProof(BlockValidationState& state, const CBlockIndex& index, const Con
 }
 
 /** Check PoW or PoS based on actual block **/
-bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Consensus::Params& params, const node::BlockManager* blockman, const CChain* active_chain, const uint256* known_hash) {
+bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Consensus::Params& params, const node::BlockManager* blockman, const CChain* active_chain, const uint256* known_hash, CCoinsViewCache* coins_tip) {
     if (block.IsProofOfWork()) {
         if (!CheckProofOfWork(known_hash ? *known_hash : block.GetHash(), block.nBits, params)) {
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pow-proof", "block proof mismatch");
@@ -6079,7 +6079,7 @@ bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Co
     }
 
     uint256 hashProofOfStake = uint256();
-    return CheckProofOfStake(state, block, hashProofOfStake, params, blockman, active_chain, nullptr);
+    return CheckProofOfStake(state, block, hashProofOfStake, params, blockman, active_chain, nullptr, coins_tip);
 }
 
 //! Guess how far we are in the verification process at the given block index
