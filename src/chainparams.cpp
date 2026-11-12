@@ -1014,6 +1014,7 @@ public:
                 {0, uint256S("0x5cc74fcae11b83a1f00ca81106deaae119486ded33918571a639e7b6eac83150")},
             }
         };
+        UpdatePosParametersFromArgs(args);
 
         m_assumeutxo_data = MapAssumeutxo{
             {
@@ -1105,6 +1106,11 @@ public:
         consensus.DIP0003EnforcementHeight = nEnforcementHeight;
     }
     void UpdateDIP3ParametersFromArgs(const ArgsManager& args);
+
+    /**
+     * Allows moving the first proof-of-stake height, shortening the minimum stake age and adding checkpoints for testing.
+     */
+    void UpdatePosParametersFromArgs(const ArgsManager& args);
 
     /**
      * Allows modifying the budget regtest parameters.
@@ -1246,6 +1252,30 @@ void CRegTestParams::UpdateActivationParametersFromArgs(const ArgsManager& args)
         if (!found) {
             throw std::runtime_error(strprintf("Invalid deployment (%s)", vDeploymentParams[0]));
         }
+    }
+}
+
+void CRegTestParams::UpdatePosParametersFromArgs(const ArgsManager& args)
+{
+    if (args.IsArgSet("-posparams")) {
+        const std::vector<std::string> params{SplitString(args.GetArg("-posparams", ""), ':')};
+        int32_t first_pos_block, min_stake_age;
+        if (params.size() != 2 || !ParseInt32(params[0], &first_pos_block) || !ParseInt32(params[1], &min_stake_age) ||
+            first_pos_block < 1 || min_stake_age < 1) {
+            throw std::runtime_error("PoS parameters malformed, expecting <firstposblock>:<stakeminage>");
+        }
+        LogPrintf("Setting PoS parameters to firstposblock=%d, stakeminage=%d\n", first_pos_block, min_stake_age);
+        nFirstPoSv2Block = first_pos_block;
+        nStakeMinAge = min_stake_age;
+    }
+
+    for (const std::string& checkpoint : args.GetArgs("-checkpoint")) {
+        const std::vector<std::string> parts{SplitString(checkpoint, ':')};
+        int32_t height;
+        if (parts.size() != 2 || !ParseInt32(parts[0], &height) || height < 1 || !IsHex(parts[1]) || parts[1].size() != 64) {
+            throw std::runtime_error(strprintf("Invalid checkpoint (%s), expecting <height>:<hash>", checkpoint));
+        }
+        checkpointData.mapCheckpoints[height] = uint256S(parts[1]);
     }
 }
 
@@ -1531,6 +1561,8 @@ void SetupChainParamsOptions(ArgsManager& argsman)
 
     argsman.AddArg("-budgetparams=<masternode>:<budget>:<superblock>", "Override masternode, budget and superblock start heights (regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-dip3params=<activation>:<enforcement>", "Override DIP3 activation and enforcement heights (regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
+    argsman.AddArg("-posparams=<firstposblock>:<stakeminage>", "Override the first proof-of-stake height and the minimum stake age in seconds (regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
+    argsman.AddArg("-checkpoint=<height>:<hash>", "Add a checkpoint. Can be specified multiple times (regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-highsubsidyblocks=<n>", "The number of blocks with a higher than normal subsidy to mine at the start of a chain. Block after that height will have fixed subsidy base. (default: 0, devnet-only)", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-highsubsidyfactor=<n>", "The factor to multiply the normal block subsidy by while in the highsubsidyblocks window of a chain (default: 1, devnet-only)", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-llmqchainlocks=<quorum name>", "Override the default LLMQ type used for ChainLocks. Allows using ChainLocks with smaller LLMQs. (default: llmq_devnet, devnet-only)", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
