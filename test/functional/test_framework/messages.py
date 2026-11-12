@@ -30,8 +30,6 @@ import unittest
 from test_framework.crypto.siphash import siphash256
 from test_framework.util import assert_equal
 
-import dash_hash # type: ignore[import]
-
 MAX_LOCATOR_SZ = 101
 MAX_BASE_BLOCK_HASHES = 4096
 MAX_BLOCK_SIZE = 2000000
@@ -93,8 +91,15 @@ def sha3(s):
 def hash256(s):
     return sha256(sha256(s))
 
-def dashhash(s):
-    return dash_hash.getPoWHash(s)
+def block_header_hash(s, version):
+    """Block hash of a header serialized for hashing.
+
+    A proof-of-stake header is hashed with double SHA256. The proof-of-work hash has no
+    Python implementation: None is returned and the caller takes the hash from the node.
+    """
+    if version & CBlockHeader.POS_BIT:
+        return hash256(s)
+    return None
 
 def ser_compact_size(l):
     r = b""
@@ -609,7 +614,10 @@ class CTransaction:
 
 class CBlockHeader:
     __slots__ = ("hash", "hashMerkleRoot", "hashPrevBlock", "nBits", "nNonce",
-                 "nTime", "nVersion", "sha256")
+                 "nTime", "nVersion", "sha256",
+                 "posStakeHash", "posStakeN", "posBlockSig")
+
+    POS_BIT = 0x10000000
 
     def __init__(self, header=None):
         if header is None:
@@ -621,6 +629,9 @@ class CBlockHeader:
             self.nTime = header.nTime
             self.nBits = header.nBits
             self.nNonce = header.nNonce
+            self.posStakeHash = header.posStakeHash
+            self.posStakeN = header.posStakeN
+            self.posBlockSig = header.posBlockSig
             self.sha256 = header.sha256
             self.hash = header.hash
             self.calc_sha256()
@@ -632,8 +643,14 @@ class CBlockHeader:
         self.nTime = 0
         self.nBits = 0
         self.nNonce = 0
+        self.posStakeHash = 0
+        self.posStakeN = 0
+        self.posBlockSig = b""
         self.sha256 = None
         self.hash = None
+
+    def is_proof_of_stake(self):
+        return (self.nVersion & self.POS_BIT) == self.POS_BIT
 
     def deserialize(self, f):
         self.nVersion = struct.unpack("<i", f.read(4))[0]
@@ -642,10 +659,17 @@ class CBlockHeader:
         self.nTime = struct.unpack("<I", f.read(4))[0]
         self.nBits = struct.unpack("<I", f.read(4))[0]
         self.nNonce = struct.unpack("<I", f.read(4))[0]
+        self.posStakeHash = 0
+        self.posStakeN = 0
+        self.posBlockSig = b""
+        if self.is_proof_of_stake():
+            self.posStakeHash = deser_uint256(f)
+            self.posStakeN = struct.unpack("<I", f.read(4))[0]
+            self.posBlockSig = deser_string(f)
         self.sha256 = None
         self.hash = None
 
-    def serialize(self):
+    def serialize_for_hash(self):
         r = b""
         r += struct.pack("<i", self.nVersion)
         r += ser_uint256(self.hashPrevBlock)
@@ -653,19 +677,28 @@ class CBlockHeader:
         r += struct.pack("<I", self.nTime)
         r += struct.pack("<I", self.nBits)
         r += struct.pack("<I", self.nNonce)
+        if self.is_proof_of_stake():
+            r += ser_uint256(self.posStakeHash)
+            r += struct.pack("<I", self.posStakeN)
         return r
+
+    def serialize(self):
+        r = self.serialize_for_hash()
+        if self.is_proof_of_stake():
+            r += ser_string(self.posBlockSig)
+        return r
+
+    def set_hash(self, block_hash):
+        """Take the hash from the node, see block_header_hash()."""
+        self.sha256 = int(block_hash, 16)
+        self.hash = block_hash
 
     def calc_sha256(self):
         if self.sha256 is None:
-            r = b""
-            r += struct.pack("<i", self.nVersion)
-            r += ser_uint256(self.hashPrevBlock)
-            r += ser_uint256(self.hashMerkleRoot)
-            r += struct.pack("<I", self.nTime)
-            r += struct.pack("<I", self.nBits)
-            r += struct.pack("<I", self.nNonce)
-            self.sha256 = uint256_from_str(dashhash(r))
-            self.hash = dashhash(r)[::-1].hex()
+            h = block_header_hash(self.serialize_for_hash(), self.nVersion)
+            if h is not None:
+                self.sha256 = uint256_from_str(h)
+                self.hash = h[::-1].hex()
 
     def rehash(self):
         self.sha256 = None
@@ -719,6 +752,8 @@ class CBlock(CBlockHeader):
 
     def is_valid(self):
         self.calc_sha256()
+        if self.sha256 is None:
+            raise NotImplementedError("the proof-of-work hash is not implemented in Python")
         target = uint256_from_compact(self.nBits)
         if self.sha256 > target:
             return False
@@ -731,6 +766,8 @@ class CBlock(CBlockHeader):
 
     def solve(self):
         self.rehash()
+        if self.sha256 is None:
+            raise NotImplementedError("the proof-of-work hash is not implemented in Python")
         target = uint256_from_compact(self.nBits)
         while self.sha256 > target:
             self.nNonce += 1
@@ -748,7 +785,7 @@ class CBlock(CBlockHeader):
 
 class CompressibleBlockHeader:
     __slots__ = ("bitfield", "timeOffset", "nVersion", "hashPrevBlock", "hashMerkleRoot", "nTime", "nBits", "nNonce",
-                 "hash", "sha256")
+                 "hash", "sha256", "posStakeHash", "posStakeN", "posBlockSig")
 
     FLAG_VERSION_BIT_0 = 1 << 0
     FLAG_VERSION_BIT_1 = 1 << 1
@@ -756,6 +793,7 @@ class CompressibleBlockHeader:
     FLAG_PREV_BLOCK_HASH = 1 << 3
     FLAG_TIMESTAMP = 1 << 4
     FLAG_NBITS = 1 << 5
+    FLAG_PROOF_OF_STAKE = 1 << 6
 
     BITMASK_VERSION = FLAG_VERSION_BIT_0 | FLAG_VERSION_BIT_1 | FLAG_VERSION_BIT_2
 
@@ -771,6 +809,11 @@ class CompressibleBlockHeader:
             self.nTime = header.nTime
             self.nBits = header.nBits
             self.nNonce = header.nNonce
+            self.posStakeHash = header.posStakeHash
+            self.posStakeN = header.posStakeN
+            self.posBlockSig = header.posBlockSig
+            if header.nVersion & CBlockHeader.POS_BIT:
+                self.bitfield |= self.FLAG_PROOF_OF_STAKE
             self.hash = None
             self.sha256 = None
             self.calc_sha256()
@@ -784,6 +827,9 @@ class CompressibleBlockHeader:
         self.nTime = 0
         self.nBits = 0
         self.nNonce = 0
+        self.posStakeHash = 0
+        self.posStakeN = 0
+        self.posBlockSig = b""
         self.hash = None
         self.sha256 = None
 
@@ -801,6 +847,10 @@ class CompressibleBlockHeader:
         if self.bitfield & self.FLAG_NBITS:
             self.nBits = struct.unpack("<I", f.read(4))[0]
         self.nNonce = struct.unpack("<I", f.read(4))[0]
+        if self.bitfield & self.FLAG_PROOF_OF_STAKE:
+            self.posStakeHash = deser_uint256(f)
+            self.posStakeN = struct.unpack("<I", f.read(4))[0]
+            self.posBlockSig = deser_string(f)
         self.rehash()
 
     def serialize(self):
@@ -815,6 +865,10 @@ class CompressibleBlockHeader:
         if self.bitfield & self.FLAG_NBITS:
             r += struct.pack("<I", self.nBits)
         r += struct.pack("<I", self.nNonce)
+        if self.bitfield & self.FLAG_PROOF_OF_STAKE:
+            r += ser_uint256(self.posStakeHash)
+            r += struct.pack("<I", self.posStakeN)
+            r += ser_string(self.posBlockSig)
         return r
 
     def calc_sha256(self):
@@ -826,8 +880,13 @@ class CompressibleBlockHeader:
             r += struct.pack("<I", self.nTime)
             r += struct.pack("<I", self.nBits)
             r += struct.pack("<I", self.nNonce)
-            self.sha256 = uint256_from_str(dashhash(r))
-            self.hash = int(dashhash(r)[::-1].hex(), 16)
+            if self.nVersion & CBlockHeader.POS_BIT:
+                r += ser_uint256(self.posStakeHash)
+                r += struct.pack("<I", self.posStakeN)
+            h = block_header_hash(r, self.nVersion)
+            if h is not None:
+                self.sha256 = uint256_from_str(h)
+                self.hash = int(h[::-1].hex(), 16)
 
     def rehash(self):
         self.sha256 = None
