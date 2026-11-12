@@ -1,0 +1,338 @@
+// Copyright (c) 2026 The Cosanta Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include <pos_header_presync.h>
+
+#include <chainparams.h>
+#include <consensus/validation.h>
+#include <primitives/block.h>
+#include <uint256.h>
+
+#include <test/util/setup_common.h>
+
+#include <boost/test/unit_test.hpp>
+
+#include <limits>
+#include <vector>
+
+using pos_presync::AddResult;
+using pos_presync::Anchor;
+using pos_presync::HeaderTail;
+using pos_presync::SegmentCollector;
+
+BOOST_FIXTURE_TEST_SUITE(pos_header_presync_tests, BasicTestingSetup)
+
+using namespace std::chrono_literals;
+
+namespace {
+constexpr NodeId PEER{7};
+constexpr size_t NO_LIMIT{1 << 20};
+const uint256 BASE_HASH{uint256S("aa")};
+
+//! `count` linked headers on top of `prev`; every third one is proof-of-stake with a signature.
+std::vector<CBlockHeader> MakeChain(uint256 prev, size_t count, uint32_t salt = 0)
+{
+    std::vector<CBlockHeader> headers;
+    for (size_t i = 0; i < count; ++i) {
+        CBlockHeader header;
+        header.nVersion = (i % 3 == 2) ? int32_t(CBlockHeader::POS_BIT | 4) : 1;
+        header.hashPrevBlock = prev;
+        header.nTime = 1000 + i;
+        header.nBits = 0x207fffff;
+        header.nNonce = salt;
+        if (header.IsProofOfStake()) {
+            header.posStakeHash = uint256S("bb");
+            header.posStakeN = i;
+            header.posBlockSig.assign(65, static_cast<unsigned char>(i));
+        }
+        prev = header.GetHash();
+        headers.push_back(header);
+    }
+    return headers;
+}
+
+std::vector<CBlockHeader> Slice(const std::vector<CBlockHeader>& headers, size_t from, size_t to)
+{
+    return {headers.begin() + from, headers.begin() + to};
+}
+} // namespace
+
+BOOST_AUTO_TEST_CASE(window_follows_chain_parameters)
+{
+    BOOST_CHECK_EQUAL(pos_presync::VerifiabilityWindow(24 * 60 * 60, 150), 576);
+    BOOST_CHECK_EQUAL(pos_presync::VerifiabilityWindow(24 * 60 * 60, 60), 1440);
+    BOOST_CHECK_EQUAL(pos_presync::VerifiabilityWindow(24 * 60 * 60, 0), 0);
+    BOOST_CHECK_EQUAL(pos_presync::VerifiabilityWindow(0, 120), 0);
+
+    const auto main_params{CreateChainParams(*m_node.args, CBaseChainParams::MAIN)};
+    BOOST_CHECK_EQUAL(pos_presync::VerifiabilityWindow(*main_params), 576);
+    const auto regtest_params{CreateChainParams(*m_node.args, CBaseChainParams::REGTEST)};
+    BOOST_CHECK_EQUAL(pos_presync::VerifiabilityWindow(*regtest_params), 1440);
+}
+
+BOOST_AUTO_TEST_CASE(anchor_lookup)
+{
+    const MapCheckpoints anchors{{10, uint256S("01")}, {20, uint256S("02")}};
+
+    BOOST_CHECK_EQUAL(pos_presync::NextAnchor(anchors, 0)->height, 10);
+    BOOST_CHECK_EQUAL(pos_presync::NextAnchor(anchors, 9)->height, 10);
+    BOOST_CHECK_EQUAL(pos_presync::NextAnchor(anchors, 10)->height, 20);
+    BOOST_CHECK(!pos_presync::NextAnchor(anchors, 20));
+    BOOST_CHECK(pos_presync::LastAnchor(anchors)->hash == uint256S("02"));
+    BOOST_CHECK(!pos_presync::LastAnchor(MapCheckpoints{}));
+}
+
+BOOST_AUTO_TEST_CASE(chain_height_is_estimated_from_the_last_anchor)
+{
+    const MapCheckpoints anchors{{100, uint256S("01")}, {200, uint256S("02")}};
+    const int64_t anchor_time{1000};
+
+    BOOST_CHECK_EQUAL(*pos_presync::EstimatedChainHeight(anchors, anchor_time, 0, anchor_time + 1200, 120), 210);
+    BOOST_CHECK_EQUAL(*pos_presync::EstimatedChainHeight(anchors, anchor_time, 199, anchor_time + 119, 120), 200);
+    // A clock behind the anchor never puts the chain below it.
+    BOOST_CHECK_EQUAL(*pos_presync::EstimatedChainHeight(anchors, anchor_time, 100, anchor_time - 5000, 120), 200);
+
+    // A clock far in the future does not overflow.
+    BOOST_CHECK_EQUAL(*pos_presync::EstimatedChainHeight(anchors, anchor_time, 0, std::numeric_limits<int64_t>::max(), 1), std::numeric_limits<int>::max());
+
+    // Headers at or above the last anchor, no anchors, no anchor time, no spacing.
+    BOOST_CHECK(!pos_presync::EstimatedChainHeight(anchors, anchor_time, 200, anchor_time + 1200, 120));
+    BOOST_CHECK(!pos_presync::EstimatedChainHeight(anchors, anchor_time, 300, anchor_time + 1200, 120));
+    BOOST_CHECK(!pos_presync::EstimatedChainHeight(MapCheckpoints{}, anchor_time, 0, anchor_time + 1200, 120));
+    BOOST_CHECK(!pos_presync::EstimatedChainHeight(anchors, 0, 0, anchor_time + 1200, 120));
+    BOOST_CHECK(!pos_presync::EstimatedChainHeight(anchors, anchor_time, 0, anchor_time + 1200, 0));
+}
+
+BOOST_AUTO_TEST_CASE(header_too_new_is_waited_for_only_briefly)
+{
+    const int64_t now{10000};
+    const auto header_at{[](int64_t time) { CBlockHeader header; header.nTime = time; return header; }};
+
+    // Exactly at the limit is not too new.
+    BOOST_CHECK(!pos_presync::FutureHeaderWait({header_at(now + 180)}, now, 180, 120));
+    BOOST_CHECK_EQUAL(*pos_presync::FutureHeaderWait({header_at(now + 181)}, now, 180, 120), 1);
+    BOOST_CHECK_EQUAL(*pos_presync::FutureHeaderWait({header_at(now + 300)}, now, 180, 120), 120);
+    BOOST_CHECK(!pos_presync::FutureHeaderWait({header_at(now + 301)}, now, 180, 120));
+    // The first header that is too new decides: the ones after it build on it.
+    BOOST_CHECK_EQUAL(*pos_presync::FutureHeaderWait({header_at(now), header_at(now + 190), header_at(now + 250)}, now, 180, 120), 10);
+    BOOST_CHECK(!pos_presync::FutureHeaderWait({}, now, 180, 120));
+}
+
+BOOST_AUTO_TEST_CASE(segment_is_handed_over_only_on_anchor_match)
+{
+    const auto chain{MakeChain(BASE_HASH, 10)};
+    const MapCheckpoints anchors{{5, chain[4].GetHash()}, {8, chain[7].GetHash()}};
+    SegmentCollector collector{anchors, NO_LIMIT};
+
+    BOOST_REQUIRE(collector.Start(PEER, Anchor{0, BASE_HASH}));
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 0, 3)) == AddResult::NEED_MORE);
+    BOOST_CHECK(collector.TakeSegment().headers.empty());
+    BOOST_CHECK_EQUAL(collector.Tail().height, 3);
+
+    // The message runs past the anchor: the excess is dropped.
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 3, 9)) == AddResult::SEGMENT_READY);
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 5, 8)) == AddResult::NOT_CONTINUING);
+
+    const auto first{collector.TakeSegment()};
+    BOOST_REQUIRE_EQUAL(first.headers.size(), 5U);
+    BOOST_CHECK_EQUAL(first.first_height, 1);
+    for (size_t i = 0; i < first.headers.size(); ++i) {
+        BOOST_CHECK(first.hashes[i] == chain[i].GetHash());
+        BOOST_CHECK(first.headers[i].GetHash() == chain[i].GetHash());
+        BOOST_CHECK(first.headers[i].posBlockSig == chain[i].posBlockSig);
+        BOOST_CHECK_EQUAL(first.headers[i].IsProofOfStake(), chain[i].IsProofOfStake());
+    }
+
+    // Collection continues from the anchor with the same peer.
+    BOOST_CHECK(collector.IsActive());
+    BOOST_CHECK_EQUAL(collector.Tail().height, 5);
+    BOOST_CHECK_EQUAL(collector.BufferedCount(), 0U);
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 5, 10)) == AddResult::SEGMENT_READY);
+    BOOST_CHECK_EQUAL(collector.TakeSegment().headers.size(), 3U);
+
+    // No anchor is left above the last one.
+    BOOST_CHECK(!collector.IsActive());
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 8, 10)) == AddResult::WRONG_PEER);
+}
+
+BOOST_AUTO_TEST_CASE(start_needs_an_anchor_above_the_base)
+{
+    const MapCheckpoints anchors{{5, uint256S("01")}};
+    SegmentCollector collector{anchors, NO_LIMIT};
+
+    BOOST_CHECK(!collector.Start(PEER, Anchor{5, uint256S("01")}));
+    BOOST_CHECK(!collector.IsActive());
+}
+
+BOOST_AUTO_TEST_CASE(unusable_messages_leave_the_buffer_untouched)
+{
+    const auto chain{MakeChain(BASE_HASH, 10)};
+    const MapCheckpoints anchors{{10, chain[9].GetHash()}};
+    SegmentCollector collector{anchors, NO_LIMIT};
+    BOOST_REQUIRE(collector.Start(PEER, Anchor{0, BASE_HASH}));
+    BOOST_REQUIRE(collector.Add(PEER, Slice(chain, 0, 4)) == AddResult::NEED_MORE);
+    const size_t bytes{collector.BufferedBytes()};
+
+    BOOST_CHECK(collector.Add(PEER + 1, Slice(chain, 4, 6)) == AddResult::WRONG_PEER);
+    BOOST_CHECK(collector.Add(PEER, {}) == AddResult::NOT_CONTINUING);
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 5, 7)) == AddResult::NOT_CONTINUING);
+
+    auto broken{Slice(chain, 4, 8)};
+    broken[2].hashPrevBlock = uint256S("cc");
+    BOOST_CHECK(collector.Add(PEER, broken) == AddResult::NON_CONTINUOUS);
+
+    BOOST_CHECK_EQUAL(collector.BufferedBytes(), bytes);
+    BOOST_CHECK_EQUAL(collector.Tail().height, 4);
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 4, 10)) == AddResult::SEGMENT_READY);
+}
+
+BOOST_AUTO_TEST_CASE(anchor_mismatch_discards_the_segment)
+{
+    const auto chain{MakeChain(BASE_HASH, 6)};
+    const auto forged{MakeChain(BASE_HASH, 6, /*salt=*/1)};
+    const MapCheckpoints anchors{{6, chain[5].GetHash()}};
+    SegmentCollector collector{anchors, NO_LIMIT};
+
+    BOOST_REQUIRE(collector.Start(PEER, Anchor{0, BASE_HASH}));
+    BOOST_CHECK(collector.Add(PEER, Slice(forged, 0, 3)) == AddResult::NEED_MORE);
+    BOOST_CHECK(collector.Add(PEER, Slice(forged, 3, 6)) == AddResult::ANCHOR_MISMATCH);
+
+    BOOST_CHECK(!collector.IsActive());
+    BOOST_CHECK_EQUAL(collector.BufferedBytes(), 0U);
+    BOOST_CHECK(collector.TakeSegment().headers.empty());
+}
+
+BOOST_AUTO_TEST_CASE(byte_limit_discards_the_segment)
+{
+    const auto chain{MakeChain(BASE_HASH, 10)};
+    const MapCheckpoints anchors{{10, chain[9].GetHash()}};
+    SegmentCollector collector{anchors, /*max_bytes=*/400};
+
+    BOOST_REQUIRE(collector.Start(PEER, Anchor{0, BASE_HASH}));
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 0, 2)) == AddResult::NEED_MORE);
+    BOOST_CHECK(collector.Add(PEER, Slice(chain, 2, 9)) == AddResult::TOO_LARGE);
+    BOOST_CHECK(!collector.IsActive());
+    BOOST_CHECK_EQUAL(collector.BufferedBytes(), 0U);
+}
+
+BOOST_AUTO_TEST_CASE(anchored_hashes)
+{
+    pos_presync::ClearAnchored();
+    BOOST_CHECK(!pos_presync::IsAnchoredHeader(uint256S("01")));
+
+    pos_presync::MarkAnchored({uint256S("01"), uint256S("02")});
+    BOOST_CHECK(pos_presync::IsAnchoredHeader(uint256S("01")));
+    BOOST_CHECK(pos_presync::IsAnchoredHeader(uint256S("02")));
+    BOOST_CHECK(!pos_presync::IsAnchoredHeader(uint256S("03")));
+
+    pos_presync::ClearAnchored();
+    BOOST_CHECK(!pos_presync::IsAnchoredHeader(uint256S("01")));
+}
+
+BOOST_AUTO_TEST_CASE(regtest_has_no_anchors_above_genesis)
+{
+    const auto params{CreateChainParams(*m_node.args, CBaseChainParams::REGTEST)};
+    BOOST_CHECK(!pos_presync::NextAnchor(params->Checkpoints().mapCheckpoints, 0));
+    BOOST_CHECK(params->GetConsensus().nMinimumChainWork.IsNull());
+}
+
+BOOST_AUTO_TEST_CASE(pos_signature_size_is_enforced)
+{
+    auto chain{MakeChain(BASE_HASH, 6)};
+    const MapCheckpoints anchors{{6, chain[5].GetHash()}};
+    SegmentCollector collector{anchors, NO_LIMIT};
+    BOOST_REQUIRE(collector.Start(PEER, Anchor{0, BASE_HASH}));
+
+    // The signature is outside the hash: the chain still links and still ends in the anchor.
+    BOOST_REQUIRE(chain[2].IsProofOfStake());
+    auto oversized{chain};
+    oversized[2].posBlockSig.resize(1000);
+    BOOST_CHECK(collector.Add(PEER, oversized) == AddResult::BAD_SIGNATURE);
+    auto missing{chain};
+    missing[2].posBlockSig.clear();
+    BOOST_CHECK(collector.Add(PEER, missing) == AddResult::BAD_SIGNATURE);
+    BOOST_CHECK_EQUAL(collector.BufferedCount(), 0U);
+
+    // Proof-of-work headers carry no signature.
+    BOOST_REQUIRE(chain[0].IsProofOfWork() && chain[0].posBlockSig.empty());
+    BOOST_CHECK(collector.Add(PEER, chain) == AddResult::SEGMENT_READY);
+}
+
+BOOST_AUTO_TEST_CASE(only_tmp_errors_count_as_deferred)
+{
+    BlockValidationState deferred;
+    deferred.Error("tmp-bad-unkown-stake");
+    BOOST_CHECK(pos_presync::IsHeaderDeferred(deferred));
+
+    BlockValidationState failed;
+    failed.Error("out of disk space");
+    BOOST_CHECK(!pos_presync::IsHeaderDeferred(failed));
+
+    BlockValidationState invalid;
+    invalid.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "tmp-forged-reason");
+    BOOST_CHECK(!pos_presync::IsHeaderDeferred(invalid));
+
+    BOOST_CHECK(!pos_presync::IsHeaderDeferred(BlockValidationState{}));
+}
+
+BOOST_AUTO_TEST_CASE(tail_is_retried_when_the_tip_moves)
+{
+    const auto chain{MakeChain(BASE_HASH, 10)};
+    const uint256 tip_a{uint256S("a1")}, tip_b{uint256S("a2")};
+    HeaderTail tail{/*max_headers=*/100};
+    BOOST_CHECK_EQUAL(tail.Owner(), -1);
+    BOOST_CHECK(tail.FrontParent().IsNull());
+
+    BOOST_REQUIRE(tail.Store(PEER, chain, /*first=*/4, /*peer_has_more=*/true, 100s));
+    BOOST_CHECK_EQUAL(tail.Owner(), PEER);
+    BOOST_CHECK(tail.FrontParent() == chain[3].GetHash());
+    BOOST_CHECK(tail.NextChunk(PEER + 1, tip_a, 100s, 3).empty());
+
+    const auto first{tail.NextChunk(PEER, tip_a, 100s, 3)};
+    BOOST_REQUIRE_EQUAL(first.size(), 3U);
+    BOOST_CHECK(first[0].GetHash() == chain[4].GetHash());
+
+    // Nothing was accepted and the tip did not move: wait a second.
+    BOOST_CHECK(tail.NextChunk(PEER, tip_a, 100s, 3).empty());
+    BOOST_CHECK_EQUAL(tail.NextChunk(PEER, tip_a, 101s, 3).size(), 3U);
+    BOOST_CHECK_EQUAL(tail.NextChunk(PEER, tip_b, 101s, 3).size(), 3U);
+
+    // Accepted headers leave the front and the next chunk is due at once.
+    tail.Consumed(2);
+    BOOST_CHECK(tail.FrontParent() == chain[5].GetHash());
+    const auto second{tail.NextChunk(PEER, tip_b, 101s, 10)};
+    BOOST_REQUIRE_EQUAL(second.size(), 4U);
+    BOOST_CHECK(second[0].GetHash() == chain[6].GetHash());
+
+    tail.Consumed(4);
+    BOOST_CHECK(tail.Empty());
+    BOOST_CHECK_EQUAL(tail.Owner(), -1);
+    BOOST_CHECK(tail.PeerHasMore());
+}
+
+BOOST_AUTO_TEST_CASE(held_tail_is_not_replaced)
+{
+    const auto chain{MakeChain(BASE_HASH, 10)};
+    HeaderTail tail{/*max_headers=*/6};
+
+    BOOST_CHECK(!tail.Store(PEER, chain, 10, false, 100s));
+    BOOST_CHECK(!tail.Store(PEER, chain, 3, false, 100s)); // over the limit
+    BOOST_REQUIRE(tail.Store(PEER, chain, 4, /*peer_has_more=*/true, 100s));
+
+    BOOST_CHECK(!tail.Store(PEER + 1, chain, 8, false, 100s));
+    BOOST_CHECK(!tail.Store(PEER, chain, 8, false, 100s));
+    BOOST_CHECK_EQUAL(tail.Owner(), PEER);
+    BOOST_CHECK(tail.PeerHasMore());
+    BOOST_CHECK_EQUAL(tail.NextChunk(PEER, uint256S("a1"), 100s, 10).size(), 6U);
+
+    tail.ForgetPeer(PEER + 1);
+    BOOST_CHECK(!tail.Empty());
+    tail.ForgetPeer(PEER);
+    BOOST_CHECK(tail.Empty());
+    BOOST_CHECK(tail.Store(PEER + 1, chain, 8, false, 100s));
+    tail.Clear();
+    BOOST_CHECK(tail.Store(PEER, chain, 8, false, 100s));
+}
+
+BOOST_AUTO_TEST_SUITE_END()
