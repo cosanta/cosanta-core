@@ -1693,6 +1693,7 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
             GetWalletEvoRPCCommands(),
             GetWalletGovernanceRPCCommands(),
             GetWalletMasternodeRPCCommands(),
+            GetWalletMiningRPCCommands(),
         }) {
             node.wallet_loader->registerOtherRpcs(commands);
         }
