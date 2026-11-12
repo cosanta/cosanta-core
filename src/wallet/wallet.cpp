@@ -2539,7 +2539,7 @@ bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount)
             if (curr_time - out.time < min_age) continue;
 
             // check that it is matured
-            if (out.depth < (wtx->IsCoinBase() ? COINBASE_MATURITY : 10)) continue;
+            if (out.depth < (wtx->IsCoinBase() ? STAKE_COINBASE_MIN_DEPTH : 10)) continue;
 
             wallet_candidates.emplace_back(out_value, wtx, out.outpoint.n);
             coins.emplace(out.outpoint, Coin{});
@@ -2585,7 +2585,7 @@ bool CWallet::MintableCoins()
         const CWalletTx* wtx = GetWalletTx(out.outpoint.hash);
         if (!wtx) continue;
 
-        if (out.depth < (wtx->IsCoinBase() ? COINBASE_MATURITY : 10)) continue;
+        if (out.depth < (wtx->IsCoinBase() ? STAKE_COINBASE_MIN_DEPTH : 10)) continue;
 
         const CAmount out_value = out.txout.nValue;
         if (inputStakeProtect && dmn_types::IsCollateralAmount(out_value)) continue;
