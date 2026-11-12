@@ -17,6 +17,7 @@ extern RecursiveMutex cs_main; // NOLINT(readability-redundant-declaration)
 class CBlockHeader;
 class CBlockIndex;
 class CChain;
+class CCoinsViewCache;
 class CTxMemPool;
 namespace Consensus {
 struct Params;
@@ -50,7 +51,7 @@ bool CheckStakeKernelHash(
 
 // Check kernel hash target and coinstake signature
 // Sets hashProofOfStake on success return
-bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& block, uint256& hashProofOfStake, const Consensus::Params& consensus, const node::BlockManager* blockman = nullptr, const CChain* active_chain = nullptr, const CTxMemPool* mempool = nullptr);
+bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& block, uint256& hashProofOfStake, const Consensus::Params& consensus, const node::BlockManager* blockman = nullptr, const CChain* active_chain = nullptr, const CTxMemPool* mempool = nullptr, CCoinsViewCache* coins_tip = nullptr);
 
 // Header-only stake double-spend guard, extracted from CheckProofOfStake so
 // the walk can be unit-tested directly. Walks the still-unvalidated PoS
