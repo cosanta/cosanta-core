@@ -106,6 +106,7 @@ BASE_SCRIPTS = [
     # vv Tests less than 2m vv
     'mining_getblocktemplate_longpoll.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as https://github.com/bitcoin/bitcoin/issues/6651
     'feature_maxuploadtarget.py',
+    'feature_pos_header_sync.py --legacy-wallet',
     'mempool_updatefromblock.py',
     'mempool_persist.py --descriptors',
     'p2p_quorum_data.py',
