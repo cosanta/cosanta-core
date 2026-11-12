@@ -592,10 +592,8 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
         if (is_active_block(pindex_header_prev)) {
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-unkown-stake");
         } else {
-            // We do not have the previous block, so the block may be valid.
-            // Cosanta: this is a transient error — header validation will
-            // be retried once our local chain progresses past the stake utxo.
-            return state.TransientError("tmp-bad-unkown-stake");
+            // The previous block is missing, so the stake input may still be valid.
+            return state.Error("tmp-bad-unkown-stake");
         }
     }
 
@@ -611,12 +609,8 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
                 return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-stake-mempool",
                                      "stake from mempool");
             } else {
-                // Cosanta: same rationale as the tmp-bad-unkown-stake
-                // branch above — the stake input's containing block is not
-                // yet in our active chain. Mark the failure as transient so
-                // header validation gets retried as we catch up, instead of
-                // being treated as a permanent run-time error.
-                return state.TransientError("tmp-bad-stake-mempool");
+                // The stake input's block may still be missing from the active chain.
+                return state.Error("tmp-bad-stake-mempool");
             }
         }
     }
