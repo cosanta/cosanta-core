@@ -520,9 +520,6 @@ bool CheckStakeKernelHash(
         }
         ss = CDataStream(SER_GETHASH, 0);
         ss << nStakeModifier;
-        if (current.IsProofOfStakeV2()){
-            return true;
-        }
 
         //hash this iteration
         hashProofOfStake = stakeHash(try_time, ss, prevout.n, prevout.hash, nTimeBlockFrom);
