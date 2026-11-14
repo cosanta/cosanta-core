@@ -28,6 +28,7 @@
 #include <pow.h>
 #include <primitives/transaction.h>
 #include <script/signingprovider.h>
+#include <script/standard.h>
 #include <util/moneystr.h>
 #include <util/system.h>
 #include <util/threadnames.h>
@@ -50,6 +51,7 @@
 #include <llmq/context.h>
 #include <llmq/options.h>
 #include <llmq/snapshot.h>
+#include <key_io.h>
 #include <masternode/payments.h>
 #include <masternode/sync.h>
 #include <spork.h>
@@ -258,6 +260,10 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     }
 
     pblock->nVersion = ComputeBlockVersion(pindexPrev, chainparams.GetConsensus(), chainparams.BIP9CheckMasternodesUpgraded(), isPos);
+    if (isPos) {
+        pblock->nVersion &= ~CBlockHeader::POSV2_BITS;
+        pblock->nVersion |= CBlockHeader::POS_BIT;
+    }
     // Non-mainnet only: allow overriding block.nVersion with
     // -blockversion=N to test forking scenarios
     if (chainparams.NetworkIDString() != CBaseChainParams::MAIN) {
@@ -309,7 +315,17 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 
     m_last_block_num_txs = nBlockTx;
     m_last_block_size = nBlockSize;
-    LogPrintf("CreateNewBlock(): total size %u txs: %u fees: %ld sigops %d\n", nBlockSize, nBlockTx, nFees, nBlockSigOps);
+    // The staking thread builds a block every second and almost never finds a stake:
+    // what is said about the block is kept and logged only once a stake is found.
+    std::vector<std::string> pos_block_log;
+    const auto log_block = [&](std::string message) {
+        if (isPos) {
+            pos_block_log.push_back(std::move(message));
+        } else {
+            LogPrintf("%s\n", message);
+        }
+    };
+    log_block(strprintf("CreateNewBlock(): total size %u txs: %u fees: %ld sigops %d", nBlockSize, nBlockTx, nFees, nBlockSigOps));
 
     // Create coinbase transaction.
     CMutableTransaction coinbaseTx;
@@ -375,10 +391,10 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
             }
             if (fV20Active_context) {
                 if (CalcCbTxBestChainlock(m_chainlocks, pindexPrev, cbTx.bestCLHeightDiff, cbTx.bestCLSignature)) {
-                    LogPrintf("CreateNewBlock() h[%d] CbTx bestCLHeightDiff[%d] CLSig[%s]\n", nHeight, cbTx.bestCLHeightDiff, cbTx.bestCLSignature.ToString());
+                    log_block(strprintf("CreateNewBlock() h[%d] CbTx bestCLHeightDiff[%d] CLSig[%s]", nHeight, cbTx.bestCLHeightDiff, cbTx.bestCLSignature.ToString()));
                 } else {
                     // not an error
-                    LogPrintf("CreateNewBlock() h[%d] CbTx failed to find best CL. Inserting null CL\n", nHeight);
+                    log_block(strprintf("CreateNewBlock() h[%d] CbTx failed to find best CL. Inserting null CL", nHeight));
                 }
                 if (!isPos) {
                     set_credit_pool_balance(cbTx);
@@ -393,6 +409,11 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     // get some info back to pass to getblocktemplate
     const MnRewardEra mn_reward_era{GetMnRewardEraAfter(pindexPrev, m_chainstate.m_chainman)};
     m_chain_helper.mn_payments->FillBlockPayments(coinbaseTx, pindexPrev, blockSubsidy, nFees, mn_reward_era, pblocktemplate->voutMasternodePayments, pblocktemplate->voutSuperblockPayments);
+    for (const CTxOut& txout : pblocktemplate->voutMasternodePayments) {
+        CTxDestination dest;
+        ExtractDestination(txout.scriptPubKey, dest);
+        log_block(strprintf("CreateNewBlock() h[%d] masternode payment %lld to %s", nHeight, txout.nValue, EncodeDestination(dest)));
+    }
 
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
     pblocktemplate->vTxFees[0] = -nFees;
@@ -436,14 +457,16 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
                 SetTxPayload(coinbaseTx, cbTx);
             }
 
+            for (const std::string& message : pos_block_log) {
+                LogPrintf("%s\n", message);
+            }
             sign_block = true;
             pblock->CoinBase() = MakeTransactionRef(std::move(coinbaseTx));
             pblocktemplate->vTxFees[1] = 0;
             pblocktemplate->vTxSigOps[1] = GetLegacySigOpCount(*pblock->Stake());
         } else {
-            pblock->vtx.erase(pblock->vtx.begin() + 1);
-            pblocktemplate->vTxFees.erase(pblocktemplate->vTxFees.begin() + 1);
-            pblocktemplate->vTxSigOps.erase(pblocktemplate->vTxSigOps.begin() + 1);
+            // Nothing to stake in this time window. A block without a stake is not worth validating.
+            return nullptr;
         }
 
         pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
@@ -471,7 +494,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     BlockValidationState state;
     if (m_options.test_block_validity && !TestBlockValidity(state, m_chainlocks, m_evoDb, chainparams, m_chainstate, *pblock, pindexPrev, /*fCheckPOW=*/false, /*fCheckMerkleRoot=*/false)) {
         if (isPos) {
-            LogError("%s: TestBlockValidity failed: %s", __func__, state.ToString());
+            LogError("%s: TestBlockValidity failed: %s\n", __func__, state.ToString());
             return nullptr;
         }
         throw std::runtime_error(strprintf("%s: TestBlockValidity failed: %s", __func__, state.ToString()));
@@ -1087,14 +1110,21 @@ void PoSMiner(std::shared_ptr<wallet::CWallet> pwallet, NodeContext& node, CThre
         auto pblocktemplate = ba.CreateNewBlock(coinbaseScript, pwallet, start_block_time, true);
         nLastCoinStakeSearchTime = TicksSinceEpoch<std::chrono::seconds>(NodeClock::now());
 
-        if (!pblocktemplate.get())
+        if (!pblocktemplate.get()) {
+            // No stake in this time window: move on to the next one, as after a failed proof check.
+            start_block_time = std::min<int64_t>(
+                start_block_time + pwallet->nHashDrift,
+                nLastCoinStakeSearchTime + MAX_POS_BLOCK_AHEAD_TIME - MAX_POS_BLOCK_AHEAD_SAFETY_MARGIN
+            );
             continue;
+        }
 
         auto pblock = pblocktemplate->block;
 
         BlockValidationState state;
 
-        if (!CheckProof(state, *pblock, Params().GetConsensus(), &chainstate.m_blockman, &chainstate.m_chain)) {
+        const bool proof_ok = WITH_LOCK(cs_main, return CheckProof(state, *pblock, Params().GetConsensus(), &chainstate.m_blockman, &chainstate.m_chain, /*known_hash=*/nullptr, &chainstate.CoinsTip()));
+        if (!proof_ok) {
             // Mimics limit in pos_kernel.cpp
             start_block_time = std::min<int64_t>(
                 pblock->nTime + pwallet->nHashDrift,

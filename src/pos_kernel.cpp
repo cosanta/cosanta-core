@@ -11,16 +11,27 @@
 #include <arith_uint256.h>
 #include <chain.h>
 #include <chainparams.h>
+#include <coins.h>
 #include <consensus/validation.h>
 #include <db.h>
+#include <index/txindex.h>
 #include <node/blockstorage.h>
 #include <node/transaction.h>
 #include <policy/policy.h>
+#include <pos_header_presync.h>
 #include <pos_kernel.h>
+#include <primitives/block.h>
 #include <script/interpreter.h>
+#include <undo.h>
+#include <util/hasher.h>
 #include <util/system.h>
 #include <util/time.h>
 #include <validation.h>
+
+#include <map>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 using namespace std;
 
@@ -509,9 +520,6 @@ bool CheckStakeKernelHash(
         }
         ss = CDataStream(SER_GETHASH, 0);
         ss << nStakeModifier;
-        if (current.IsProofOfStakeV2()){
-            return true;
-        }
 
         //hash this iteration
         hashProofOfStake = stakeHash(try_time, ss, prevout.n, prevout.hash, nTimeBlockFrom);
@@ -566,8 +574,163 @@ bool HasHeaderOnlyStakeReuse(const CBlockIndex* pindex_prev,
     return false;
 }
 
+// Stake output of a header that extends the active tip, read from the UTXO set
+// so that nodes with and without -txindex accept the same headers.
+static bool LookupStakeInTipCoins(BlockValidationState& state, const COutPoint& prevout,
+                                  const CBlockIndex& header_prev, const CChain& active_chain,
+                                  CCoinsViewCache& coins_tip, CTxOut& stake_out,
+                                  bool& stake_is_coinbase, const CBlockIndex*& pindex_tx)
+    EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
+{
+    // Do not let headers grow the coins cache.
+    const bool was_cached{coins_tip.HaveCoinInCache(prevout)};
+    Coin coin;
+    const bool found{coins_tip.GetCoin(prevout, coin)};
+    if (!was_cached) coins_tip.Uncache(prevout);
+
+    if (found) pindex_tx = active_chain[coin.nHeight];
+    if (!found || pindex_tx == nullptr) {
+        if (&header_prev == active_chain.Tip()) {
+            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-unkown-stake");
+        }
+        // The stake may be created by a block between the tip and this header.
+        return state.Error("tmp-bad-unkown-stake");
+    }
+
+    stake_out = coin.out;
+    stake_is_coinbase = coin.IsCoinBase();
+    return true;
+}
+
+namespace {
+enum class StakeLookup {
+    FOUND,
+    MISSING, //!< the coin did not exist at the fork point
+    UNKNOWN, //!< this node cannot tell
+};
+
+//! Coins spent by one block of the active chain, taken from its undo data.
+struct SpentCoins {
+    uint256 block_hash;
+    //! False when the block could not be looked into; kept so that it is not read from disk again.
+    bool usable{false};
+    std::unordered_map<COutPoint, Coin, SaltedOutpointHasher> coins;
+};
+std::map<int, SpentCoins> g_spent_coins GUARDED_BY(::cs_main);
+size_t g_spent_coins_total GUARDED_BY(::cs_main){0};
+//! Blocks spending more than this are not looked into; their branch is then left unjudged.
+constexpr size_t MAX_SPENT_COINS_PER_BLOCK{20000};
+//! Same, for all remembered blocks together.
+constexpr size_t MAX_SPENT_COINS_TOTAL{200000};
+//! While the tip is this block, blocks at or below the height do not fit: they are not read again.
+struct SpentCoinsFull {
+    uint256 tip_hash;
+    int height{-1};
+};
+SpentCoinsFull g_spent_coins_full GUARDED_BY(::cs_main);
+
+bool LoadSpentCoins(const CBlockIndex& block_index, const Consensus::Params& consensus, SpentCoins& spent)
+    EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
+{
+    if (!(block_index.nStatus & BLOCK_HAVE_DATA) || !(block_index.nStatus & BLOCK_HAVE_UNDO)) return false;
+    CBlock block;
+    CBlockUndo undo;
+    if (!node::ReadBlockFromDisk(block, &block_index, consensus) || !node::UndoReadFromDisk(undo, &block_index)) return false;
+    if (undo.vtxundo.size() + 1 != block.vtx.size()) return false;
+    size_t input_count{0};
+    for (const CTxUndo& tx_undo : undo.vtxundo) input_count += tx_undo.vprevout.size();
+    if (input_count > MAX_SPENT_COINS_PER_BLOCK) return false;
+
+    for (size_t i = 1; i < block.vtx.size(); ++i) {
+        const auto& inputs{block.vtx[i]->vin};
+        const auto& coins{undo.vtxundo[i - 1].vprevout};
+        if (inputs.size() != coins.size()) return false;
+        for (size_t j = 0; j < inputs.size(); ++j) {
+            spent.coins.emplace(inputs[j].prevout, coins[j]);
+        }
+    }
+    return true;
+}
+
+const SpentCoins* ReadSpentCoins(const CBlockIndex& block_index, const Consensus::Params& consensus, int keep_from_height,
+                                 const CBlockIndex& tip)
+    EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
+{
+    const uint256 tip_hash{tip.GetBlockHash()};
+    if (g_spent_coins_full.tip_hash == tip_hash && block_index.nHeight <= g_spent_coins_full.height) return nullptr;
+
+    const auto forget{[](auto it) EXCLUSIVE_LOCKS_REQUIRED(::cs_main) {
+        g_spent_coins_total -= it->second.coins.size();
+        return g_spent_coins.erase(it);
+    }};
+    for (auto it = g_spent_coins.begin(); it != g_spent_coins.end() && it->first < keep_from_height;) it = forget(it);
+    // Blocks above the tip were left behind by a reorganization and would only take up room.
+    for (auto it = g_spent_coins.upper_bound(tip.nHeight); it != g_spent_coins.end();) it = forget(it);
+
+    auto it{g_spent_coins.find(block_index.nHeight)};
+    if (it != g_spent_coins.end() && it->second.block_hash != block_index.GetBlockHash()) {
+        forget(it);
+        it = g_spent_coins.end();
+    }
+    if (it == g_spent_coins.end()) {
+        SpentCoins spent{block_index.GetBlockHash(), false, {}};
+        spent.usable = LoadSpentCoins(block_index, consensus, spent);
+        if (!spent.usable) spent.coins.clear();
+        // Blocks near the tip are needed by every lookup, so room is made at the deep end.
+        // Running out of room is remembered only until the tip moves on.
+        for (auto deep = g_spent_coins.begin(); deep != g_spent_coins.end() && deep->first < block_index.nHeight &&
+                                                g_spent_coins_total + spent.coins.size() > MAX_SPENT_COINS_TOTAL;) {
+            // An unusable block holds no coins: dropping it frees nothing and costs a reread.
+            deep = deep->second.usable ? forget(deep) : std::next(deep);
+        }
+        if (g_spent_coins_total + spent.coins.size() > MAX_SPENT_COINS_TOTAL) {
+            g_spent_coins_full = {tip_hash, block_index.nHeight};
+            return nullptr;
+        }
+        g_spent_coins_total += spent.coins.size();
+        it = g_spent_coins.emplace(block_index.nHeight, std::move(spent)).first;
+    }
+    return it->second.usable ? &it->second : nullptr;
+}
+
+// Stake output of a header on a branch that leaves the active chain below the tip,
+// found without a transaction index: either still unspent at the tip, or spent by
+// one of our blocks above the fork point (the competing branch may stake it too).
+StakeLookup LookupStakeBelowFork(const COutPoint& prevout, const CBlockIndex& fork, const CChain& active_chain,
+                                 CCoinsViewCache& coins_tip, const Consensus::Params& consensus, CTxOut& stake_out,
+                                 bool& stake_is_coinbase, const CBlockIndex*& pindex_tx)
+    EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
+{
+    // Bounded by what a pruned node keeps and by how far back a stake can matter.
+    const int max_depth{std::min<int>(pos_presync::VerifiabilityWindow(Params()), Params().MinBlocksToKeep())};
+    const CBlockIndex* tip{active_chain.Tip()};
+    if (tip->nHeight - fork.nHeight > max_depth) return StakeLookup::UNKNOWN;
+
+    const auto found{[&](const Coin& coin) EXCLUSIVE_LOCKS_REQUIRED(::cs_main) {
+        pindex_tx = active_chain[coin.nHeight];
+        if (pindex_tx == nullptr) return StakeLookup::UNKNOWN;
+        stake_out = coin.out;
+        stake_is_coinbase = coin.IsCoinBase();
+        return StakeLookup::FOUND;
+    }};
+
+    const bool was_cached{coins_tip.HaveCoinInCache(prevout)};
+    Coin unspent;
+    const bool have_unspent{coins_tip.GetCoin(prevout, unspent)};
+    if (!was_cached) coins_tip.Uncache(prevout);
+    if (have_unspent) return found(unspent);
+
+    for (const CBlockIndex* walk = tip; walk != &fork; walk = walk->pprev) {
+        const SpentCoins* spent{ReadSpentCoins(*walk, consensus, tip->nHeight - max_depth, *tip)};
+        if (spent == nullptr) return StakeLookup::UNKNOWN;
+        if (const auto it{spent->coins.find(prevout)}; it != spent->coins.end()) return found(it->second);
+    }
+    return StakeLookup::MISSING;
+}
+} // namespace
+
 // Check kernel hash target and coinstake signature
-bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, uint256& hashProofOfStake, const Consensus::Params& consensus, const node::BlockManager* blockman, const CChain* active_chain, const CTxMemPool* mempool)
+bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, uint256& hashProofOfStake, const Consensus::Params& consensus, const node::BlockManager* blockman, const CChain* active_chain, const CTxMemPool* mempool, CCoinsViewCache* coins_tip)
 {
     if (header.posBlockSig.empty()) {
         return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pos-sig", "missing PoS signature");
@@ -579,28 +742,65 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
 
     COutPoint prevout = header.StakeInput();
 
-    // First try finding the previous transaction in database
-    uint256 txinHashBlock;
-    CTransactionRef txinPrevRef;
+    CTxOut stake_out;
+    bool stake_is_coinbase{false};
     const CBlockIndex* pindex_tx = nullptr;
     const CBlockIndex* pindex_prev = nullptr;
 
-    txinPrevRef = node::GetTransaction(/* block_index */ nullptr, mempool, prevout.hash, consensus, txinHashBlock);
+    bool stake_from_tip_coins{false};
+    bool stake_below_fork_unknown{false};
+    if (coins_tip != nullptr && blockman != nullptr && active_chain != nullptr) {
+        LOCK(::cs_main);
+        const CBlockIndex* pindex_header_prev = blockman->LookupBlockIndex(header.hashPrevBlock);
+        const CBlockIndex* tip = active_chain->Tip();
+        const CBlockIndex* fork = pindex_header_prev != nullptr && tip != nullptr ? active_chain->FindFork(pindex_header_prev) : nullptr;
+        if (fork != nullptr && fork == tip) {
+            if (!LookupStakeInTipCoins(state, prevout, *pindex_header_prev, *active_chain, *coins_tip,
+                                       stake_out, stake_is_coinbase, pindex_tx)) {
+                return false;
+            }
+            stake_from_tip_coins = true;
+        } else if (fork != nullptr) {
+            switch (LookupStakeBelowFork(prevout, *fork, *active_chain, *coins_tip, consensus,
+                                         stake_out, stake_is_coinbase, pindex_tx)) {
+            case StakeLookup::FOUND:
+                stake_from_tip_coins = true;
+                break;
+            case StakeLookup::MISSING:
+                if (pindex_header_prev == fork) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-unkown-stake");
+                }
+                // The stake may be created by a block of the branch that we do not have.
+                return state.Error("tmp-bad-unkown-stake");
+            case StakeLookup::UNKNOWN:
+                stake_below_fork_unknown = true;
+                break;
+            }
+        }
+    }
+
+    // Side branches and callers without a coins view: find the previous transaction in database
+    uint256 txinHashBlock;
+    CTransactionRef txinPrevRef;
+
+    if (!stake_from_tip_coins) {
+        txinPrevRef = node::GetTransaction(/* block_index */ nullptr, mempool, prevout.hash, consensus, txinHashBlock);
+    }
     LOCK(::cs_main);
-    if (!txinPrevRef) {
+    if (!stake_from_tip_coins && !txinPrevRef) {
         const CBlockIndex* pindex_header_prev = blockman ? blockman->LookupBlockIndex(header.hashPrevBlock) : nullptr;
-        if (is_active_block(pindex_header_prev)) {
+        // Without a transaction index a branch too deep to look into cannot be judged.
+        const bool cannot_tell{stake_below_fork_unknown && (!g_txindex || !g_txindex->GetSummary().synced)};
+        if (!cannot_tell && is_active_block(pindex_header_prev)) {
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-unkown-stake");
         } else {
-            // We do not have the previous block, so the block may be valid.
-            // Cosanta: this is a transient error — header validation will
-            // be retried once our local chain progresses past the stake utxo.
-            return state.TransientError("tmp-bad-unkown-stake");
+            // The previous block is missing, so the stake input may still be valid.
+            return state.Error("tmp-bad-unkown-stake");
         }
     }
 
     // Check tx input block is known
-    {
+    if (!stake_from_tip_coins) {
         const CBlockIndex* pindex_lookup = blockman ? blockman->LookupBlockIndex(txinHashBlock) : nullptr;
 
         if (pindex_lookup && (!active_chain || active_chain->Contains(pindex_lookup))) {
@@ -611,14 +811,22 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
                 return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-stake-mempool",
                                      "stake from mempool");
             } else {
-                // Cosanta: same rationale as the tmp-bad-unkown-stake
-                // branch above — the stake input's containing block is not
-                // yet in our active chain. Mark the failure as transient so
-                // header validation gets retried as we catch up, instead of
-                // being treated as a permanent run-time error.
-                return state.TransientError("tmp-bad-stake-mempool");
+                // The stake input's block may still be missing from the active chain.
+                return state.Error("tmp-bad-stake-mempool");
             }
         }
+
+        // Guard against an out-of-range stake output index before dereferencing
+        // vout[prevout.n]. prevout.n comes from the attacker-controlled header
+        // (posStakeN); a crafted header referencing a real transaction hash but
+        // a bogus index would otherwise cause an out-of-bounds read / crash.
+        if (prevout.n >= txinPrevRef->vout.size()) {
+            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pos-input",
+                                 "stake prevout index out of range");
+        }
+
+        stake_out = txinPrevRef->vout[prevout.n];
+        stake_is_coinbase = txinPrevRef->IsCoinBase();
     }
 
     // Header-only chain specific validation
@@ -642,6 +850,10 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
 
             // Check if UTXO is beyond possible fork point
             if (pindex_fork->nHeight < pindex_tx->nHeight) {
+                if (pindex_prev != pindex_fork) {
+                    // Blocks of the branch that we do not have may confirm the same transaction.
+                    return state.Error("tmp-bad-stake-after-fork");
+                }
                 return state.Invalid(BlockValidationResult::BLOCK_INVALID_PREV, "bad-stake-after-fork",
                                     "rogue fork tries to use UTXO from the current chain");
             }
@@ -667,20 +879,11 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
     // such legitimate headers whenever the stake-utxo's containing block
     // happens to land within COINBASE_MATURITY blocks of our local tip even
     // though it is already mature at the actual new-block height.
-    if (txinPrevRef->IsCoinBase() &&
+    if (stake_is_coinbase &&
         ((pindex_prev->nHeight - pindex_tx->nHeight) <= COINBASE_MATURITY)
     ) {
         return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-stake-coinbase-maturity",
                             "coinbase maturity mismatch for stake");
-    }
-
-    // Guard against an out-of-range stake output index before dereferencing
-    // vout[prevout.n]. prevout.n comes from the attacker-controlled header
-    // (posStakeN); a crafted header referencing a real transaction hash but
-    // a bogus index would otherwise cause an out-of-bounds read / crash.
-    if (prevout.n >= txinPrevRef->vout.size()) {
-        return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pos-input",
-                             "stake prevout index out of range");
     }
 
     // Extract stake public key ID and verify block signature
@@ -688,7 +891,7 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
         TxoutType whichType;
         std::vector<std::vector<unsigned char>> vSolutions;
         CKeyID key_id;
-        const auto &spk = txinPrevRef->vout[prevout.n].scriptPubKey;
+        const auto &spk = stake_out.scriptPubKey;
 
         whichType = Solver(spk, vSolutions);
 
@@ -715,6 +918,15 @@ bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& header, 
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-blk-sig",
                              "invalid block signature");
         }
+    }
+
+    // The stake check below takes a transaction. A stake read from the UTXO set
+    // has only its output, so it is placed at the same index of a stand-in.
+    if (stake_from_tip_coins) {
+        CMutableTransaction stake_tx;
+        stake_tx.vout.resize(size_t{prevout.n} + 1);
+        stake_tx.vout[prevout.n] = stake_out;
+        txinPrevRef = MakeTransactionRef(std::move(stake_tx));
     }
 
     unsigned int nInterval = 0;

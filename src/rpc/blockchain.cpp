@@ -666,7 +666,8 @@ static RPCHelpMan getblockheader()
     if (!fVerbose)
     {
         DataStream ssBlock{};
-        ssBlock << pblockindex->GetBlockHeader();
+        // The signature kept in the index is not covered by the hash and can still be replaced.
+        ssBlock << WITH_LOCK(::cs_main, return pblockindex->GetBlockHeader());
         std::string strHex = HexStr(ssBlock);
         return strHex;
     }
@@ -761,7 +762,7 @@ static RPCHelpMan getblockheaders()
         for (; pblockindex; pblockindex = active_chain.Next(pblockindex))
         {
             CDataStream ssBlock(SER_NETWORK, PROTOCOL_VERSION);
-            ssBlock << pblockindex->GetBlockHeader();
+            ssBlock << WITH_LOCK(::cs_main, return pblockindex->GetBlockHeader());
             std::string strHex = HexStr(ssBlock);
             arrHeaders.push_back(strHex);
             if (--nCount <= 0)

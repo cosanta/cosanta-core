@@ -1193,10 +1193,9 @@ public:
      *
      * @param[in]  block The block headers themselves
      * @param[out] state This may be set to an Error state if any error occurred processing them
-     * @param[out] ppindex If set, points to the last accepted header, including on partial failure
-     * @param[out] first_invalid If set, receives the first rejected header or is cleared when all headers are accepted
+     * @param[out] ppindex If set, the pointer will be set to point to the last new block index object for the given headers
      */
-    bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& block, BlockValidationState& state, const CBlockIndex** ppindex = nullptr, CBlockHeader* first_invalid = nullptr) LOCKS_EXCLUDED(cs_main);
+    bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& block, BlockValidationState& state, const CBlockIndex** ppindex = nullptr) LOCKS_EXCLUDED(cs_main);
 
     /**
      * Sufficiently validate a block for disk storage (and store on disk).
@@ -1315,7 +1314,7 @@ bool IsPoSV2EnforcedHeight(int nFirstPoSv2Block);
 bool IsPowActiveHeight(int nBlockHeight, const CSporkManager* sporkman = nullptr);
 
 bool CheckProof(BlockValidationState& state, const CBlockIndex& pindex, const Consensus::Params& params, const node::BlockManager* blockman = nullptr, const CChain* active_chain = nullptr);
-bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Consensus::Params& params, const node::BlockManager* blockman = nullptr, const CChain* active_chain = nullptr, const uint256* known_hash = nullptr);
+bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Consensus::Params& params, const node::BlockManager* blockman = nullptr, const CChain* active_chain = nullptr, const uint256* known_hash = nullptr, CCoinsViewCache* coins_tip = nullptr);
 
 /**
  * Return the expected assumeutxo value for a given height, if one exists.

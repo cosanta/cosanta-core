@@ -6,6 +6,7 @@
 #define BITCOIN_KERNEL_H
 
 #include <consensus/amount.h>
+#include <consensus/consensus.h>
 #include <consensus/validation.h>
 #include <primitives/transaction.h>
 #include <streams.h>
@@ -17,6 +18,7 @@ extern RecursiveMutex cs_main; // NOLINT(readability-redundant-declaration)
 class CBlockHeader;
 class CBlockIndex;
 class CChain;
+class CCoinsViewCache;
 class CTxMemPool;
 namespace Consensus {
 struct Params;
@@ -27,6 +29,9 @@ class BlockManager;
 
 
 static constexpr CAmount MIN_STAKE_AMOUNT = COIN;
+/** Confirmations a coinbase output needs before it can stake: CheckProofOfStake wants
+ *  more than COINBASE_MATURITY blocks between its block and the block being built on. */
+static constexpr int STAKE_COINBASE_MIN_DEPTH{COINBASE_MATURITY + 2};
 static constexpr int64_t MAX_POS_BLOCK_AHEAD_TIME = 180;
 static constexpr int64_t MAX_POS_BLOCK_AHEAD_SAFETY_MARGIN = 5;
 
@@ -50,7 +55,7 @@ bool CheckStakeKernelHash(
 
 // Check kernel hash target and coinstake signature
 // Sets hashProofOfStake on success return
-bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& block, uint256& hashProofOfStake, const Consensus::Params& consensus, const node::BlockManager* blockman = nullptr, const CChain* active_chain = nullptr, const CTxMemPool* mempool = nullptr);
+bool CheckProofOfStake(BlockValidationState& state, const CBlockHeader& block, uint256& hashProofOfStake, const Consensus::Params& consensus, const node::BlockManager* blockman = nullptr, const CChain* active_chain = nullptr, const CTxMemPool* mempool = nullptr, CCoinsViewCache* coins_tip = nullptr);
 
 // Header-only stake double-spend guard, extracted from CheckProofOfStake so
 // the walk can be unit-tested directly. Walks the still-unvalidated PoS

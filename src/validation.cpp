@@ -8,6 +8,7 @@
 #include <config/bitcoin-config.h>
 #endif
 
+#include <pos_header_presync.h>
 #include <pos_kernel.h>
 #include <validation.h>
 #include <spork.h>
@@ -4640,7 +4641,7 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
                                  strprintf("rejected nVersion=0x%08x block", block.nVersion));
     }
 
-    if (fCheckProof && !CheckProof(state, block, consensusParams, &blockman, active_chain, known_hash)) {
+    if (fCheckProof && !CheckProof(state, block, consensusParams, &blockman, active_chain, known_hash, active_chain ? &chainman.ActiveChainstate().CoinsTip() : nullptr)) {
         return false;
     }
 
@@ -4772,9 +4773,7 @@ bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValida
         }
 
         if (!ContextualCheckBlockHeader(block, state, m_blockman, *this, pindexPrev, true, &ActiveChainstate().m_chain, &hash)) {
-            if (!state.IsTransientError()) {
-                LogPrint(BCLog::VALIDATION, "%s: Consensus::ContextualCheckBlockHeader: %s, %s\n", __func__, hash.ToString(), state.ToString());
-            }
+            LogPrint(BCLog::VALIDATION, "%s: Consensus::ContextualCheckBlockHeader: %s, %s\n", __func__, hash.ToString(), state.ToString());
             return false;
         }
 
@@ -4853,31 +4852,21 @@ bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValida
 }
 
 // Exposed wrapper for AcceptBlockHeader
-bool ChainstateManager::ProcessNewBlockHeaders(const std::vector<CBlockHeader>& headers, BlockValidationState& state, const CBlockIndex** ppindex, CBlockHeader* first_invalid)
+bool ChainstateManager::ProcessNewBlockHeaders(const std::vector<CBlockHeader>& headers, BlockValidationState& state, const CBlockIndex** ppindex)
 {
     AssertLockNotHeld(cs_main);
-    if (first_invalid != nullptr) first_invalid->SetNull();
-
     {
         LOCK(cs_main);
-        CBlockIndex* pindex_last = nullptr;
         for (const CBlockHeader& header : headers) {
             CBlockIndex *pindex = nullptr; // Use a temp pindex instead of ppindex to avoid a const_cast
             bool accepted{AcceptBlockHeader(header, state, &pindex, header.GetHash())};
             CheckBlockIndex();
 
             if (!accepted) {
-                if (first_invalid != nullptr) {
-                    *first_invalid = header;
-                }
-                if (ppindex != nullptr) {
-                    *ppindex = pindex_last;
-                }
                 return false;
             }
-            pindex_last = pindex;
-            if (ppindex != nullptr) {
-                *ppindex = pindex_last;
+            if (ppindex) {
+                *ppindex = pindex;
             }
         }
     }
@@ -4961,6 +4950,22 @@ bool ChainstateManager::AcceptBlock(const std::shared_ptr<const CBlock>& pblock,
         }
         LogError("%s: %s\n", __func__, state.ToString());
         return false;
+    }
+
+    // Up to the last checkpoint a header may have come without its stake proof being checked
+    // (see pos_header_presync.h), so its signature is only as good as the peer that sent it. The
+    // block's signature has just been checked against its coinbase and replaces one made with
+    // another key. Above the last checkpoint the header's signature was checked against the
+    // stake owner and stays, whatever the block carries.
+    if (block.IsProofOfStake() && pindex->posBlockSig != block.posBlockSig) {
+        const auto last_anchor{pos_presync::LastAnchor(params.Checkpoints().mapCheckpoints)};
+        if (last_anchor && pindex->nHeight <= last_anchor->height) {
+            CPubKey index_key;
+            if (!index_key.RecoverCompact(hash, pindex->posBlockSig) || index_key != block.BlockPubKey()) {
+                pindex->posBlockSig = block.posBlockSig;
+                m_blockman.m_dirty_blockindex.insert(pindex);
+            }
+        }
     }
 
     // Header is valid/has work, merkle tree is good...RELAY NOW
@@ -6081,7 +6086,7 @@ bool CheckProof(BlockValidationState& state, const CBlockIndex& index, const Con
 }
 
 /** Check PoW or PoS based on actual block **/
-bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Consensus::Params& params, const node::BlockManager* blockman, const CChain* active_chain, const uint256* known_hash) {
+bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Consensus::Params& params, const node::BlockManager* blockman, const CChain* active_chain, const uint256* known_hash, CCoinsViewCache* coins_tip) {
     if (block.IsProofOfWork()) {
         if (!CheckProofOfWork(known_hash ? *known_hash : block.GetHash(), block.nBits, params)) {
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pow-proof", "block proof mismatch");
@@ -6090,8 +6095,10 @@ bool CheckProof(BlockValidationState& state, const CBlockHeader& block, const Co
         return true;
     }
 
+    // The header came out of a segment that hashes to a checkpoint.
+    if (pos_presync::IsAnchoredHeader(block)) return true;
     uint256 hashProofOfStake = uint256();
-    return CheckProofOfStake(state, block, hashProofOfStake, params, blockman, active_chain, nullptr);
+    return CheckProofOfStake(state, block, hashProofOfStake, params, blockman, active_chain, nullptr, coins_tip);
 }
 
 //! Guess how far we are in the verification process at the given block index
