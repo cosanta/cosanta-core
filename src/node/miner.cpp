@@ -200,7 +200,8 @@ static bool CalcCbTxBestChainlock(const chainlock::Chainlocks& chainlocks, const
 }
 
 
-std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn, std::shared_ptr<wallet::CWallet> pwallet, int64_t block_time, bool isPos)
+std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn, std::shared_ptr<wallet::CWallet> pwallet, int64_t block_time, bool isPos,
+                                                               PosV3Search* v3_search)
 {
     const auto time_start{SteadyClock::now()};
 
@@ -261,8 +262,12 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 
     pblock->nVersion = ComputeBlockVersion(pindexPrev, chainparams.GetConsensus(), chainparams.BIP9CheckMasternodesUpgraded(), isPos);
     if (isPos) {
-        pblock->nVersion &= ~CBlockHeader::POSV2_BITS;
-        pblock->nVersion |= CBlockHeader::POS_BIT;
+        if (chainparams.GetConsensus().IsPosV3Height(nHeight)) {
+            pblock->nVersion |= CBlockHeader::POSV2_BITS;
+        } else {
+            pblock->nVersion &= ~CBlockHeader::POSV2_BITS;
+            pblock->nVersion |= CBlockHeader::POS_BIT;
+        }
     }
     // Non-mainnet only: allow overriding block.nVersion with
     // -blockversion=N to test forking scenarios
@@ -443,7 +448,23 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
         const size_t stake_size_budget = block_size_limit > nBlockSize ? block_size_limit - nBlockSize : 0;
         const unsigned int max_block_sigops = MaxBlockSigOps(fDIP0001Active_context);
         const size_t stake_sigops_budget = max_block_sigops > nBlockSigOps ? max_block_sigops - nBlockSigOps : 0;
-        bool fStakeFound = pwallet->CreateCoinStake(pindexPrev, *pblock, coinbaseTx, stake_size_budget, stake_sigops_budget);
+        // From PosV3Height the time and nBits come with the slot the kernel is found in.
+        // The caller chose the search from a tip read earlier: build only if that still holds for this parent.
+        const bool pos_v3{chainparams.GetConsensus().IsPosV3Height(nHeight)};
+        if (pos_v3 != (v3_search != nullptr) || (v3_search && v3_search->prev != pindexPrev->GetBlockHash())) {
+            LogPrint(BCLog::STAKING, "%s: the tip changed while the stake search was prepared\n", __func__);
+            return nullptr;
+        }
+        std::optional<std::vector<PosV3Slot>> v3_slots;
+        if (pos_v3) {
+            v3_slots = PosV3Slots(*pindexPrev, v3_search->first, v3_search->last, chainparams.GetConsensus());
+            if (v3_slots->empty()) {
+                v3_search->no_kernel = true;
+                return nullptr;
+            }
+        }
+        bool fStakeFound = pwallet->CreateCoinStake(pindexPrev, *pblock, coinbaseTx, stake_size_budget, stake_sigops_budget,
+                                                    v3_slots ? &*v3_slots : nullptr, v3_search);
 
         if (fStakeFound) {
             if (fV20Active_context) {
@@ -983,12 +1004,9 @@ void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned
 }
 
 
-void PoSMiner(std::shared_ptr<wallet::CWallet> pwallet, NodeContext& node, CThreadInterrupt &interrupt)
+namespace {
+void StakingPasses(const std::shared_ptr<wallet::CWallet>& pwallet, NodeContext& node, CThreadInterrupt& interrupt)
 {
-    LogPrintf("PoSMiner started\n");
-    util::ThreadRename("cosanta-miner");
-    SetThreadPriority(0);
-
     auto& connman = *Assert(node.connman);
     auto& chainman = *Assert(node.chainman);
     auto& chainstate = chainman.ActiveChainstate();
@@ -1002,6 +1020,7 @@ void PoSMiner(std::shared_ptr<wallet::CWallet> pwallet, NodeContext& node, CThre
     int nMintableLastCheck = 0;
     int last_height = -1;
     int64_t start_block_time = 0;
+    PosV3SlotTracker slot_tracker;
 
     while (!interrupt) {
         auto hash_interval = std::max(pwallet->nHashInterval, (unsigned int)1);
@@ -1096,27 +1115,44 @@ void PoSMiner(std::shared_ptr<wallet::CWallet> pwallet, NodeContext& node, CThre
             continue;
         }
 
-        // For now keep the staking path simple: build the PoS candidate
-        // directly and let CreateCoinStake()/CheckProof decide whether this
-        // pass actually found a valid kernel.
-        start_block_time = std::max<int64_t>(
-            start_block_time,
-            std::max<int64_t>(pindexPrev->GetMedianTimePast() + 1, TicksSinceEpoch<std::chrono::seconds>(NodeClock::now()))
-        );
+        const Consensus::Params& consensus = Params().GetConsensus();
+        const bool pos_v3 = consensus.IsPosV3Height(pindexPrev->nHeight + 1);
+        std::unique_ptr<CBlockTemplate> pblocktemplate;
 
-        //
-        // Create new block
-        //
-        auto pblocktemplate = ba.CreateNewBlock(coinbaseScript, pwallet, start_block_time, true);
-        nLastCoinStakeSearchTime = TicksSinceEpoch<std::chrono::seconds>(NodeClock::now());
-
-        if (!pblocktemplate.get()) {
-            // No stake in this time window: move on to the next one, as after a failed proof check.
-            start_block_time = std::min<int64_t>(
-                start_block_time + pwallet->nHashDrift,
-                nLastCoinStakeSearchTime + MAX_POS_BLOCK_AHEAD_TIME - MAX_POS_BLOCK_AHEAD_SAFETY_MARGIN
+        std::optional<PosV3Search> search;
+        if (pos_v3) {
+            search = slot_tracker.NextRange(*pindexPrev, NodeClock::now(), consensus);
+            nLastCoinStakeSearchTime = TicksSinceEpoch<std::chrono::seconds>(NodeClock::now());
+            if (!search) continue;
+            pblocktemplate = ba.CreateNewBlock(coinbaseScript, pwallet, search->first, true, &*search);
+            if (!pblocktemplate) {
+                // Done slots are not searched again; the stake of a block that failed is left out of the next pass.
+                slot_tracker.Searched(*pindexPrev, *search, consensus);
+                continue;
+            }
+        } else {
+            // For now keep the staking path simple: build the PoS candidate
+            // directly and let CreateCoinStake()/CheckProof decide whether this
+            // pass actually found a valid kernel.
+            start_block_time = std::max<int64_t>(
+                start_block_time,
+                std::max<int64_t>(pindexPrev->GetMedianTimePast() + 1, TicksSinceEpoch<std::chrono::seconds>(NodeClock::now()))
             );
-            continue;
+
+            //
+            // Create new block
+            //
+            pblocktemplate = ba.CreateNewBlock(coinbaseScript, pwallet, start_block_time, true);
+            nLastCoinStakeSearchTime = TicksSinceEpoch<std::chrono::seconds>(NodeClock::now());
+
+            if (!pblocktemplate.get()) {
+                // No stake in this time window: move on to the next one, as after a failed proof check.
+                start_block_time = std::min<int64_t>(
+                    start_block_time + pwallet->nHashDrift,
+                    nLastCoinStakeSearchTime + MAX_POS_BLOCK_AHEAD_TIME - MAX_POS_BLOCK_AHEAD_SAFETY_MARGIN
+                );
+                continue;
+            }
         }
 
         auto pblock = pblocktemplate->block;
@@ -1125,12 +1161,16 @@ void PoSMiner(std::shared_ptr<wallet::CWallet> pwallet, NodeContext& node, CThre
 
         const bool proof_ok = WITH_LOCK(cs_main, return CheckProof(state, *pblock, Params().GetConsensus(), &chainstate.m_blockman, &chainstate.m_chain, /*known_hash=*/nullptr, &chainstate.CoinsTip()));
         if (!proof_ok) {
-            // Mimics limit in pos_kernel.cpp
-            start_block_time = std::min<int64_t>(
-                pblock->nTime + pwallet->nHashDrift,
-                nLastCoinStakeSearchTime + MAX_POS_BLOCK_AHEAD_TIME - MAX_POS_BLOCK_AHEAD_SAFETY_MARGIN
-            );
+            if (search && search->used) slot_tracker.Exclude(*pindexPrev, *search->used);
+            if (!pos_v3) {
+                // Mimics limit in pos_kernel.cpp
+                start_block_time = std::min<int64_t>(
+                    pblock->nTime + pwallet->nHashDrift,
+                    nLastCoinStakeSearchTime + MAX_POS_BLOCK_AHEAD_TIME - MAX_POS_BLOCK_AHEAD_SAFETY_MARGIN
+                );
+            }
 
+            LogPrint(BCLog::STAKING, "%s : proof check failed: %s\n", __func__, state.ToString());
             continue;
         }
 
@@ -1147,8 +1187,32 @@ void PoSMiner(std::shared_ptr<wallet::CWallet> pwallet, NodeContext& node, CThre
             } else {
                 LogPrintf("PoSMiner : block duplicate %s\n", hash.ToString().c_str());
             }
+            // Stored but not connected (it failed to connect): do not stake the same coin and slot again.
+            if (search && search->used && WITH_LOCK(cs_main, return chainstate.m_chain.Tip()) == pindexPrev) {
+                LogPrint(BCLog::STAKING, "%s : block %s was not connected\n", __func__, hash.ToString());
+                slot_tracker.Exclude(*pindexPrev, *search->used);
+            }
         } else {
             LogPrintf("PoSMiner : block is rejected %s\n", hash.ToString().c_str());
+            if (search && search->used) slot_tracker.Exclude(*pindexPrev, *search->used);
+        }
+    }
+}
+} // namespace
+
+void PoSMiner(std::shared_ptr<wallet::CWallet> pwallet, NodeContext& node, CThreadInterrupt &interrupt)
+{
+    LogPrintf("PoSMiner started\n");
+    util::ThreadRename("cosanta-miner");
+    SetThreadPriority(0);
+
+    // An exception (e.g. from CreateNewBlock()) must not take the node down: log it and start the passes
+    // over, which begin with the usual sleep.
+    while (!interrupt) {
+        try {
+            StakingPasses(pwallet, node, interrupt);
+        } catch (const std::exception& e) {
+            LogPrintf("PoSMiner : %s\n", e.what());
         }
     }
 }

@@ -184,6 +184,15 @@ struct Params {
     int64_t nPowTargetTimespan;
     int nPowKGWHeight;
     int nPowDGWHeight;
+    /** A proof-of-stake block at this height or above has a slot-aligned time and the chained 256-bit stake modifier */
+    int PosV3Height{std::numeric_limits<int>::max()};
+    /** From PosV3Height: proof-of-stake block times are multiples of this */
+    int64_t nPosV3SlotSeconds{10};
+    /** From PosV3Height: DGW targets of blocks below PosV3Height are shifted left by this many bits */
+    int nPosV3TargetShift{4};
+    bool IsPosV3Height(int height) const { return height >= PosV3Height; }
+    /** From PosV3Height: how far ahead of the node's own clock a proof-of-stake block time may be */
+    int64_t PosV3FutureTolerance() const { return nPosV3SlotSeconds - 1; }
     std::chrono::seconds PowTargetSpacing() const
     {
         return std::chrono::seconds{nPowTargetSpacing};

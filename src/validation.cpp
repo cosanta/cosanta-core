@@ -45,6 +45,7 @@
 #include <script/script.h>
 #include <script/sigcache.h>
 #include <shutdown.h>
+#include <timedata.h>
 #include <tinyformat.h>
 #include <txdb.h>
 #include <txmempool.h>
@@ -3333,6 +3334,16 @@ void Chainstate::UpdateTip(const CBlockIndex* pindexNew)
         g_best_block_cv.notify_all();
     }
 
+    {
+        // From a day before PosV3Height on, warn when our clock is off by more than the fork's tolerance minus the
+        // error of the peer time samples (whole seconds, plus latency).
+        const Consensus::Params& consensus{params.GetConsensus()};
+        const int64_t blocks_per_day{24 * 60 * 60 / consensus.nPowTargetSpacing};
+        SetStakingClockLimit(pindexNew->nHeight + blocks_per_day >= consensus.PosV3Height ?
+                                 std::optional<int64_t>{std::max<int64_t>(consensus.PosV3FutureTolerance() - 3, 0)} :
+                                 std::nullopt);
+    }
+
     bilingual_str warning_messages;
     if (!this->IsInitialBlockDownload())
     {
@@ -4631,8 +4642,10 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
     if (block.GetBlockTime() <= pindexPrev->GetMedianTimePast())
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "time-too-old", strprintf("block's timestamp is too early %d %d", block.GetBlockTime(), pindexPrev->GetMedianTimePast()));
 
-    const auto max_future_time = NodeClock::now() + std::chrono::seconds{block.IsProofOfStake() ? MAX_POS_BLOCK_AHEAD_TIME : MAX_FUTURE_BLOCK_TIME};
-    if (block.Time() > max_future_time) {
+    if (block.IsProofOfStake() && consensusParams.IsPosV3Height(nHeight)) {
+        if (!CheckPosV3Header(block, *pindexPrev, consensusParams, NodeClock::now(), state)) return false;
+    } else if (const auto max_future_time = NodeClock::now() + std::chrono::seconds{block.IsProofOfStake() ? MAX_POS_BLOCK_AHEAD_TIME : MAX_FUTURE_BLOCK_TIME};
+               block.Time() > max_future_time) {
         return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", strprintf("block timestamp too far in the future %d %d", block.GetBlockTime(), TicksSinceEpoch<std::chrono::seconds>(max_future_time)));
     }
 
