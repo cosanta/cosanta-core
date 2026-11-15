@@ -29,6 +29,8 @@
 #include <cassert>
 #include <map>
 #include <memory>
+#include <optional>
+#include <set>
 #include <vector>
 
 namespace wallet {
@@ -196,8 +198,10 @@ void CWallet::AutocombineCoinStake(const COutPoint& kernel_prevout, const CPubKe
 }
 
 // ppcoin: create coin stake transaction
-bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block, CMutableTransaction& coinbaseTx, size_t max_tx_size, size_t max_sigops)
+bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block, CMutableTransaction& coinbaseTx, size_t max_tx_size, size_t max_sigops,
+                              const std::vector<PosV3Slot>* v3_slots, PosV3Search* v3_search)
 {
+    LOCK(m_stake_mutex);
     // Choose coins to use
     const CAmount nBalance = GetBalance(*this).m_mine_trusted;
 
@@ -226,7 +230,7 @@ bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block
             return false;
         }
         std::sort(setStakeCoins.begin(), setStakeCoins.end(), [](const auto& lhs, const auto& rhs) {
-            return std::get<0>(lhs) > std::get<0>(rhs);
+            return lhs.first > rhs.first;
         });
 
         nLastStakeSetUpdate = GetTime();
@@ -234,16 +238,68 @@ bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block
 
     LogPrint(BCLog::STAKING, "%s : found %u possible stake inputs\n", __func__, static_cast<unsigned int>(setStakeCoins.size()));
 
+    // Copies of what the search needs from the wallet transactions: the kernel is hashed without cs_wallet.
+    struct StakeInput {
+        COutPoint prevout;
+        CTransactionRef tx;
+        std::optional<TxStateConfirmed> conf;
+    };
+    std::vector<StakeInput> stake_inputs;
+    {
+        LOCK(cs_wallet);
+        for (const auto& [value, prevout] : setStakeCoins) {
+            const CWalletTx* wtx = GetWalletTx(prevout.hash);
+            if (!wtx) continue;
+            const auto* conf = wtx->state<TxStateConfirmed>();
+            stake_inputs.push_back({prevout, wtx->tx, conf ? std::make_optional(*conf) : std::nullopt});
+        }
+    }
+
+    // The coins in the order they are tried: below PosV3Height all of them; from it only those with a
+    // kernel, earliest slot first (ties keep the order above), each with its slot.
+    std::vector<std::pair<size_t, size_t>> stake_order;
+    std::optional<uint256> v3_modifier;
+    if (v3_slots) {
+        const Consensus::Params& consensus{Params().GetConsensus()};
+        v3_modifier = GetStakeModifierV3(*pindex_prev, consensus);
+        if (!v3_modifier) {
+            LogPrint(BCLog::STAKING, "%s : no chained stake modifier for block %s\n", __func__, pindex_prev->GetBlockHash().ToString());
+            return false;
+        }
+        std::map<COutPoint, Coin> coins;
+        for (const auto& input : stake_inputs) coins.emplace(input.prevout, Coin{});
+        chain().findCoins(coins);
+        std::vector<size_t> candidate_inputs;
+        std::vector<PosV3StakeCandidate> candidates;
+        for (size_t i = 0; i < stake_inputs.size(); ++i) {
+            const auto& [prevout, tx, conf] = stake_inputs[i];
+            if (coins[prevout].IsSpent()) continue;
+            if (!conf || conf->confirmed_block_height > pindex_prev->nHeight || prevout.n >= tx->vout.size()) continue;
+            const CBlockIndex* coin_index = pindex_prev->GetAncestor(conf->confirmed_block_height);
+            if (!coin_index || coin_index->GetBlockHash() != conf->confirmed_block_hash) continue;
+            candidate_inputs.push_back(i);
+            candidates.push_back({coin_index, tx->vout[prevout.n], prevout});
+        }
+        static const std::set<PosV3Stake> no_exclusions;
+        for (const auto& [candidate, slot] : RankStakeKernelsV3(candidates, *pindex_prev, *v3_slots, *v3_modifier, Params().MinStakeAge(),
+                                                                consensus, v3_search ? v3_search->excluded : no_exclusions)) {
+            stake_order.emplace_back(candidate_inputs[candidate], slot);
+        }
+    } else {
+        for (size_t i = 0; i < stake_inputs.size(); ++i) stake_order.emplace_back(i, 0);
+    }
+
     // NOTE: go from smaller amounts to bigger to increase chance, unlike it was before
-    for (auto iter = setStakeCoins.begin(); iter != setStakeCoins.end(); ++iter) {
+    for (const auto& [input_index, v3_slot] : stake_order) {
         if (ShutdownRequested()) {
             break;
         }
 
         const CBlockIndex* pcoin_index = nullptr;
-        const auto* pWalletTxIn = std::get<1>(*iter);
+        const StakeInput& stake_input = stake_inputs[input_index];
+        const CTransaction& tx_stake = *stake_input.tx;
 
-        COutPoint prevoutStake = COutPoint(pWalletTxIn->GetHash(), std::get<2>(*iter));
+        const COutPoint& prevoutStake = stake_input.prevout;
         LogPrint(BCLog::STAKING, "%s : trying tx=%s n=%u\n", __func__,
                  prevoutStake.hash.ToString(), prevoutStake.n);
 
@@ -255,7 +311,7 @@ bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block
             continue;
         }
 
-        const auto* confirmed = pWalletTxIn->state<TxStateConfirmed>();
+        const auto& confirmed = stake_input.conf;
         if (!confirmed) {
             continue;
         }
@@ -271,11 +327,15 @@ bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block
         uint256 hashProofOfStake;
 
         // iterates each utxo inside of CheckStakeKernelHash()
-        bool fKernelFound = CheckStakeKernelHash(
+        bool fKernelFound = v3_slots ?
+            FindStakeKernelV3(curr_block, *pindex_prev, *pcoin_index, tx_stake.vout[prevoutStake.n], prevoutStake,
+                              {(*v3_slots)[v3_slot]}, *v3_modifier, Params().MinStakeAge(), Params().GetConsensus(),
+                              hashProofOfStake, /*fPrint=*/true).has_value() :
+            CheckStakeKernelHash(
                 curr_block,
                 *pindex_prev,
                 *pcoin_index,
-                *pWalletTxIn->tx,
+                tx_stake,
                 prevoutStake,
                 nHashDrift,
                 false,
@@ -283,6 +343,7 @@ bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block
                 true);
 
         if (fKernelFound) {
+            if (v3_search) v3_search->used = PosV3Stake{prevoutStake, curr_block.nTime};
             // Double check that this will pass time requirements
             const bool too_far_in_past = curr_block.nTime <= pindex_prev->GetMedianTimePast();
             if (too_far_in_past) {
@@ -295,7 +356,7 @@ bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block
 
             std::vector<std::vector<unsigned char>> vSolutions;
             CScript scriptPubKeyOut;
-            const auto& tx_in = pWalletTxIn->tx->vout[prevoutStake.n];
+            const auto& tx_in = tx_stake.vout[prevoutStake.n];
             const auto& scriptPubKeyKernel = tx_in.scriptPubKey;
 
             const TxoutType whichType = Solver(scriptPubKeyKernel, vSolutions);
@@ -403,6 +464,8 @@ bool CWallet::CreateCoinStake(const CBlockIndex* pindex_prev, CBlock& curr_block
         }
     }
 
+    // Every coin with a kernel was tried; from PosV3Height the slots are done.
+    if (v3_search && !ShutdownRequested()) v3_search->no_kernel = true;
     LogPrint(BCLog::STAKING, "%s : no stakes found\n", __func__);
 
     return false;

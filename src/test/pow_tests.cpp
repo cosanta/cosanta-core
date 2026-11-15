@@ -10,6 +10,11 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <functional>
+#include <iterator>
+#include <limits>
+#include <list>
+
 BOOST_FIXTURE_TEST_SUITE(pow_tests, BasicTestingSetup)
 
 /* Test calculation of next difficulty target with DGW */
@@ -48,6 +53,8 @@ BOOST_AUTO_TEST_CASE(get_next_work)
 
     // test special rules for slow blocks on devnet/testnet
     auto dev_consensus = CreateChainParams(*m_node.args, CBaseChainParams::DEVNET)->GetConsensus();
+    // These rules are checked before the proof-of-stake fork (see get_next_work_posv3_transition).
+    dev_consensus.PosV3Height = std::numeric_limits<int>::max();
 
     // Use the recorded mainnet spacing for the DGW vector; devnet defaults to 60 seconds.
     dev_consensus.nPowTargetSpacing = chainParams->GetConsensus().nPowTargetSpacing;
@@ -66,6 +73,168 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, dev_consensus), 0x207fffffU); // Block #123457 has 0x207fffff
     blockHeader.nTime = 1408743289; // Block #123457 (3h)
     BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, dev_consensus), 0x207fffffU); // Block #123457 has 0x207fffff
+}
+
+/* From PosV3Height DGW scales the targets of earlier blocks in its window by 2^nPosV3TargetShift */
+BOOST_AUTO_TEST_CASE(get_next_work_posv3_transition)
+{
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    auto consensus = chainParams->GetConsensus();
+    const int fork{1300000};
+    consensus.PosV3Height = fork;
+    auto no_v3 = consensus;
+    no_v3.PosV3Height = std::numeric_limits<int>::max();
+    BOOST_REQUIRE_EQUAL(consensus.nPosV3TargetShift, 4);
+
+    // 0x1b100000 times 16 is exactly 0x1c010000, so the scaled window can be written out in compact form.
+    const uint32_t pre_bits{0x1b100000};
+    const uint32_t pre_bits_x16{0x1c010000};
+    const uint32_t v3_bits{0x1c00a000};
+    BOOST_REQUIRE(arith_uint256().SetCompact(pre_bits_x16) == arith_uint256().SetCompact(pre_bits) << 4);
+
+    // Blocks from fork - 30 to fork + 30, 120 s apart (the timespan stays inside DGW's clamps).
+    using Chain = std::list<CBlockIndex>;
+    const auto make_chain{[&](Chain& chain, const std::function<uint32_t(int)>& bits_at) {
+        CBlockIndex* prev{nullptr};
+        for (int i = 0; i < 61; ++i) {
+            CBlockIndex& entry{chain.emplace_back()};
+            entry.nHeight = fork - 30 + i;
+            entry.nTime = 1700000000 + 120 * i + (i % 3) * 7;
+            entry.nBits = bits_at(entry.nHeight);
+            entry.pprev = prev;
+            prev = &entry;
+        }
+    }};
+    const auto at{[&](Chain& chain, int height) { return &*std::next(chain.begin(), height - (fork - 30)); }};
+    CBlockHeader header;
+
+    Chain real;
+    make_chain(real, [&](int h) { return h < fork ? pre_bits : v3_bits; });
+
+    // First block at the fork: the whole window is below it, so 16x the old result.
+    Chain all_pre_x16;
+    make_chain(all_pre_x16, [&](int) { return pre_bits_x16; });
+    const uint32_t first_v3{GetNextWorkRequired(at(real, fork - 1), &header, consensus)};
+    BOOST_CHECK_EQUAL(first_v3, GetNextWorkRequired(at(all_pre_x16, fork - 1), &header, no_v3));
+    const arith_uint256 old_target{arith_uint256().SetCompact(GetNextWorkRequired(at(real, fork - 1), &header, no_v3))};
+    const arith_uint256 new_target{arith_uint256().SetCompact(first_v3)};
+    BOOST_CHECK(new_target > (old_target << 4) - (old_target >> 10) && new_target < (old_target << 4) + (old_target >> 10));
+    // The last block below the fork is not affected.
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(at(real, fork - 2), &header, consensus), GetNextWorkRequired(at(real, fork - 2), &header, no_v3));
+
+    // Block fork + 23: its window still holds block fork - 1, which alone is scaled.
+    Chain last_pre_x16;
+    make_chain(last_pre_x16, [&](int h) { return h < fork ? pre_bits_x16 : v3_bits; });
+    const uint32_t mixed{GetNextWorkRequired(at(real, fork + 22), &header, consensus)};
+    BOOST_CHECK_EQUAL(mixed, GetNextWorkRequired(at(last_pre_x16, fork + 22), &header, no_v3));
+    BOOST_CHECK(mixed != GetNextWorkRequired(at(real, fork + 22), &header, no_v3));
+
+    // Block fork + 24: the window holds only blocks from the fork, nothing is scaled.
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(at(real, fork + 23), &header, consensus), GetNextWorkRequired(at(real, fork + 23), &header, no_v3));
+
+    // A scaled target above the limit counts as the limit. Block fork + 23 with the block below the fork at the limit
+    // (0x1e0fffff) and 23 blocks at T = 0x1c00a000, over exactly the target timespan: the window "average" is
+    // (24 * T + powLimit) / 25 = 0x1e00a3d7. Unclamped, 16 * 0x1e0fffff would make it 0x1e0a3d70.
+    BOOST_REQUIRE_EQUAL(UintToArith256(consensus.powLimit).GetCompact(), 0x1e0fffffU);
+    std::vector<CBlockIndex> window(24);
+    for (size_t i = 0; i < window.size(); ++i) {
+        window[i].nHeight = fork - 1 + int(i);
+        window[i].nBits = i == 0 ? 0x1e0fffff : v3_bits;
+        window[i].nTime = 1700000000 + 100 * i;
+        window[i].pprev = i == 0 ? nullptr : &window[i - 1];
+    }
+    window.back().nTime = window.front().nTime + 24 * consensus.nPowTargetSpacing;
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&window.back(), &header, consensus), 0x1e00a3d7U);
+}
+
+/* The window mixes proof-of-work and proof-of-stake blocks; DGW caps with the limit of the block being built */
+BOOST_AUTO_TEST_CASE(get_next_work_posv3_mixed_window)
+{
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    auto consensus = chainParams->GetConsensus();
+    const int fork{1300000};
+    consensus.PosV3Height = fork;
+    auto no_v3 = consensus;
+    no_v3.PosV3Height = std::numeric_limits<int>::max();
+    const arith_uint256 pos_limit{UintToArith256(consensus.posLimit)};
+    BOOST_REQUIRE(pos_limit < UintToArith256(consensus.powLimit));
+
+    CBlockHeader pow_header;
+    CBlockHeader pos_header;
+    pos_header.nVersion = CBlockHeader::POSV2_BITS | 4;
+    BOOST_REQUIRE(!pow_header.IsProofOfStake() && pos_header.IsProofOfStake());
+
+    // Block fork + 23 over exactly the target timespan; its window holds block fork - 1 and 23 blocks at T.
+    const uint32_t v3_bits{0x1c00a000};
+    const auto window_with{[&](uint32_t pre_fork_bits) {
+        std::vector<CBlockIndex> window(24);
+        for (size_t i = 0; i < window.size(); ++i) {
+            window[i].nHeight = fork - 1 + int(i);
+            window[i].nBits = i == 0 ? pre_fork_bits : v3_bits;
+            window[i].nTime = 1700000000 + 100 * i;
+            window[i].pprev = i == 0 ? nullptr : &window[i - 1];
+        }
+        window.back().nTime = window.front().nTime + 24 * consensus.nPowTargetSpacing;
+        return window;
+    }};
+
+    // Below the shifted limit both kinds of block scale the entry by 16.
+    const uint32_t pre_bits{0x1b100000};
+    const uint32_t pre_bits_x16{0x1c010000};
+    auto low{window_with(pre_bits)};
+    auto low_x16{window_with(pre_bits_x16)};
+    for (const CBlockHeader* header : {&pow_header, &pos_header}) {
+        BOOST_CHECK_EQUAL(GetNextWorkRequired(&low.back(), header, consensus), GetNextWorkRequired(&low_x16.back(), header, no_v3));
+    }
+
+    // A proof-of-work block below the fork whose target is above posLimit: for a proof-of-stake block it is kept,
+    // not lowered to posLimit, so the result is not below the one without the fork. Lowered, it would be 0x1d0a3e0a.
+    auto high{window_with(0x1e0fffff)};
+    BOOST_REQUIRE(arith_uint256().SetCompact(0x1e0fffff) > pos_limit);
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&high.back(), &pos_header, consensus), GetNextWorkRequired(&high.back(), &pos_header, no_v3));
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&high.back(), &pos_header, consensus), 0x1e00a3d7U);
+}
+
+/* The testnet relaxation scales the target of a parent below PosV3Height the same way */
+BOOST_AUTO_TEST_CASE(min_difficulty_relaxation_across_posv3)
+{
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::TESTNET);
+    auto consensus = chainParams->GetConsensus();
+    const int fork{1300000};
+    consensus.PosV3Height = fork;
+    BOOST_REQUIRE(consensus.fPowAllowMinDifficultyBlocks);
+    const arith_uint256 limit{UintToArith256(consensus.powLimit)};
+
+    CBlockIndex parent;
+    parent.nBits = 0x1b100000;
+    parent.nTime = 1700000000;
+    const arith_uint256 parent_target{arith_uint256().SetCompact(parent.nBits)};
+    CBlockHeader header;
+    header.nTime = parent.nTime + 4 * consensus.nPowTargetSpacing + 10;
+
+    // The first block at the fork relaxes from 16x the parent's target.
+    parent.nHeight = fork - 1;
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&parent, &header, consensus), arith_uint256{(parent_target << 4) * 10}.GetCompact());
+    // A parent at the fork is not scaled again, and neither is a parent further below it.
+    parent.nHeight = fork;
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&parent, &header, consensus), arith_uint256{parent_target * 10}.GetCompact());
+    parent.nHeight = fork - 2;
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&parent, &header, consensus), arith_uint256{parent_target * 10}.GetCompact());
+
+    // Relaxed beyond the limit, it is the limit.
+    parent.nHeight = fork - 1;
+    parent.nBits = arith_uint256{limit >> 6}.GetCompact();
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&parent, &header, consensus), limit.GetCompact());
+
+    // With devnet's limit of 2^255 - 1 a parent target of 2^252 would overflow: 2^252 << 4 is 2^256, which wraps to zero.
+    const auto dev_params = CreateChainParams(*m_node.args, CBaseChainParams::DEVNET);
+    auto dev = dev_params->GetConsensus();
+    dev.PosV3Height = fork;
+    BOOST_REQUIRE(dev.fPowAllowMinDifficultyBlocks);
+    BOOST_REQUIRE(arith_uint256().SetCompact(0x20100000) == arith_uint256(1) << 252);
+    parent.nBits = 0x20100000;
+    header.nTime = parent.nTime + 4 * dev.nPowTargetSpacing + 10;
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(&parent, &header, dev), UintToArith256(dev.powLimit).GetCompact());
 }
 
 /* Test the constraint on the upper bound for next work */

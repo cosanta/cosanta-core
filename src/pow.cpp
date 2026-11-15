@@ -10,6 +10,7 @@
 #include <primitives/block.h>
 #include <uint256.h>
 
+#include <algorithm>
 #include <math.h>
 
 unsigned int static KimotoGravityWell(const CBlockIndex* pindexLast, const Consensus::Params& params) {
@@ -89,9 +90,17 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const arith_u
 
     const CBlockIndex *pindex = pindexLast;
     arith_uint256 bnPastTargetAvg;
+    // From PosV3Height a proof-of-stake kernel is tested once per slot; scale the targets of earlier blocks up.
+    const bool scale_pre_v3{params.IsPosV3Height(pindexLast->nHeight + 1)};
+    const arith_uint256 bnPreV3ScaleLimit{bnPowLimit >> params.nPosV3TargetShift};
 
     for (unsigned int nCountBlocks = 1; nCountBlocks <= nPastBlocks; nCountBlocks++) {
         arith_uint256 bnTarget = arith_uint256().SetCompact(pindex->nBits);
+        if (scale_pre_v3 && !params.IsPosV3Height(pindex->nHeight)) {
+            // The limit depends on the type of the block being built: a scaled target above it counts as
+            // the limit, a target already above it is kept.
+            bnTarget = bnTarget > bnPreV3ScaleLimit ? std::max(bnTarget, bnPowLimit) : arith_uint256{bnTarget << params.nPosV3TargetShift};
+        }
         if (nCountBlocks == 1) {
             bnPastTargetAvg = bnTarget;
         } else {
@@ -199,7 +208,14 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         }
         // recent block is more than 10 minutes old
         if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing * 4) {
-            arith_uint256 bnNew = arith_uint256().SetCompact(pindexLast->nBits) * 10;
+            arith_uint256 bnLast = arith_uint256().SetCompact(pindexLast->nBits);
+            // Relaxing from a parent below PosV3Height: scale its target as DGW does, or the relaxed block would be harder than a normal one.
+            // With a limit near 2^256 (devnet: 2^255) the shift and the x10 below would overflow; such parents relax to the limit.
+            if (params.IsPosV3Height(pindexLast->nHeight + 1) && !params.IsPosV3Height(pindexLast->nHeight)) {
+                if (bnLast > bnPowLimit / (arith_uint256(10) << params.nPosV3TargetShift)) return bnPowLimit.GetCompact();
+                bnLast <<= params.nPosV3TargetShift;
+            }
+            arith_uint256 bnNew = bnLast * 10;
             if (bnNew > bnPowLimit) {
                 return bnPowLimit.GetCompact();
             }

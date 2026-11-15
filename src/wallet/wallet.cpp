@@ -2539,7 +2539,7 @@ bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount)
             // check that it is matured
             if (out.depth < (wtx->IsCoinBase() ? STAKE_COINBASE_MIN_DEPTH : 10)) continue;
 
-            wallet_candidates.emplace_back(out_value, wtx, out.outpoint.n);
+            wallet_candidates.emplace_back(out_value, out.outpoint);
             coins.emplace(out.outpoint, Coin{});
         }
     }
@@ -2549,9 +2549,7 @@ bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount)
     chain().findCoins(coins);
 
     for (const auto& candidate : wallet_candidates) {
-        const auto* wtx = std::get<1>(candidate);
-        const unsigned int output_index = std::get<2>(candidate);
-        COutPoint outpoint(wtx->tx->GetHash(), output_index);
+        const COutPoint& outpoint = candidate.second;
         const auto coin_it = coins.find(outpoint);
         if (coin_it == coins.end() || coin_it->second.IsSpent()) {
             continue;

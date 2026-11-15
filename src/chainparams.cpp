@@ -257,6 +257,9 @@ public:
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 30;
         consensus.nPowDGWHeight = 40;
+        consensus.PosV3Height = 1078675; // expected approximately 2026-12-07 08:20 UTC
+        consensus.nPosV3SlotSeconds = 10;
+        consensus.nPosV3TargetShift = 4;
         consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = VERSIONBITS_NUM_BITS - 1;
@@ -469,6 +472,9 @@ public:
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 30; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
         consensus.nPowDGWHeight = 40; // TODO: make sure to drop all spork6 related code on next testnet reset
+        consensus.PosV3Height = 888547; // expected approximately 2026-11-17 09:10 UTC
+        consensus.nPosV3SlotSeconds = 10;
+        consensus.nPosV3TargetShift = 4;
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = VERSIONBITS_NUM_BITS - 1;
@@ -669,6 +675,9 @@ public:
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 30; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
         consensus.nPowDGWHeight = 40;
+        consensus.PosV3Height = 78000; // together with nFirstPoSv2Block: the fork needs the stake input format of its blocks from that height
+        consensus.nPosV3SlotSeconds = 10;
+        consensus.nPosV3TargetShift = 4;
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = VERSIONBITS_NUM_BITS - 1;
@@ -926,6 +935,9 @@ public:
         consensus.fPowNoRetargeting = true;
         consensus.nPowKGWHeight = 30; // same as mainnet
         consensus.nPowDGWHeight = 40; // same as mainnet
+        consensus.PosV3Height = std::numeric_limits<int>::max(); // see -testactivationheight
+        consensus.nPosV3SlotSeconds = 10;
+        consensus.nPosV3TargetShift = 4;
         consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains
         consensus.nMinerConfirmationWindow = 144; // Faster than normal for regtest (144 instead of 2016)
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = VERSIONBITS_NUM_BITS - 1;
@@ -1188,6 +1200,14 @@ static void MaybeUpdateHeights(const ArgsManager& args, Consensus::Params& conse
             consensus.MN_RRHeight = int{height};
         } else if (name == "ipv4_optional") {
             consensus.IPv4OptionalHeight = int{height};
+        } else if (name == "posv3") {
+            // The fork needs a parent (its time rules compare with it); the modifier chain starts
+            // POS_V3_MODIFIER_SEED_DEPTH blocks below the last block before it, or at genesis.
+            // Checked against the first proof-of-stake height in UpdatePosParametersFromArgs().
+            if (height < 1) {
+                throw std::runtime_error(strprintf("Invalid height value (%s) for -testactivationheight=name@height.", arg));
+            }
+            consensus.PosV3Height = int{height};
         } else {
             throw std::runtime_error(strprintf("Invalid name (%s) for -testactivationheight=name@height.", arg));
         }
@@ -1267,6 +1287,11 @@ void CRegTestParams::UpdatePosParametersFromArgs(const ArgsManager& args)
         LogPrintf("Setting PoS parameters to firstposblock=%d, stakeminage=%d\n", first_pos_block, min_stake_age);
         nFirstPoSv2Block = first_pos_block;
         nStakeMinAge = min_stake_age;
+    }
+    // From the fork every proof-of-stake block has POSV2_BITS, which is valid only from nFirstPoSv2Block.
+    if (consensus.PosV3Height < static_cast<int64_t>(nFirstPoSv2Block)) {
+        throw std::runtime_error(strprintf("Invalid height value (posv3@%d) for -testactivationheight=name@height: below the first proof-of-stake height %d.",
+                                           consensus.PosV3Height, nFirstPoSv2Block));
     }
 
     for (const std::string& checkpoint : args.GetArgs("-checkpoint")) {
@@ -1535,16 +1560,26 @@ const CChainParams &Params() {
     return *globalChainParams;
 }
 
+//! The fork divides by the slot length and shifts targets by nPosV3TargetShift: values outside these
+//! bounds would be undefined behaviour at the fork height, so the node must not start with them.
+static std::unique_ptr<const CChainParams> CheckPosV3Params(std::unique_ptr<const CChainParams> chain_params)
+{
+    const Consensus::Params& consensus{chain_params->GetConsensus()};
+    assert(consensus.nPosV3SlotSeconds >= 2);
+    assert(consensus.nPosV3TargetShift >= 0 && consensus.nPosV3TargetShift < 32);
+    return chain_params;
+}
+
 std::unique_ptr<const CChainParams> CreateChainParams(const ArgsManager& args, const std::string& chain)
 {
     if (chain == CBaseChainParams::MAIN) {
-        return std::unique_ptr<CChainParams>(new CMainParams());
+        return CheckPosV3Params(std::make_unique<CMainParams>());
     } else if (chain == CBaseChainParams::TESTNET) {
-        return std::unique_ptr<CChainParams>(new CTestNetParams());
+        return CheckPosV3Params(std::make_unique<CTestNetParams>());
     } else if (chain == CBaseChainParams::DEVNET) {
-        return std::unique_ptr<CChainParams>(new CDevNetParams(args));
+        return CheckPosV3Params(std::make_unique<CDevNetParams>(args));
     } else if (chain == CBaseChainParams::REGTEST) {
-        return std::unique_ptr<CChainParams>(new CRegTestParams(args));
+        return CheckPosV3Params(std::make_unique<CRegTestParams>(args));
     }
     throw std::runtime_error(strprintf("%s: Unknown chain %s.", __func__, chain));
 }
@@ -1576,7 +1611,7 @@ void SetupChainParamsOptions(ArgsManager& argsman)
     argsman.AddArg("-llmqtestplatformparams=<size>:<threshold>", "Override the default LLMQ size for the LLMQ_TEST_PLATFORM quorum (default: 3:2, regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-minimumdifficultyblocks=<n>", "The number of blocks that can be mined with the minimum difficulty at the start of a chain (default: 0, devnet-only)", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-powtargetspacing=<n>", "Override the default PowTargetSpacing value in seconds (default: 2.5 minutes, devnet-only)", ArgsManager::ALLOW_ANY | ArgsManager::DISALLOW_NEGATION, OptionsCategory::CHAINPARAMS);
-    argsman.AddArg("-testactivationheight=name@height.", "Set the activation height of 'name' (bip147, bip34, dersig, cltv, csv, brr, dip0001, dip0008, dip0024, v19, v20, mn_rr, ipv4_optional). (regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
+    argsman.AddArg("-testactivationheight=name@height.", "Set the activation height of 'name' (bip147, bip34, dersig, cltv, csv, brr, dip0001, dip0008, dip0024, v19, v20, mn_rr, ipv4_optional, posv3). (regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-vbparams=<deployment>:<start>:<end>(:min_activation_height(:<window>:<threshold/thresholdstart>(:<thresholdmin>:<falloffcoeff>:<mnactivation>)))",
                  "Use given start/end times and min_activation_height for specified version bits deployment (regtest-only). "
                  "Specifying window, threshold/thresholdstart, thresholdmin, falloffcoeff and mnactivation is optional.", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
