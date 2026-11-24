@@ -79,12 +79,14 @@ void TrafficGraphWidget::paintEvent(QPaintEvent *)
 
     if(fMax <= 0.0f) return;
 
-    QColor green = GUIUtil::getThemedQColor(GUIUtil::ThemedColor::GREEN);
-    QColor red = GUIUtil::getThemedQColor(GUIUtil::ThemedColor::RED);
+    const QColor receivedFill = GUIUtil::getThemedQColor(GUIUtil::ThemedColor::TRAFFIC_RECEIVED);
+    const QColor sentFill = GUIUtil::getThemedQColor(GUIUtil::ThemedColor::TRAFFIC_SENT);
+    const QColor receivedColor = QColor::fromRgb(receivedFill.rgb());
+    const QColor sentColor = QColor::fromRgb(sentFill.rgb());
     QColor axisCol(GUIUtil::getThemedQColor(GUIUtil::ThemedColor::DEFAULT));
-    QColor axisCol2;
+    const QColor gridColor = GUIUtil::getThemedQColor(GUIUtil::ThemedColor::TRAFFIC_GRID);
     int h = height() - YMARGIN * 2;
-    painter.setPen(axisCol);
+    painter.setPen(gridColor);
     painter.drawLine(XMARGIN, YMARGIN + h, width() - XMARGIN, YMARGIN + h);
 
     // decide what order of magnitude we are
@@ -96,16 +98,15 @@ void TrafficGraphWidget::paintEvent(QPaintEvent *)
     const float yMarginText = 2.0;
 
     // draw lines
-    painter.setPen(axisCol);
+    painter.setPen(gridColor);
     for(float y = val; y < fMax; y += val) {
         int yy = YMARGIN + h - h * y / fMax;
         painter.drawLine(XMARGIN, yy, width() - XMARGIN, yy);
     }
     // if we drew 3 or fewer lines, break them up at the next lower order of magnitude
     if(fMax / val <= 3.0f) {
-        axisCol2 = axisCol.darker();
         val2 = pow(10.0f, base - 1);
-        painter.setPen(axisCol2);
+        painter.setPen(gridColor.darker());
         int count = 1;
         for(float y = val2; y < fMax; y += val2, count++) {
             // don't overwrite lines drawn above
@@ -121,21 +122,17 @@ void TrafficGraphWidget::paintEvent(QPaintEvent *)
     if(!queue.empty()) {
         painter.setRenderHint(QPainter::Antialiasing);
         QPainterPath pIn;
-        QColor lucentGreen = green;
-        lucentGreen.setAlpha(128);
 
         paintPath(pIn, queue, std::bind(chooseIn, std::placeholders::_1));
-        painter.fillPath(pIn, lucentGreen);
-        painter.setPen(green);
+        painter.fillPath(pIn, receivedFill);
+        painter.setPen(receivedColor);
         painter.drawPath(pIn);
 
         QPainterPath pOut;
-        QColor lucentRed = red;
-        lucentRed.setAlpha(128);
 
         paintPath(pOut, queue, std::bind(chooseOut, std::placeholders::_1));
-        painter.fillPath(pOut, lucentRed);
-        painter.setPen(red);
+        painter.fillPath(pOut, sentFill);
+        painter.setPen(sentColor);
         painter.drawPath(pOut);
         painter.setRenderHint(QPainter::Antialiasing, false);
     }
@@ -150,7 +147,7 @@ void TrafficGraphWidget::paintEvent(QPaintEvent *)
         QRect textRect2 = painter.boundingRect(QRect(XMARGIN, YMARGIN + h - (h * val2 / fMax) - yMarginText, 0, 0), Qt::AlignLeft, QString("%1 %2").arg(val2).arg(units));
         textRect2.translate(0, -textRect2.height());
         painter.fillRect(textRect2, GUIUtil::getThemedQColor(GUIUtil::ThemedColor::BACKGROUND_WIDGET));
-        painter.setPen(axisCol2);
+        painter.setPen(axisCol.darker());
         painter.drawText(textRect2, Qt::AlignLeft, QString("%1 %2").arg(val2).arg(units));
     }
 
@@ -212,11 +209,11 @@ void TrafficGraphWidget::paintEvent(QPaintEvent *)
     painter.drawText(rectInBytes, Qt::AlignRight, GUIUtil::formatBytes(trafficGraphData.getLastBytesIn()));
     painter.drawText(rectOutText, Qt::AlignLeft, strSent);
     painter.drawText(rectOutBytes, Qt::AlignRight, GUIUtil::formatBytes(trafficGraphData.getLastBytesOut()));
-    painter.setPen(green);
-    painter.setBrush(green);
+    painter.setPen(receivedColor);
+    painter.setBrush(receivedColor);
     painter.drawEllipse(rectInMark);
-    painter.setPen(red);
-    painter.setBrush(red);
+    painter.setPen(sentColor);
+    painter.setBrush(sentColor);
     painter.drawEllipse(rectOutMark);
 }
 

@@ -50,9 +50,19 @@
     </qresource>
     <qresource prefix="/css">
         <file alias="general">res/css/general.css</file>
+        <file alias="cosanta">res/css/cosanta.css</file>
         <file alias="Dark">res/css/dark.css</file>
         <file alias="Light">res/css/light.css</file>
         <file alias="Traditional">res/css/traditional.css</file>
+    </qresource>
+    <qresource prefix="/tools/cosanta">
+        <file alias="check">res/css/cosanta-tools/check.png</file>
+        <file alias="partial">res/css/cosanta-tools/partial.png</file>
+        <file alias="btnInfo">res/css/cosanta-tools/info.png</file>
+        <file alias="btnConsole">res/css/cosanta-tools/console.png</file>
+        <file alias="btnNetTraffic">res/css/cosanta-tools/traffic.png</file>
+        <file alias="btnPeers">res/css/cosanta-tools/peers.png</file>
+        <file alias="btnRepair">res/css/cosanta-tools/repair.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file alias="monospace">res/fonts/RobotoMono-Bold.ttf</file>

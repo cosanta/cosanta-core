@@ -99,7 +99,7 @@ ProposalList::ProposalList(QWidget* parent) :
     updateProposalButtons();
 
     // Set up info button
-    ui->btnInfoView->setIcon(style()->standardIcon(QStyle::SP_MessageBoxInformation));
+    updateInfoIcon();
     ui->btnInfoView->setIconSize(QSize(20, 20));
     ui->btnInfoView->setFixedSize(36, 34);
     connect(ui->btnInfoView, &QPushButton::clicked, this, &ProposalList::showProposalInfo);
@@ -116,9 +116,17 @@ void ProposalList::changeEvent(QEvent* event)
 {
     QWidget::changeEvent(event);
     if (event->type() == QEvent::StyleChange) {
+        QTimer::singleShot(0, this, &ProposalList::updateInfoIcon);
         QTimer::singleShot(0, proposalModel, &ProposalModel::refreshIcons);
         QTimer::singleShot(0, this, &ProposalList::updateEmptyPagePalette);
     }
+}
+
+void ProposalList::updateInfoIcon()
+{
+    ui->btnInfoView->setIcon(GUIUtil::getActiveTheme() == "cosanta"
+        ? QIcon(":/tools/cosanta/btnInfo")
+        : style()->standardIcon(QStyle::SP_MessageBoxInformation));
 }
 
 void ProposalList::updateEmptyPagePalette()

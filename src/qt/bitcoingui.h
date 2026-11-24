@@ -209,6 +209,7 @@ private:
 
     /** Timer to update the spinner animation in the status bar periodically */
     QTimer* timerSpinner = nullptr;
+    std::vector<QPixmap> m_spinner_frames;
     /** Start the spinner animation in the status bar if it's not running and if labelBlocksIcon is visible. */
     void startSpinner();
     /** Stop the spinner animation in the status bar */

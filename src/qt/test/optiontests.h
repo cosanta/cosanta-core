@@ -21,6 +21,8 @@ private Q_SLOTS:
     void init(); // called before each test function execution.
     void migrateSettings();
     void integerGetArgBug();
+    void themeSelection_data();
+    void themeSelection();
     void invalidFontSetting();
     void invalidLangSetting();
     void parametersInteraction();

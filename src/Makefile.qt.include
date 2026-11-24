@@ -199,6 +199,7 @@ BITCOIN_QT_H = \
   qt/receivecoinsdialog.h \
   qt/receiverequestdialog.h \
   qt/recentrequeststablemodel.h \
+  qt/res/css/cosantapalette.h \
   qt/rpcconsole.h \
   qt/sendcoinsdialog.h \
   qt/sendcoinsentry.h \
@@ -368,6 +369,13 @@ BITCOIN_QT_CPP += $(BITCOIN_QT_WALLET_CPP)
 endif # ENABLE_WALLET
 
 QT_RES_IMAGES = \
+  qt/res/css/cosanta-tools/check.png \
+  qt/res/css/cosanta-tools/partial.png \
+  qt/res/css/cosanta-tools/console.png \
+  qt/res/css/cosanta-tools/info.png \
+  qt/res/css/cosanta-tools/peers.png \
+  qt/res/css/cosanta-tools/repair.png \
+  qt/res/css/cosanta-tools/traffic.png \
   qt/res/images/arrow_down_dark.png \
   qt/res/images/arrow_down_light.png \
   qt/res/images/arrow_left_dark.png \
@@ -419,6 +427,7 @@ QT_RES_IMAGES = \
   qt/res/images/splash.png
 
 QT_RES_CSS = \
+  qt/res/css/cosanta.css \
   qt/res/css/dark.css \
   qt/res/css/general.css \
   qt/res/css/light.css \

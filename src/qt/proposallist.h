@@ -76,6 +76,7 @@ private:
     void requestForceRefresh();
     void setProposalList(ProposalData&& data);
     void updateEmptyPagePalette();
+    void updateInfoIcon();
     void updateEmptyState();
     void updateInfoTooltip();
     void updateProposalButtons();
