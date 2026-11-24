@@ -1543,12 +1543,6 @@
         <translation>De taal van de gebruikersinterface kan hier ingesteld worden. Deze instelling zal pas van kracht worden nadat %1 herstart wordt.</translation>
     </message>
     <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/projects/p/cosanta/</source>
-        <translation>Is een een taal te kort of een vertaling onvolledig ? Help de vertaling hier:
-https://www.transifex.com/projects/p/cosanta/</translation>
-    </message>
-    <message>
         <source>&amp;Unit to show amounts in:</source>
         <translation>&amp;Eenheid om bedrag in te tonen:</translation>
     </message>

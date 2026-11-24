@@ -663,7 +663,7 @@ std::variant<Dissolution, ProviderTxError> BuildDissolution(const CDeterministic
     }
     if (fee > CProDisTx::MAX_FEE) {
         return Error(ProviderTxErrorCode::INVALID_PARAMETER,
-                     strprintf("fee exceeds the consensus ceiling of %d duffs", CProDisTx::MAX_FEE));
+                     strprintf("fee exceeds the consensus ceiling of %d units", CProDisTx::MAX_FEE));
     }
     const CAmount actor_output = shares[actor_index].amount - penalty - fee;
     if (actor_output < 0) {
@@ -1267,7 +1267,7 @@ ProviderTxResult<SharedSignResult> SignShared(node::NodeContext& node, Wallet& w
         if (!ReturnsPrincipal(*dmn, payload->actorIndex, tx)) {
             return Error(ProviderTxErrorCode::INVALID_PARAMETER,
                          strprintf("dissolution does not return every share's principal to its refund address, "
-                                   "less a fee of at most %d duffs from the actor's share; only dissolutions as "
+                                   "less a fee of at most %d units from the actor's share; only dissolutions as "
                                    "built by \"protx shared_dissolve_prepare\" are signed",
                                    CProDisTx::MAX_FEE));
         }

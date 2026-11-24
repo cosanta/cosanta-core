@@ -4,7 +4,7 @@ Expectations for DNS Seed operators
 Cosanta Core attempts to minimize the level of trust in DNS seeds,
 but DNS seeds still pose a small amount of risk for the network.
 As such, DNS seeds must be run by entities which have some minimum
-level of trust within the Dash community.
+level of trust within the Cosanta community.
 
 Other implementations of Cosanta software may also use the same
 seeds and may be more exposed. In light of this exposure, this
@@ -26,7 +26,7 @@ urgent technical necessity and disclosed.
 3. The results may not be served with a DNS TTL of less than one minute.
 
 4. Any logging of DNS queries should be only that which is necessary
-for the operation of the service or urgent health of the Dash
+for the operation of the service or urgent health of the Cosanta
 network and must not be retained longer than necessary nor disclosed
 to any third party.
 
@@ -42,7 +42,7 @@ details of their operating practices.
 related to the DNS seed operation.
 
 If these expectations cannot be satisfied the operator should
-discontinue providing services and contact the active Dash
+discontinue providing services and contact the active Cosanta
 Core development team.
 
 Behavior outside of these expectations may be reasonable in some

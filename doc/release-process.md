@@ -11,7 +11,7 @@ Before every minor and major release:
 * [ ] Update DIPs with any changes introduced by this release (see [this pull request](https://github.com/dashpay/dips/pull/142) for an example)
 * [ ] Update version in `configure.ac` (don't forget to set `CLIENT_VERSION_IS_RELEASE` to `true`)
 * [ ] Write release notes (see below). To clear the release notes: `cp doc/release-notes-empty-template.md doc/release-notes.md`
-* [ ] Update flatpak [metainfo file](../contrib/flatpak/org.dash.dash-core.metainfo.xml) with latest release tag and estimated release date
+* [ ] Update flatpak [metainfo file](../contrib/flatpak/org.cosanta.cosanta-core.metainfo.xml) with latest release tag and estimated release date
 * [ ] Update the following variables in [`src/chainparams.cpp`](/src/chainparams.cpp) for mainnet and testnet:
   - `nMinimumChainWork` with the "chainwork" value of RPC `getblockheader` using the same height as that selected for the previous step.
   - `defaultAssumeValid` with the output of RPC `getblockhash` using the `height` of `window_final_block_height` above

@@ -1119,8 +1119,8 @@
         <translation>(%1 ล็อค)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>สามารถเปลี่ยนแปลงได้ + / - %1 duff (s) ต่อรายการ</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>สามารถเปลี่ยนแปลงได้ + / - %1 unit (s) ต่อรายการ</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>ธุรกรรมที่มีเอาต์พุตเท่ากับหรือต่ำกว่าจำนวนนี้จะถือว่าเป็น dust เมื่อได้รับจากแหล่งภายนอก</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ The migration process will create a backup of the wallet before migrating. This 
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>แสดง หากพร็อกซี SOCKS5 เป็นค่าเริ่มต้นที่ใช้เพื่อเข้าถึง Peers ผ่านเครือข่ายประเภทนี้</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>ภาษาหายไปหรือแปลไม่สมบูรณ์? ช่วยสนับสนุนการแปลที่นี่:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ For more information on using this console, type %6.
         <translation>บันทึกเดี๋ยวนี้ — ไม่สามารถเริ่มลงทะเบียนได้จนกว่าคุณจะยืนยัน</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>เพิ่มบรรทัดนี้ลงใน dash.conf บนเซิร์ฟเวอร์มาสเตอร์โหนดของคุณ:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>เพิ่มบรรทัดนี้ลงใน cosanta.conf บนเซิร์ฟเวอร์มาสเตอร์โหนดของคุณ:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ For more information on using this console, type %6.
         <translation>บันทึกไว้ในกระเป๋าสตางค์นี้และปรากฏในธุรกรรม หลักประกันยังอยู่ในกระเป๋าสตางค์แต่ถูกล็อกไว้ตราบที่มาสเตอร์โหนดยังลงทะเบียนอยู่</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>ตั้งค่าเซิร์ฟเวอร์มาสเตอร์โหนดของคุณด้วยคีย์ลับของผู้ดำเนินการที่คุณบันทึกไว้ แล้วรีสตาร์ท dashd ที่นั่น</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>ตั้งค่าเซิร์ฟเวอร์มาสเตอร์โหนดของคุณด้วยคีย์ลับของผู้ดำเนินการที่คุณบันทึกไว้ แล้วรีสตาร์ท cosantad ที่นั่น</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,7 +6980,7 @@ For more information on using this console, type %6.
         <translation>ค่าธรรมเนียมการทำธุรกรรม:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>เมื่อมีปริมาณธุรกรรมน้อยกว่าพื้นที่ในบล็อก นักขุดและโหนดรีเลย์อาจบังคับใช้ค่าธรรมเนียมขั้นต่ำ การจ่ายเฉพาะค่าธรรมเนียมขั้นต่ำนี้ถือว่าใช้ได้ แต่โปรดทราบว่าสิ่งนี้อาจส่งผลให้ธุรกรรมไม่ได้รับการยืนยันเมื่อมีความต้องการธุรกรรม Cosanta มากกว่าที่เครือข่ายจะสามารถดำเนินการได้</translation>
     </message>
     <message>
@@ -7002,8 +6996,8 @@ For more information on using this console, type %6.
         <translation>การยืนยันเวลาเป้าหมาย</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>หากค่าธรรมเนียมที่กำหนดเองถูกตั้งค่าเป็น 1000 duffs และการทำธุรกรรมนี้มีเพียง 250 ไบต์   ซึ่ง "ต่อกิโลไบต์" จะจ่ายเพียง 250 duffs ในขณะที่ "อย่างน้อย" จ่าย 1000 duffs สำหรับธุรกรรมที่มีขนาดใหญ่กว่ากิโลไบต์จะต้องจ่ายเป็นกิโลไบต์</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>หากค่าธรรมเนียมที่กำหนดเองถูกตั้งค่าเป็น 1000 units และการทำธุรกรรมนี้มีเพียง 250 ไบต์   ซึ่ง "ต่อกิโลไบต์" จะจ่ายเพียง 250 units ในขณะที่ "อย่างน้อย" จ่าย 1000 units สำหรับธุรกรรมที่มีขนาดใหญ่กว่ากิโลไบต์จะต้องจ่ายเป็นกิโลไบต์</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ For more information on using this console, type %6.
         <translation>คัดลอก</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>เพิ่มบรรทัดนี้ลงใน dash.conf บนเซิร์ฟเวอร์มาสเตอร์โหนด:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>เพิ่มบรรทัดนี้ลงใน cosanta.conf บนเซิร์ฟเวอร์มาสเตอร์โหนด:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ For more information on using this console, type %6.
         <translation>ผู้ที่รันโหนด</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>ตั้งค่าเซิร์ฟเวอร์มาสเตอร์โหนดด้วยคีย์ลับของผู้ดำเนินการ แล้วรีสตาร์ท dashd ที่นั่น</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>ตั้งค่าเซิร์ฟเวอร์มาสเตอร์โหนดด้วยคีย์ลับของผู้ดำเนินการ แล้วรีสตาร์ท cosantad ที่นั่น</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

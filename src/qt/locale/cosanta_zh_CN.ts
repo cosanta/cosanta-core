@@ -1119,8 +1119,8 @@
         <translation>(%1 锁定)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>每笔输入可能会有 +/- %1个duff(s)的偏差.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>每笔输入可能会有 +/- %1个unit(s)的偏差.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ The migration process will create a backup of the wallet before migrating. This 
         <translation>从外部来源收到的输出等于或低于此金额的交易将被视为粉尘。</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ The migration process will create a backup of the wallet before migrating. This 
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>如果是使用提供的默认SOCKS5代理来连接到节点就加以显示。</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>缺少相关语言或翻译不完整？请到这里协助翻译：
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -3726,7 +3720,7 @@ https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>0 COSA / 0 Rounds</source>
-        <translation>0 Cosanta / 0 循环数</translation>
+        <translation>0 COSA / 0 循环数</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -6290,8 +6284,8 @@ For more information on using this console, type %6.
         <translation>请立即保存——确认之前无法开始注册。</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>请将这一行添加到您主节点服务器上的 dash.conf 中：</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>请将这一行添加到您主节点服务器上的 cosanta.conf 中：</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ For more information on using this console, type %6.
         <translation>它已记录在此钱包中，并显示在“交易”下。抵押品仍留在钱包中，但在主节点注册期间处于锁定状态。</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>请使用您保存的运营者私钥配置您的主节点服务器，然后在那里重新启动 dashd。</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>请使用您保存的运营者私钥配置您的主节点服务器，然后在那里重新启动 cosantad。</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,7 +6980,7 @@ For more information on using this console, type %6.
         <translation>交易手续费：</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>当交易量小于区块空间时, 矿工和中继节点或许会强制收取最低费用. 仅支付最低费用也可以, 但请注意, 一旦Cosanta交易的需求超出了网络的处理能力, 则会导致这笔交易永远无法被确认.</translation>
     </message>
     <message>
@@ -7002,8 +6996,8 @@ For more information on using this console, type %6.
         <translation>确认时间目标：</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>如果自定手续费设定为1000 duffs，而交易信息只有250字节的话，那么选择"每千字节"就只会支付250 duffs的手续费，&lt;br /&gt;而"至少"会支付1000 duffs。但如果交易信息大于一千字节,那么两者都要按每千字节付费。</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>如果自定手续费设定为1000 units，而交易信息只有250字节的话，那么选择"每千字节"就只会支付250 units的手续费，&lt;br /&gt;而"至少"会支付1000 units。但如果交易信息大于一千字节,那么两者都要按每千字节付费。</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ For more information on using this console, type %6.
         <translation>复制</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>请将这一行添加到主节点服务器上的 dash.conf 中：</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>请将这一行添加到主节点服务器上的 cosanta.conf 中：</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ For more information on using this console, type %6.
         <translation>运行节点的人</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>请使用运营者私钥配置主节点服务器，然后在那里重新启动 dashd。</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>请使用运营者私钥配置主节点服务器，然后在那里重新启动 cosantad。</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

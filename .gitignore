@@ -160,6 +160,7 @@ cmake-build-debug
 
 # clang-check
 *.plist
+!contrib/init/org.cosanta.cosantad.plist
 
 dist/
 

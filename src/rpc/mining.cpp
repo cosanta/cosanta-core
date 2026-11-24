@@ -501,7 +501,7 @@ static RPCHelpMan prioritisetransaction()
         "Accepts the transaction into mined blocks at a higher (or lower) priority\n",
         {
             {"txid", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The transaction id."},
-            {"fee_delta", RPCArg::Type::NUM, RPCArg::Optional::NO, "The fee value (in duffs) to add (or subtract, if negative).\n"
+            {"fee_delta", RPCArg::Type::NUM, RPCArg::Optional::NO, "The fee value (in units) to add (or subtract, if negative).\n"
     "                  Note, that this value is not a fee rate. It is a value to modify absolute fee of the TX.\n"
     "                  The fee is not actually paid, only the algorithm for selecting transactions into a block\n"
     "                  considers the transaction as it would have paid a higher (or lower) fee."},
@@ -615,7 +615,7 @@ static RPCHelpMan getblocktemplate()
                         {
                             {RPCResult::Type::NUM, "", "transactions before this one (by 1-based index in 'transactions' list) that must be present in the final block if this one is"},
                         }},
-                        {RPCResult::Type::NUM, "fee", "difference in value between transaction inputs and outputs (in duffs); for coinbase transactions, this is a negative Number of the total collected block fees (ie, not including the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there isn't one"},
+                        {RPCResult::Type::NUM, "fee", "difference in value between transaction inputs and outputs (in units); for coinbase transactions, this is a negative Number of the total collected block fees (ie, not including the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there isn't one"},
                         {RPCResult::Type::NUM, "sigops", "total number of SigOps, as counted for purposes of block limits; if key is not present, sigop count is unknown and clients MUST NOT assume there aren't any"},
                     }},
                 }},
@@ -623,7 +623,7 @@ static RPCHelpMan getblocktemplate()
                 {
                     {RPCResult::Type::STR_HEX, "key", "values must be in the coinbase (keys may be ignored)"},
                 }},
-                {RPCResult::Type::NUM, "coinbasevalue", "maximum allowable input to coinbase transaction, including the generation award and transaction fees (in duffs)"},
+                {RPCResult::Type::NUM, "coinbasevalue", "maximum allowable input to coinbase transaction, including the generation award and transaction fees (in units)"},
                 {RPCResult::Type::STR, "longpollid", "an id to include with a request to longpoll on an update to this template"},
                 {RPCResult::Type::STR, "target", "The hash target"},
                 {RPCResult::Type::NUM_TIME, "mintime", "The minimum timestamp appropriate for the next block time, expressed in " + UNIX_EPOCH_TIME},

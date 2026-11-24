@@ -1119,8 +1119,8 @@
         <translation>(%1 được khoá)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Có thể thay đổi +/- %1 duff(s) cho mỗi đầu vào.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Có thể thay đổi +/- %1 unit(s) cho mỗi đầu vào.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ Quá trình di chuyển sẽ tạo một bản sao lưu của ví trước khi d
         <translation>Các giao dịch có đầu ra bằng hoặc thấp hơn số tiền này sẽ được coi là bụi khi nhận từ nguồn bên ngoài.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ Quá trình di chuyển sẽ tạo một bản sao lưu của ví trước khi d
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Hiển thị nếu proxy SOCKS5 mặc định được cung cấp để dùng tiếp cận các thiết bị ngang hàng thông qua loại mạng này.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Thiếu ngôn ngữ hoặc bản dịch chưa hoàn chỉnh? Giúp đóng góp bản dịch tại đây:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ Nhập %5 để xem tổng quan về các lệnh có sẵn.
         <translation>Hãy lưu ngay bây giờ — không thể bắt đầu đăng ký cho đến khi bạn xác nhận.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Thêm dòng này vào dash.conf trên máy chủ masternode của bạn:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Thêm dòng này vào cosanta.conf trên máy chủ masternode của bạn:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Nhập %5 để xem tổng quan về các lệnh có sẵn.
         <translation>Nó được ghi trong ví này và hiển thị ở mục Giao dịch. Tài sản thế chấp vẫn nằm trong ví nhưng bị khóa trong thời gian masternode còn được đăng ký.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Hãy cấu hình máy chủ masternode của bạn với khóa bí mật của nhà vận hành mà bạn đã lưu, rồi khởi động lại dashd ở đó.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Hãy cấu hình máy chủ masternode của bạn với khóa bí mật của nhà vận hành mà bạn đã lưu, rồi khởi động lại cosantad ở đó.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,8 +6980,8 @@ Nhập %5 để xem tổng quan về các lệnh có sẵn.
         <translation>Phí giao dịch</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
-        <translation>Khi có ít giao dịch hơn không gian trong các khối, thợ đào cũng như các nút chuyển tiếp có thể áp dụng mức phí tối thiểu. Chỉ trả mức phí tối thiểu này là được, nhưng hãy lưu ý rằng điều này có thể dẫn đến giao dịch không bao giờ được xác nhận khi có nhiều nhu cầu giao dịch dash hơn mức mạng có thể xử lý.</translation>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
+        <translation>Khi có ít giao dịch hơn không gian trong các khối, thợ đào cũng như các nút chuyển tiếp có thể áp dụng mức phí tối thiểu. Chỉ trả mức phí tối thiểu này là được, nhưng hãy lưu ý rằng điều này có thể dẫn đến giao dịch không bao giờ được xác nhận khi có nhiều nhu cầu giao dịch Cosanta hơn mức mạng có thể xử lý.</translation>
     </message>
     <message>
         <source>A too low fee might result in a never confirming transaction (read the tooltip)</source>
@@ -7002,8 +6996,8 @@ Nhập %5 để xem tổng quan về các lệnh có sẵn.
         <translation>Thời gian xác nhận đối tượng:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Nếu mức phí tuỳ chỉnh được đặt là 1000 duff và giao dịch chỉ có 250 byte, thì "theo kilobyte" chỉ trả 250 duff cho phí,&lt;br /&gt;trong khi "ít nhất" phải trả 1000 duff. Cho các giao dịch lớn hơn 1 kilobyte thì cả hai đều trả theo kilobyte.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Nếu mức phí tuỳ chỉnh được đặt là 1000 unit và giao dịch chỉ có 250 byte, thì "theo kilobyte" chỉ trả 250 unit cho phí,&lt;br /&gt;trong khi "ít nhất" phải trả 1000 unit. Cho các giao dịch lớn hơn 1 kilobyte thì cả hai đều trả theo kilobyte.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ Nhập %5 để xem tổng quan về các lệnh có sẵn.
         <translation>Sao chép</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Thêm dòng này vào dash.conf trên máy chủ masternode:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Thêm dòng này vào cosanta.conf trên máy chủ masternode:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Nhập %5 để xem tổng quan về các lệnh có sẵn.
         <translation>người vận hành nút</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Hãy cấu hình máy chủ masternode với khóa bí mật của nhà vận hành và khởi động lại dashd ở đó.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Hãy cấu hình máy chủ masternode với khóa bí mật của nhà vận hành và khởi động lại cosantad ở đó.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>

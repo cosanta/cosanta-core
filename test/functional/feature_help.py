@@ -54,14 +54,14 @@ class HelpTest(BitcoinTestFramework):
         missing_datadir = Path(self.options.tmpdir) / "missing_crashinfo_datadir"
         assert not missing_datadir.exists()
 
-        self.log.info("Start dashd with -printcrashinfo and a nonexistent datadir")
+        self.log.info("Start cosantad with -printcrashinfo and a nonexistent datadir")
         self.nodes[0].start(extra_args=["-printcrashinfo=invalid", f"-datadir={missing_datadir}"])
         output, error = self.get_node_output(ret_code_expected=0)
         assert b'Error while deserializing crash info' in output
         assert_equal(error, b'')
         assert not missing_datadir.exists()
 
-        self.log.info("Start dashd with a nonexistent datadir and no -printcrashinfo")
+        self.log.info("Start cosantad with a nonexistent datadir and no -printcrashinfo")
         self.nodes[0].start(extra_args=[f"-datadir={missing_datadir}"])
         _, error = self.get_node_output(ret_code_expected=1)
         assert b'Specified data directory' in error

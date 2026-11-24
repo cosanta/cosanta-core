@@ -331,7 +331,7 @@ std::string LogCategoryToStr(BCLog::LogFlags category)
     case BCLog::LogFlags::EHF:
         return "ehf";
     case BCLog::LogFlags::DASH:
-        return "dash";
+        return "cosanta";
     case BCLog::LogFlags::NET_NETCONN:
         return "net|netconn";
     /* End Dash */

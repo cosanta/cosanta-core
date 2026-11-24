@@ -1106,7 +1106,7 @@ class AssetLocksTest(DashTestFramework):
         mempool = node_wallet.getrawmempool()
         assert stable_txid in mempool
         assert child_txid in mempool
-        self.log.info("A whole window later the allowance has regenerated to at least the 2000 DASH floor")
+        self.log.info("A whole window later the allowance has regenerated to at least the 2000 COSA floor")
         assert_greater_than_or_equal(node_wallet.getcreditpoolinfo()['currentlimit'], 2000)
 
         self.log.info("Both expired instances fit the cleared limit but are not minable, so neither is locked")

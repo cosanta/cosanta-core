@@ -1119,8 +1119,8 @@
         <translation>(%1 gesperrt)</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Kann um +/- %1 duff(s) pro Eingabe variieren.</translation>
+        <source>Can vary +/- %1 unit(s) per input.</source>
+        <translation>Kann um +/- %1 unit(s) pro Eingabe variieren.</translation>
     </message>
     <message>
         <source>Some coins were unselected because they were spent.</source>
@@ -3316,8 +3316,8 @@ Beim Migrationsvorgang wird vor der Migration eine Sicherung der Wallet erstellt
         <translation>Transaktionen mit Ausgaben in Höhe dieses Betrags oder darunter werden als Dust betrachtet, wenn sie von externen Quellen empfangen werden.</translation>
     </message>
     <message>
-        <source>duffs</source>
-        <translation>Duffs</translation>
+        <source>unit</source>
+        <translation>unit</translation>
     </message>
     <message>
         <source>External Signer (e.g. hardware wallet)</source>
@@ -3434,12 +3434,6 @@ Beim Migrationsvorgang wird vor der Migration eine Sicherung der Wallet erstellt
     <message>
         <source>Shows if the supplied default SOCKS5 proxy is used to reach peers via this network type.</source>
         <translation>Zeigt an, ob der mitgelieferte Standard SOCKS5 Proxy benutzt wird.</translation>
-    </message>
-    <message>
-        <source>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/cosanta/cosanta/</source>
-        <translation>Fehlt eine Sprache oder ist eine Übersetzung unvollständig? Helfen Sie hier, die Übersetzung zu verbessern:
-https://explore.transifex.com/cosanta/cosanta/</translation>
     </message>
     <message>
         <source>Third-party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -6290,8 +6284,8 @@ Für mehr Information, wie diese Konsole zu nutzen ist, %6 tippen.
         <translation>Speichern Sie ihn jetzt – die Registrierung kann erst beginnen, wenn Sie das bestätigt haben.</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on your masternode server:</source>
-        <translation>Fügen Sie diese Zeile in die dash.conf auf Ihrem Masternode-Server ein:</translation>
+        <source>Add this line to cosanta.conf on your masternode server:</source>
+        <translation>Fügen Sie diese Zeile in die cosanta.conf auf Ihrem Masternode-Server ein:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -6674,8 +6668,8 @@ Für mehr Information, wie diese Konsole zu nutzen ist, %6 tippen.
         <translation>Sie ist in dieser Wallet erfasst und erscheint unter „Transaktionen“. Das Collateral bleibt in der Wallet, ist aber gesperrt, solange die Masternode registriert ist.</translation>
     </message>
     <message>
-        <source>Configure your masternode server with the operator secret key you saved, then restart dashd there.</source>
-        <translation>Konfigurieren Sie Ihren Masternode-Server mit dem gespeicherten geheimen Betreiber-Schlüssel und starten Sie dashd dort neu.</translation>
+        <source>Configure your masternode server with the operator secret key you saved, then restart cosantad there.</source>
+        <translation>Konfigurieren Sie Ihren Masternode-Server mit dem gespeicherten geheimen Betreiber-Schlüssel und starten Sie cosantad dort neu.</translation>
     </message>
     <message>
         <source>Configure your masternode server with the BLS secret key matching the operator public key you provided.</source>
@@ -6986,7 +6980,7 @@ Für mehr Information, wie diese Konsole zu nutzen ist, %6 tippen.
         <translation>Transaktionsgebühr:</translation>
     </message>
     <message>
-        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for dash transactions than the network can process.</source>
+        <source>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for Cosanta transactions than the network can process.</source>
         <translation>Wenn das Transaktionsvolumen geringer ist als der Platz in den Blöcken, können sowohl die Miner als auch die Relais-Nodes eine Mindestgebühr erheben. Es ist in Ordnung, nur diese Mindestgebühr zu zahlen, aber seien Sie sich bewusst, dass dies dazu führen kann, dass eine Transaktion nie bestätigt wird, sobald es mehr Nachfrage nach Cosanta-Transaktionen gibt, als das Netzwerk verarbeiten kann.</translation>
     </message>
     <message>
@@ -7002,8 +6996,8 @@ Für mehr Information, wie diese Konsole zu nutzen ist, %6 tippen.
         <translation>Bestätigungsziel:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Wenn die benutzerdefinierten Gebühren auf 1000 duffs gesetzt sind und eine Transaktion hat nur 250 Bytes, dann kostet "pro Kilobyte" nur 250 duffs Gebühren,&lt;br/&gt; während "mindestens" 1000 duffs kostet. Transaktionen größer als 1 Kilobyte werden immer pro Kilobyte bezahlt.</translation>
+        <source>If the custom fee is set to 1000 unit and the transaction is only 250 bytes, then "per kilobyte" only pays 250 unit in fee,&lt;br /&gt;while "at least" pays 1000 unit. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Wenn die benutzerdefinierten Gebühren auf 1000 units gesetzt sind und eine Transaktion hat nur 250 Bytes, dann kostet "pro Kilobyte" nur 250 units Gebühren,&lt;br/&gt; während "mindestens" 1000 units kostet. Transaktionen größer als 1 Kilobyte werden immer pro Kilobyte bezahlt.</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -7730,8 +7724,8 @@ Für mehr Information, wie diese Konsole zu nutzen ist, %6 tippen.
         <translation>Kopieren</translation>
     </message>
     <message>
-        <source>Add this line to dash.conf on the masternode server:</source>
-        <translation>Fügen Sie diese Zeile in die dash.conf auf dem Masternode-Server ein:</translation>
+        <source>Add this line to cosanta.conf on the masternode server:</source>
+        <translation>Fügen Sie diese Zeile in die cosanta.conf auf dem Masternode-Server ein:</translation>
     </message>
     <message>
         <source>The invitation you are about to send contains only the public key.</source>
@@ -8142,8 +8136,8 @@ Für mehr Information, wie diese Konsole zu nutzen ist, %6 tippen.
         <translation>demjenigen, der den Knoten betreibt</translation>
     </message>
     <message>
-        <source>Configure the masternode server with the operator secret key and restart dashd there.</source>
-        <translation>Konfigurieren Sie den Masternode-Server mit dem geheimen Betreiber-Schlüssel und starten Sie dashd dort neu.</translation>
+        <source>Configure the masternode server with the operator secret key and restart cosantad there.</source>
+        <translation>Konfigurieren Sie den Masternode-Server mit dem geheimen Betreiber-Schlüssel und starten Sie cosantad dort neu.</translation>
     </message>
     <message>
         <source>Send a service update once the node's addresses are ready; it stays inactive until then.</source>
