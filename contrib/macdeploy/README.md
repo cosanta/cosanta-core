@@ -6,7 +6,9 @@ The `macdeployqtplus` script should not be run manually. Instead, after building
 make deploy
 ```
 
-When complete, it will have produced `Cosanta-Core.zip`.
+The archive is named `cosantacore-<version>-<arch>-apple-darwin.zip` using the
+configured version and target architecture. Cosanta Core v24.0.1 for Apple
+Silicon produces `cosantacore-24.0.1-arm64-apple-darwin.zip`.
 
 ## SDK Extraction
 
