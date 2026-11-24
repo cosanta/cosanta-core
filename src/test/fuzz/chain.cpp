@@ -33,7 +33,7 @@ FUZZ_TARGET(chain)
         (void)disk_block_index->IsValid();
     }
 
-    const CBlockHeader block_header = disk_block_index->GetBlockHeader();
+    const CBlockHeader block_header = WITH_LOCK(::cs_main, return disk_block_index->GetBlockHeader());
     (void)CDiskBlockIndex{*disk_block_index};
     (void)disk_block_index->BuildSkip();
 

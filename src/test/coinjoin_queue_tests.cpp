@@ -45,7 +45,7 @@ struct RegisteredMasternodeSetup : public TestChainSetup {
     RegisteredMasternodeSetup() :
         TestChainSetup(DIP3_ACTIVATION_HEIGHT - 2, CBaseChainParams::REGTEST, {"-dip3params=109:500"})
     {
-        auto utxos = BuildSimpleUtxoMap(m_coinbase_txns);
+        auto utxos = FundMasternodeTestChain(*this);
         // Activate DIP3, then register the masternode
         MineBlock({});
         CKey owner_key;

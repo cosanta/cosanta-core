@@ -206,7 +206,9 @@ public:
     uint32_t nNonce{0};
     uint256 posStakeHash{};
     uint32_t posStakeN{0};
-    std::vector<unsigned char> posBlockSig{};
+    // AcceptBlock() can replace this signature after the index entry is published.
+    // Hold cs_main when copying the header from the index.
+    std::vector<unsigned char> posBlockSig GUARDED_BY(::cs_main){};
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     int32_t nSequenceId{0};
@@ -248,7 +250,7 @@ public:
         return ret;
     }
 
-    CBlockHeader GetBlockHeader() const
+    CBlockHeader GetBlockHeader() const EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
     {
         CBlockHeader block;
         block.nVersion = nVersion;
@@ -426,7 +428,7 @@ public:
 
     CDiskBlockIndex() = default;
 
-    explicit CDiskBlockIndex(const CBlockIndex* pindex) :
+    explicit CDiskBlockIndex(const CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(::cs_main) :
         CBlockIndex(*pindex),
         hash(pindex->GetBlockHash()),
         hashPrev(pprev ? pprev->GetBlockHash() : uint256())
@@ -474,7 +476,6 @@ public:
         block.nNonce = nNonce;
         block.posStakeHash = posStakeHash;
         block.posStakeN = posStakeN;
-        block.posBlockSig = posBlockSig;
         return block.GetHash();
     }
 

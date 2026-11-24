@@ -671,7 +671,8 @@ std::optional<QuorumProofChain> QuorumProofBuilder::Build(const CBlockIndex* che
             "checkpoint/target not on chain");
     Require(targetIndex->GetBlockHash() == target.getBlockHash(), "target ChainLock block mismatch");
     auto certificate = [&](const chainlock::CoinbaseChainLock& entry) {
-        return ProofCertificate{uint32_t(entry.height), m_tip->GetAncestor(entry.height)->GetBlockHeader(),
+        const auto* index = m_tip->GetAncestor(entry.height);
+        return ProofCertificate{uint32_t(entry.height), WITH_LOCK(::cs_main, return index->GetBlockHeader()),
                                 entry.Signed().getSig()};
     };
     QuorumProofChain proof;
@@ -684,7 +685,7 @@ std::optional<QuorumProofChain> QuorumProofBuilder::Build(const CBlockIndex* che
         seedLeaves.push_back(SerializeHash(seed));
         if (seed.llmqType == kind && seed.nVersion >= 3) seedHashes.insert(seed.quorumHash);
     }
-    proof.target = {uint32_t(target.getHeight()), targetIndex->GetBlockHeader(), target.getSig()};
+    proof.target = {uint32_t(target.getHeight()), WITH_LOCK(::cs_main, return targetIndex->GetBlockHeader()), target.getSig()};
     auto needed = DetermineChainlockSigningCommitment(targetIndex->nHeight);
     Require(needed.has_value(), "target signer unavailable");
     int32_t later = targetIndex->nHeight;
@@ -724,7 +725,8 @@ std::optional<QuorumProofChain> QuorumProofBuilder::Build(const CBlockIndex* che
         }
         Require(best && predecessor, "no B-only route within proof budget");
         for (int32_t h = mined->nHeight; h < int64_t(best->certificate.height); ++h) {
-            best->ancestors.push_back(m_tip->GetAncestor(h)->GetBlockHeader());
+            const auto* index = m_tip->GetAncestor(h);
+            best->ancestors.push_back(WITH_LOCK(::cs_main, return index->GetBlockHeader()));
         }
         remaining -= best->ancestors.size();
         later = best->certificate.height;
