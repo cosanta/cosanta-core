@@ -94,6 +94,11 @@ namespace GUIUtil
         QR_PIXEL,
         /* Alternative color for black/white icons. White part will be filled with this color by default. */
         ICON_ALTERNATIVE_COLOR,
+        /* Series alpha controls the area fill; the outline and legend are opaque. */
+        TRAFFIC_RECEIVED,
+        TRAFFIC_SENT,
+        TRAFFIC_GRID,
+        CONSOLE_ALERT,
     };
 
     /* Enumeration of possible "styles" */
@@ -111,6 +116,7 @@ namespace GUIUtil
         /* General text styles */
         TS_PRIMARY,
         TS_SECONDARY,
+        TS_CONSOLE_COMMAND,
     };
 
     /** Helper to get colors for various themes which can't be applied via css for some reason */
@@ -122,6 +128,10 @@ namespace GUIUtil
     /** Helper to get an icon colorized with the given color (replaces black) and colorAlternative (replaces white)  */
     QIcon getIcon(const QString& strIcon, ThemedColor color, ThemedColor colorAlternative, const QString& strIconPath = ICONS_PATH);
     QIcon getIcon(const QString& strIcon, ThemedColor color = ThemedColor::BLUE, const QString& strIconPath = ICONS_PATH);
+
+    QIcon getStatusBarIcon(const QString& name, ThemedColor color, const QString& path = ICONS_PATH);
+    enum class StatusBarState { Inactive, Active };
+    QIcon getStatusBarIcon(const QString& name, StatusBarState state, ThemedColor fallback);
 
     /** Helper to set an icon for a button with the given color (replaces black) and colorAlternative (replaces white). */
     void setIcon(QAbstractButton* button, const QString& strIcon, ThemedColor color, ThemedColor colorAlternative, const QSize& size);

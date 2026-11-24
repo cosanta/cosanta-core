@@ -90,8 +90,10 @@ AppearanceWidget::AppearanceWidget(QWidget* parent) :
     ui->setupUi(this);
 
     for (const QString& entry : GUIUtil::listThemes()) {
-        ui->theme->addItem(entry, QVariant(entry));
+        ui->theme->addItem(entry == QStringLiteral("cosanta") ? QStringLiteral("Cosanta") : entry, entry);
     }
+
+    ui->theme->setCurrentIndex(ui->theme->findData(prevTheme));
 
     const auto& known = GUIUtil::knownFonts();
     for (size_t idx{0}; idx < known.size(); idx++) {
@@ -122,8 +124,10 @@ AppearanceWidget::AppearanceWidget(QWidget* parent) :
     connect(ui->moneyFont, &QComboBox::currentTextChanged, [this]() { Q_EMIT appearanceChanged(); });
     connect(ui->moneyFont, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AppearanceWidget::updateMoneyFont);
 
-    connect(ui->theme, &QComboBox::currentTextChanged, this, &AppearanceWidget::updateTheme);
-    connect(ui->theme, &QComboBox::currentTextChanged, [this]() { Q_EMIT appearanceChanged(); });
+    connect(ui->theme, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() {
+        updateTheme(ui->theme->currentData().toString());
+        Q_EMIT appearanceChanged();
+    });
 }
 
 AppearanceWidget::~AppearanceWidget()
@@ -167,7 +171,6 @@ void AppearanceWidget::setModel(OptionsModel* _model)
     if (!_model) return;
 
     mapper->setModel(_model);
-    mapper->addMapping(ui->theme, OptionsModel::Theme);
     mapper->addMapping(ui->fontFamily, OptionsModel::FontFamily);
     mapper->addMapping(ui->fontScaleSlider, OptionsModel::FontScale);
     mapper->addMapping(ui->fontWeightNormalSlider, OptionsModel::FontWeightNormal);
