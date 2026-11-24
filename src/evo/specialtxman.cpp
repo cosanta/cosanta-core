@@ -737,9 +737,13 @@ bool CSpecialTxProcessor::FinishListForBlock(const CBlock& block, gsl::not_null<
     const int nHeight = pindexPrev->nHeight + 1;
     auto payee = prevList.GetMNPayee(pindexPrev);
     const bool isMNRewardReallocation{DeploymentActiveAfter(pindexPrev, m_consensus_params, Consensus::DEPLOYMENT_MN_RR)};
+    const bool is_proof_of_stake{block.IsProofOfStake()};
 
     // we skip the coinbase
     for (int i = 1; i < static_cast<int>(block.vtx.size()); i++) {
+        if (is_proof_of_stake && i == 1) {
+            continue;
+        }
         const CTransaction& tx = *block.vtx[i];
 
         // check if any existing MN collateral is spent by this transaction
@@ -810,9 +814,13 @@ bool CSpecialTxProcessor::RebuildListFromBlock(const CBlock& block, gsl::not_nul
                                                CDeterministicMNList& mnListRet)
 {
     CDeterministicMNList newList = BeginListForBlock(pindexPrev, prevList);
+    const bool is_proof_of_stake{block.IsProofOfStake()};
 
     // we skip the coinbase
     for (int i = 1; i < static_cast<int>(block.vtx.size()); i++) {
+        if (is_proof_of_stake && i == 1) {
+            continue;
+        }
         if (!ApplyTxToList(*block.vtx[i], pindexPrev, is_v24_active, view, debugLogs, newList, state)) {
             return false;
         }

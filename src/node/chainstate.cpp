@@ -164,7 +164,7 @@ static ChainstateLoadResult CompleteChainstateInitialization(ChainstateManager& 
     chain_helper.reset();
     chain_helper = std::make_unique<CChainstateHelper>(evodb, dmnman, *options.mn_sync, *options.isman, *(llmq_ctx->quorum_block_processor),
                                                        *(llmq_ctx->qsnapman), chainman, chainman.m_blockman, chainman.GetConsensus(),
-                                                       *options.chainlocks, *(llmq_ctx->qman));
+                                                       *options.sporkman, *options.chainlocks, *(llmq_ctx->qman));
 
     if (options.reindex) {
         pblocktree->WriteReindexing(true);
@@ -303,6 +303,7 @@ ChainstateLoadResult LoadChainstate(ChainstateManager& chainman, const CacheSize
     assert(options.isman);
     assert(options.chainlocks);
     assert(options.mn_sync);
+    assert(options.sporkman);
 
     if (!chainman.AssumedValidBlock().IsNull()) {
         LogPrintf("Assuming ancestors of block %s have valid signatures.\n", chainman.AssumedValidBlock().GetHex());
