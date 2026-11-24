@@ -7,6 +7,7 @@
 #endif
 
 #include <init.h>
+#include <interfaces/handler.h>
 #include <qt/bitcoin.h>
 #include <qt/guiutil.h>
 #include <qt/optionsdialog.h>
@@ -15,6 +16,7 @@
 #include <util/system.h>
 
 #include <QApplication>
+#include <QFile>
 #include <QFont>
 #include <QLabel>
 #include <QSettings>
@@ -24,6 +26,7 @@
 
 #include <univalue.h>
 
+#include <algorithm>
 #include <fstream>
 
 OptionTests::OptionTests(interfaces::Node& node) : m_node(node)
@@ -101,6 +104,69 @@ void OptionTests::integerGetArgBug()
         settings.rw_settings.erase("prune");
     });
     gArgs.WriteSettingsFile();
+}
+
+void OptionTests::themeSelection_data()
+{
+    QTest::addColumn<QString>("stored");
+    QTest::addColumn<QString>("expected");
+    QTest::newRow("fresh profile") << QString{} << QString{"cosanta"};
+    QTest::newRow("unknown theme") << QString{"unknown"} << QString{"cosanta"};
+    QTest::newRow("base stylesheet") << QString{"general"} << QString{"cosanta"};
+    for (const char* theme : {"cosanta", "Light", "Dark", "Traditional"}) {
+        QTest::newRow(theme) << QString{theme} << QString{theme};
+    }
+}
+
+void OptionTests::themeSelection()
+{
+    QFETCH(QString, stored);
+    QFETCH(QString, expected);
+
+    QSettings settings;
+    const QVariant original = settings.value("theme");
+    const auto restore = interfaces::MakeCleanupHandler([&] {
+        if (original.isValid()) settings.setValue("theme", original);
+        else settings.remove("theme");
+    });
+    if (stored.isNull()) settings.remove("theme");
+    else settings.setValue("theme", stored);
+
+    QCOMPARE(GUIUtil::getActiveTheme(), expected);
+    const auto accent = GUIUtil::getThemedQColor(GUIUtil::ThemedColor::BLUE);
+    const auto command = GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_COMMAND);
+
+    bilingual_str error;
+    QVERIFY(OptionsModel{m_node}.Init(error));
+    QCOMPARE(settings.value("theme").toString(), expected);
+    QCOMPARE(GUIUtil::getThemedQColor(GUIUtil::ThemedColor::BLUE), accent);
+    QCOMPARE(GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_COMMAND), command);
+    if (expected == "cosanta") {
+        const QColor red{"#ff2637"};
+        QCOMPARE(accent, red);
+        QCOMPARE(GUIUtil::getThemedQColor(GUIUtil::ThemedColor::GREEN),
+                 GUIUtil::getThemedQColor(GUIUtil::ThemedColor::DEFAULT));
+        QCOMPARE(GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_ERROR), QString{"color: #ff2637;"});
+        for (const QString& name : {QString{"connect_1"}, QString{"staking_active"}, QString{"lock_closed"}}) {
+            const QImage active = GUIUtil::getStatusBarIcon(name, GUIUtil::StatusBarState::Active,
+                                                            GUIUtil::ThemedColor::GREEN).pixmap(32, 32).toImage();
+            QVERIFY(!active.isNull());
+            bool has_accent = false;
+            for (int y = 0; y < active.height(); ++y) {
+                for (int x = 0; x < active.width(); ++x) {
+                    has_accent |= active.pixelColor(x, y) == red;
+                }
+            }
+            QVERIFY2(has_accent, qPrintable(name));
+        }
+    }
+
+    const auto themes = GUIUtil::listThemes();
+    QVERIFY(std::find(themes.begin(), themes.end(), expected) != themes.end());
+    QVERIFY(std::find(themes.begin(), themes.end(), QString{"general"}) == themes.end());
+    QFile stylesheet{":/css/" + expected};
+    QVERIFY(stylesheet.open(QIODevice::ReadOnly));
+    QVERIFY(stylesheet.size() > 0);
 }
 
 void OptionTests::invalidFontSetting()

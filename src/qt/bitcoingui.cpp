@@ -237,7 +237,7 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const NetworkStyle* networkStyle,
     QString curStyle = QApplication::style()->metaObject()->className();
     if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
     {
-        progressBar->setStyleSheet("QProgressBar { background-color: #F8F8F8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #00CCFF, stop: 1 #33CCFF); border-radius: 7px; margin: 0px; }");
+        progressBar->setObjectName("segmentedSyncProgress");
     }
 
     statusBar()->addWidget(progressBarLabel);
@@ -316,27 +316,17 @@ void BitcoinGUI::startSpinner()
     if (labelBlocksIcon == nullptr || labelBlocksIcon->isHidden() || timerSpinner != nullptr) {
         return;
     }
-    auto getNextFrame = []() {
-        static std::vector<std::unique_ptr<QPixmap>> vecFrames;
-        static std::vector<std::unique_ptr<QPixmap>>::iterator itFrame;
-        while (vecFrames.size() < SPINNER_FRAMES) {
-            QString&& strFrame = QString("spinner-%1").arg(vecFrames.size(), 3, 10, QChar('0'));
-            QPixmap&& frame = getIcon(strFrame, GUIUtil::ThemedColor::ORANGE, ":animation/").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE);
-            itFrame = vecFrames.insert(vecFrames.end(), std::make_unique<QPixmap>(frame));
-        }
-        assert(vecFrames.size() == SPINNER_FRAMES);
-        if (itFrame == vecFrames.end()) {
-            itFrame = vecFrames.begin();
-        }
-        return *itFrame++->get();
-    };
-
     timerSpinner = new QTimer(this);
-    QObject::connect(timerSpinner, &QTimer::timeout, [this, getNextFrame]() {
-        if (timerSpinner == nullptr) {
-            return;
+    connect(timerSpinner, &QTimer::timeout, this, [this, index = 0]() mutable {
+        if (m_spinner_frames.empty()) {
+            m_spinner_frames.reserve(SPINNER_FRAMES);
+            for (int i = 0; i < SPINNER_FRAMES; ++i) {
+                const QString name = QString("spinner-%1").arg(i, 3, 10, QChar('0'));
+                m_spinner_frames.push_back(GUIUtil::getStatusBarIcon(name, GUIUtil::ThemedColor::ORANGE, ":animation/").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+            }
         }
-        labelBlocksIcon->setPixmap(getNextFrame());
+        labelBlocksIcon->setPixmap(m_spinner_frames[index]);
+        index = (index + 1) % SPINNER_FRAMES;
     });
     timerSpinner->start(SPINNER_FRAME_MS);
 }
@@ -346,6 +336,7 @@ void BitcoinGUI::stopSpinner()
     if (timerSpinner == nullptr) {
         return;
     }
+    timerSpinner->stop();
     timerSpinner->deleteLater();
     timerSpinner = nullptr;
 }
@@ -379,7 +370,7 @@ void BitcoinGUI::startConnectingAnimation()
         } else {
             return;
         }
-        labelConnectionsIcon->setPixmap(GUIUtil::getIcon(strImage, color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelConnectionsIcon->setPixmap(GUIUtil::getStatusBarIcon(strImage, color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
     });
     timerConnecting->start(100);
 }
@@ -1460,7 +1451,8 @@ void BitcoinGUI::updateNetworkState()
     }
     if (!fNetworkActive || count > 0) {
         stopConnectingAnimation();
-        labelConnectionsIcon->setPixmap(GUIUtil::getIcon(icon, color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        const auto state = fNetworkActive && count > 0 ? GUIUtil::StatusBarState::Active : GUIUtil::StatusBarState::Inactive;
+        labelConnectionsIcon->setPixmap(GUIUtil::getStatusBarIcon(icon, state, color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
     }
     labelConnectionsIcon->setToolTip(tooltip);
 }
@@ -1773,7 +1765,7 @@ void BitcoinGUI::setAdditionalDataSyncProgress(double nSyncProgress)
     updateGovernanceCycleIcon();
 
     stopSpinner();
-    labelBlocksIcon->setPixmap(GUIUtil::getIcon("synced", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+    labelBlocksIcon->setPixmap(GUIUtil::getStatusBarIcon("synced", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
 
     // Don't word-wrap this (fixed-width) tooltip
     tooltip = QString("<nobr>") + tooltip + QString("</nobr>");
@@ -1819,7 +1811,7 @@ void BitcoinGUI::refreshGovernanceCycleIcons()
     for (auto color : {GUIUtil::ThemedColor::ORANGE, GUIUtil::ThemedColor::GREEN, GUIUtil::ThemedColor::BLUE}) {
         for (int i = 0; i < GOV_CYCLE_FRAME_COUNT; ++i) {
             m_gov_cycle_pixmaps[{std23::to_underlying(color), i}] =
-                GUIUtil::getIcon(QString("moon_%1").arg(i), color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE);
+                GUIUtil::getStatusBarIcon(QString("moon_%1").arg(i), color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE);
         }
     }
 }
@@ -1981,6 +1973,12 @@ void BitcoinGUI::changeEvent(QEvent *e)
     }
 #endif
     if (e->type() == QEvent::StyleChange) {
+        m_spinner_frames.clear();
+        if (labelStakingIcon && progressBarLabel && progressBar) setStakingStatus();
+        if (labelProxyIcon && clientModel) {
+            labelProxyIcon->clear();
+            updateProxyIcon();
+        }
         updateNetworkState();
 #ifdef ENABLE_WALLET
         if (walletFrame) {
@@ -1988,7 +1986,7 @@ void BitcoinGUI::changeEvent(QEvent *e)
         }
 #endif
         if (m_node.masternodeSync().isSynced()) {
-            labelBlocksIcon->setPixmap(GUIUtil::getIcon("synced", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+            labelBlocksIcon->setPixmap(GUIUtil::getStatusBarIcon("synced", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         }
         refreshGovernanceCycleIcons();
         updateGovernanceCycleIcon();
@@ -2157,7 +2155,7 @@ void BitcoinGUI::setStakingStatus()
     if (node::IsStakingActive()) {
         GUIUtil::ThemedColor color = GUIUtil::ThemedColor::GREEN;
         labelStakingIcon->show();
-        labelStakingIcon->setPixmap(GUIUtil::getIcon("staking_active", color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelStakingIcon->setPixmap(GUIUtil::getStatusBarIcon("staking_active", GUIUtil::StatusBarState::Active, color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelStakingIcon->setToolTip(tr("Staking is <b>enabled</b>"));
     } else {
         GUIUtil::ThemedColor color = GUIUtil::ThemedColor::ORANGE;
@@ -2166,7 +2164,7 @@ void BitcoinGUI::setStakingStatus()
             detailed_status = QString(":<br>- %1").arg(progressBarLabel->text());
         }
         labelStakingIcon->show();
-        labelStakingIcon->setPixmap(GUIUtil::getIcon("staking_inactive", color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelStakingIcon->setPixmap(GUIUtil::getStatusBarIcon("staking_inactive", GUIUtil::StatusBarState::Inactive, color).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelStakingIcon->setToolTip(tr("Staking is <b>disabled</b> %1").arg(detailed_status));
     }
 }
@@ -2186,7 +2184,7 @@ bool BitcoinGUI::handlePaymentRequest(const SendCoinsRecipient& recipient)
 void BitcoinGUI::setHDStatus(int hdEnabled)
 {
     if (hdEnabled) {
-        labelWalletHDStatusIcon->setPixmap(GUIUtil::getIcon("hd_enabled", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelWalletHDStatusIcon->setPixmap(GUIUtil::getStatusBarIcon("hd_enabled", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelWalletHDStatusIcon->setToolTip(tr("HD key generation is <b>enabled</b>"));
         labelWalletHDStatusIcon->show();
     }
@@ -2206,7 +2204,7 @@ void BitcoinGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::Unencrypted:
         labelWalletEncryptionIcon->show();
-        labelWalletEncryptionIcon->setPixmap(GUIUtil::getIcon("lock_open", GUIUtil::ThemedColor::RED).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelWalletEncryptionIcon->setPixmap(GUIUtil::getStatusBarIcon("lock_open", GUIUtil::StatusBarState::Inactive, GUIUtil::ThemedColor::RED).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>unencrypted</b>"));
         changePassphraseAction->setEnabled(false);
         unlockWalletAction->setVisible(false);
@@ -2216,7 +2214,7 @@ void BitcoinGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::Unlocked:
         labelWalletEncryptionIcon->show();
-        labelWalletEncryptionIcon->setPixmap(GUIUtil::getIcon("lock_open", GUIUtil::ThemedColor::RED).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelWalletEncryptionIcon->setPixmap(GUIUtil::getStatusBarIcon("lock_open", GUIUtil::StatusBarState::Inactive, GUIUtil::ThemedColor::RED).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(false);
@@ -2226,7 +2224,7 @@ void BitcoinGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::UnlockedForMixingOnly:
         labelWalletEncryptionIcon->show();
-        labelWalletEncryptionIcon->setPixmap(GUIUtil::getIcon("lock_open", GUIUtil::ThemedColor::ORANGE).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelWalletEncryptionIcon->setPixmap(GUIUtil::getStatusBarIcon("lock_open", GUIUtil::StatusBarState::Inactive, GUIUtil::ThemedColor::ORANGE).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for mixing only and staking only"));
         changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(true);
@@ -2236,7 +2234,7 @@ void BitcoinGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::Locked:
         labelWalletEncryptionIcon->show();
-        labelWalletEncryptionIcon->setPixmap(GUIUtil::getIcon("lock_closed", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelWalletEncryptionIcon->setPixmap(GUIUtil::getStatusBarIcon("lock_closed", GUIUtil::StatusBarState::Active, GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
         changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(true);
@@ -2269,7 +2267,7 @@ void BitcoinGUI::updateProxyIcon()
     if (proxy_enabled) {
         if (!GUIUtil::HasPixmap(labelProxyIcon)) {
             QString ip_port_q = QString::fromStdString(ip_port);
-            labelProxyIcon->setPixmap(GUIUtil::getIcon("proxy", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+            labelProxyIcon->setPixmap(GUIUtil::getStatusBarIcon("proxy", GUIUtil::ThemedColor::GREEN).pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
             labelProxyIcon->setToolTip(tr("Proxy is <b>enabled</b>: %1").arg(ip_port_q));
         } else {
             labelProxyIcon->show();

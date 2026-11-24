@@ -64,6 +64,7 @@ src/qt/proposallist.*
 src/qt/proposalmodel.*
 src/qt/proposalresume.*
 src/qt/proposalvotedialog.*
+src/qt/res/css/cosantapalette.h
 src/qt/test/proposalvotetests.*
 src/qt/sharedmncreatedialog.*
 src/qt/sharedmndialogs.*

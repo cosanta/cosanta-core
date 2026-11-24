@@ -12,6 +12,7 @@
 #include <qt/bitcoinaddressvalidator.h>
 #include <qt/bitcoinunits.h>
 #include <qt/qvalidatedlineedit.h>
+#include <qt/res/css/cosantapalette.h>
 #include <qt/sendcoinsrecipient.h>
 
 #include <base58.h>
@@ -80,6 +81,7 @@
 #if defined(Q_OS_MACOS)
 
 #include <QProcess>
+#include <QWindow>
 
 void ForceActivation();
 #endif
@@ -95,16 +97,17 @@ static const QString defaultStylesheetDirectory = ":css";
 static QString stylesheetDirectory = defaultStylesheetDirectory;
 // The name of the traditional theme
 static const QString traditionalTheme = "Traditional";
+static const QString cosantaTheme = "cosanta";
+static const QString darkTheme = "Dark";
 // The theme to set by default if settings are missing or incorrect
-static const QString defaultTheme = "Light";
-// The prefix a theme name should have if we want to apply dark colors and styles to it
-static const QString darkThemePrefix = "Dark";
+static const QString defaultTheme = cosantaTheme;
 // The theme to set as a base one for non-traditional themes
 static const QString generalTheme = "general";
 // Mapping theme => css file
 static const std::map<QString, QString> mapThemeToStyle{
     {generalTheme, "general.css"},
-    {"Dark", "dark.css"},
+    {cosantaTheme, "cosanta.css"},
+    {darkTheme, "dark.css"},
     {"Light", "light.css"},
     {"Traditional", "traditional.css"},
 };
@@ -129,6 +132,10 @@ static const std::map<ThemedColor, QColor> themedColors = {
     { ThemedColor::BORDER_NETSTATS, QColor(180, 180, 180) },
     { ThemedColor::QR_PIXEL, QColor(85, 85, 85) },
     { ThemedColor::ICON_ALTERNATIVE_COLOR, QColor(167, 167, 167) },
+    { ThemedColor::TRAFFIC_RECEIVED, QColor(94, 140, 65, 128) },
+    { ThemedColor::TRAFFIC_SENT, QColor(168, 72, 50, 128) },
+    { ThemedColor::TRAFFIC_GRID, QColor(85, 85, 85) },
+    { ThemedColor::CONSOLE_ALERT, QColor(168, 72, 50) },
 };
 
 static const std::map<ThemedColor, QColor> themedDarkColors = {
@@ -146,6 +153,10 @@ static const std::map<ThemedColor, QColor> themedDarkColors = {
     { ThemedColor::BORDER_NETSTATS, QColor(74, 74, 75) },
     { ThemedColor::QR_PIXEL, QColor(199, 199, 199) },
     { ThemedColor::ICON_ALTERNATIVE_COLOR, QColor(74, 74, 75) },
+    { ThemedColor::TRAFFIC_RECEIVED, QColor(94, 140, 65, 128) },
+    { ThemedColor::TRAFFIC_SENT, QColor(168, 72, 50, 128) },
+    { ThemedColor::TRAFFIC_GRID, QColor(199, 199, 199) },
+    { ThemedColor::CONSOLE_ALERT, QColor(168, 72, 50) },
 };
 
 static const std::map<ThemedStyle, QString> themedStyles = {
@@ -156,6 +167,7 @@ static const std::map<ThemedStyle, QString> themedStyles = {
     { ThemedStyle::TS_COMMAND, "color:#008de4;" },
     { ThemedStyle::TS_PRIMARY, "color:#333;" },
     { ThemedStyle::TS_SECONDARY, "color:#444;" },
+    { ThemedStyle::TS_CONSOLE_COMMAND, "color:#008de4;" },
 };
 
 static const std::map<ThemedStyle, QString> themedDarkStyles = {
@@ -166,6 +178,7 @@ static const std::map<ThemedStyle, QString> themedDarkStyles = {
     { ThemedStyle::TS_COMMAND, "color:#00599a;" },
     { ThemedStyle::TS_PRIMARY, "color:#c7c7c7;" },
     { ThemedStyle::TS_SECONDARY, "color:#aaa;" },
+    { ThemedStyle::TS_CONSOLE_COMMAND, "color:#00599a;" },
 };
 
 std::string defaultUIPlatform()
@@ -181,21 +194,21 @@ std::string defaultUIPlatform()
 
 QColor getThemedQColor(ThemedColor color)
 {
-    QString theme = QSettings().value("theme", "").toString();
-    return theme.startsWith(darkThemePrefix) ? themedDarkColors.at(color) : themedColors.at(color);
+    const QString theme = getActiveTheme();
+    if (theme == cosantaTheme) return CosantaPalette::colors.at(color);
+    return theme == darkTheme ? themedDarkColors.at(color) : themedColors.at(color);
 }
 
 QString getThemedStyleQString(ThemedStyle style)
 {
-    QString theme = QSettings().value("theme", "").toString();
-    return theme.startsWith(darkThemePrefix) ? themedDarkStyles.at(style) : themedStyles.at(style);
+    const QString theme = getActiveTheme();
+    if (theme == cosantaTheme) return CosantaPalette::styles.at(style);
+    return theme == darkTheme ? themedDarkStyles.at(style) : themedStyles.at(style);
 }
 
-QIcon getIcon(const QString& strIcon, const ThemedColor color, const ThemedColor colorAlternative, const QString& strIconPath)
+static QIcon tintIcon(const QString& resource, const QColor& qcolor, const QColor& qcolorAlternative)
 {
-    QColor qcolor = getThemedQColor(color);
-    QColor qcolorAlternative = getThemedQColor(colorAlternative);
-    QIcon icon(strIconPath + strIcon);
+    QIcon icon(resource);
     QIcon themedIcon;
     for (const QSize& size : icon.availableSizes()) {
         QImage image(icon.pixmap(size).toImage());
@@ -203,7 +216,7 @@ QIcon getIcon(const QString& strIcon, const ThemedColor color, const ThemedColor
         for (int x = 0; x < image.width(); ++x) {
             for (int y = 0; y < image.height(); ++y) {
                 const QRgb rgb = image.pixel(x, y);
-                QColor* pColor;
+                const QColor* pColor;
                 if ((rgb & RGB_MASK) < RGB_HALF) {
                     pColor = &qcolor;
                 } else {
@@ -215,6 +228,30 @@ QIcon getIcon(const QString& strIcon, const ThemedColor color, const ThemedColor
         themedIcon.addPixmap(QPixmap::fromImage(image));
     }
     return themedIcon;
+}
+
+QIcon getIcon(const QString& strIcon, const ThemedColor color, const ThemedColor colorAlternative, const QString& strIconPath)
+{
+    return tintIcon(strIconPath + strIcon, getThemedQColor(color), getThemedQColor(colorAlternative));
+}
+
+QIcon getStatusBarIcon(const QString& name, ThemedColor color, const QString& path)
+{
+    if (getActiveTheme() == cosantaTheme) {
+        const auto& palette = CosantaPalette::statusIconColors;
+        if (const auto it = palette.find(color); it != palette.end()) {
+            return tintIcon(path + name, it->second, palette.at(ThemedColor::ICON_ALTERNATIVE_COLOR));
+        }
+    }
+    return getIcon(name, color, path);
+}
+
+QIcon getStatusBarIcon(const QString& name, StatusBarState state, ThemedColor fallback)
+{
+    const auto color = getActiveTheme() == cosantaTheme
+        ? (state == StatusBarState::Active ? ThemedColor::RED : ThemedColor::ICON_ALTERNATIVE_COLOR)
+        : fallback;
+    return getStatusBarIcon(name, color);
 }
 
 QIcon getIcon(const QString& strIcon, const ThemedColor color, const QString& strIconPath)
@@ -840,7 +877,8 @@ std::vector<QString> listStyleSheets()
     std::vector<QString> vecStylesheets;
     vecStylesheets.reserve(mapThemeToStyle.size());
     for (const auto& it : mapThemeToStyle) {
-        vecStylesheets.push_back(it.second);
+        // Existing custom CSS directories can use the bundled Cosanta stylesheet.
+        if (it.first != cosantaTheme) vecStylesheets.push_back(it.second);
     }
     return vecStylesheets;
 }
@@ -862,8 +900,30 @@ QString getDefaultTheme()
 
 bool isValidTheme(const QString& strTheme)
 {
-    return strTheme == defaultTheme || strTheme == darkThemePrefix || strTheme == traditionalTheme;
+    return strTheme != generalTheme && mapThemeToStyle.count(strTheme) != 0;
 }
+
+#ifdef Q_OS_MACOS
+class MacPopupMenuStyle final : public QObject
+{
+public:
+    bool cosanta_active{false};
+
+protected:
+    bool eventFilter(QObject* target, QEvent* event) override
+    {
+        if (event->type() != QEvent::Show) return false;
+        auto* menu = qobject_cast<QMenu*>(target);
+        if (!menu || menu->windowType() != Qt::Popup || !menu->windowHandle()) return false;
+
+        // Cocoa shows its system window color behind the rounded QSS corners unless
+        // the native popup is frameless. Keep the widget flags for subsequent themes.
+        menu->windowHandle()->setFlag(Qt::FramelessWindowHint,
+                                      cosanta_active || menu->windowFlags().testFlag(Qt::FramelessWindowHint));
+        return false;
+    }
+};
+#endif
 
 void loadStyleSheet(bool fForceUpdate)
 {
@@ -958,22 +1018,34 @@ void loadStyleSheet(bool fForceUpdate)
         };
 
         auto pathToFile = [&](const QString& theme) -> QString {
-            return stylesheetDirectory + "/" + (isStyleSheetDirectoryCustom() ? mapThemeToStyle.at(theme) : theme);
+            if (isStyleSheetDirectoryCustom()) {
+                const QString path = stylesheetDirectory + "/" + mapThemeToStyle.at(theme);
+                if (theme != cosantaTheme || QFileInfo::exists(path)) return path;
+            }
+            return defaultStylesheetDirectory + "/" + theme;
         };
 
         std::vector<QString> vecFiles;
-        // If light/dark theme is used load general styles first
+        // Full themes share the same widget layout.
         if (dashThemeActive()) {
             vecFiles.push_back(pathToFile(generalTheme));
         }
         vecFiles.push_back(pathToFile(getActiveTheme()));
 
         fStyleSheetChanged = loadFiles(vecFiles);
+        if (fStyleSheetChanged && getActiveTheme() != cosantaTheme) {
+            stylesheet->append(QStringLiteral("QProgressBar#segmentedSyncProgress { background-color: #F8F8F8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar#segmentedSyncProgress::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #00CCFF, stop: 1 #33CCFF); border-radius: 7px; margin: 0px; }"));
+        }
     }
 
     bool fUpdateStyleSheet = fForceUpdate || (fDebugCustomStyleSheets && fStyleSheetChanged);
 
     if (fUpdateStyleSheet && stylesheet != nullptr) {
+#ifdef Q_OS_MACOS
+        static MacPopupMenuStyle popupMenuStyle;
+        popupMenuStyle.cosanta_active = getActiveTheme() == cosantaTheme;
+        qApp->installEventFilter(&popupMenuStyle);
+#endif
         qApp->setStyleSheet(*stylesheet);
     }
 }

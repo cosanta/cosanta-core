@@ -200,7 +200,9 @@ SplashScreen::SplashScreen(const NetworkStyle* networkStyle)
             int badgeY = cardY + 14;
             // Rounded badge
             pixPaint.setPen(Qt::NoPen);
-            pixPaint.setBrush(networkStyle->getBadgeColor());
+            pixPaint.setBrush(GUIUtil::getActiveTheme() == "cosanta"
+                ? GUIUtil::getThemedQColor(GUIUtil::ThemedColor::BLUE).darker(160)
+                : networkStyle->getBadgeColor());
             pixPaint.drawRoundedRect(badgeX, badgeY, badgeW, badgeH, badgeH / 2, badgeH / 2);
             // Badge text
             pixPaint.setPen(QColor(255, 255, 255));

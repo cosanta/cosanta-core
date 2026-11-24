@@ -45,6 +45,7 @@
 #include <QDir>
 #include <QFont>
 #include <QDateTime>
+#include <QFile>
 #include <QKeyEvent>
 #include <QKeySequence>
 #include <QLatin1String>
@@ -1006,8 +1007,8 @@ void RPCConsole::clear(bool keep_prompt)
                 "table { }"
                 "td.time { " + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_SECONDARY) + " font-size: %1pt; } "
                 "td.message { " + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_PRIMARY) + " font-size: %1pt; white-space:pre-wrap; } "
-                "td.cmd-request, b { " + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_COMMAND) + " } "
-                "td.cmd-error, .secwarning { " + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_ERROR) + " }"
+                "td.cmd-request, b { " + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_CONSOLE_COMMAND) + " } "
+                "td.cmd-error, .secwarning { color: " + GUIUtil::getThemedQColor(GUIUtil::ThemedColor::CONSOLE_ALERT).name() + "; }"
             ).arg(consoleFontSize)
         );
 
@@ -1031,7 +1032,7 @@ void RPCConsole::clear(bool keep_prompt)
                  "<b>help</b>",
                  "<b>help-console</b>",
                  "<span class=\"secwarning\">",
-                 "<span>");
+                 "</span>");
 
     message(CMD_REPLY, welcome_message, true);
 }
@@ -1048,7 +1049,10 @@ void RPCConsole::message(int category, const QString &message, bool html)
     QTime time = QTime::currentTime();
     QString timeString = time.toString();
     QString out;
-    out += "<table><tr><td class=\"time\" width=\"65\">" + timeString + "</td>";
+    QFont timeFont = ui->messagesWidget->font();
+    timeFont.setPointSize(consoleFontSize);
+    const int timeWidth = GUIUtil::TextWidth(QFontMetrics(timeFont), timeString) + 12;
+    out += QString("<table><tr><td class=\"time\" width=\"%1\">").arg(timeWidth) + timeString + "</td>";
     out += "<td class=\"message " + categoryClass(category) + "\" valign=\"middle\">";
     if(html)
         out += message;
@@ -1338,8 +1342,13 @@ void RPCConsole::updateDetailWidget()
 
 void RPCConsole::setButtonIcons()
 {
+    const QString iconDir = ":/tools/" + GUIUtil::getActiveTheme() + "/";
+    for (auto* tab : {ui->btnInfo, ui->btnConsole, ui->btnNetTraffic, ui->btnPeers, ui->btnRepair}) {
+        const QString resource = iconDir + tab->objectName();
+        tab->setIcon(QFile::exists(resource) ? QIcon(resource) : QIcon{});
+    }
     const QSize consoleButtonsSize(BUTTON_ICONSIZE * 0.8, BUTTON_ICONSIZE * 0.8);
-    GUIUtil::setIcon(ui->clearButton, "remove", GUIUtil::ThemedColor::RED, consoleButtonsSize);
+    GUIUtil::setIcon(ui->clearButton, "remove", GUIUtil::ThemedColor::CONSOLE_ALERT, consoleButtonsSize);
 
     GUIUtil::setIcon(ui->fontBiggerButton, "fontbigger", GUIUtil::ThemedColor::BLUE, consoleButtonsSize);
     //: Main shortcut to increase the RPC console font size.
